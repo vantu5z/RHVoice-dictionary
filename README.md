@@ -1,7 +1,7 @@
 RHVoice-dictionary
 ==================
 
-Русский словарь в формате поддерживаемом RHVoice v0.5
+Русский словарь в формате поддерживаемом RHVoice v0.5 (https://github.com/Olga-Yakovleva/RHVoice)
 
 Установка:
  - Пакет в AUR для Arch пользователей https://aur.archlinux.org/packages/rhvoice-dictionary-git/
