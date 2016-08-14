@@ -694,7 +694,6 @@ text = sub(r'\n{2,}', r'\n', text)
 text = sub(r'[«»"]', '', text)
 text = sub(r'[‑–−—]', '-', text)
 
-text = sub(r'([Зз]а|[Пп]од) № ?', r'\1 номером ', text)
 text = sub('№ ?', 'номер ', text)
 text = sub('[Тт]\. ?е\.', 'то есть', text)
 text = sub('т\. ?д\.', 'так далее', text)
@@ -850,11 +849,6 @@ for sample in samples:
 samples = findall(r'\b([Кк] )(\d+-м)\b', text)
 for sample in samples:
     text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], 2, 3), 1)
-
-#samplrs = findall(r'([Пп]о сравнению с |[Пп]еред )(\d+-м)\b', text)
-#for sample in samples:
-#    print(sample)
-#    text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], 5, 0), 1)
 
 samples = findall(r'\b([Сс] )(\d+-м)\b', text)
 for sample in samples:
