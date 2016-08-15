@@ -651,7 +651,7 @@ forms = {
     'Вт': ('ватт', 'ватта', 'ватт', 'ватта'),
     '₽': ('рубль', 'рубля', 'рублей', 'рубля'),
     '£': ('фунт стерлингов', 'фунта стерлингов', 'фунтов стерлингов', 'фунта стерлингов'),
-    'л\u002Eс\u002E': ('лошадиная сила', 'лошадиных силы', 'лошадиных сил', 'лошадиной силы'),
+    'л\u002Eс\u002E': ('лошадиная сила', 'лошадиные силы', 'лошадиных сил', 'лошадиной силы'),
     'тыс\u002E': ('тысяча', 'тысячи', 'тысяч', 'тысячи'),
     'млн': ('миллион', 'миллиона', 'миллионов', 'миллиона'),
     'млрд': ('миллиард', 'миллиарда', 'миллиардв', 'миллиарда'),
@@ -752,7 +752,7 @@ for sample in samples:
     text = text.replace(sample[0] + ',' + sample[1],  full + decimal + frac, 1)
 
 # Проверка должна следовать после обработки десятичных дробей
-samples = findall(r'(\d+) (тонн[аы]|тысяч[аи]?|лошадин[ахыя]{2} сил[аы]?)\b', text)
+samples = findall(r'(\d+) (тонн[аы]|тысяч[аи]?|лошадин[аеыя]{2} сил[аы]?)\b', text)
 for sample in samples:
     text = text.replace(sample[0] + ' ' + sample[1], feminin(sample[0]) + ' ' + sample[1], 1)
 
@@ -823,7 +823,7 @@ text = sub(r'(\d+-е )гг\.', r'\1годы', text)
 text = sub(r'(\d+-ми )гг\.', r'\1годами', text)
 text = sub(r'(\d+-х )гг\.', r'\1годов', text)
 
-text = sub(r'\b(\d+)(-| и | или )(\d+)-(е|го|ми|х)\b', r'\1-\4\2\3-\4', text)
+text = sub(r'\b(\d+)-(\d+)-(е|го|ми|м|х)\b', r'\1-\3 \2-\3', text)
 
 text = sub(r'(1\d|[02-9][05-9]|\b[5-9]) года', r'\1-го года', text)
 text = sub(r'(1\d|[02-9][02-9]|\b[2-9]) год\b', r'\1-й год', text)
@@ -835,6 +835,18 @@ text = sub(r'(\d+) г\.р\.', r'\1-го года рождения', text)
 samples = findall(r'(\d+-е)( Олимпийские| годы)', text)
 for sample in samples:
     text = text.replace(sample[0] + sample[1], ordinal(sample[0][:-2], 0, 3) + sample[1], 1)
+
+samples = findall(r'([Вв] )(\d+-е)\b', text)
+for sample in samples:
+    text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], 0, 3), 1)
+
+samples = findall(r'([Кк] )(\d+-м)\b', text)
+for sample in samples:
+    text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], 2, 3), 1)
+
+samples = findall(r'(\d+-х-)', text)
+for sample in samples:
+    text = text.replace(sample, ordinal(sample[:-3], 1, 3) + ' ', 1)
 
 samples = findall(r'\d+-я\b', text)
 for sample in samples:
