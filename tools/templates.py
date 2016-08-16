@@ -729,11 +729,14 @@ for sample in samples:
 text = sub(r'/(сек|с)\b', r' в секунду', text)
 text = sub(r'/(час|ч)\b', r' в час', text)
 
+# Удаление пробелов между разрядами /только целая часть числа/
+text = sub(r'(?<=\d) (?=\d{3})', r'', text)
+
 # Десятичные дроби (до тысячных включительно)
-samples = findall(r'(\d+),(\d{1,3})', text)
+samples = findall(r'(\d+,)(\d{1,3})\b', text)
 for sample in samples:
     length = len(sample[1])
-    full = feminin(sample[0])
+    full = feminin(sample[0][0:-1])
     if full[-1] == 'а':
         full += ' целая '
     else:
@@ -749,15 +752,12 @@ for sample in samples:
         frac += 'ая'
     else:
         frac += 'ых'
-    text = text.replace(sample[0] + ',' + sample[1],  full + decimal + frac, 1)
+    text = text.replace(sample[0] + sample[1],  full + decimal + frac, 1)
 
 # Проверка должна следовать после обработки десятичных дробей
 samples = findall(r'(\d+) (тонн[аы]|тысяч[аи]?|лошадин[аеыя]{2} сил[аы]?)\b', text)
 for sample in samples:
     text = text.replace(sample[0] + ' ' + sample[1], feminin(sample[0]) + ' ' + sample[1], 1)
-
-# Удаление пробелов между разрядами
-text = sub(r'(?<=\d) (?=\d{3}\b)', r'', text)
 
 # Римские цифры
 roman = findall(r'\b[IVXLCDM]+\b', text)
@@ -783,12 +783,13 @@ text = sub(r'(начал[аеому]{1,2}|середин[аеойуы]{1,2}|ко
 
 text = sub(r'(ноч[иь] со? \d+)( на \d+)', r'\1-го\2', text)
 
-text = sub(r'(\d+) (годов|гг\.)', r'\1-го годов', text)
+text = sub(r'(\d+) годов', r'\1-го годов', text)
 text = sub(r'\b([Кк] \d+)-(\d+) (годам|гг\.)', r'\1-му \2-му годам', text)
 text = sub(r'(\d+-м )(гг\.)', r'\1годам', text)
 
+text = sub(r'\b(\d+) века\b', r'\1-го века', text) # Спорный шаблон
 text = sub(r'\b([Вв] \d+) (веке|в\.)', r'\1-м веке', text)
-text = sub(r'\b([Кк] \d+) (веку|в\.)', r'\1-му веку', text)
+text = sub(r'\b([Кк] \d+)(-му) (веку|в\.)', r'\1-му веку', text)
 text = sub(r'\b([Дд]о|[Пп]осле|[Сс])( \d+) (века|в\.)', r'\1\2-го века', text)
 text = sub(r'\b([Кк] \d+)-(\d+) векам', r'\1-му \2-му векам', text)
 
@@ -797,7 +798,7 @@ text = sub(r'\b([Кк] \d+) (году|г\.)', r'\1-му году', text)
 
 text = sub(r'([Пп]о сравнению с|[Пп]еред)( \d+) г\.', r'\1\2-м годом', text)
 text = sub(r'(\d+) годом', r'\1-м годом', text)
-text = sub(r'\b([Дд]о|[Пп]осле|[Сс])( \d+) г\.', r'\1\2-го года', text)
+text = sub(r'\b([Дд]о|[Пп]осле|[Сс])( \d+) (года|г\.)', r'\1\2-го года', text)
 
 text = sub(r'\b([Вв] \d+)-(\d+) (годах|гг\.)', r'\1-м \2-м годах', text)
 text = sub(r'(\d+)-(\d+) (годы|гг\.)', r'\1-й \2-й годы', text)
@@ -805,7 +806,7 @@ text = sub(r'(\d+)-(\d+) (годы|гг\.)', r'\1-й \2-й годы', text)
 text = sub(r'\b([Вв] \d+) (годах|гг\.)', r'\1-х годах', text)
 #text = sub(r'\b([Кк] \d+0) гг\.', r'\1-м годам', text)
 text = sub(r'\b([Дд]о|[Пп]осле|[Сс])( \d+) (годов|гг\.)', r'\1\2-х годов', text)
-text = sub(r'\b([Сс] \d+) по (\d+) (год|век)', r'\1-го по \2-й \3', text)
+text = sub(r'\b([Сс] \d+) по (\d+) (годы|гг\.)', r'\1-го по \2-й годы', text)
 
 text = sub(r'([Зз]им[аеойуы]{1,2} \d+)-(\d+)', r'\1-го \2-го', text)
 
