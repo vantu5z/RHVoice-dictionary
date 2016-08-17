@@ -755,7 +755,7 @@ for sample in samples:
     text = text.replace(sample[0] + sample[1],  full + decimal + frac, 1)
 
 # Проверка должна следовать после обработки десятичных дробей
-samples = findall(r'(\d+) (тонн[аы]|тысяч[аи]?|лошадин[аеыя]{2} сил[аы]?)\b', text)
+samples = findall(r'(\d+) (минут[аы]?|недел[иья]|секунд[аы]?|тонн[аы]|тысяч[аи]?|лошадин[аеыя]{2} сил[аы]?)\b', text)
 for sample in samples:
     text = text.replace(sample[0] + ' ' + sample[1], feminin(sample[0]) + ' ' + sample[1], 1)
 
@@ -769,15 +769,14 @@ text = sub(r'(\d+)( Олимпийски)([еимх]{1,2})', r'\1-\3\2\3', text)
 
 # Даты
 
-text = sub(r'([Пп]еред \d+) (января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)', r'\1-м \2', text)
-
 text = sub(r'(январ[еюьям]{1,2}|феврал[еюьям]{1,2}|март[аеуом]{0,2}|апрел[еюьям]{1,2}|ма[йюяем]{1,2}|июн[еюьям]{1,2}|июл[еюьям]{1,2}|август[аеуом]{0,2}|сентябр[еюьям]{1,2}|октябр[еюьям]{1,2}|ноябр[еюьям]{1,2}|декабр[еюьям]{1,2}|начал[аеому]{1,2}|середин[аеойуы]{1,2}|кон[ецауом]{2,3}|половин[аеуыой]{1,2}|лет[ауом]{1,2}|весн[аеуыой]{1,2}|осен[иью]{1,2})( \d+) (года\b|г\.)', r'\1\2-го года', text)
+
+text = sub(r'([Пп]еред \d+) (января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)', r'\1-м \2', text)
 
 text = sub(r'\b([Зз]а|[Нн]а|[Пп]о)( \d+) (января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)', r'\1\2-е \3', text)
 text = sub(r'\b([Дд]о|[Пп]осле|[Сс]о?)( \d+) (января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)', r'\1\2-го \3', text)
 text = sub(r'\b([Кк]о?)( \d+) (января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)', r'\1\2-му \3', text)
 text = sub(r'(\d+) (января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)', r'\1-го \2', text)
-#text = sub(r'([Вв] )(январ|феврал|март|апрел|ма|июн|июл|август|сентябр|октябр|ноябр|декабр|начал|конц|середин)(е \d+)', r'\1\2\3-го', text)
 
 text = sub(r'(начал[аеому]{1,2}|середин[аеойуы]{1,2}|кон[ецауом]{2,3}|половин[аеуыой]{1,2})( \d+) гг\.', r'\1\2-х годов', text)
 
@@ -853,6 +852,14 @@ samples = findall(r'\d+-я\b', text)
 for sample in samples:
     text = text.replace(sample, ordinal(sample[:-2], 0, 2), 1)
 
+samples = findall(r'\b([Вв]о? |[Нн]а )(\d+-ю)\b', text)
+for sample in samples:
+    text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], 1, 2), 1)
+
+samples = findall(r'\d+-ю\b', text)
+for sample in samples:
+    text = text.replace(sample, ordinal(sample[:-2], 1, 2), 1)
+
 samples = findall(r'\b([Вв] |[Нн]а |[Пп]ри )(\d+-м)\b', text)
 for sample in samples:
     text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], 5, 0), 1)
@@ -877,9 +884,9 @@ samples = findall(r'\d+-ми\b', text)
 for sample in samples:
     text = text.replace(sample, ordinal(sample[:-3], 3, 3), 1)
 
-samples = findall(r'\d+-х\b', text)
+samples = findall(r'(\d{,}1\d|\d{,}[02-9][015-9]|[015-9])-х\b', text)
 for sample in samples:
-    text = text.replace(sample, ordinal(sample[:-2], 1, 3), 1)
+    text = text.replace(sample + '-х', ordinal(sample, 1, 3), 1)
 
 samples = findall(r'\b([Дд]о|[Пп]осле|[Сс]о?) (\d+-й)\b', text)
 for sample in samples:
