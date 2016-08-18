@@ -6,7 +6,7 @@
 
 from re import sub, findall
 
-im_muzh = (
+i_mu = (
   (
     (
       (
@@ -51,7 +51,7 @@ im_muzh = (
   ('восьмой', 'восемнадцатый'),
   ('девятый', 'девятнадцатый')
 )
-im_sred = (
+i_sr = (
   (
     (
       (
@@ -96,7 +96,7 @@ im_sred = (
   ('восьмое', 'восемнадцатое'),
   ('девятое', 'девятнадцатое')
 )
-im_zhen = (
+i_zh = (
   (
     (
       (
@@ -141,7 +141,7 @@ im_zhen = (
   ('восьмая', 'восемнадцатая'),
   ('девятая', 'девятнадцатая')
 )
-im_mnozh = (
+i_mn = (
   (
     (
       (
@@ -186,7 +186,7 @@ im_mnozh = (
   ('восьмые', 'восемнадцатые'),
   ('девятые' 'девятнадцаые')
 )
-ro_muzh = (
+r_mu = (
   (
     (
       (
@@ -231,7 +231,7 @@ ro_muzh = (
   ('восьмого', 'восемнадцатого'),
   ('девятого', 'девятнадцатого')
 )
-ro_zhen = (
+r_zh = (
   (
     (
       (
@@ -276,7 +276,7 @@ ro_zhen = (
   ('восьмую', 'восемнадцатую'),
   ('девятую', 'девятнадцатую')
 )
-ro_mnozh = (
+r_mn = (
   (
     (
       (
@@ -321,7 +321,7 @@ ro_mnozh = (
   ('восьмых', 'восемнадцатых'),
   ('девятых' 'девятнадцатых')
 )
-da_muzh = (
+d_mu = (
   (
     (
       (
@@ -366,7 +366,7 @@ da_muzh = (
   ('восьмому', 'восемнадцатому'),
   ('девятому', 'девятнадцатому')
 )
-da_zhen = (
+d_zh = (
   (
     (
       (
@@ -411,7 +411,7 @@ da_zhen = (
   ('восьмой', 'восемнадцатой'),
   ('девятой', 'девятнадцатой')
 )
-tv_muzh = (
+t_mu = (
   (
     (
       (
@@ -456,7 +456,7 @@ tv_muzh = (
   ('восьмым', 'восемнадцатым'),
   ('девятым', 'девятнадцатым')
 )
-tv_mnozh = (
+t_mn = (
   (
     (
       (
@@ -501,7 +501,7 @@ tv_mnozh = (
   ('восьмыми', 'восемнадцатым'),
   ('девятыми' 'девятнадцатым')
 )
-pr_muzh = (
+p_mu = (
   (
     (
       (
@@ -546,40 +546,29 @@ pr_muzh = (
   ('восьмом', 'восемнадцатом'),
   ('девятом', 'девятнадцатом')
 )
-ro_sred = ro_muzh
-da_sred = da_muzh
-da_mnozh = tv_muzh
-vi_muzh = None
-vi_sred = None
-vi_zhen = ro_zhen
-vi_mnozh = None
-tv_sred = tv_muzh
-tv_zhen = ro_zhen
-pr_sred = pr_muzh
-pr_zhen = ro_zhen
-pr_mnozh = ro_mnozh
-ordinales = (
-    (im_muzh, im_sred, im_zhen, im_mnozh),
-    (ro_muzh, ro_sred, ro_zhen, ro_mnozh),
-    (da_muzh, da_sred, da_zhen, da_mnozh),
-    (tv_muzh, tv_sred, tv_zhen, tv_mnozh),
-    (vi_muzh, vi_sred, vi_zhen, vi_mnozh),
-    (pr_muzh, pr_sred, pr_zhen, pr_mnozh)
-)
+r_sr = r_mu
+d_sr = d_mu
+d_mn = t_mu
+v_zh = r_zh
+t_sr = t_mu
+t_zh = r_zh
+p_sr = p_mu
+p_zh = r_zh
+p_mn = r_mn
 
-def ordinal(num, casus, genum):
+def ordinal(num, casus):
     if num[-1] == '0':
         try:
             if num[-2] == '0':
                 if num[-3] == '0':
                     prenum = ''
-                    number = ordinales[casus][genum][0][0][0][int(num[-4])]
+                    number = casus[0][0][0][int(num[-4])]
                 else:
                     if len(num) == 3:
                         prenum = ''
                     else:
                         prenum = num[:-3] + '000 '
-                    number = ordinales[casus][genum][0][0][int(num[-3])]
+                    number = casus[0][0][int(num[-3])]
             else:
                 if len(num) == 2:
                     prenum = ''
@@ -589,10 +578,10 @@ def ordinal(num, casus, genum):
                         prenum += ' '
                     else:
                         prenum += '00 '
-                number = ordinales[casus][genum][0][int(num[-2])]
+                number = casus[0][int(num[-2])]
         except:
             prenum = ''
-            number = ordinales[casus][genum][0][0][0][0]
+            number = casus[0][0][0][0]
     else:
         if len(num) == 1:
             prenum = ''
@@ -615,7 +604,7 @@ def ordinal(num, casus, genum):
                 else:
                     prenum += '0 '
                 dec = 0
-        number = ordinales[casus][genum][int(num[-1])][dec]
+        number = casus[int(num[-1])][dec]
     return prenum + number
 
 # Код заимствован (с изменениями) у Jeff Wheeler
@@ -698,13 +687,21 @@ text = sub(r'\n{2,}', r'\n', text)
 text = sub(r'[«»"]', '', text)
 text = sub(r'[‑–−—]', '-', text)
 
-text = sub('№ ?', 'номер ', text)
-text = sub('[Тт]\. ?е\.', 'то есть', text)
-text = sub('т\. ?д\.', 'так далее', text)
-text = sub('т\. ?п\.', 'тому подобное', text)
+text = sub(r'№ ?', 'номер ', text)
+text = sub(r'\b[Тт]\. ?е\.', 'то есть', text)
+text = sub(r' т\. ?д\.', ' так далее', text)
+text = sub(r' т\. ?п\.', ' тому подобное', text)
+text = sub(r' н\. ?э\.', ' нашей эры', text)
+text = sub(r'\b[Пп]рим\. ред\.', 'примечание редактора', text)
+text = sub(r'\b[Рр]ед\.', 'редактор', text)
+text = sub(r'\b[Пп]рим\.', 'примечание', text)
 
 text = sub(r'\b([Гг])-(н|на|не|ном|ну)\b', r'\1осподи\2', text)
 text = sub(r'\b([Гг])-(жа|же|жи|жой|жу)\b', r'\1оспо\2', text)
+
+text = sub(r' ?± ?', ' плюс-минус ', text)
+text = sub(r' ?= ?', ' равно ', text)
+text = sub(r' ?≈ ?', ' приближённо равно ', text)
 
 # Единицы измерения и денежные единицы
 
@@ -769,6 +766,8 @@ text = sub(r'(\d+)( Олимпийски)([еимх]{1,2})', r'\1-\3\2\3', text)
 
 # Даты
 
+text = sub(r'(?<=\d)(г\.|гг\.)', r' \1', text)
+
 text = sub(r'(январ[еюьям]{1,2}|феврал[еюьям]{1,2}|март[аеуом]{0,2}|апрел[еюьям]{1,2}|ма[йюяем]{1,2}|июн[еюьям]{1,2}|июл[еюьям]{1,2}|август[аеуом]{0,2}|сентябр[еюьям]{1,2}|октябр[еюьям]{1,2}|ноябр[еюьям]{1,2}|декабр[еюьям]{1,2}|начал[аеому]{1,2}|середин[аеойуы]{1,2}|кон[ецауом]{2,3}|половин[аеуыой]{1,2}|лет[ауом]{1,2}|весн[аеуыой]{1,2}|осен[иью]{1,2})( \d+) (года\b|г\.)', r'\1\2-го года', text)
 
 text = sub(r'([Пп]еред \d+) (января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)', r'\1-м \2', text)
@@ -822,7 +821,7 @@ text = sub(r'(\d+-е )гг\.', r'\1годы', text)
 text = sub(r'(\d+-ми )гг\.', r'\1годами', text)
 text = sub(r'(\d+-х )гг\.', r'\1годов', text)
 
-text = sub(r'\b(\d+)-(\d+)-(е|го|ми|м|х)\b', r'\1-\3 \2-\3', text)
+text = sub(r'\b(\d+)-(\d+)-(го|ми|х)\b', r'\1-\3 \2-\3', text)
 
 text = sub(r'(1\d|[02-9][05-9]|\b[5-9]) года\b', r'\1-го года', text)
 text = sub(r'(1\d|[02-9][02-9]|\b[2-9]) год\b', r'\1-й год', text)
@@ -832,85 +831,93 @@ text = sub(r'(\d+) г\.р\.', r'\1-го года рождения', text)
 
 # Порядковые числительные
 
+samples = findall(r'(\d+0)(-\d+0-е годы)', text)
+for sample in samples:
+    text = text.replace(sample[0] + sample[1], ordinal(sample[0], i_mn) + sample[1], 1)
+
 samples = findall(r'(\d+-е)( Олимпийские| годы)', text)
 for sample in samples:
-    text = text.replace(sample[0] + sample[1], ordinal(sample[0][:-2], 0, 3) + sample[1], 1)
+    text = text.replace(sample[0] + sample[1], ordinal(sample[0][:-2], i_mn) + sample[1], 1)
 
 samples = findall(r'([Вв] )(\d+-е)\b', text)
 for sample in samples:
-    text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], 0, 3), 1)
+    text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], i_mn), 1)
+
+samples = findall(r'(\d+0)(-\d+0-м годам)', text)
+for sample in samples:
+    text = text.replace(sample[0] + sample[1], ordinal(sample[0], d_mn) + sample[1], 1)
 
 samples = findall(r'([Кк] )(\d+-м)\b', text)
 for sample in samples:
-    text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], 2, 3), 1)
+    text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], d_mn), 1)
 
 samples = findall(r'(\d+-х-)', text)
 for sample in samples:
-    text = text.replace(sample, ordinal(sample[:-3], 1, 3) + ' ', 1)
+    text = text.replace(sample, ordinal(sample[:-3], r_mnoz) + ' ', 1)
 
 samples = findall(r'\d+-я\b', text)
 for sample in samples:
-    text = text.replace(sample, ordinal(sample[:-2], 0, 2), 1)
+    text = text.replace(sample, ordinal(sample[:-2], i_zh), 1)
 
 samples = findall(r'\b([Вв]о? |[Нн]а )(\d+-ю)\b', text)
 for sample in samples:
-    text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], 1, 2), 1)
+    text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], r_zh), 1)
 
 samples = findall(r'\d+-ю\b', text)
 for sample in samples:
-    text = text.replace(sample, ordinal(sample[:-2], 1, 2), 1)
+    text = text.replace(sample, ordinal(sample[:-2], r_zh), 1)
 
 samples = findall(r'\b([Вв] |[Нн]а |[Пп]ри )(\d+-м)\b', text)
 for sample in samples:
-    text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], 5, 0), 1)
+    text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], p_mu), 1)
 
 samples = findall(r'\b([Кк] )(\d+-м)\b', text)
 for sample in samples:
-    text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], 2, 3), 1)
+    text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], d_mn), 1)
 
 samples = findall(r'\b([Сс] )(\d+-м)\b', text)
 for sample in samples:
-    text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], 3, 0), 1)
+    text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], t_mu), 1)
 
 samples = findall(r'\d+-му\b', text)
 for sample in samples:
-    text = text.replace(sample, ordinal(sample[:-3], 2, 0), 1)
+    text = text.replace(sample, ordinal(sample[:-3], d_mu), 1)
 
 samples = findall(r'\d+-го\b', text)
 for sample in samples:
-    text = text.replace(sample, ordinal(sample[:-3], 1, 0), 1)
+    text = text.replace(sample, ordinal(sample[:-3], r_mu), 1)
 
 samples = findall(r'\d+-ми\b', text)
 for sample in samples:
-    text = text.replace(sample, ordinal(sample[:-3], 3, 3), 1)
+    text = text.replace(sample, ordinal(sample[:-3], t_mn), 1)
 
 samples = findall(r'(\d{,}1\d|\d{,}[02-9][015-9]|[015-9])-х\b', text)
 for sample in samples:
-    text = text.replace(sample + '-х', ordinal(sample, 1, 3), 1)
+    text = text.replace(sample + '-х', ordinal(sample, r_mn), 1)
 
 samples = findall(r'\b([Дд]о|[Пп]осле|[Сс]о?) (\d+-й)\b', text)
 for sample in samples:
-    text = text.replace(sample[0] + ' ' + sample[1], sample[0] + ' ' + ordinal(sample[1][:-2], 1, 1), 1)
+    text = text.replace(sample[0] + ' ' + sample[1], sample[0] + ' ' + ordinal(sample[1][:-2], r_zh), 1)
 
 samples = findall(r'\d+-й\b', text)
 for sample in samples:
-    text = text.replace(sample, ordinal(sample[:-2], 0, 0), 1)
+    text = text.replace(sample, ordinal(sample[:-2], i_mu), 1)
 
 samples = findall(r'(\d+-м)( годах)\b', text)
 for sample in samples:
-    text = text.replace(sample[0] + sample[1], ordinal(sample[0][:-2], 5, 0) + sample[1], 1)
+    text = text.replace(sample[0] + sample[1], ordinal(sample[0][:-2], p_mu) + sample[1], 1)
 
 #samples = findall(r'(\d{2}1\d|\d{3}[05-9])( года)\b', text)
 #for sample in samples:
-#    text = text.replace(sample[0] + sample[1], ordinal(sample[0], 1, 0) + sample[1], 1)
+#    text = text.replace(sample[0] + sample[1], ordinal(sample[0], r_mu) + sample[1], 1)
 
 samples = findall(r'(\d+-м)( [а-яА-Я]+м\b)', text)
 for sample in samples:
-    text = text.replace(sample[0] + sample[1], ordinal(sample[0][:-2], 3, 0) + sample[1], 1)
+    text = text.replace(sample[0] + sample[1], ordinal(sample[0][:-2], t_mu) + sample[1], 1)
 
 samples = findall(r'\d+-е\b', text)
 for sample in samples:
-    text = text.replace(sample, ordinal(sample[:-2], 0, 1), 1)
+    text = text.replace(sample, ordinal(sample[:-2], i_sr), 1)
 
 # Буквы греческого алфавита
 #greekletters = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσΤτΥυΦφΧχΨψΩως'
