@@ -777,6 +777,7 @@ def txt_prep(text):
 
     # Даты
 
+    text = sub(r'(\d) - (\d)', r'\1-\2', text)
     text = sub(r'(?<=\d)(г\.|гг\.)', r' \1', text)
 
     text = sub(r'(январ[еюьям]{1,2}|феврал[еюьям]{1,2}|март[аеуом]{0,2}|апрел[еюьям]{1,2}|ма[йюяем]{1,2}|июн[еюьям]{1,2}|июл[еюьям]{1,2}|август[аеуом]{0,2}|сентябр[еюьям]{1,2}|октябр[еюьям]{1,2}|ноябр[еюьям]{1,2}|декабр[еюьям]{1,2}|начал[аеому]{1,2}|середин[аеойуы]{1,2}|кон[ецауом]{2,3}|половин[аеуыой]{1,2}|лет[ауом]{1,2}|весн[аеуыой]{1,2}|осен[иью]{1,2})( \d+) (года\b|г\.)', r'\1\2-го года', text)
@@ -800,6 +801,7 @@ def txt_prep(text):
     text = sub(r'\b([Вв] \d+) (веке|в\.)', r'\1-м веке', text)
     text = sub(r'\b([Кк] \d+)(-му) (веку|в\.)', r'\1-му веку', text)
     text = sub(r'\b([Дд]о|[Пп]осле|[Сс])( \d+) (века|в\.)', r'\1\2-го века', text)
+    text = sub(r'\b([Вв] \d+)-(\d+) (веках|вв\.)', r'\1-м \2-м веках', text)
     text = sub(r'\b([Кк] \d+)-(\d+) векам', r'\1-му \2-му векам', text)
 
     text = sub(r'\b([Вв] \d+) (году|г\.)', r'\1-м году', text)
@@ -840,6 +842,14 @@ def txt_prep(text):
 
     text = sub(r'(\d+) г\.р\.', r'\1-го года рождения', text)
 
+    text = sub(r'(\d+)-(\d+) (тысяче|сто)летия\b', r'\1-е \2-е \3летия\b', text)
+    text = sub(r'\b([Сс]о?)( \d+)( по \d+) (тысяче|сто)летие', r'\1\2-го\3-е \4летие', text)
+    text = sub(r'\b([Вв]о?)( \d+)-(\d+) (тысяче|сто)летиях', r'\1\2-м \3-м \4летиях', text)
+    text = sub(r'(\d+) (тысяче|сто)летие', r'\1-е \2летие', text)
+    text = sub(r'(\d+) (тысяче|сто)летия\b', r'\1-го \2летия', text)
+    text = sub(r'(\d+) (тысяче|сто)летию', r'\1-му \2летию', text)
+    text = sub(r'(\d+) (тысяче|сто)летии', r'\1-м \2летии', text)
+
     # Порядковые числительные
 
     samples = findall(r'(\d+0)(-\d+0-е годы)', text)
@@ -850,7 +860,7 @@ def txt_prep(text):
     for sample in samples:
         text = text.replace(sample[0] + sample[1], ordinal(sample[0][:-2], i_mn) + sample[1], 1)
 
-    samples = findall(r'([Вв] )(\d+-е)\b', text)
+    samples = findall(r'([Вв] )(\d{,}0-е)\b', text)
     for sample in samples:
         text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], i_mn), 1)
 
@@ -914,9 +924,9 @@ def txt_prep(text):
     for sample in samples:
         text = text.replace(sample, ordinal(sample[:-2], i_mu), 1)
 
-    samples = findall(r'(\d+-м)( годах)\b', text)
+    samples = findall(r'(\d+-м )(годах|веках|(сто|тысяче)летиях)\b', text)
     for sample in samples:
-        text = text.replace(sample[0] + sample[1], ordinal(sample[0][:-2], p_mu) + sample[1], 1)
+        text = text.replace(sample[0] + sample[1], ordinal(sample[0][:-3], p_mu) + ' ' + sample[1], 1)
 
     samples = findall(r'(\d+-м)( [а-яА-Я]+м\b)', text)
     for sample in samples:
@@ -935,4 +945,3 @@ def txt_prep(text):
     text = sub(r'(\w)(\n|\Z)', r'\1.\2', text)
 
     return text
-    
