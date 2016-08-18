@@ -556,19 +556,19 @@ p_sr = p_mu
 p_zh = r_zh
 p_mn = r_mn
 
-def ordinal(num, cagenum):
+def ordinal(num, casus):
     if num[-1] == '0':
         try:
             if num[-2] == '0':
                 if num[-3] == '0':
                     prenum = ''
-                    number = cagenum[0][0][0][int(num[-4])]
+                    number = casus[0][0][0][int(num[-4])]
                 else:
                     if len(num) == 3:
                         prenum = ''
                     else:
                         prenum = num[:-3] + '000 '
-                    number = cagenum[0][0][int(num[-3])]
+                    number = casus[0][0][int(num[-3])]
             else:
                 if len(num) == 2:
                     prenum = ''
@@ -578,10 +578,10 @@ def ordinal(num, cagenum):
                         prenum += ' '
                     else:
                         prenum += '00 '
-                number = cagenum[0][int(num[-2])]
+                number = casus[0][int(num[-2])]
         except:
             prenum = ''
-            number = cagenum[0][0][0][0]
+            number = casus[0][0][0][0]
     else:
         if len(num) == 1:
             prenum = ''
@@ -604,7 +604,7 @@ def ordinal(num, cagenum):
                 else:
                     prenum += '0 '
                 dec = 0
-        number = cagenum[int(num[-1])][dec]
+        number = casus[int(num[-1])][dec]
     return prenum + number
 
 # Код заимствован (с изменениями) у Jeff Wheeler
