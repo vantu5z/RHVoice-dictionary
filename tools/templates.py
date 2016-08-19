@@ -767,6 +767,19 @@ def txt_prep(text):
     for sample in samples:
         text = text.replace(sample[0] + ' ' + sample[1], feminin(sample[0]) + ' ' + sample[1], 1)
 
+    # Не римские цифры
+    samples = findall(r'([LVX])-образн', text)
+    for sample in samples:
+        text = text.replace(sample + '-образн', sample.lower() + '-образн', 1)
+    # "I" не считается цифрой, если далее следует слово на латинице
+    samples = findall(r'I( [a-zA-Z][a-z]+)', text)
+    for sample in samples:
+        text = text.replace('I' + sample, 'i' + sample, 1)
+    # "ID" НЕ считается цифрой
+    samples = findall(r'\bID\b', text)
+    for sample in samples:
+        text = text.replace( sample, 'id', 1)
+
     # Римские цифры
     roman = findall(r'\b[IVXLCDM]+\b', text)
     for i in roman:
@@ -797,6 +810,7 @@ def txt_prep(text):
     text = sub(r'\b([Кк] \d+)-(\d+) (годам|гг\.)', r'\1-му \2-му годам', text)
     text = sub(r'(\d+-м )(гг\.)', r'\1годам', text)
 
+    text = sub(r'\b(\d+)-(\d+) (века|вв\.)', r'\1-й \2-й века', text)
     text = sub(r'\b(\d+) века\b', r'\1-го века', text) # FIXME спорный шаблон
     text = sub(r'\b([Вв] \d+) (веке|в\.)', r'\1-м веке', text)
     text = sub(r'\b([Кк] \d+)(-му) (веку|в\.)', r'\1-му веку', text)
