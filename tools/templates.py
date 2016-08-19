@@ -737,10 +737,13 @@ def txt_prep(text):
     text = sub(r'/(сек|с)\b', r' в секунду', text)
     text = sub(r'/(час|ч)\b', r' в час', text)
 
-    # Удаление пробелов между разрядами /только целая часть числа/
+    # Удаление пробелов между разрядами
     text = sub(r'(?<=\d) (?=\d{3})', r'', text)
+    samples = findall(r'(\d+,)(\d+)( \d{1,2})\b', text)
+    for sample in samples:
+        if len(sample[1]) % 3 == 0: text = text.replace(sample[0] + sample[1] + sample[2], sample[0] + sample[1] + sample[2][1:], 1)
 
-    # Десятичные дроби (до тысячных включительно)
+    # Десятичные дроби (до миллионных включительно)
     samples = findall(r'(\d+,)(\d{1,3})\b', text)
     for sample in samples:
         length = len(sample[1])
@@ -753,8 +756,12 @@ def txt_prep(text):
             frac = ' десят'
         elif length == 2:
             frac = ' сот'
+        elif length == 4:
+            frac = ' десятитысячн'
+        elif length == 5:
+            frac = ' стотысячн'
         else:
-            frac = ' тысячн'
+            frac = ' миллионн'
         decimal = feminin(sample[1])
         if decimal[-1] == 'а':
             frac += 'ая'
