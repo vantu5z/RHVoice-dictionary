@@ -767,6 +767,19 @@ def txt_prep(text):
     for sample in samples:
         text = text.replace(sample[0] + ' ' + sample[1], feminin(sample[0]) + ' ' + sample[1], 1)
 
+    # Не римские цифры
+    samples = findall(r'([LVX])-образн', text)
+    for sample in samples:
+        text = text.replace(sample + '-образн', sample.lower() + '-образн', 1)
+    # "I" не считается цифрой, если далее следует слово на латинице
+    samples = findall(r'I( [a-zA-Z][a-z]+)', text)
+    for sample in samples:
+        text = text.replace('I' + sample, 'i' + sample, 1)
+    # "ID" НЕ считается цифрой
+    samples = findall(r'\bID\b', text)
+    for sample in samples:
+        text = text.replace( sample, 'id', 1)
+
     # Римские цифры
     roman = findall(r'\b[IVXLCDM]+\b', text)
     for i in roman:
