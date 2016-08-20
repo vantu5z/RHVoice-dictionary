@@ -578,7 +578,7 @@ forms = {
     'Вт': ('ватт', 'ватта', 'ватт', 'ватта'),
     '₽': ('рубль', 'рубля', 'рублей', 'рубля'),
     '£': ('фунт стерлингов', 'фунта стерлингов', 'фунтов стерлингов', 'фунта стерлингов'),
-    'л\u002Eс\u002E': ('лошадиная сила', 'лошадиных силы', 'лошадиных сил', 'лошадиной силы'),
+    'л\u002Eс\u002E': ('лошадиная сила', 'лошадиные силы', 'лошадиных сил', 'лошадиной силы'),
     'тыс\u002E': ('тысяча', 'тысячи', 'тысяч', 'тысячи'),
     'млн': ('миллион', 'миллиона', 'миллионов', 'миллиона'),
     'млрд': ('миллиард', 'миллиарда', 'миллиардов', 'миллиарда'),
@@ -698,14 +698,20 @@ def txt_prep(text):
     text = sub(r'[«»"]', '', text)
     text = sub(r'[‑–−—]', '-', text)
 
+    text = sub(r'\b([Пп]од|[Зз]а) №№ ?', '\1 номерами ', text)
+    text = sub(r'\b([Пп]од|[Зз]а) №( ?\d+)', '\1 номером \2', text)
+    text = sub(r'№№ ?', 'номера ', text)
     text = sub(r'№ ?', 'номер ', text)
+
     text = sub(r'\b[Тт]\. ?е\.', 'то есть', text)
     text = sub(r' т\. ?д\.', ' так далее', text)
     text = sub(r' т\. ?п\.', ' тому подобное', text)
+    text = sub(r' т\. ?к\.', ' так как', text)
     text = sub(r' н\. ?э\.', ' нашей эры', text)
     text = sub(r'\b[Пп]рим\. ред\.', 'примечание редактора', text)
     text = sub(r'\b[Рр]ед\.', 'редактор', text)
     text = sub(r'\b[Пп]рим\.', 'примечание', text)
+    text = sub(r'ВКП\(б\)', 'вэкапэ-бэ', text)
 
     text = sub(r'\b([Гг])-(н|на|не|ном|ну)\b', r'\1осподи\2', text)
     text = sub(r'\b([Гг])-(жа|же|жи|жой|жу)\b', r'\1оспо\2', text)
@@ -744,7 +750,7 @@ def txt_prep(text):
         if len(sample[1]) % 3 == 0: text = text.replace(sample[0] + sample[1] + sample[2], sample[0] + sample[1] + sample[2][1:], 1)
 
     # Десятичные дроби (до миллионных включительно)
-    samples = findall(r'(\d+,)(\d{1,3})\b', text)
+    samples = findall(r'(\d+,)(\d{1,6})\b', text)
     for sample in samples:
         length = len(sample[1])
         full = feminin(sample[0][0:-1])
@@ -773,6 +779,16 @@ def txt_prep(text):
     samples = findall(r'(\d+) (минут[аы]?|недел[иья]|секунд[аы]?|тонн[аы]|тысяч[аи]?|лошадин[аеыя]{2} сил[аы]?)\b', text)
     for sample in samples:
         text = text.replace(sample[0] + ' ' + sample[1], feminin(sample[0]) + ' ' + sample[1], 1)
+
+    # Дроби
+    samples = findall(r'\b(\d+)(/\d+)\b', text)
+    for sample in samples:
+        numerator = feminin(sample[0])
+        if numerator[-1] == 'а':
+            casus = i_zh
+        else:
+            casus = r_mn
+        text = text.replace(sample[0] + sample[1], numerator + ' ' + ordinal(sample[1][1:], casus), 1)
 
     # Не римские цифры
     samples = findall(r'([LVX])-образн', text)
