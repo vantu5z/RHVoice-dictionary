@@ -875,8 +875,8 @@ def txt_prep(text):
         text = text.replace(sample[0] + ' ' + sample[1], feminin(sample[0]) + ' ' + sample[1], 1)
 
     # Не римские цифры
-    samples = findall(r'([LVX])-образн', text)
-    for sample in samples:
+    found = findall(r'([LVX])-образн', text)
+    for sample in found:
         text = text.replace(sample + '-образн', sample.lower() + '-образн', 1)
     # "I" не считается цифрой, если далее следует слово на латинице
     found = findall(r'I( [a-zA-Z][a-z]+)', text)
