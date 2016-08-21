@@ -546,6 +546,8 @@ p_mu = (
   ('восьмом', 'восемнадцатом'),
   ('девятом', 'девятнадцатом')
 )
+
+# Сопоставление остальных форм
 r_sr = r_mu
 d_sr = d_mu
 d_mn = t_mu
@@ -976,4 +978,3 @@ def txt_prep(text):
         text = text.replace(j, letternames[greekletters.index(j)//2])
 
     return text
-    
