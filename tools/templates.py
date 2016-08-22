@@ -612,6 +612,12 @@ presamples = (
   (' ?€', ' евро',),
   (r'кв\. ((|к|с|м)м)\b', r'\1²'),
   (r'(?<=\d) ' + units,  r'\1'),
+
+  ('L-образн', 'эль-образн'),
+  ('V-образн', 'вэ-образн'),
+  ('X-образн', 'икс-образн'),
+  (r'\bID\b', 'ай-ди'),
+  (r'I( [a-zA-Z][a-z]+)', r'i\1'),
   
   (r'(в|вв|г|гг|д|п|э|тыс|л\.с)(\. [А-Я][ а-я]+)', r'\1.\2')
 )
@@ -879,19 +885,6 @@ def txt_prep(text):
     found = findall(r'(\d+) (минут[аы]?|недел[иья]|секунд[аы]?|тонн[аы]|тысяч[аи]?|лошадин[аеыя]{2} сил[аы]?)\b', text)
     for sample in found:
         text = text.replace(sample[0] + ' ' + sample[1], feminin(sample[0]) + ' ' + sample[1], 1)
-
-    # Не римские цифры
-    found = findall(r'([LVX])-образн', text)
-    for sample in found:
-        text = text.replace(sample + '-образн', sample.lower() + '-образн', 1)
-    # "I" не считается цифрой, если далее следует слово на латинице
-    found = findall(r'I( [a-zA-Z][a-z]+)', text)
-    for sample in found:
-        text = text.replace('I' + sample, 'i' + sample, 1)
-    # "ID" НЕ считается цифрой
-    found = findall(r'\bID\b', text)
-    for sample in found:
-        text = text.replace( sample, 'id', 1)
 
     # Римские цифры
     roman = findall(r'\b[IVXLCDM]+\b', text)
