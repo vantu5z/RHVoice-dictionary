@@ -749,7 +749,7 @@ samples = (
   (r'(\d+) (тысяче|сто)летии', r'\1-м \2летии'),
 
   (r'(\d)( ранга)\b', r'\1-го\2'),
-  (r'(\d+)( Олимпийски)([еимх]{1,2})', r'\1-\3\2\3'),
+  (r'(\d+) (зимн|летн|Олимпийск)и([еимх]{1,2})', r'\1-\3 \2и\3'),
 
   (r'(\w)(\n|\Z)', r'\1.\2')
 )
@@ -917,7 +917,7 @@ def txt_prep(text):
     for sample in found:
         text = text.replace(sample[0] + sample[1], ordinal(sample[0], i_mn) + sample[1], 1)
 
-    found = findall(r'(\d+-е)( Олимпийские| годы)', text)
+    found = findall(r'(\d+-е)((| зимние| летние) Олимпийские| годы)', text)
     for sample in found:
         text = text.replace(sample[0] + sample[1], ordinal(sample[0][:-2], i_mn) + sample[1], 1)
 
