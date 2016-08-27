@@ -652,6 +652,7 @@ samples = (
 
   (r'/(сек|с)\b', ' в секунду'),
   (r'/(час|ч)\b', ' в час'),
+  (r'(\w| )/(\w| )', r'\1 дробь \2'),
 
   (r'(\d)(½|¼|¾|⅕|⅖|⅗|⅘|⅙|⅚|⅐|⅛|⅜|⅝|⅞|⅑)', r'\1 и \2'),
   ('½', 'одна вторая'),
@@ -879,11 +880,6 @@ def txt_prep(text):
     found = findall(r'(тысяч[аи]?|миллион[аов]{,2}|миллиард[аов]{,2}|триллион[аов]{,2}) ?' + units, text)
     for sample in found:
         text = text.replace(sample[0] + ' ' + sample[1], sample[0] + ' ' + forms[sample[1]][2], 1)
-
-    # Дроби
-    found = findall(r'\b(\d+)(/\d+)\b', text)
-    for sample in found:
-        text = text.replace(sample[0] + sample[1], feminin(sample[0]) + ordinal(sample[1][1:]), 1)
 
     # Десятичные дроби (до миллионых включительно)
     found = findall(r'(\d+,)(\d{1,6})\b', text)
