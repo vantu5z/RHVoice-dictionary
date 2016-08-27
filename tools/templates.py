@@ -880,11 +880,6 @@ def txt_prep(text):
     for sample in found:
         text = text.replace(sample[0] + ' ' + sample[1], sample[0] + ' ' + forms[sample[1]][2], 1)
 
-    # Дроби
-    found = findall(r'\b(\d+)(/\d+)\b', text)
-    for sample in found:
-        text = text.replace(sample[0] + sample[1], feminin(sample[0]) + ordinal(sample[1][1:]), 1)
-
     # Десятичные дроби (до миллионых включительно)
     found = findall(r'(\d+,)(\d{1,6})\b', text)
     for sample in found:
