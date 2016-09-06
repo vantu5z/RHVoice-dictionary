@@ -716,7 +716,7 @@ samples = (
   (r'\b([Кк] \d+)-(\d+) (годам|гг\.)', r'\1-му \2-му годам'),
   (r'(\d+-м )(гг\.)', r'\1годам'),
 
-  (r'\b(\d+)-(\d+) (века|вв\.)', r'\1-й \2-й века'),
+  (r'\b(\d+)-(\d+) (века\b|вв\.)', r'\1-й \2-й века'),
   (r'\b(\d+) века\b', r'\1-го века'), # Спорный шаблон
   (r'\b([Вв] \d+) (веке|в\.)', r'\1-м веке'),
   (r'\b([Кк] \d+)(-му) (веку|в\.)', r'\1-му веку'),
@@ -1004,6 +1004,10 @@ def txt_prep(text):
     found = findall(r'\d+-й\b', text)
     for sample in found:
         text = text.replace(sample, ordinal(sample[:-2], i_mu), 1)
+
+    found = findall(r'(\d+)(-| и )(\d+)( годами| веками)', text)
+    for sample in found:
+        text = text.replace(sample[0] + sample[1] + sample[2] + sample[3], ordinal(sample[0], t_mu) + sample[1] + ordinal(sample[2], t_mu) + sample[3], 1)
 
     found = findall(r'(\d+-м )(годах|веках|(сто|тысяче)летиях)\b', text)
     for sample in found:
