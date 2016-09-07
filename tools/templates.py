@@ -652,6 +652,7 @@ samples = (
 
   (r'\b([Гг])-(н|на|не|ном|ну)\b', r'\1осподи\2'),
   (r'\b([Гг])-(жа|же|жи|жой|жу)\b', r'\1оспо\2'),
+  (r'\bр-н(|а|е|ом|у)\b', r'район\1'),
 
   (r' ?± ?', ' плюс-минус '),
   (r' ?= ?', ' равно '),
@@ -942,7 +943,7 @@ def txt_prep(text):
     for sample in found:
         text = text.replace(sample[0] + sample[1], ordinal(sample[0][:-2], i_mn) + sample[1], 1)
 
-    found = findall(r'([Вв] )(\d{,}0-е)\b', text)
+    found = findall(r'([Вв] )(\d*0-е)\b', text)
     for sample in found:
         text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], i_mn), 1)
 
@@ -994,7 +995,7 @@ def txt_prep(text):
     for sample in found:
         text = text.replace(sample, ordinal(sample[:-3], t_mn), 1)
 
-    found = findall(r'(\d{,}1\d|\d{,}[02-9][015-9]|[015-9])-х\b', text)
+    found = findall(r'(\d*1\d|\d*[02-9][015-9]|[015-9])-х\b', text)
     for sample in found:
         text = text.replace(sample + '-х', ordinal(sample, r_mn), 1)
 
