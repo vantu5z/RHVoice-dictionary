@@ -4,7 +4,7 @@
 # синтезатора речи RHVoice Ольги Яковлевой
 # By Capricorn2001
 
-from re import sub, findall
+from re import sub, finditer
 
 i_mu = (
   (
@@ -235,46 +235,46 @@ r_zh = (
   (
     (
       (
-        'нулевую',
-        'тысячную',
-        'двухтысячную',
-        'трёхтысячную',
-        'четырёхтысячную',
-        'пятитысячную',
-        'шеститысячную',
-        'семитысячную',
-        'восьмитысячную',
-        'девятитысячную'
+      'нулевой',
+      'тысячной',
+      'двухтысячной',
+      'трёхтысячной',
+      'четырёхтысячной',
+      'пятитысячной',
+      'шеститысячной',
+      'семитысячной',
+      'восьмитысячной',
+      'девятитысячной'
       ),
-      'сотую',
-      'двухсотую',
-      'трёхсотую',
-      'четырёхсотую',
-      'пятисотую',
-      'шестисотую',
-      'семисотую',
-      'восьмисотую',
-      'девятисотую'
+      'сотой',
+      'двухсотой',
+      'трёхсотой',
+      'четырёхсотой',
+      'пятисотой',
+      'шестисотой',
+      'семисотой',
+      'восьмисотой',
+      'девятисотой'
     ),
-    'десятую',
-    'двадцатую',
-    'тридцатую',
-    'сороковую',
-    'пятидесятую',
-    'шестидесятую',
-    'семидесятую',
-    'восьмидесятую', 
-    'девяностую'
+    'десятой',
+    'двадцатой',
+    'тридцатой',
+    'сороковой',
+    'пятидесятой',
+    'шестидесятой',
+    'семидесятой',
+    'восьмидесятой', 
+    'девяностой'
   ),
-  ('первую', 'одиннадцатую'),
-  ('вторую', 'двенадцатую'),
-  ('третью', 'тринадцатую'),
-  ('четвёртую', 'четырнадцатую'),
-  ('пятую', 'пятнадцатую'),
-  ('шестую', 'шестнадцатую'),
-  ('седьмую', 'семнадцатую'),
-  ('восьмую', 'восемнадцатую'),
-  ('девятую', 'девятнадцатую')
+  ('первой', 'одиннадцатой'),
+  ('второй', 'двенадцатой'),
+  ('третью', 'тринадцатой'),
+  ('четвёртой', 'четырнадцатой'),
+  ('пятой', 'пятнадцатой'),
+  ('шестой', 'шестнадцатой'),
+  ('седьмой', 'семнадцатой'),
+  ('восьмой', 'восемнадцатой'),
+  ('девятой', 'девятнадцатой')
 )
 r_mn = (
   (
@@ -366,51 +366,6 @@ d_mu = (
   ('восьмому', 'восемнадцатому'),
   ('девятому', 'девятнадцатому')
 )
-d_zh = (
-  (
-    (
-      (
-      'нулевой',
-      'тысячной',
-      'двухтысячной',
-      'трёхтысячной',
-      'четырёхтысячной',
-      'пятитысячной',
-      'шеститысячной',
-      'семитысячной',
-      'восьмитысячной',
-      'девятитысячной'
-      ),
-      'сотой',
-      'двухсотой',
-      'трёхсотой',
-      'четырёхсотой',
-      'пятисотой',
-      'шестисотой',
-      'семисотой',
-      'восьмисотой',
-      'девятисотой'
-    ),
-    'десятой',
-    'двадцатой',
-    'тридцатой',
-    'сороковой',
-    'пятидесятой',
-    'шестидесятой',
-    'семидесятой',
-    'восьмидесятой', 
-    'девяностой'
-  ),
-  ('первой', 'одиннадцатой'),
-  ('второй', 'двенадцатой'),
-  ('третью', 'тринадцатой'),
-  ('четвёртой', 'четырнадцатой'),
-  ('пятой', 'пятнадцатой'),
-  ('шестой', 'шестнадцатой'),
-  ('седьмой', 'семнадцатой'),
-  ('восьмой', 'восемнадцатой'),
-  ('девятой', 'девятнадцатой')
-)
 t_mu = (
   (
     (
@@ -501,6 +456,51 @@ t_mn = (
   ('восьмыми', 'восемнадцатым'),
   ('девятыми' 'девятнадцатым')
 )
+v_zh = (
+  (
+    (
+      (
+        'нулевую',
+        'тысячную',
+        'двухтысячную',
+        'трёхтысячную',
+        'четырёхтысячную',
+        'пятитысячную',
+        'шеститысячную',
+        'семитысячную',
+        'восьмитысячную',
+        'девятитысячную'
+      ),
+      'сотую',
+      'двухсотую',
+      'трёхсотую',
+      'четырёхсотую',
+      'пятисотую',
+      'шестисотую',
+      'семисотую',
+      'восьмисотую',
+      'девятисотую'
+    ),
+    'десятую',
+    'двадцатую',
+    'тридцатую',
+    'сороковую',
+    'пятидесятую',
+    'шестидесятую',
+    'семидесятую',
+    'восьмидесятую', 
+    'девяностую'
+  ),
+  ('первую', 'одиннадцатую'),
+  ('вторую', 'двенадцатую'),
+  ('третью', 'тринадцатую'),
+  ('четвёртую', 'четырнадцатую'),
+  ('пятую', 'пятнадцатую'),
+  ('шестую', 'шестнадцатую'),
+  ('седьмую', 'семнадцатую'),
+  ('восьмую', 'восемнадцатую'),
+  ('девятую', 'девятнадцатую')
+)
 p_mu = (
   (
     (
@@ -550,6 +550,7 @@ p_mu = (
 # Сопоставление остальных форм
 r_sr = r_mu
 d_sr = d_mu
+d_zh = r_zh
 d_mn = t_mu
 v_zh = r_zh
 t_sr = t_mu
@@ -612,7 +613,7 @@ presamples = (
   (r'(?<=\d) ?USD\b', '$ США'),
   (r'\bруб\.', '₽'),
   (r'(\$|€|£|₽)([0-9,]+)', r'\2\1'),
-  (r'(\$|€|£|₽) ?(тыс\.|млн|млрд|трлн|тысяч(|а|и)|(миллион|миллиард|триллион)(|а|ов))\b', r' \2 \1'),
+  (r'(\$|€|£|₽) ?(тыс\.|млн|млрд|трлн|тысяч(|а|и)\b|(миллион|миллиард|триллион)(|а|ов)\b)', r' \2 \1'),
   (' ?€', ' евро',),
   (r'кв\. ((|к|с|м)м)\b', r'\1²'),
   (r'куб\. ((|к|с|м)м)\b', r'\1³'),
@@ -880,24 +881,17 @@ def feminin(num):
 
 def txt_prep(text):
 
-    for sample in presamples:
-        text = sub(sample[0], sample[1], text)
-
-    found = findall(r'(\d+,\d+)' + units, text)
-    for sample in found:
-        text = text.replace(sample[0] + sample[1], sample[0] + ' ' + forms[sample[1]][3], 1)
-    found = findall(r'(\d+)' + units, text)
-    for sample in found:
-        text = text.replace(sample[0] + sample[1], sample[0] + ' ' + substant(sample[0], sample[1]), 1)
-    found = findall(r'(тысяч[аи]?|миллион[аов]{,2}|миллиард[аов]{,2}|триллион[аов]{,2}) ?' + units, text)
-    for sample in found:
-        text = text.replace(sample[0] + ' ' + sample[1], sample[0] + ' ' + forms[sample[1]][2], 1)
+    for m in finditer(r'(\d+,\d+)' + units, text):
+        text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(2)][3], 1)
+    for m in finditer(r'(\d+)' + units, text):
+        text = text.replace(m.group(), m.group(1) + ' ' + substant(m.group(1), m.group(2)), 1)
+    for m in finditer(r'(тысяч[аи]?|миллион[аов]{,2}|миллиард[аов]{,2}|триллион[аов]{,2}) ?' + units, text):
+        text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(2)][2], 1)
 
     # Десятичные дроби (до миллионых включительно)
-    found = findall(r'(\d+,)(\d{1,6})[^0-9]', text)
-    for sample in found:
-        length = len(sample[1])
-        full = feminin(sample[0][0:-1])
+    for m in finditer(r'(\d+),(\d{1,6})(\W)', text):
+        length = len(m.group(2))
+        full = feminin(m.group(1))
         if full[-1] == 'а':
             full += ' целая '
         else:
@@ -914,114 +908,90 @@ def txt_prep(text):
             frac = ' стотысячн'
         else:
             frac = ' миллионн'
-        decimal = feminin(sample[1])
+        decimal = feminin(m.group(2))
         if decimal[-1] == 'а':
             frac += 'ая'
         else:
             frac += 'ых'
-        text = text.replace(sample[0] + sample[1],  full + decimal + frac, 1)
+        text = text.replace(m.group(),  full + decimal + frac + m.group(3), 1)
 
-    found = findall(r'(\d+) (минут[аы]?|недел[иья]|секунд[аы]?|лошадин(ая сила|ые силы)|тонн[аы]|тысяч[аи]?)\b', text)
-    for sample in found:
-        text = text.replace(sample[0] + ' ' + sample[1], feminin(sample[0]) + ' ' + sample[1], 1)
+    for m in finditer(r'(\d+) (минут[аы]?|недел[иья]|секунд[аы]?|лошадин(ая сила|ые силы)|тонн[аы]|тысяч[аи]?)\b', text):
+        text = text.replace(m.group(), feminin(m.group(1)) + ' ' + m.group(2), 1)
 
     # Римские цифры
-    roman = findall(r'\b[IVXLCDM]+\b', text)
-    for i in roman:
-        text = text.replace(i, roman2arabic(i), 1)
+    for m in finditer(r'\b[IVXLCDM]+\b', text):
+        text = text.replace(m.group(), roman2arabic(m.group()), 1)
 
     for sample in samples:
         text = sub(sample[0], sample[1], text)
 
     # Порядковые числительные
 
-    found = findall(r'(\d+0)(-\d+0-е годы)', text)
-    for sample in found:
-        text = text.replace(sample[0] + sample[1], ordinal(sample[0], i_mn) + sample[1], 1)
+    for m in finditer(r'(\d+0)(-\d+0-е годы)', text):
+        text = text.replace(m.group(), ordinal(m.group(1), i_mn) + m.group(2), 1)
 
-    found = findall(r'(\d+-е)((| зимние| летние) Олимпийские| годы)', text)
-    for sample in found:
-        text = text.replace(sample[0] + sample[1], ordinal(sample[0][:-2], i_mn) + sample[1], 1)
+    for m in finditer(r'(\d+)-е((| зимние| летние) Олимпийские| годы)', text):
+        text = text.replace(m.group(), ordinal(m.group(1), i_mn) + m.group(2), 1)
 
-    found = findall(r'([Вв] )(\d*0-е)\b', text)
-    for sample in found:
-        text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], i_mn), 1)
+    for m in finditer(r'([Вв] )(\d*0)-е\b', text):
+        text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), i_mn), 1)
 
-    found = findall(r'(\d+0)(-\d+0-м годам)', text)
-    for sample in found:
-        text = text.replace(sample[0] + sample[1], ordinal(sample[0], d_mn) + sample[1], 1)
+    for m in finditer(r'(\d+0)(-\d+0-м годам)', text):
+        text = text.replace(m.group(), ordinal(m.group(1), d_mn) + m.group(2), 1)
 
-    found = findall(r'([Кк] )(\d+-м)\b', text)
-    for sample in found:
-        text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], d_mn), 1)
+    for m in finditer(r'([Кк] )(\d+)-м\b', text):
+        text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), d_mn), 1)
 
-    found = findall(r'(\d+-х-)', text)
-    for sample in found:
-        text = text.replace(sample, ordinal(sample[:-3], r_mnoz) + ' ', 1)
+    for m in finditer(r'(\d+)-х-', text):
+        text = text.replace(m.group(), ordinal(m.group(1), r_mn) + ' ', 1)
 
-    found = findall(r'\d+-я\b', text)
-    for sample in found:
-        text = text.replace(sample, ordinal(sample[:-2], i_zh), 1)
+    for m in finditer(r'(\d+)-я\b', text):
+        text = text.replace(m.group(), ordinal(m.group(1), i_zh), 1)
 
-    found = findall(r'\b([Вв]о? |[Нн]а )(\d+-ю)\b', text)
-    for sample in found:
-        text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], r_zh), 1)
+    for m in finditer(r'\b([Вв]о? |[Нн]а )(\d+)-ю\b', text):
+        text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), r_zh), 1)
 
-    found = findall(r'\d+-ю\b', text)
-    for sample in found:
-        text = text.replace(sample, ordinal(sample[:-2], r_zh), 1)
+    for m in finditer(r'(\d+)-ю\b', text):
+        text = text.replace(m.group(), ordinal(m.group(1), v_zh), 1)
 
-    found = findall(r'\b([Вв] |[Нн]а |[Пп]ри )(\d+-м)\b', text)
-    for sample in found:
-        text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], p_mu), 1)
+    for m in finditer(r'\b([Вв] |[Нн]а |[Пп]ри )(\d+)-м\b', text):
+        text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), p_mu), 1)
 
-    found = findall(r'\b([Кк] )(\d+-м)\b', text)
-    for sample in found:
-        text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], d_mn), 1)
+    for m in finditer(r'\b([Кк] )(\d+)-м\b', text):
+        text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), d_mn), 1)
 
-    found = findall(r'\b([Сс] )(\d+-м)\b', text)
-    for sample in found:
-        text = text.replace(sample[0] + sample[1], sample[0] + ordinal(sample[1][:-2], t_mu), 1)
+    for m in finditer(r'\b([Сс] )(\d+)-м\b', text):
+        text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), t_mu), 1)
 
-    found = findall(r'\d+-му\b', text)
-    for sample in found:
-        text = text.replace(sample, ordinal(sample[:-3], d_mu), 1)
+    for m in finditer(r'(\d+)-му\b', text):
+        text = text.replace(m.group(), ordinal(m.group(1), d_mu), 1)
 
-    found = findall(r'\d+-го\b', text)
-    for sample in found:
-        text = text.replace(sample, ordinal(sample[:-3], r_mu), 1)
+    for m in finditer(r'(\d+)-го\b', text):
+        text = text.replace(m.group(), ordinal(m.group(1), r_mu), 1)
 
-    found = findall(r'\d+-ми\b', text)
-    for sample in found:
-        text = text.replace(sample, ordinal(sample[:-3], t_mn), 1)
+    for m in finditer(r'(\d+)-ми\b', text):
+        text = text.replace(m.group(), ordinal(m.group(1), t_mn), 1)
 
-    found = findall(r'(\d*1\d|\d*[02-9][015-9]|[015-9])-х\b', text)
-    for sample in found:
-        text = text.replace(sample + '-х', ordinal(sample, r_mn), 1)
+    for m in finditer(r'(\d*1\d|\d*[02-9][015-9]|[015-9])-х\b', text):
+        text = text.replace(m.group(), ordinal(m.group(1), r_mn), 1)
 
-    found = findall(r'\b([Дд]о|[Пп]осле|[Сс]о?) (\d+-й)\b', text)
-    for sample in found:
-        text = text.replace(sample[0] + ' ' + sample[1], sample[0] + ' ' + ordinal(sample[1][:-2], r_zh), 1)
+    for m in finditer(r'\b([Дд]о|[Пп]осле|[Сс]о?) (\d+)-й\b', text):
+        text = text.replace(m.group(), m.group(1) + ' ' + ordinal(m.group(2), r_zh), 1)
 
-    found = findall(r'\d+-й\b', text)
-    for sample in found:
-        text = text.replace(sample, ordinal(sample[:-2], i_mu), 1)
+    for m in finditer(r'(\d+)-й\b', text):
+        text = text.replace(m.group(), ordinal(m.group(1), i_mu), 1)
 
-    found = findall(r'(\d+)(-| и )(\d+)( годами| веками)', text)
-    for sample in found:
-        text = text.replace(sample[0] + sample[1] + sample[2] + sample[3], ordinal(sample[0], t_mu) + sample[1] + ordinal(sample[2], t_mu) + sample[3], 1)
+    for m in finditer(r'(\d+)(-| и )(\d+)( годами| веками)', text):
+        text = text.replace(m.group(), ordinal(m.group(1), t_mu) + m.group(2) + ordinal(m.group(3), t_mu) + m.group(4), 1)
 
-    found = findall(r'(\d+-м )(годах|веках|(сто|тысяче)летиях)\b', text)
-    for sample in found:
-        text = text.replace(sample[0] + sample[1], ordinal(sample[0][:-3], p_mu) + ' ' + sample[1], 1)
+    for m in finditer(r'(\d+)-м (годах|веках|(сто|тысяче)летиях)\b', text):
+        text = text.replace(m.group(), ordinal(m.group(1), p_mu) + ' ' + m.group(2), 1)
 
-    found = findall(r'(\d+-м)( [а-яА-Я]+м\b)', text)
-    for sample in found:
-        text = text.replace(sample[0] + sample[1], ordinal(sample[0][:-2], t_mu) + sample[1], 1)
+    for m in finditer(r'(\d+)-м( [а-яА-Я]+м\b)', text):
+        text = text.replace(m.group(), ordinal(m.group(1), t_mu) + m.group(2), 1)
 
-    found = findall(r'\d+-е\b', text)
-    for sample in found:
-        text = text.replace(sample, ordinal(sample[:-2], i_sr), 1)
+    for m in finditer(r'(\d+)-е\b', text):
+        text = text.replace(m.group(), ordinal(m.group(1), i_sr), 1)
 
     # Буквы греческого алфавита
     greekletters = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσΤτΥυΦφΧχΨψΩως'
