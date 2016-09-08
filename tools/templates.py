@@ -881,6 +881,9 @@ def feminin(num):
 
 def txt_prep(text):
 
+    for sample in presamples:
+        text = sub(sample[0], sample[1], text)
+
     for m in finditer(r'(\d+,\d+)' + units, text):
         text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(2)][3], 1)
     for m in finditer(r'(\d+)' + units, text):
