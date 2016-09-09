@@ -560,12 +560,7 @@ p_zh = r_zh
 p_mn = r_mn
 
 # Определение падежа по окончанию
-pad_mn = {
-  'е': i_mn,
-  'м': d_mn,
-  'х': r_mn,
-  'ми': t_mn
-}
+pad_mn = {'е': i_mn, 'м': d_mn, 'х': r_mn, 'ми': t_mn}
 
 # Обозначения едииниц измерения и числительных
 units = r'(%|°|℃|£|₽|\$|(к|м)г\b|(|мк|к|с|м)м\b|(|к|с|м)м²|(|к|с|м)м³|т\b|(|к|М|Г)Вт\b|л\.с\.|тыс\.|млн|млрд|трлн)'
@@ -996,7 +991,7 @@ def txt_prep(text):
     for m in finditer(r'(\d+)(-| и )(\d+)( годами| веками)', text):
         text = text.replace(m.group(), ordinal(m.group(1), t_mu) + m.group(2) + ordinal(m.group(3), t_mu) + m.group(4), 1)
 
-    for m in finditer(r'(\d+)-м (годах|веках|(сто|тысяче)летиях)\b', text):
+    for m in finditer(r'(\d+)-м (год(у|ах)|век(е|ах)|(сто|тысяче)лети(и|ях))', text):
         text = text.replace(m.group(), ordinal(m.group(1), p_mu) + ' ' + m.group(2), 1)
 
     for m in finditer(r'(\d+)-м( [а-яА-Я]+м\b)', text):
