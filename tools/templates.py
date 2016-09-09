@@ -559,6 +559,14 @@ p_sr = p_mu
 p_zh = r_zh
 p_mn = r_mn
 
+# Определение падежа по окончанию
+pad_mn = {
+  'е': i_mn,
+  'м': d_mn,
+  'х': r_mn,
+  'ми': t_mn
+}
+
 # Обозначения едииниц измерения и числительных
 units = r'(%|°|℃|£|₽|\$|(к|м)г\b|(|мк|к|с|м)м\b|(|к|с|м)м²|(|к|с|м)м³|т\b|(|к|М|Г)Вт\b|л\.с\.|тыс\.|млн|млрд|трлн)'
 
@@ -609,6 +617,7 @@ presamples = (
   (r'[«»"]', ''),
   (r'[‑–−—]', '-'),
 
+  ('л\. с\.', 'л.с.'),
   (r' ?\& ?', ' and '),
   (r'(?<=\d) ?USD\b', '$ США'),
   (r'\bруб\.', '₽'),
@@ -735,13 +744,13 @@ samples = (
   (r'(\d+) годом', r'\1-м годом'),
   (r'\b([Дд]о|[Пп]осле|[Сс])( \d+) (года|г\.)', r'\1\2-го года'),
 
-  (r'\b([Вв] \d+)(-| и( в) )(\d+) (годах|гг\.)', r'\1-м\2\4-м годах'),
+  (r'\b([Вв] \d+)(-| и )(\d+) (годах|гг\.)', r'\1-м\2\3-м годах'),
   (r'(\d+)-(\d+) (годы|гг\.)', r'\1-й \2-й годы'),
   (r'(\d+) (или|и) (\d+) (годы|гг\.)', r'\1-й \2 \3-й годы'),
 
   (r'\b([Вв] \d+0)(|-х) (годах|гг\.)', r'\1-х годах'),
   (r'\b([Дд]о|[Пп]осле|[Сс])( \d+) (годов|гг\.)', r'\1\2-х годов'),
-  (r'\b([Сс] \d+) по (\d+) (годы|гг\.)', r'\1-го по \2-й годы'),
+  (r'\b([Сс] \d+) по (\d+) (год[ы]?|г[г]?\.)', r'\1-го по \2-й \3'),
 
   (r'([Зз]им[аеойуы]{1,2} \d+)-(\d+)', r'\1-го \2-го'),
 
@@ -933,8 +942,11 @@ def txt_prep(text):
     for m in finditer(r'(\d+0)(-\d+0-е годы)', text):
         text = text.replace(m.group(), ordinal(m.group(1), i_mn) + m.group(2), 1)
 
-    for m in finditer(r'(\d+)-е((| зимние| летние) Олимпийские| годы)', text):
+    for m in finditer(r'(\d+0)-е( годы)', text):
         text = text.replace(m.group(), ordinal(m.group(1), i_mn) + m.group(2), 1)
+
+    for m in finditer(r'(\d+)-(е|х|ми|м\b)((| зимни| летни)\2 Олимпийски)\2', text):
+        text = text.replace(m.group(), ordinal(m.group(1), pad_mn[m.group(2)]) + m.group(3) + m.group(2), 1)
 
     for m in finditer(r'([Вв] )(\d*0)-е\b', text):
         text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), i_mn), 1)
@@ -959,9 +971,6 @@ def txt_prep(text):
 
     for m in finditer(r'\b([Вв] |[Нн]а |[Пп]ри )(\d+)-м\b', text):
         text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), p_mu), 1)
-
-    for m in finditer(r'\b([Кк] )(\d+)-м\b', text):
-        text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), d_mn), 1)
 
     for m in finditer(r'\b([Сс] )(\d+)-м\b', text):
         text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), t_mu), 1)
