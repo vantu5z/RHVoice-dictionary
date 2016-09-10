@@ -559,6 +559,9 @@ p_sr = p_mu
 p_zh = r_zh
 p_mn = r_mn
 
+# Определение падежа по окончанию
+pad_mn = {'е': i_mn, 'м': d_mn, 'х': r_mn, 'ми': t_mn}
+
 # Падежи имён собственных
 names = (
   ('Петр', i_mu),
@@ -656,10 +659,10 @@ presamples = (
   (r'(\d+,\d+) ?млн', r'\1 миллиона'),
   (r'(\d+,\d+) ?млрд', r'\1 миллиарда'),
   (r'(\d+,\d+) ?трлн', r'\1 триллиона'),
-  (r'(\d+) ?тыс\.', r'\1 000'),
-  (r'(\d+) ?млн', r'\1 000 000'),
-  (r'(\d+) ?млрд', r'\1 000 000 000'),
-  (r'(\d+) ?трлн', r'\1 000 000 000 000'),
+  (r'(?<=\d) ?тыс\.', '000'),
+  (r'(?<=\d) ?млн', '000000'),
+  (r'(?<=\d) ?млрд', '000000000'),
+  (r'(?<=\d) ?трлн', '000000000000'),
 
   (r'(?<=\d) (?=\d{3}\b)', ''),
   (r'(\d+,)((\d{3})+) (\d{1,2}\b)', r'\1\2\4'),
@@ -931,7 +934,7 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(2)][3], 1)
     for m in finditer(r'(\d+)' + units, text):
         text = text.replace(m.group(), m.group(1) + ' ' + substant(m.group(1), m.group(2)), 1)
-    for m in finditer(r'(тысячи|миллиона|миллиарда|триллиона) ' + units, text):
+    for m in finditer(r'(тысячи|миллиона|миллиарда|триллиона) ?' + units, text):
         text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(2)][2], 1)
 
     # Десятичные дроби (до миллионых включительно)
@@ -961,7 +964,7 @@ def txt_prep(text):
             frac += 'ых'
         text = text.replace(m.group(),  full + decimal + frac + m.group(3), 1)
 
-    for m in finditer(r'(\d+) (минут[аы]?|недел[иья]|секунд[аы]?|лошадин(ая сила|ые силы)|тонн[аы]|тысяч[аи]?)\b', text):
+    for m in finditer(r'(\d+) (минут[аы]?|недел[иья]|секунд[аы]?|лошадин(ая сила|ые силы|ых сил)|тонн[аы]?|тысяч[аи]?)\b', text):
         text = text.replace(m.group(), feminin(m.group(1)) + ' ' + m.group(2), 1)
 
     # Римские цифры
