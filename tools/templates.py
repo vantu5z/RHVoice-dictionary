@@ -1007,9 +1007,9 @@ def txt_prep(text):
         text = text.replace(m.group(), ordinal(m.group(1), i_sr), 1)
 
     # Склонение порядковых числительных при именах собственных
-    for m in finditer(r'(Александр|Иван|Иоанн|Пав[е]?л|Петр|Васили|Никола)' + '(|а|е|ем|й|ом|у|ю|я)' + ' ' + r'(\d+)', text):
+    for m in finditer(r'(Александр|Иван|Иоанн|Пав[е]?л|Петр|Федор|Васили|Лжедмитри|Никола)' + '(|а|е|ем|й|ом|у|ю|я)' + r' (\d+)', text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(m.group(3), mu_pd[m.group(2)]), 1)
-    for m in finditer(r'(Екатерин)' + '(|а|е|ой|у|ы)' + ' ' + r'(\d+)', text):
+    for m in finditer(r'(Анн|Екатерин)' + '(|а|е|ой|у|ы)' + r' (\d+)', text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(m.group(3), zh_pd[m.group(2)]), 1)
 
     # Буквы греческого алфавита
