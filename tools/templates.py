@@ -552,7 +552,6 @@ r_sr = r_mu
 d_sr = d_mu
 d_zh = r_zh
 d_mn = t_mu
-v_zh = r_zh
 t_sr = t_mu
 t_zh = r_zh
 p_sr = p_mu
@@ -560,41 +559,9 @@ p_zh = r_zh
 p_mn = r_mn
 
 # Определение падежа по окончанию
-pad_mn = {'е': i_mn, 'м': d_mn, 'х': r_mn, 'ми': t_mn}
-
-# Падежи имён собственных
-names = (
-  ('Петр', i_mu),
-  ('Петра', r_mu),
-  ('Петру', d_mu),
-  ('Петром', t_mu),
-  ('Петре', p_mu),
-  ('Павел', i_mu),
-  ('Павла', r_mu),
-  ('Павлу', d_mu),
-  ('Павлом', t_mu),
-  ('Павле', p_mu),
-  ('Иван', i_mu),
-  ('Ивана', r_mu),
-  ('Ивану', d_mu),
-  ('Иваном', t_mu),
-  ('Иване', p_mu),
-  ('Василий', i_mu),
-  ('Василия', r_mu),
-  ('Василию', d_mu),
-  ('Василием', t_mu),
-  ('Василии', p_mu),
-  ('Николай', i_mu),
-  ('Николая', r_mu),
-  ('Николаю', d_mu),
-  ('Николаем', t_mu),
-  ('Николае', p_mu),
-  ('Екатерина', i_zh),
-  ('Екатерины', r_zh),
-  ('Екатерине', d_zh),
-  ('Екатериной', t_zh),
-  ('Екатерину', v_zh)
-)
+mn_pd = {'е': i_mn, 'м': d_mn, 'х': r_mn, 'ми': t_mn}
+mu_pd = {'': i_mu, 'а': r_mu, 'у': d_mu, 'ом': t_mu, 'е': p_mu, 'й': i_mu, 'я': r_mu, 'ю': d_mu, 'ем': t_mu, 'и': p_mu}
+zh_pd = {'а': i_zh, 'ы': r_zh, 'е': d_zh, 'ой': t_zh, 'у': v_zh}
 
 # Обозначения едииниц измерения и числительных
 units = r'(%|°|℃|£|₽|\$|(к|м)г\b|(|мк|к|с|м)м\b|(|к|с|м)м²|(|к|с|м)м³|т\b|(|к|М|Г)Вт\b|л\.с\.)'
@@ -973,18 +940,14 @@ def txt_prep(text):
 
     # Порядковые числительные
 
-    for name in names:
-        for n in finditer(name[0] + r' (\d+)', text):
-            text = text.replace(n.group(), name[0] + ' ' + ordinal(n.group(1), name[1]), 1)
+    for m in finditer(r'(\d+)( зимни[еимх]{1,2}| летни[еимх]{1,2}|)( Олимпийски)(е|ми|м\b|х)', text):
+        text = text.replace(m.group(), ordinal(m.group(1), mn_pd[m.group(4)]) + m.group(2) + m.group(3) + m.group(4), 1)
 
     for m in finditer(r'(\d+0)(-\d+0-е годы)', text):
         text = text.replace(m.group(), ordinal(m.group(1), i_mn) + m.group(2), 1)
 
     for m in finditer(r'(\d+0)-е( годы)', text):
         text = text.replace(m.group(), ordinal(m.group(1), i_mn) + m.group(2), 1)
-
-    for m in finditer(r'(\d+)( зимни[еимх]{1,2}| летни[еимх]{1,2}|)( Олимпийски)(е|ми|м\b|х)', text):
-        text = text.replace(m.group(), ordinal(m.group(1), pad_mn[m.group(4)]) + m.group(2) + m.group(3) + m.group(4), 1)
 
     for m in finditer(r'([Вв] )(\d*0)-е\b', text):
         text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), i_mn), 1)
@@ -1042,6 +1005,12 @@ def txt_prep(text):
 
     for m in finditer(r'(\d+)-е\b', text):
         text = text.replace(m.group(), ordinal(m.group(1), i_sr), 1)
+
+    # Склонение порядковых числительных при именах собственных
+    for m in finditer(r'(Александр|Иван|Иоанн|Пав[е]?л|Петр|Васили|Никола)' + '(|а|е|ем|й|ом|у|ю|я)' + ' ' + r'(\d+)', text):
+        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(m.group(3), mu_pd[m.group(2)]), 1)
+    for m in finditer(r'(Екатерин)' + '(|а|е|ой|у|ы)' + ' ' + r'(\d+)', text):
+        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(m.group(3), zh_pd[m.group(2)]), 1)
 
     # Буквы греческого алфавита
     greekletters = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσΤτΥυΦφΧχΨψΩως'
