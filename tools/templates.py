@@ -1251,6 +1251,9 @@ def txt_prep(text):
     for m in finditer(r'([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Вв] течение|[Пп]осле) (\d+)\b', text):
         text = text.replace(m.group(), m.group(1) + ' ' + cardinal(m.group(2), r_ca), 1)
 
+    for m in finditer(r'\b([Кк] )(\d+)( [а-я]+[ая]м)\b', text):
+        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), d_ca) + m.group(3), 1)
+
     for m in finditer(r'\b([Сс] )(\d+)( [а-я]+ми)\b', text):
         text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), t_ca) + m.group(3), 1)
 
