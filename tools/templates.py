@@ -812,7 +812,7 @@ presamples = (
   (r'(?<=\d) ?USD\b', '$ США'),
   (r'\bдолл\.', '$'),
   (r'\bруб\.', '₽'),
-  (r'(\$|€|£|₽)([0-9,]+)', r'\2\1'),
+  (r'(\$|€|£|₽)([0-9,-]+)', r'\2\1'),
   (r'(\$|€|£|₽) ?(тыс\.|млн|млрд|трлн|тысяч(|а|и)\b|(миллион|миллиард|триллион)(|а|ов)\b)', r' \2 \1'),
   (' ?€', ' евро',),
   (r'кв\. ?((|к|с|м)м)\b', r'\1²'),
@@ -1039,17 +1039,15 @@ def ordinal(num, casus):
                     if len(num) == 3:
                         prenum = ''
                     else:
-                        prenum = num[:-3] + '000 '
+                        prenum = num[:-3]
+                        if int(prenum) != 0: prenum += '000'
                     number = casus[0][0][int(num[-3])]
             else:
                 if len(num) == 2:
                     prenum = ''
                 else:
                     prenum = num[:-2]
-                    if int(prenum) == 0:
-                        prenum += ' '
-                    else:
-                        prenum += '00 '
+                    if int(prenum) != 0: prenum += '00'
                 number = casus[0][int(num[-2])]
         except:
             prenum = ''
@@ -1065,16 +1063,10 @@ def ordinal(num, casus):
                     prenum = ''
                 else:
                     prenum = num[:-2]
-                    if int(prenum) == 0:
-                        prenum += ' '
-                    else:
-                        prenum += '00 '
+                    if int(prenum) != 0: prenum += '00'
             else:
                 prenum = num[:-1]
-                if int(prenum) == 0:
-                    prenum += ' '
-                else:
-                    prenum += '0 '
+                if int(prenum) != 0: prenum += '0'
                 dec = 0
         number = casus[int(num[-1])][dec]
     return prenum + number
