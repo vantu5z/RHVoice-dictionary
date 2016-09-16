@@ -744,7 +744,7 @@ mn_pd = {'е': i_mn, 'м': d_mn, 'х': r_mn, 'ми': t_mn}
 mu_pd = {'': i_mu, 'а': r_mu, 'у': d_mu, 'ом': t_mu, 'е': p_mu, 'й': i_mu, 'я': r_mu, 'ю': d_mu, 'ем': t_mu, 'и': p_mu}
 zh_pd = {'а': i_zh, 'ы': r_zh, 'е': d_zh, 'ой': t_zh, 'у': v_zh}
 
-# Обозначения едииниц измерения и числительных
+# Обозначения едииниц измерения
 units = r'(%|°|℃|£|₽|\$|(к|м)г\b|(|мк|к|с|м)м\b|(|к|с|м)м²|(|к|с|м)м³|т\b|(|к|М|Г)Вт\b|сек\b|л\.с\.)'
 
 # Формы единиц измерения и числительных
@@ -994,7 +994,6 @@ def cardinal(num, casus):
     c_num = ''
     triple = len(num) // 3
     for t in range(triple):
-        if c_num != '': c_num += ' '
         number = num[:3]
         num = num[3:]
 
@@ -1014,8 +1013,11 @@ def cardinal(num, casus):
             if number[0] != '0':
                 t_num = casus[0][0][int(number[0])]
 
-        c_num = c_num + t_num
-        if c_num != '' and len(num) != 0:
+        if c_num != '' and t_num != '':
+             c_num += ' ' + t_num
+        else:
+             c_num += t_num
+        if t_num != '' and len(num) != 0:
             if number[2] != '1':
                 n = 1
             else:
@@ -1105,18 +1107,17 @@ def substant(num, key):
     return form
 
 def feminin(num):
-    num = str(int(num))
-    if len(num) == 1:
-        if num == '1':
-            num = 'одна'
-        elif num == '2':
-            num = 'две'
-    else:
+    try:
         if num[-2] != '1':
             if num[-1] == '1':
                 num = num[:-1] + '0 одна'
             elif num[-1] == '2':
                 num = num[:-1] + '0 две'
+    except:
+        if num == '1':
+            num = 'одна'
+        elif num == '2':
+            num = 'две'
     return num
 
 # =================================
@@ -1248,7 +1249,7 @@ def txt_prep(text):
 
     # Количественные числительные
 
-    for m in finditer(r'([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Вв] течение|[Пп]осле) (\d+)\b', text):
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Вв] течение|[Пп]осле) (\d+)\b', text):
         text = text.replace(m.group(), m.group(1) + ' ' + cardinal(m.group(2), r_ca), 1)
 
     for m in finditer(r'\b([Кк] )(\d+)( [а-я]+[ая]м)\b', text):
