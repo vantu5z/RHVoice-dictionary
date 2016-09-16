@@ -1039,17 +1039,15 @@ def ordinal(num, casus):
                     if len(num) == 3:
                         prenum = ''
                     else:
-                        prenum = num[:-3] + '000'
+                        prenum = num[:-3]
+                        if int(prenum) != 0: prenum += '000'
                     number = casus[0][0][int(num[-3])]
             else:
                 if len(num) == 2:
                     prenum = ''
                 else:
                     prenum = num[:-2]
-                    if int(prenum) == 0:
-                        prenum += ' '
-                    else:
-                        prenum += '00'
+                    if int(prenum) != 0: prenum += '00'
                 number = casus[0][int(num[-2])]
         except:
             prenum = ''
