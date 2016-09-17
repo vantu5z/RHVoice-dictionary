@@ -996,7 +996,11 @@ postsamples = (
 
   (r'(двух|трёх|четырех) ((|кило|милли|санти)метр|градус|(|кило|милли)грамм|процент)а\b', r'\1 \2ов'),
   (r'(двум|трём|четырем) ((|кило|милли|санти)метр|градус|(|кило|милли)грамм|процент)а\b', r'\1 \2ам'),
-  (r'(двумя|тремя|четырьмя) ((|кило|милли|санти)метр|градус|(|кило|милли)грамм|процент)а\b', r'\1 \2ами')
+  (r'(двумя|тремя|четырьмя) ((|кило|милли|санти)метр|градус|(|кило|милли)грамм|процент)а\b', r'\1 \2ами'),
+
+  (r'одного (тонн|секуд)а', r'одной \1ы'),
+  (r'одном[у] (тонн|секунд)а', r'одной \1е'),
+  (r'одним (тонн|секунд)а', r'одной \1ой')
 )
 
 def cardinal(num, casus):
@@ -1112,9 +1116,9 @@ def feminin(num):
     try:
         if num[-2] != '1':
             if num[-1] == '1':
-                num = num[:-1] + '0 одна'
+                num = num[:-1] + '0одна'
             elif num[-1] == '2':
-                num = num[:-1] + '0 две'
+                num = num[:-1] + '0две'
     except:
         if num == '1':
             num = 'одна'
@@ -1164,9 +1168,6 @@ def txt_prep(text):
         else:
             frac += 'ых'
         text = text.replace(m.group(),  full + decimal + frac + m.group(3), 1)
-
-    for m in finditer(r'(\d+) (минут[аы]?|недел[иья]|секунд[аы]?|лошадин(ая сила|ые силы|ых сил)|тонн[аы]?|тысяч[аи]?)\b', text):
-        text = text.replace(m.group(), feminin(m.group(1)) + ' ' + m.group(2), 1)
 
     # Римские цифры
     for m in finditer(r'\b[IVXLCDM]+\b', text):
@@ -1251,18 +1252,30 @@ def txt_prep(text):
 
     # Количественные числительные
 
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Вв] течение|[Пп]осле) (\d+)\b', text):
-    text = text.replace(m.group(), m.group(1) + ' ' + cardinal(m.group(2), r_ca), 1)
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Вв] течение|[Пп]осле) (\d+)( [а-я]+)\b', text):
+        number = cardinal(m.group(2), r_ca)
+        if (m.group(3)[-1] == 'и' or m.group(3)[-1] == 'ы'):
+            number = number.replace('одного', 'одной', number.rfind('одного'))
+        text = text.replace(m.group(), m.group(1) + ' ' + number + m.group(3), 1)
 
-    for m in finditer(r'\b([Кк] )(\d+)\b', text):
-        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), d_ca), 1)
+    for m in finditer(r'\b([Кк] )(\d+)( [а-я]+)(ам|у|е|и)\b', text):
+        number = cardinal(m.group(2), d_ca)
+        if (m.group(4) == 'е' or m.group(4) == 'и'):
+            number = number.replace('одному', 'одной', number.rfind('одному'))
+        text = text.replace(m.group(), m.group(1) + number + m.group(3) + m.group(4), 1)
 
-    for m in finditer(r'\b([Сс] )(\d+)\b', text):
-        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), t_ca), 1)
+    for m in finditer(r'\b([Сс] )(\d+)( [а-я]+)(ми|[ео]м|[ео]й|ью)\b', text):
+        number = cardinal(m.group(2), t_ca)
+        if (m.group(4) == 'й' or m.group(4) == 'ью'):
+            number = number.replace('одним', 'одной', number.rfind('одним'))
+        text = text.replace(m.group(), m.group(1) + number + m.group(3) + m.group(4), 1)
+
+    for m in finditer(r'(\d+) (минут[аы]?|недел[иья]|секунд[аы]?|лошадин(ая сила|ые силы|ых сил)|тонн[аы]?|тысяч[аи]?)\b', text):
+        text = text.replace(m.group(), feminin(m.group(1)) + ' ' + m.group(2), 1)
 
     # Коррекция формы единиц измерения в косвенных падежах
-    for sample in postsamples:
-        text = sub(sample[0], sample[1], text)
+#    for sample in postsamples:
+#        text = sub(sample[0], sample[1], text)
 
     # Буквы греческого алфавита
     greekletters = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσΤτΥυΦφΧχΨψΩως'
