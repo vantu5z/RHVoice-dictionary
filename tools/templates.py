@@ -1004,7 +1004,8 @@ postsamples = (
 )
 
 def cardinal(num, casus):
-    num = '0' * (3 - len(num) % 3) + num
+        rem = len(num) % 3
+    if rem != 0: num = '0' * (3 - rem) + num
     c_num = ''
     triple = len(num) // 3
     for t in range(triple):
@@ -1025,7 +1026,10 @@ def cardinal(num, casus):
             if number[1] != '0':
                 t_num = casus[0][int(number[1])]
             if number[0] != '0':
-                t_num = casus[0][0][int(number[0])]
+                if t_num == '':
+                    t_num = casus[0][0][int(number[0])]
+                else:
+                    t_num = casus[0][0][int(number[0])] + ' ' + t_num
 
         if c_num != '' and t_num != '':
              c_num += ' ' + t_num
