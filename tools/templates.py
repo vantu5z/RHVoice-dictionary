@@ -1259,19 +1259,19 @@ def txt_prep(text):
     for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Вв] течение|[Пп]осле) (\d+)( [а-я]+)\b', text):
         number = cardinal(m.group(2), r_ca)
         if (m.group(3)[-1] == 'и' or m.group(3)[-1] == 'ы'):
-            number = number.replace('одного', 'одной', number.rfind('одного'))
+            number = number[:number.rfind('одного')] + 'одной'
         text = text.replace(m.group(), m.group(1) + ' ' + number + m.group(3), 1)
 
     for m in finditer(r'\b([Кк] )(\d+)( [а-я]+)(ам|у|е|и)\b', text):
         number = cardinal(m.group(2), d_ca)
         if (m.group(4) == 'е' or m.group(4) == 'и'):
-            number = number.replace('одному', 'одной', number.rfind('одному'))
+            number = number[:number.rfind('одному')] + 'одной'
         text = text.replace(m.group(), m.group(1) + number + m.group(3) + m.group(4), 1)
 
     for m in finditer(r'\b([Сс] )(\d+)( [а-я]+)(ми|[ео]м|[ео]й|ью)\b', text):
         number = cardinal(m.group(2), t_ca)
         if (m.group(4) == 'й' or m.group(4) == 'ью'):
-            number = number.replace('одним', 'одной', number.rfind('одним'))
+            number = number[:number.rfind('одним')] + 'одной'
         text = text.replace(m.group(), m.group(1) + number + m.group(3) + m.group(4), 1)
 
     for m in finditer(r'(\d+) (минут[аы]?|недел[иья]|секунд[аы]?|лошадин(ая сила|ые силы|ых сил)|тонн[аы]?|тысяч[аи]?)\b', text):
