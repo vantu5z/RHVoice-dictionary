@@ -1256,26 +1256,32 @@ def txt_prep(text):
 
     # Количественные числительные
 
+    for m in finditer(r'\b([Сс]о? )(\d+)( [а-я]+)(ми|[ео]м|[ео]й|ью)\b', text):
+        number = cardinal(m.group(2), t_ca)
+        if m.group(4) == 'й' or m.group(4) == 'ью':
+            number = number[:-5] + 'одной'
+        text = text.replace(m.group(), m.group(1) + number + m.group(3) + m.group(4), 1)
+
     for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Вв] течение|[Пп]осле) (\d+)( [а-я]+)\b', text):
         number = cardinal(m.group(2), r_ca)
-        if (m.group(3)[-1] == 'и' or m.group(3)[-1] == 'ы'):
+        if m.group(3)[-1] == 'и' or m.group(3)[-1] == 'ы':
             number = number[:-6] + 'одной'
         text = text.replace(m.group(), m.group(1) + ' ' + number + m.group(3), 1)
 
     for m in finditer(r'\b([Кк] )(\d+)( [а-я]+)(ам|у|е|и)\b', text):
         number = cardinal(m.group(2), d_ca)
-        if (m.group(4) == 'е' or m.group(4) == 'и'):
+        if m.group(4) == 'е' or m.group(4) == 'и':
             number = number[:-6] + 'одной'
         text = text.replace(m.group(), m.group(1) + number + m.group(3) + m.group(4), 1)
 
-    for m in finditer(r'\b([Сс] )(\d+)( [а-я]+)(ми|[ео]м|[ео]й|ью)\b', text):
-        number = cardinal(m.group(2), t_ca)
-        if (m.group(4) == 'й' or m.group(4) == 'ью'):
-            number = number[:-5] + 'одной'
-        text = text.replace(m.group(), m.group(1) + number + m.group(3) + m.group(4), 1)
+#    for m in finditer(r'(\d+)-ти\b', text):
+#        text = text.replace(m.group(), cardinal(m.group(1), r_ca), 1)
 
-    for m in finditer(r'(\d+) (минут[аы]?|недел[иья]|секунд[аы]?|лошадин(ая сила|ые силы|ых сил)|тонн[аы]?|тысяч[аи]?)\b', text):
-        text = text.replace(m.group(), feminin(m.group(1)) + ' ' + m.group(2), 1)
+    # Женский род чилительных (им. пад.)
+    for m in finditer(r'(\d+)( [а-я]+(а|я|[шч]ь|и|ы))\b', text):
+        text = text.replace(m.group(), feminin(m.group(1)) + m.group(2), 1)
+#    for m in finditer(r'(\d+) (минут[аы]?|недел[иья]|секунд[аы]?|лошадин(ая сила|ые силы|ых сил)|тонн[аы]?|тысяч[аи]?)\b', text):
+#        text = text.replace(m.group(), feminin(m.group(1)) + ' ' + m.group(2), 1)
 
     # Коррекция формы единиц измерения в косвенных падежах
 #    for sample in postsamples:
