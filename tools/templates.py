@@ -365,7 +365,7 @@ i_mn = (
   ('шестые', 'шестнадцатые'),
   ('седьмые', 'семнадцатые'),
   ('восьмые', 'восемнадцатые'),
-  ('девятые' 'девятнадцаые')
+  ('девятые' 'девятнадцатые')
 )
 r_mu = (
   (
@@ -1004,7 +1004,7 @@ postsamples = (
 )
 
 def cardinal(num, casus):
-        rem = len(num) % 3
+    rem = len(num) % 3
     if rem != 0: num = '0' * (3 - rem) + num
     c_num = ''
     triple = len(num) // 3
@@ -1249,7 +1249,7 @@ def txt_prep(text):
         text = text.replace(m.group(), ordinal(m.group(1), i_sr), 1)
 
     # Склонение порядковых числительных при именах собственных
-    for m in finditer(r'(Александр|Иван|Иоанн|Пав[е]?л|Петр|Федор|Васили|Лжедмитри|Никола)' + '(|а|е|ем|й|ом|у|ю|я)' + r' (\d+)', text):
+    for m in finditer(r'(Александр|Иван|Иоанн|Пав[е]?л|П[её]тр|Ф[её]дор|Васили|Лжедмитри|Никола)' + '(|а|е|ем|й|ом|у|ю|я)' + r' (\d+)', text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(m.group(3), mu_pd[m.group(2)]), 1)
     for m in finditer(r'(Анн|Екатерин)' + '(|а|е|ой|у|ы)' + r' (\d+)', text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(m.group(3), zh_pd[m.group(2)]), 1)
