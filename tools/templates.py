@@ -1004,7 +1004,7 @@ postsamples = (
 )
 
 def cardinal(num, casus):
-        rem = len(num) % 3
+    rem = len(num) % 3
     if rem != 0: num = '0' * (3 - rem) + num
     c_num = ''
     triple = len(num) // 3
