@@ -1121,6 +1121,7 @@ def substant(num, key):
     return form
 
 def feminin(num):
+    num = str(int(num))
     try:
         if num[-2] != '1':
             if num[-1] == '1':
@@ -1258,6 +1259,40 @@ def txt_prep(text):
     for m in finditer(r'(Анн|Екатерин)' + '(|а|е|ой|у|ы)' + r' (\d+)', text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(m.group(3), zh_pd[m.group(2)]), 1)
 
+    # Время в формате чч:мм или чч.мм
+
+    for m in finditer(r'\b([Вв] \d+)[.:](\d+)\b', text):
+        minutes = feminin(m.group(2))
+        if minutes[-2:] == 'на':
+            minutes = minutes[:-1] + 'у'
+        if m.group(2) == '00':
+            minutes = '00'
+        elif m.group(2)[0] == '0':
+            minutes = '0_' + minutes
+        text = text.replace(m.group(), m.group(1) + ' ' + minutes, 1)
+
+    for m in finditer(r'\b([Кк] )(\d+)[.:](\d+)\b', text):
+        hours = cardinal(m.group(2), d_ca)
+        minutes = cardinal(m.group(3), d_ca)
+        if minutes[-2:] == 'му':
+            minutes = minutes[:-6] + 'одной'
+        if m.group(3) == '00':
+            minutes = '00'
+        elif m.group(3)[0] == '0':
+            minutes = '0_' + minutes
+        text = text.replace(m.group(), m.group(1) + hours + ' ' + minutes, 1)
+
+    # Только минуты - часы в следующей секции
+    for m in finditer(r'\b([Дд]о |[Пп]осле |[Оо]коло |[Сс] )(\d+)[.:](\d+)\b', text):
+        minutes = cardinal(m.group(3), r_ca)
+        if minutes[-2:] == 'го':
+            minutes = minutes[:-6] + 'одной'
+        if m.group(3) == '00':
+            minutes = '00'
+        elif m.group(3)[0] == '0':
+            minutes = '0_' + minutes
+        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + minutes, 1)
+
     # Количественные числительные
 
     for m in finditer(r'\b([Сс]о? )(\d+)( [а-я]+)(ми|[ео]м|[ео]й|ью)\b', text):
@@ -1265,6 +1300,16 @@ def txt_prep(text):
         if m.group(4) == 'й' or m.group(4) == 'ью':
             number = number[:-5] + 'одной'
         text = text.replace(m.group(), m.group(1) + number + m.group(3) + m.group(4), 1)
+
+    for m in finditer(r'\b([Дд]о ||[Пп]осле |[Оо]коло )(\d+)[.:](\d+)\b', text):
+        number = cardinal(m.group(3), r_ca)
+        if number[-2:] == 'го':
+            number = number[:-6] + 'одной'
+        if m.group(3) == '00':
+            number = '00'
+        elif m.group(3)[0] == '0':
+            number = '0_' + number
+        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + number, 1)
 
     for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв] течение|[Пп]орядка|[Пп]осле|достиг[алнш][веиотуьщюя]{1,4}) (\d+)(| [а-я]+)\b', text):
         number = cardinal(m.group(2), r_ca)
