@@ -1301,16 +1301,6 @@ def txt_prep(text):
             number = number[:-5] + 'одной'
         text = text.replace(m.group(), m.group(1) + number + m.group(3) + m.group(4), 1)
 
-    for m in finditer(r'\b([Дд]о ||[Пп]осле |[Оо]коло )(\d+)[.:](\d+)\b', text):
-        number = cardinal(m.group(3), r_ca)
-        if number[-2:] == 'го':
-            number = number[:-6] + 'одной'
-        if m.group(3) == '00':
-            number = '00'
-        elif m.group(3)[0] == '0':
-            number = '0_' + number
-        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + number, 1)
-
     for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв] течение|[Пп]орядка|[Пп]осле|достиг[алнш][веиотуьщюя]{1,4}) (\d+)(| [а-я]+)\b', text):
         number = cardinal(m.group(2), r_ca)
         if m.group(3) != '':
