@@ -1276,23 +1276,23 @@ def txt_prep(text):
         hours = cardinal(m.group(2), d_ca)
         minutes = cardinal(m.group(3), d_ca)
         if minutes[-2:] == 'му':
-            minutes = minutes[:-6] + 'одной'
+            minutes = minutes[:-2] + 'й'
         if m.group(3) == '00':
             minutes = '00'
         elif m.group(3)[0] == '0':
             minutes = '0_' + minutes
         text = text.replace(m.group(), m.group(1) + hours + ' ' + minutes, 1)
 
-    # Только минуты - часы в следующей секции
     for m in finditer(r'\b([Дд]о |[Пп]осле |[Оо]коло |[Сс] )(\d{1,2})[.:](\d{2})\b', text):
+        hours = cardinal(m.group(2), r_ca)
         minutes = cardinal(m.group(3), r_ca)
         if minutes[-2:] == 'го':
-            minutes = minutes[:-6] + 'одной'
+            minutes = minutes[:-2] + 'й'
         if m.group(3) == '00':
             minutes = '00'
         elif m.group(3)[0] == '0':
             minutes = '0_' + minutes
-        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + minutes, 1)
+        text = text.replace(m.group(), m.group(1) + hours + ' ' + minutes, 1)
 
     # Количественные числительные
 
@@ -1302,11 +1302,10 @@ def txt_prep(text):
             number = number[:-5] + 'одной'
         text = text.replace(m.group(), m.group(1) + number + m.group(3) + m.group(4), 1)
 
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв] течение|[Пп]орядка|[Пп]осле|достиг[алнш][веиотуьщюя]{1,4}) (\d+)(| [а-я]+)\b', text):
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв] течение|[Пп]орядка|[Пп]осле|достиг[алнш][веиотуьщюя]{1,4}) (\d+)( [а-я]+)\b', text):
         number = cardinal(m.group(2), r_ca)
-        if m.group(3) != '':
-            if m.group(3)[-1] == 'и' or m.group(3)[-1] == 'ы':
-                number = number[:-6] + 'одной'
+        if m.group(3)[-1] == 'и' or m.group(3)[-1] == 'ы':
+            number = number[:-6] + 'одной'
         text = text.replace(m.group(), m.group(1) + ' ' + number + m.group(3), 1)
 
     for m in finditer(r'\b([Кк] |равно )(\d+)( [а-я]+)(ам|у|е|и)\b', text):
