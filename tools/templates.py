@@ -10,7 +10,7 @@ r_ca = (
   (
     (
       (
-        'нуля',
+        'ноля',
         ('тысячи', 'тысяч'),
         ('миллиона', 'миллионов'),
         ('миллиарда', 'миллиардов'),
@@ -55,7 +55,7 @@ d_ca = (
   (
     (
       (
-        'нулю',
+        'нолю',
         ('тысяче', 'тысячам'),
         ('миллиону', 'миллионам'),
         ('миллиарду', 'миллиардам'),
@@ -100,7 +100,7 @@ t_ca = (
   (
     (
       (
-        'нулём',
+        'нолём',
         ('тысячей', 'тысячами'),
         ('миллионом', 'миллионами'),
         ('миллиардом', 'миллиардами'),
@@ -145,7 +145,7 @@ p_ca = (
   (
     (
       (
-        'нуле',
+        'ноле',
         ('тысяче', 'тысячах'),
         ('миллионе', 'миллионах'),
         ('миллиарде', 'миллиардах'),
@@ -945,6 +945,7 @@ samples = (
 
   (r'\b([Вв] ([а-я]+м |)\d+) (году|г\.)', r'\1-м году'),
   (r'\b([Кк] ([а-я]+му |)\d+) (году|г\.)', r'\1-му году'),
+  (r'\b([Кк] \d+0) гг\.', r'\1-м годам'),
 
   (r'([Пп]о сравнению с|[Пп]еред)( \d+) г\.', r'\1\2-м годом'),
   (r'(\d+) годом', r'\1-м годом'),
@@ -1051,6 +1052,7 @@ def cardinal(num, casus):
 
     c_num = sub(r'одно(го|му) тысячи', 'одной тысячи', c_num)
     c_num = sub('один тысячу', 'одну тысячу', c_num)
+    if c_num == '': c_num = casus[0][0][0][0]
     return c_num
 
 def ordinal(num, casus):
@@ -1262,9 +1264,9 @@ def txt_prep(text):
     for m in finditer(r'(Анн|Екатерин)' + '(|а|е|ой|у|ы)' + r' (\d+)', text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(m.group(3), zh_pd[m.group(2)]), 1)
 
-    # Время в формате (ч)ч:мм или (ч)ч.мм
+    # Время в формате (ч)ч:мм
 
-    for m in finditer(r'\b([Вв] \d{1,2})[.:](\d{2})\b', text):
+    for m in finditer(r'\b([Вв] \d{1,2}):(\d{2})\b', text):
         minutes = feminin(m.group(2))
         if minutes[-2:] == 'на':
             minutes = minutes[:-1] + 'у'
@@ -1274,7 +1276,7 @@ def txt_prep(text):
             minutes = '0_' + minutes
         text = text.replace(m.group(), m.group(1) + ' ' + minutes, 1)
 
-    for m in finditer(r'\b([Кк] )(\d{1,2})[.:](\d{2})\b', text):
+    for m in finditer(r'\b([Кк] )(\d{1,2}):(\d{2})\b', text):
         hours = cardinal(m.group(2), d_ca)
         minutes = cardinal(m.group(3), d_ca)
         if minutes[-2:] == 'му':
@@ -1285,7 +1287,7 @@ def txt_prep(text):
             minutes = '0_' + minutes
         text = text.replace(m.group(), m.group(1) + hours + ' ' + minutes, 1)
 
-    for m in finditer(r'\b([Дд]о |[Пп]осле |[Оо]коло |[Сс] )(\d{1,2})[.:](\d{2})\b', text):
+    for m in finditer(r'\b([Дд]о |[Пп]осле |[Оо]коло |[Сс] )(\d{1,2}):(\d{2})\b', text):
         hours = cardinal(m.group(2), r_ca)
         minutes = cardinal(m.group(3), r_ca)
         if minutes[-2:] == 'го':
