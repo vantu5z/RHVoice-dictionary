@@ -141,6 +141,51 @@ t_ca = (
   ('восемью', 'восемнадцатью'),
   ('девятью', 'девятнадцатью')
 )
+v_ca = (
+  (
+    (
+      (
+        'ноль',
+        ('тысячу', 'тысяч'),
+        ('миллион', 'миллионов'),
+        ('миллиард', 'миллиардов'),
+        ('триллион', 'триллионов'),
+        ('квадриллион', 'квадриллионов'),
+        ('квинтиллион', 'квинтиллионов'),
+        ('секстиллион', 'секстиллионов'),
+        ('септиллион', 'септиллионов'),
+        ('октиллион', 'октиллионов')
+      ),
+      'сто',
+      'двести',
+      'триста',
+      'четыреста',
+      'пятьсот',
+      'шестьсот',
+      'семьсот',
+      'восемьсот',
+      'девятьсот'
+    ),
+    'десять',
+    'двадцать',
+    'тридцать',
+    'сорок',
+    'пятьдесят',
+    'шестьдесят',
+    'семьдесят',
+    'восемьдесят', 
+    'девяносто'
+  ),
+  ('один', 'одиннадцать'),
+  ('два', 'двенадцать'),
+  ('три', 'тринадцать'),
+  ('четыре', 'четырнадцать'),
+  ('пять', 'пятнадцать'),
+  ('шесть', 'шестнадцать'),
+  ('семь', 'семнадцать'),
+  ('восемь', 'восемнадцать'),
+  ('девять', 'девятнадцать')
+)
 p_ca = (
   (
     (
@@ -1157,31 +1202,181 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(2)][2], 1)
 
     # Десятичные дроби (до миллионых включительно)
-    for m in finditer(r'(\d+),(\d{1,6})(\W)', text):
+    for m in finditer(r'(\d+),(\d{1,6})(\b|$)', text):
         length = len(m.group(2))
         full = feminin(m.group(1))
         if full[-1] == 'а':
-            full += ' целая '
+            full += '_целая '
         else:
-            full += ' целых '
+            full += '_целых '
         if length == 1:
-            frac = ' десят'
+            frac = '_десят'
         elif length == 2:
-            frac = ' сот'
+            frac = '_сот'
         elif length == 3:
-            frac = ' тысячн'
+            frac = '_тысячн'
         elif length == 4:
-            frac = ' десятитысячн'
+            frac = '_десятитысячн'
         elif length == 5:
-            frac = ' стотысячн'
+            frac = '_стотысячн'
         else:
-            frac = ' миллионн'
+            frac = '_миллионн'
         decimal = feminin(m.group(2))
         if decimal[-1] == 'а':
             frac += 'ая'
         else:
             frac += 'ых'
         text = text.replace(m.group(),  full + decimal + frac + m.group(3), 1)
+
+    # Коррекция чтения десятичных дробей в косвенных падежах
+
+    # Творительный
+    for m in finditer(r'\b([Пп]о сравнению с )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)\b', text):
+        if m.group(2) != '':
+            full = cardinal(m.group(2)[:-1], t_ca) + '_'
+        else:
+            full =''
+        if m.group(3) == 'одна_':
+            full += 'одной_'
+        elif m.group(3) == 'две_':
+            full += 'двумя_'
+        if full == 'нолём_':
+            full += 'целых'
+        elif m.group(4) == 'целая':
+            full += 'целой'
+        else:
+            full += 'целыми'
+        if m.group(5) != '':
+            frac = cardinal(m.group(5)[:-1], t_ca) + '_'
+        else:
+            frac =''
+        if m.group(6) == 'одна_':
+            frac += 'одной_'
+        elif m.group(6) == 'две_':
+            frac += 'двумя_'
+        if frac == 'нолём_':
+            rd = 'ых'
+        elif m.group(8) == 'ая':
+            rd = 'ой'
+        else:
+            rd = 'ыми'
+        text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
+
+    # Родительный 
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв] течение|[Пп]орядка|[Пп]осле|достиг[алнш][веиотуьщюя]{1,4}) (|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)\b', text):
+        if m.group(2) != '':
+            full = cardinal(m.group(2)[:-1], r_ca) + '_'
+        else:
+            full =''
+        if m.group(3) == 'одна_':
+            full += 'одной_'
+        elif m.group(3) == 'две_':
+            full += 'двух_'
+        if m.group(4) == 'целая':
+            full += 'целой'
+        else:
+            full += 'целых'
+        if m.group(5) != '':
+            frac = cardinal(m.group(5)[:-1], r_ca) + '_'
+        else:
+            frac =''
+        if m.group(6) == 'одна_':
+            frac += 'одной_'
+        elif m.group(6) == 'две_':
+            frac += 'двух_'
+        if m.group(8) == 'ая':
+            rd = 'ой'
+        else:
+            rd = 'ых'
+        text = text.replace(m.group(), m.group(1) + ' ' + full + ' ' + frac + m.group(7) + rd, 1)
+
+    # Дательный
+    for m in finditer(r'\b([Кк] |равно )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)\b', text):
+        if m.group(2) != '':
+            full = cardinal(m.group(2)[:-1], d_ca) + '_'
+        else:
+            full =''
+        if m.group(3) == 'одна_':
+            full += 'одной_'
+        elif m.group(3) == 'две_':
+            full += 'двум_'
+        if full == 'нолю_':
+            full += 'целых'
+        elif m.group(4) == 'целая':
+            full += 'целой'
+        else:
+            full += 'целым'
+        if m.group(5) != '':
+            frac = cardinal(m.group(5)[:-1], d_ca) + '_'
+        else:
+            frac =''
+        if m.group(6) == 'одна_':
+            frac += 'одной_'
+        elif m.group(6) == 'две_':
+            frac += 'двум_'
+        if frac == 'нолю_':
+            rd = 'ых'
+        elif m.group(8) == 'ая':
+            rd = 'ой'
+        else:
+            rd = 'ым'
+        text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
+
+    # Винительный
+    for m in finditer(r'\b([Вв] )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)\b', text):
+        if m.group(2) != '':
+            full = cardinal(m.group(2)[:-1], v_ca) + '_'
+        else:
+            full =''
+        if m.group(3) == 'одна_':
+            full += 'одну_'
+        else:
+            full += m.group(3)
+        if m.group(4) == 'целая':
+            full += 'целую'
+        else:
+            full += 'целых'
+        if m.group(5) != '':
+            frac = cardinal(m.group(5)[:-1], v_ca) + '_'
+        else:
+            frac =''
+        if m.group(6) == 'одна_':
+            frac += 'одну_'
+        else:
+            frac += m.group(6)
+        if m.group(8) == 'ая':
+            rd = 'ую'
+        else:
+            rd = 'ых'
+        text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
+
+    # Предложный
+    for m in finditer(r'\b([Оо]б? |[Пп]ри )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)\b', text):
+        if m.group(2) != '':
+            full = cardinal(m.group(2)[:-1], p_ca) + '_'
+        else:
+            full =''
+        if m.group(3) == 'одна_':
+            full += 'одной_'
+        elif m.group(3) == 'две_':
+            full += 'двух_'
+        if m.group(4) == 'целая':
+            full += 'целой'
+        else:
+            full += 'целых'
+        if m.group(5) != '':
+            frac = cardinal(m.group(5)[:-1], p_ca) + '_'
+        else:
+            frac =''
+        if m.group(6) == 'одна_':
+            frac += 'одной_'
+        elif m.group(6) == 'две_':
+            frac += 'двух_'
+        if m.group(8) == 'ая':
+            rd = 'ой'
+        else:
+            rd = 'ых'
+        text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
 
     # Римские цифры
     for m in finditer(r'\b[IVXLCDM]+\b', text):
@@ -1325,7 +1520,7 @@ def txt_prep(text):
                 number = number[:-2] + 'й'
         text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
 
-    for m in finditer(r'(\d+)-(лет[геиймнохюя]{2,4}|(|кило)граммов[аеийохмыя]{2,3}|(|кило|милли|санти)метров[аеийохмыя]{2,3})\b', text):
+    for m in finditer(r'(\d+)-(лет[геиймнохюя]{2,4}|(|кило)граммов[аеийохмыя]{2,3}|(|кило|милли|санти)метров[аеийохмыя]{2,3}|тысячн[агеймохыя]{2,3}|миллионн[агеймохыя]{2,3}|миллиардн[агеймохыя]{2,3})\b', text):
         text = text.replace(m.group(), cardinal(m.group(1), r_ca) + '-' + m.group(2), 1)
 
      # Наращения при количественных числительных недопустимы, но распространены
