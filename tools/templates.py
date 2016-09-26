@@ -1021,7 +1021,7 @@ samples = (
 
   (r'(\d+) г\.р\.', r'\1-го года рождения'),
 
-  (r'\b(\d+)-(\d+)-(го|ми|х)\b', r'\1-\3 \2-\3'),
+  (r'\b(\d+)( и |-)(\d+)-(го|ми|х)\b', r'\1-\4\2\3-\4'),
 
   (r'(1\d|[02-9][05-9]|\b[5-9]) года\b', r'\1-го года'),
   (r'([12]\d{3}) года\b', r'\1-го года'),
@@ -1235,7 +1235,7 @@ def txt_prep(text):
         if m.group(2) != '':
             full = cardinal(m.group(2)[:-1], t_ca) + '_'
         else:
-            full =''
+            full = ''
         if m.group(3) == 'одна_':
             full += 'одной_'
         elif m.group(3) == 'две_':
@@ -1267,7 +1267,7 @@ def txt_prep(text):
         if m.group(2) != '':
             full = cardinal(m.group(2)[:-1], r_ca) + '_'
         else:
-            full =''
+            full = ''
         if m.group(3) == 'одна_':
             full += 'одной_'
         elif m.group(3) == 'две_':
@@ -1295,7 +1295,7 @@ def txt_prep(text):
         if m.group(2) != '':
             full = cardinal(m.group(2)[:-1], d_ca) + '_'
         else:
-            full =''
+            full = ''
         if m.group(3) == 'одна_':
             full += 'одной_'
         elif m.group(3) == 'две_':
@@ -1327,7 +1327,7 @@ def txt_prep(text):
         if m.group(2) != '':
             full = cardinal(m.group(2)[:-1], v_ca) + '_'
         else:
-            full =''
+            full = ''
         if m.group(3) == 'одна_':
             full += 'одну_'
         else:
@@ -1355,7 +1355,7 @@ def txt_prep(text):
         if m.group(2) != '':
             full = cardinal(m.group(2)[:-1], p_ca) + '_'
         else:
-            full =''
+            full = ''
         if m.group(3) == 'одна_':
             full += 'одной_'
         elif m.group(3) == 'две_':
