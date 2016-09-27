@@ -844,7 +844,7 @@ presamples = (
   ('л\. с\.', 'л.с.'),
   (r' ?\& ?', ' and '),
 
-  (r'(?<=\d) (?=\d{3}\b)', ''),
+  (r'(?<=\d) (?=\d{3}[^-])', ''),
   (r'(\d+,)((\d{3})+) (\d{1,2}\b)', r'\1\2\4'),
 
   ('L-образн', 'эль-образн'),
@@ -1015,9 +1015,9 @@ samples = (
 
   (r'(\d+-го )г\.', r'\1года'),
   (r'([Сс] \d+-м )г\.', r'\1годом'),
-  (r'(\d+-е )гг\.', r'\1годы'),
-  (r'(\d+-ми )гг\.', r'\1годами'),
-  (r'(\d+-х )гг\.', r'\1годов'),
+  (r'(\d+0-е )гг\.', r'\1годы'),
+  (r'(\d+0-ми )гг\.', r'\1годами'),
+  (r'(\d+0-х )гг\.', r'\1годов'),
 
   (r'(\d+) г\.р\.', r'\1-го года рождения'),
 
@@ -1493,13 +1493,13 @@ def txt_prep(text):
             minutes = '0_' + minutes
         text = text.replace(m.group(), m.group(1) + hours + ' ' + minutes, 1)
 
-    for m in finditer(r'\b(\d{1,2}):(\d{2})\b', text):
-        minutes = feminin(m.group(2))
-        if m.group(2) == '00':
-            minutes = '00'
-        elif m.group(2)[0] == '0':
-            minutes = '0_' + minutes
-        text = text.replace(m.group(), m.group(1) + ' ' + minutes, 1)
+#    for m in finditer(r'\b(\d{1,2}):(\d{2})\b', text):
+#        minutes = feminin(m.group(2))
+#        if m.group(2) == '00':
+#            minutes = '00'
+#        elif m.group(2)[0] == '0':
+#            minutes = '0_' + minutes
+#        text = text.replace(m.group(), m.group(1) + ' ' + minutes, 1)
 
     # Количественные числительные
 
@@ -1508,6 +1508,12 @@ def txt_prep(text):
         if m.group(4) == 'й' or m.group(4) == 'ью':
             number = number[:-5] + 'одной'
         text = text.replace(m.group(), m.group(1) + number + m.group(3) + m.group(4), 1)
+
+    for m in finditer(r'\b([Оо]т |[Сс] )(\d+)( до \d+ [а-я]+)\b', text):
+        number = cardinal(m.group(2), r_ca)    
+        if m.group(3)[-1] == 'и' or m.group(3)[-1] == 'ы':
+            number = number[:-6] + 'одной'
+        text = text.replace(m.group(), m.group(1) + number + m.group(3), 1)
 
     for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв] течение|[Пп]орядка|[Пп]осле|достиг[алнш][веиотуьщюя]{1,4}) (\d+)( [а-я]+)\b', text):
         number = cardinal(m.group(2), r_ca)
@@ -1528,12 +1534,18 @@ def txt_prep(text):
                 number = number[:-2] + 'й'
         text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
 
-    for m in finditer(r'(\d+)-(лет[геиймнохюя]{2,4}|(|кило)граммов[аеийохмыя]{2,3}|(|кило|милли|санти)метров[аеийохмыя]{2,3}|тысячн[агеймохыя]{2,3}|миллионн[агеймохыя]{2,3}|миллиардн[агеймохыя]{2,3})\b', text):
-        text = text.replace(m.group(), cardinal(m.group(1), r_ca) + '-' + m.group(2), 1)
+    for m in finditer(r'(\d+)-(лет[геиймнохюя]{2,4}|((|кило)граммов|(|кило|милли|санти)метров|тысяч|миллионн[агеймохыя]{2,3}|миллиардн|процентн)[агеймохыя]{2,3})\b', text):
+        if m.group(1) == '100':
+            num = 'сто'
+        elif m.group(1) == '1000':
+            num = 'тысяче'
+        else:
+            num = cardinal(m.group(1), r_ca) + '-'
+        text = text.replace(m.group(), num + m.group(2), 1)
 
      # Наращения при количественных числительных недопустимы, но распространены
-#    for m in finditer(r'(\d+)-ти\b', text):
-#        text = text.replace(m.group(), cardinal(m.group(1), r_ca), 1)
+    for m in finditer(r'(\d+)(-ти|-х)\b', text):
+        text = text.replace(m.group(), cardinal(m.group(1), r_ca), 1)
 
     # Женский род числительных (им. пад.)
     for m in finditer(r'(\d*[02-9][12]|[12]) ' + zh_i, text):
@@ -1547,6 +1559,6 @@ def txt_prep(text):
     greekletters = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσΤτΥυΦφΧχΨψΩως'
     letternames = ('альфа', 'бета', 'гамма', 'дельта', 'эпсилон', 'дзета', 'эта', 'тета', 'йота', 'каппа', 'лямбда', 'мю', 'ню', 'кси', 'омикрон', 'пи', 'ро', 'сигма', 'тау', 'ипсилон', 'фи', 'хи', 'пси', 'омега', 'сигма')
     for j in greekletters:
-        text = text.replace(j, letternames[greekletters.index(j)//2])
+        text = text.replace(j, letternames[greekletters.index(j)//2], 1)
 
     return text
