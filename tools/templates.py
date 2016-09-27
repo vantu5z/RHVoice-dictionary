@@ -1173,14 +1173,16 @@ def substant(num, key):
     return form
 
 def feminin(num):
-    num = str(int(num))
-    try:
+    if len(num) > 1:
         if num[-2] != '1':
+            pre = num[:-1]
+            if int(pre) != 0:
+                pre = num[:-1] + '0'
             if num[-1] == '1':
-                num = num[:-1] + '0_одна'
+                num = pre + '_одна'
             elif num[-1] == '2':
-                num = num[:-1] + '0_две'
-    except:
+                num = pre + '_две'
+    else:
         if num == '1':
             num = 'одна'
         elif num == '2':
@@ -1473,10 +1475,6 @@ def txt_prep(text):
         minutes = feminin(m.group(2))
         if minutes[-2:] == 'на':
             minutes = minutes[:-1] + 'у'
-        if m.group(2) == '00':
-            minutes = '00'
-        elif m.group(2)[0] == '0':
-            minutes = '0_' + minutes
         text = text.replace(m.group(), m.group(1) + ' ' + minutes, 1)
 
     for m in finditer(r'\b([Кк] )(\d{1,2}):(\d{2})\b', text):
