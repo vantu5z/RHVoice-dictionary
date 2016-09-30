@@ -1520,7 +1520,7 @@ def txt_prep(text):
 #        text = text.replace(m.group(), m.group(1) + ' ' + minutes, 1)
 
     # Количественные числительные
-    
+
     for m in finditer(r'(\d+)-(лет[геиймнохюя]{2,4}|((|кило)граммов|(|кило|милли|санти)метров|тысяч|миллионн[агеймохыя]{2,3}|миллиардн|процентн)[агеймохыя]{2,3})\b', text):
         if m.group(1) == '100':
             num = 'сто'
@@ -1532,7 +1532,7 @@ def txt_prep(text):
     
     for m in finditer(r'(\d+)(-ти|-х)\b', text):
         text = text.replace(m.group(), cardinal(m.group(1), r_ca), 1)
-    
+
     # Винительный падеж (муж. род)
     for m in finditer(r'(\d*[02-9]1|[1-4]) ' + mu_v, text):
         if m.group(1) == '1':
@@ -1546,7 +1546,7 @@ def txt_prep(text):
         else:
             number = m.group(1)[:-1] + '0_одного '
         text = text.replace(m.group(), number + m.group(2), 1)
-    
+
     # Винительный падеж (жен. род)
     for m in finditer(r'([Вв] |[Зз]а |[Нн]а |[Пп]ро |[Чч]ерез )(\d*[02-9]1|[1-4]) ' + zh_v, text):
         if m.group(2) == '1':
@@ -1561,11 +1561,11 @@ def txt_prep(text):
             number = m.group(2)[:-1] + '0_одну '
         text = text.replace(m.group(), m.group(1) + number + m.group(3), 1)
     
-    # Женский род числительных (им./вин. пад.)
+    # Женский род (им./вин. пад.)
     for m in finditer(r'(\d*[02-9][12]|[12]) ' + zh_i, text):
         text = text.replace(m.group(), feminin(m.group(1)) + ' ' + m.group(2), 1)
-    
-    # Средний род числительных (им./вин. пад.)
+
+    # Средний род (им./вин. пад.)
     for m in finditer(r'(\d*[02-9]1|1) ([а-я]+)', text):
         if sr_i.find(m.group(2)) != -1:
             if len(m.group(1)) > 1:
@@ -1576,37 +1576,45 @@ def txt_prep(text):
             else:
                 num = m.group(1)[:-1] + 'одно'
             text = text.replace(m.group(), num + ' ' + m.group(2), 1)
-    
+
+    # Творительный падеж
     for m in finditer(r'\b([Зз]а |[Нн]ад |[Пп]од |[Пп]еред |[Сс] )(\d+)( [а-я]+)(ми|[ео]м|[ео]й|ью)\b', text):
         number = cardinal(m.group(2), t_ca)
         if m.group(4) == 'ей' or m.group(4) == 'ой' or m.group(4) == 'ью':
             number = number[:-5] + 'одной'
         text = text.replace(m.group(), m.group(1) + number + m.group(3) + m.group(4), 1)
-    
+
+    # Родительный падеж
     for m in finditer(r'\b([Оо]т |[Сс] )(\d+)( до \d+ [а-я]+)\b', text):
         number = cardinal(m.group(2), r_ca)    
         if m.group(3)[-1] == 'и' or m.group(3)[-1] == 'ы':
             number = number[:-6] + 'одной'
         text = text.replace(m.group(), m.group(1) + number + m.group(3), 1)
-    
+
     for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв] течение|[Пп]орядка|[Пп]осле|достиг[алнш][веиотуьщюя]{1,4}) (\d+)( [а-я]+)\b', text):
         number = cardinal(m.group(2), r_ca)
         if m.group(3)[-1] == 'и' or m.group(3)[-1] == 'ы':
             number = number[:-6] + 'одной'
         text = text.replace(m.group(), m.group(1) + ' ' + number + m.group(3), 1)
-    
+
+    # Дательный падеж
     for m in finditer(r'\b([Кк] |[Пп]о |равно )(\d+)( [а-я]+)([ая]м|у|ю|е|и)\b', text):
         number = cardinal(m.group(2), d_ca)
         if m.group(4) == 'е' or m.group(4) == 'и':
             number = number[:-6] + 'одной'
-        text = text.replace(m.group(), m.group(1) + number + m.group(3) + m.group(4), 1)    
-    
+        text = text.replace(m.group(), m.group(1) + number + m.group(3) + m.group(4), 1)
+
+    # Предложный падеж
     for m in finditer(r'\b([Вв] |[Нн]а |[Оо]б? |[Пп]ри )(\d+) ([а-я]+([ая]х|е|и))\b', text):
         number = cardinal(m.group(2), p_ca)
         if number[-1] == 'м':
             if zh_p.find(m.group(3)) != -1:
                 number = number[:-2] + 'й'
         text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
+
+    # Наращения при количественных числительных недопустимы, но распространены
+    for m in finditer(r'(\d+)(-ти|-х)\b', text):
+        text = text.replace(m.group(), cardinal(m.group(1), r_ca), 1)
 
     # Коррекция формы единиц измерения в косвенных падежах
     for sample in postsamples:
