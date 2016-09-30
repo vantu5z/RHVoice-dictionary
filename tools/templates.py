@@ -1512,13 +1512,13 @@ def txt_prep(text):
             minutes = '0_' + minutes
         text = text.replace(m.group(), m.group(1) + hours + ' ' + minutes, 1)
 
-    #for m in finditer(r'\b(\d{1,2}):(\d{2})\b', text):
-    #    minutes = feminin(m.group(2))
-    #    if m.group(2) == '00':
-    #        minutes = '00'
-    #    elif m.group(2)[0] == '0':
-    #        minutes = '0_' + minutes
-    #    text = text.replace(m.group(), m.group(1) + ' ' + minutes, 1)
+#    for m in finditer(r'\b(\d{1,2}):(\d{2})\b', text):
+#        minutes = feminin(m.group(2))
+#        if m.group(2) == '00':
+#            minutes = '00'
+#        elif m.group(2)[0] == '0':
+#            minutes = '0_' + minutes
+#        text = text.replace(m.group(), m.group(1) + ' ' + minutes, 1)
 
     # Количественные числительные
 
