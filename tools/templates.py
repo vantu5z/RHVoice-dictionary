@@ -1440,16 +1440,27 @@ def txt_prep(text):
     for m in finditer(r'(\d+)-ю\b', text):
         text = text.replace(m.group(), ordinal(m.group(1), v_zh), 1)
 
-    for m in finditer(r'\b([Вв] |[Нн]а |[Пп]ри )(\d+)-м\b', text):
+    for m in finditer(r'\b([Вв]о? |[Нн]а |[Пп]ри )(\d+)-м\b', text):
         text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), p_mu), 1)
 
+    for m in finditer(r'\b([Кк]о? |[Пп]о )(\d*[02-9][02-9]|[02-9]|\d*1\d) ([а-я]+[еиую])\b', text):
+        number = ''
+        if ms_d.find('|' + m.group(3) + '|') != -1:
+            number = ordinal(m.group(2), d_mu)
+        else:
+            if zh_dp.find('|' + m.group(3) + '|') != -1:
+                number = ordinal(m.group(2), d_zh)
+        if number != '':
+            text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
+
     for m in finditer(r'\b([Вв]о? |[Нн]а |[Оо] |[Пп]ри )(\d*[02-9][02-9]|[02-9]|\d*1\d) ([а-я]+[еиу])\b', text):
-#    for m in finditer(r'\b([Вв]о? |[Нн]а |[Оо] |[Пп]ри )(\d+) ([а-я]+[еиу])\b', text):
+    #for m in finditer(r'\b([Вв]о? |[Нн]а |[Оо] |[Пп]ри )(\d+) ([а-я]+[еиу])\b', text):
         number = ''
         if ms_p.find('|' + m.group(3) + '|') != -1:
             number = ordinal(m.group(2), p_mu)
-        if zh_dp.find('|' + m.group(3) + '|') != -1:
-            number = ordinal(m.group(2), p_mu)[:-1] + 'й'
+        else:
+            if zh_dp.find('|' + m.group(3) + '|') != -1:
+                number = ordinal(m.group(2), p_zh)
         if number != '':
             text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
 
@@ -1566,11 +1577,11 @@ def txt_prep(text):
             elif m.group(2)[-1] == '1':
                 number = m.group(2)[:-1] + '0_одну '
         elif m.group(2) == '2':
-             number = 'двух '
+            number = 'двух '
         elif m.group(2) == '3':
-             number = 'трех '
+            number = 'трех '
         elif m.group(2) == '4':
-             number = 'четырех '
+            number = 'четырех '
         if number != '':
             text = text.replace(m.group(), m.group(1) + number + m.group(3), 1)
 
