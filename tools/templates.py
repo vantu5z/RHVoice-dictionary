@@ -1543,7 +1543,6 @@ def txt_prep(text):
 
     # Винительный падеж (муж. род)
     for m in finditer(r'(\d*[02-9]1|[1-4]) ' + mu_v, text):
-        print(m.group())
         if m.group(1) == '1':
             number = 'одного '
         elif m.group(1) == '2':
