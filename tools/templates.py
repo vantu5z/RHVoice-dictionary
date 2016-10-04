@@ -1569,7 +1569,6 @@ def txt_prep(text):
 
     # Винительный падеж (муж. род)
     for m in finditer(r'\b(\d*[02-9]1|[1-4]) ' + mu_v, text):
-        print(m.group(1))
         number = m.group(1)
         if m.group(2)[-1] == 'а' or m.group(2)[-1] == 'я':
             if m.group(1) == '1':
