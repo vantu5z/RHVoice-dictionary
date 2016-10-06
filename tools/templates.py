@@ -1470,20 +1470,21 @@ def txt_prep(text):
     for m in finditer(r'\b([Дд]о|[Пп]осле|[Сс]о?) (\d+)-й\b', text):
         text = text.replace(m.group(), m.group(1) + ' ' + ordinal(m.group(2), r_zh), 1)
 
-    for m in finditer(r'(\d+)-й\b', text):
-        text = text.replace(m.group(), ordinal(m.group(1), i_mu), 1)
-
-    for m in finditer(r'(\d+)(-| и )(\d+)( годами| веками)', text):
+    for m in finditer(r'(\d+)(-| и )(\d+)( годами| веками| (сто|тысяче)летиями)', text):
         text = text.replace(m.group(), ordinal(m.group(1), t_mu) + m.group(2) + ordinal(m.group(3), t_mu) + m.group(4), 1)
 
     for m in finditer(r'(\d+)-м (год(у|ах)|век(е|ах)|(сто|тысяче)лети(и|ях))', text):
         text = text.replace(m.group(), ordinal(m.group(1), p_mu) + ' ' + m.group(2), 1)
 
-    for m in finditer(r'(\d+)-м( [а-яА-Я]+м\b)', text):
+    for m in finditer(r'(\d+)-м( [а-яА-Я]+[иы]м)\b', text):
         text = text.replace(m.group(), ordinal(m.group(1), t_mu) + m.group(2), 1)
 
-    for m in finditer(r'(\d+)-е\b', text):
-        text = text.replace(m.group(), ordinal(m.group(1), i_sr), 1)
+    for m in finditer(r'(\d+)-е ([а-я]+[ео])\b', text):
+        if sr_iv.find('|' + m.group(2) + '|') != -1:
+            text = text.replace(m.group(), ordinal(m.group(1), i_sr) + ' ' + m.group(2), 1)
+
+    for m in finditer(r'(\d+)-й\b', text):
+        text = text.replace(m.group(), ordinal(m.group(1), i_mu), 1)
 
     # Склонение порядковых числительных при именах собственных
     for m in finditer(r'(Александр|Иван|Иоанн|Пав[е]?л|П[её]тр|Ф[её]дор|Васили|Лжедмитри|Никола)' + '(|а|е|ем|й|ом|у|ю|я)' + r' (\d+)', text):
