@@ -1425,6 +1425,9 @@ def txt_prep(text):
     for m in finditer(r'(\d+)( зимни[еимх]{1,2}| летни[еимх]{1,2}|)( Олимпийски)(е|ми|м\b|х)', text):
         text = text.replace(m.group(), ordinal(m.group(1), mn_pd[m.group(4)]) + m.group(2) + m.group(3) + m.group(4), 1)
 
+    for m in finditer(r'(\d+)( Съезд)(|а|е|ом|у)\b', text):
+        text = text.replace(m.group(), ordinal(m.group(1), mu_pd[m.group(3)]) + m.group(2) + m.group(3), 1)
+
     for m in finditer(r'(\d+0)(-\d+0-е годы)', text):
         text = text.replace(m.group(), ordinal(m.group(1), i_mn) + m.group(2), 1)
 
