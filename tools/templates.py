@@ -1219,7 +1219,7 @@ def txt_prep(text):
     # Единицы измерения
 
     # Родительный падеж
-    for m in finditer(r'([Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Оо]т|[Вв] течение|[Пп]орядка|[Пп]осле) (\d+)' + units, text):
+    for m in finditer(r'([Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Вв] течение|[Пп]орядка|[Пп]осле) (\d+)' + units, text):
         text = text.replace(m.group(), m.group(1) + ' ' + m.group(2) + ' ' + substant(m.group(2), m.group(3), 1), 1)
 
     # Дательный падеж
@@ -1231,7 +1231,7 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + substant(m.group(2), m.group(3), 3), 1)
 
     # Предложный падеж
-    for m in finditer(r'([Вв] |[Нн]а |[Оо] |[Пп]ри )(\d+)' + units, text):
+    for m in finditer(r'([Вв] |[Оо] |[Пп]ри )(\d+)' + units, text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + substant(m.group(2), m.group(3), 4), 1)
 
     # Именительный
