@@ -1239,8 +1239,8 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(2)][2], 1)
     for m in finditer(r'(\d+)' + units, text):
         text = text.replace(m.group(), m.group(1) + ' ' + substant(m.group(1), m.group(2)), 1)
-    for m in finditer(r'(тысячи|миллиона|миллиарда|триллиона) ?' + units, text):
-        text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(2)][1], 1)
+    for m in finditer(r'(тысяч[аимх]{,3}|(миллион|миллиард|триллион)(а[имх]{,2}|ов)) ' + units, text):
+        text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(4)][1], 1)
 
     # Десятичные дроби (до миллионых включительно)
 
