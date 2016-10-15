@@ -1218,6 +1218,10 @@ def txt_prep(text):
 
     # Единицы измерения
 
+    # Творительный падеж
+    for m in finditer(r'([Сс]равн(ени[еию]|ив|ивая) с )(\d+)' + units, text):
+        text = text.replace(m.group(), m.group(1) + m.group(3) + ' ' + substant(m.group(3), m.group(4), 3), 1)
+
     # Родительный падеж
     for m in finditer(r'([Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Вв] течение|[Пп]орядка|[Пп]осле|[Сс]) (\d+)' + units, text):
         text = text.replace(m.group(), m.group(1) + ' ' + m.group(2) + ' ' + substant(m.group(2), m.group(3), 1), 1)
@@ -1225,10 +1229,6 @@ def txt_prep(text):
     # Дательный падеж
     for m in finditer(r'([Кк]о? |рав[нагеимоыхя]{2,4} )(\d+)' + units, text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + substant(m.group(2), m.group(3), 2), 1)
-
-    # Творительный падеж
-    for m in finditer(r'([Сс]равн(ени[еию]|ив|ивая) с )(\d+)' + units, text):
-        text = text.replace(m.group(), m.group(1) + m.group(3) + ' ' + substant(m.group(3), m.group(4), 3), 1)
 
     # Предложный падеж
     for m in finditer(r'([Вв] |[Оо] |[Пп]ри )(\d+)' + units, text):
@@ -1560,6 +1560,17 @@ def txt_prep(text):
         num = sub(r'(одной тысячи|одноготысяче)', 'тысяче', num)
         text = text.replace(m.group(), num + m.group(2), 1)
 
+    # Творительный падеж
+    for m in finditer(r'(\d+)( [а-я]+(ми|[ео]м|[ео]й|ью))\b', text):
+        number = ''
+        if m.group(2)[-1] == 'и' or m.group(2)[-1] == 'м':
+            number = cardinal(m.group(1), t_ca)
+        else:
+            if (m.group(2)[-1] == 'й' or m.group(2)[-1] == 'ю') and (m.group(1) == '1' or (len(m.group(1)) > 1 and m.group(1)[-2] != '1' and m.group(1)[-1] == '1')):
+                number = cardinal(m.group(1), t_ca)[:-2] + 'ой'
+        if number != '':
+            text = text.replace(m.group(), number + m.group(2), 1)
+
     # Родительный падеж
     for m in finditer(r'\b([Оо]т |[Сс] )(\d+)( до \d+ )([а-я]+)\b', text):
         number = cardinal(m.group(2), r_ca)
@@ -1580,7 +1591,7 @@ def txt_prep(text):
             if num2[-6:] == 'одного': num2 = num2[:-2] + 'й'
         text = text.replace(m.group(), m.group(1) + num1 + ' ' + num2 + ' ' + m.group(4), 1)
 
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв]озраст[аемоу]{,2}) (\d+) ([а-я]+)\b', text):
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв]озраст[аемоу]{,2}|[Сс]) (\d+) ([а-я]+)\b', text):
         number = ''
         if ms_r.find('|' + m.group(3) + '|') != -1:
             if m.group(2) == '1' or (len(m.group(2)) > 1 and m.group(2)[-2] != '1' and m.group(2)[-1] == '1'):
@@ -1613,17 +1624,6 @@ def txt_prep(text):
                         number = ordinal(m.group(1), d_zh)
         if number != '':
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
-
-    # Творительный падеж
-    for m in finditer(r'(\d+)( [а-я]+(ми|[ео]м|[ео]й|ью))\b', text):
-        number = ''
-        if m.group(2)[-1] == 'и' or m.group(2)[-1] == 'м':
-            number = cardinal(m.group(1), t_ca)
-        else:
-            if (m.group(2)[-1] == 'й' or m.group(2)[-1] == 'ю') and (m.group(1) == '1' or (len(m.group(1)) > 1 and m.group(1)[-2] != '1' and m.group(1)[-1] == '1')):
-                number = cardinal(m.group(1), t_ca)[:-2] + 'ой'
-        if number != '':
-            text = text.replace(m.group(), number + m.group(2), 1)
 
     # Винительный падеж (муж. род)
     for m in finditer(r'\b(\d*[02-9]1|[1-4]) ' + mu_v, text):
