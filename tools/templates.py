@@ -1223,7 +1223,7 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + m.group(3) + ' ' + substant(m.group(3), m.group(4), 3), 1)
 
     # Родительный падеж
-    for m in finditer(r'([Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Вв] течение|[Пп]орядка|[Пп]осле|[Сс]) (\d+)' + units, text):
+    for m in finditer(r'([Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Сс]) (\d+)' + units, text):
         text = text.replace(m.group(), m.group(1) + ' ' + m.group(2) + ' ' + substant(m.group(2), m.group(3), 1), 1)
 
     # Дательный падеж
