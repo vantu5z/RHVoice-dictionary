@@ -1011,7 +1011,7 @@ samples = (
   (r'\b(\d+)-(\d+) (века\b|вв\.)', r'\1-й \2-й века'),
   (r'\b(\d+) века\b', r'\1-го века'), # Спорный шаблон
   (r'\b([Вв] \d+) (веке|в\.)', r'\1-м веке'),
-  (r'\b([Кк] \d+)(-му) (веку|в\.)', r'\1-му веку'),
+  (r'\b([Кк] \d+)(|-му) (веку|в\.)', r'\1-му веку'),
   (r'\b([Дд]о|[Пп]осле|[Сс])( \d+) (века|в\.)', r'\1\2-го века'),
   (r'\b([Вв] \d+)(-| и )(\d+) (веках|вв\.)', r'\1-м\2\3-м веках'),
   (r'\b([Кк] \d+)-(\d+) векам', r'\1-му \2-му векам'),
@@ -1238,7 +1238,11 @@ def txt_prep(text):
     for m in finditer(r'(\d+,\d+)' + units, text):
         text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(2)][2], 1)
     for m in finditer(r'(\d+)' + units, text):
-        text = text.replace(m.group(), m.group(1) + ' ' + substant(m.group(1), m.group(2)), 1)
+        if m.group(2) == 'л.с.':
+            number = feminin(m.group(1))
+        else:
+            number = m.group(1)
+        text = text.replace(m.group(), number + ' ' + substant(m.group(1), m.group(2)), 1)
     for m in finditer(r'(тысяч[аимх]{,3}|(миллион|миллиард|триллион)(а[имх]{,2}|ов)) ' + units, text):
         text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(4)][1], 1)
 
@@ -1661,7 +1665,7 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Предложный падеж
-    for m in finditer(r'(\d+) ([а-я]+([аиыя]х|е|и|у))\b', text):
+    for m in finditer(r'(\d+) ([а-я]+([ая]х|е|и|у))\b', text):
         number = ''
         if m.group(2)[-1] == 'х':
             if m.group(1)[-1] != '1' or (len(m.group(1)) > 1 and m.group(1)[-2] == '1'):
