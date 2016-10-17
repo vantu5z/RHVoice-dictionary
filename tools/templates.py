@@ -1170,24 +1170,27 @@ def roman2arabic(value):
     return total
 
 def substant(num, key, cas = 0):
-    if cas == 0:
-        if len(num) > 1 and num[-2] == '1':
-            form = forms[key][1]
-        else:
-            if num[-1] == '1':
-                form = forms[key][0]
-            elif 1 < int(num[-1]) < 5:
-                if key == 'л.с.':
-                    form = 'лошадиные силы'
-                else:
-                    form = forms[key][2]
-            else:
-                form = forms[key][1]
+    if len (num) > 3 and num[-3:] == '000':
+        form = forms[key][1]
     else:
-        if (len(num) > 1 and num[-2] == '1') or num[-1] != '1':
-            form = forms[key][2 * cas + 1]
+        if cas == 0:
+            if len(num) > 1 and num[-2] == '1':
+                form = forms[key][1]
+            else:
+                if num[-1] == '1':
+                    form = forms[key][0]
+                elif 1 < int(num[-1]) < 5:
+                    if key == 'л.с.':
+                        form = 'лошадиные силы'
+                    else:
+                        form = forms[key][2]
+                else:
+                    form = forms[key][1]
         else:
-            form = forms[key][2 * cas]        
+            if (len(num) > 1 and num[-2] == '1') or num[-1] != '1':
+                form = forms[key][2 * cas + 1]
+            else:
+                form = forms[key][2 * cas]
     return form
 
 def feminin(num):
@@ -1223,7 +1226,7 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + m.group(3) + ' ' + substant(m.group(3), m.group(4), 3), 1)
 
     # Родительный падеж
-    for m in finditer(r'([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Сс]) (\d+)' + units, text):
+    for m in finditer(r'([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Сс]) (\d+)' + units, text):
         text = text.replace(m.group(), m.group(1) + ' ' + m.group(2) + ' ' + substant(m.group(2), m.group(3), 1), 1)
 
     # Дательный падеж
@@ -1231,8 +1234,10 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + substant(m.group(2), m.group(3), 2), 1)
 
     # Предложный падеж
-    for m in finditer(r'([Вв] |[Оо] |[Пп]ри )(\d+)' + units, text):
+    for m in finditer(r'([Вв] |[Оо]б? |[Пп]ри )(\d+)' + units, text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + substant(m.group(2), m.group(3), 4), 1)
+    for m in finditer(r'([Вв] )(\d+)(мм|см|км|м) от ', text):
+        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + substant(m.group(2), m.group(3), 4) + ' от ', 1)
 
     # Именительный
     for m in finditer(r'(\d+,\d+)' + units, text):
@@ -1598,7 +1603,7 @@ def txt_prep(text):
             if num2[-6:] == 'одного': num2 = num2[:-2] + 'й'
         text = text.replace(m.group(), m.group(1) + num1 + ' ' + num2 + ' ' + m.group(4), 1)
 
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв]озраст[аемоу]{,2}|[Сс]) (\d+) ([а-я]+)\b', text):
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв]озраст[аемоу]{,2}|[Сс]) (\d+) ([а-я]+)\b', text):
         number = ''
         if ms_r.find('|' + m.group(3) + '|') != -1:
             if m.group(2) == '1' or (len(m.group(2)) > 1 and m.group(2)[-2] != '1' and m.group(2)[-1] == '1'):
@@ -1612,25 +1617,25 @@ def txt_prep(text):
             text = text.replace(m.group(), m.group(1) + ' ' + number + ' ' + m.group(3), 1)
 
     # Дательный падеж
-    for m in finditer(r'(\d+) ([а-я]+([аиыя]м|у|ю|е|и))\b', text):
+    for m in finditer(r'\b([Кк] |[Пп]о |рав[нагеимоыхя]{2,4} )(\d+) ([а-я]+([аиыя]м|у|ю|е|и))\b', text):
         number = ''
-        if m.group(2)[-1] == 'м':
-            if m.group(1)[-1] != '1' or (len(m.group(1)) > 1 and m.group(1)[-2] == '1'):
-                number = cardinal(m.group(1), d_ca)
+        if m.group(3)[-1] == 'м':
+            if m.group(2)[-1] != '1' or (len(m.group(2)) > 1 and m.group(2)[-2] == '1'):
+                number = cardinal(m.group(2), d_ca)
         else:
-            if m.group(1) == '1' or (len(m.group(1)) > 1 and m.group(1)[-2] != '1' and m.group(1)[-1] == '1'):
-                if ms_d.find('|' + m.group(2) + '|') != -1 and m.group(1)[-1] == '1':
-                    number = cardinal(m.group(1), d_ca)
-                if zh_dp.find('|' + m.group(2) + '|') != -1:
-                    number = cardinal(m.group(1), d_ca)[:-2] + 'й'
+            if m.group(2) == '1' or (len(m.group(2)) > 1 and m.group(2)[-2] != '1' and m.group(2)[-1] == '1'):
+                if ms_d.find('|' + m.group(3) + '|') != -1 and m.group(2)[-1] == '1':
+                    number = cardinal(m.group(2), d_ca)
+                if zh_dp.find('|' + m.group(3) + '|') != -1:
+                    number = cardinal(m.group(2), d_ca)[:-2] + 'й'
             else:
-                if ms_d.find('|' + m.group(2) + '|') != -1:
-                    number = ordinal(m.group(1), d_mu)
+                if ms_d.find('|' + m.group(3) + '|') != -1:
+                    number = ordinal(m.group(2), d_mu)
                 else:
-                    if zh_dp.find('|' + m.group(2) + '|') != -1:
-                        number = ordinal(m.group(1), d_zh)
+                    if zh_dp.find('|' + m.group(3) + '|') != -1:
+                        number = ordinal(m.group(2), d_zh)
         if number != '':
-            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
+            text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
 
     # Винительный падеж (муж. род)
     for m in finditer(r'\b(\d*[02-9]1|[1-4]) ' + mu_v, text):
@@ -1668,25 +1673,17 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Предложный падеж
-    for m in finditer(r'(\d+) ([а-я]+([ая]х|е|и|у))\b', text):
+    for m in finditer(r'([Вв] |[Нн]а |[Оо]б? |[Пп]ри )(\d+) ([а-я]{2,})\b', text):
         number = ''
-        if m.group(2)[-1] == 'х':
-            if m.group(1)[-1] != '1' or (len(m.group(1)) > 1 and m.group(1)[-2] == '1'):
-                number = cardinal(m.group(1), p_ca)
-        else:
-            if m.group(1) == '1' or (len(m.group(1)) > 1 and m.group(1)[-2] != '1' and m.group(1)[-1] == '1'):
-                if ms_p.find('|' + m.group(2) + '|') != -1:
-                    number = cardinal(m.group(1), p_ca)
-                if zh_dp.find('|' + m.group(2) + '|') != -1:
-                    number = cardinal(m.group(1), p_ca)[:-1] + 'й'
-            else:
-                if ms_p.find('|' + m.group(2) + '|') != -1:
-                    number = ordinal(m.group(1), p_mu)
-                else:
-                    if zh_dp.find('|' + m.group(2) + '|') != -1:
-                        number = ordinal(m.group(1), p_zh)
+        if m.group(3)[-2:] == 'ах' or m.group(3)[-2:] == 'ях':
+            number = cardinal(m.group(2), p_ca)
+        if m.group(2) == '1' or (len(m.group(2)) > 1 and m.group(2)[-2] != '1' and m.group(2)[-1] == '1'):
+            if ms_p.find('|' + m.group(3) + '|') != -1:
+                number = cardinal(m.group(2), p_ca)
+            elif zh_dp.find('|' + m.group(3) + '|') != -1:
+                number = cardinal(m.group(2), p_ca)[:-1] + 'й'
         if number != '':
-            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
+            text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
 
     # Женский род (им./вин. пад.)
     for m in finditer(r'(\d*[02-9][12]|[12]) ([а-я]+)', text):
