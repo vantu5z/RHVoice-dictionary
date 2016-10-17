@@ -1055,7 +1055,7 @@ samples = (
 
   (r'(1\d|[02-9][05-9]|\b[5-9]) года\b', r'\1-го года'),
   (r'([12]\d{3}) года\b', r'\1-го года'),
-  (r'(1\d|[02-9][02-9]|\b[2-9]) год\b', r'\1-й год'),
+  (r'(1\d|[02-9][02-9]|\b[2-9])(| [а-я]+[иы]й) год\b', r'\1-й\2 год'),
   (r'(\d+)(|-й) ?г\.', r'\1-й год'),
 
   (r'(\d+) ?- ?(\d+) ((тысяче|сто)летия|поколения)\b', r'\1-е-\2-е \3'),
@@ -1516,6 +1516,28 @@ def txt_prep(text):
     for m in finditer(r'(\d+)-й\b', text):
         text = text.replace(m.group(), ordinal(m.group(1), i_mu), 1)
 
+    # Числительное может быть только порядковым
+
+    for m in finditer(r'(\d*[02-9][02-9]|\d*1\d|[02-9]) ([а-я]+)\b', text):
+        number = ''
+        if ms_d.find('|' + m.group(2) + '|') != -1:
+            number = ordinal(m.group(1), d_mu)
+        elif ms_p.find('|' + m.group(2) + '|') != -1:
+            number = ordinal(m.group(1), p_mu)
+        elif zh_dp.find('|' + m.group(2) + '|') != -1:
+            number = ordinal(m.group(1), d_zh)
+        if number != '':
+            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
+
+    for m in finditer(r'\b([Оо]коло|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв] течение|[Пп]осле|[Пп]ротив|[Сс]) (\d*[02-9][02-9]|\d*1\d|[02-9]) ([а-я]+)\b', text):
+        number = ''
+        if ms_r.find('|' + m.group(3) + '|') != -1:
+            number = ordinal(m.group(2), r_mu)
+        elif zh_r.find('|' + m.group(3) + '|') != -1:
+            number = ordinal(m.group(2), r_zh)
+        if number != '':
+            text = text.replace(m.group(), m.group(1) + ' ' + number + ' ' + m.group(3), 1)
+
     # Склонение порядковых числительных при именах собственных
     for m in finditer(r'(Александр|Иван|Иоанн|Пав[е]?л|П[её]тр|Ф[её]дор|Васили|Лжедмитри|Никола)' + '(|а|е|ем|й|ом|у|ю|я)' + r' (\d+)', text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(m.group(3), mu_pad[m.group(2)]), 1)
@@ -1628,12 +1650,6 @@ def txt_prep(text):
                     number = cardinal(m.group(2), d_ca)
                 if zh_dp.find('|' + m.group(3) + '|') != -1:
                     number = cardinal(m.group(2), d_ca)[:-2] + 'й'
-            else:
-                if ms_d.find('|' + m.group(3) + '|') != -1:
-                    number = ordinal(m.group(2), d_mu)
-                else:
-                    if zh_dp.find('|' + m.group(3) + '|') != -1:
-                        number = ordinal(m.group(2), d_zh)
         if number != '':
             text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
 
