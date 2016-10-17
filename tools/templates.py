@@ -1223,7 +1223,7 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + m.group(3) + ' ' + substant(m.group(3), m.group(4), 3), 1)
 
     # Родительный падеж
-    for m in finditer(r'([Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Сс]) (\d+)' + units, text):
+    for m in finditer(r'([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Сс]) (\d+)' + units, text):
         text = text.replace(m.group(), m.group(1) + ' ' + m.group(2) + ' ' + substant(m.group(2), m.group(3), 1), 1)
 
     # Дательный падеж
@@ -1504,6 +1504,9 @@ def txt_prep(text):
     for m in finditer(r'(\d+)-е ([а-я]+[ео])\b', text):
         if sr_iv.find('|' + m.group(2) + '|') != -1:
             text = text.replace(m.group(), ordinal(m.group(1), i_sr) + ' ' + m.group(2), 1)
+
+    for m in finditer(r'(\d+)-е' + months, text):
+        text = text.replace(m.group(), ordinal(m.group(1), i_sr) + ' ' + m.group(2), 1)
 
     for m in finditer(r'(\d+)-й\b', text):
         text = text.replace(m.group(), ordinal(m.group(1), i_mu), 1)
