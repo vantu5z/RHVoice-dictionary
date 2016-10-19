@@ -1528,8 +1528,10 @@ def txt_prep(text):
             number = ordinal(m.group(1), d_mu)
         elif ms_p.find('|' + m.group(2) + '|') != -1:
             number = ordinal(m.group(1), p_mu)
-        elif zh_dp.find('|' + m.group(2) + '|') != -1:
-            number = ordinal(m.group(1), d_zh)
+        elif ms_t.find('|' + m.group(2) + '|') != -1:
+            number = ordinal(m.group(1), t_mu)
+        elif zh_dp.find('|' + m.group(2) + '|') != -1 or zh_t.find('|' + m.group(2) + '|') != -1:
+            number = ordinal(m.group(1), r_zh)
         if number != '':
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
