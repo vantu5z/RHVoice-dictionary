@@ -1233,8 +1233,8 @@ def txt_prep(text):
     # Единицы измерения
 
     # Часто встречающаяся конструкция
-    for m in finditer(r'(весом|высотой|глубиной|длиной|массой|шириной)( в \d+)' + units, text):
-        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + substant(m.group(2), m.group(3)), 1)
+    for m in finditer(r'(весом|высотой|глубиной|длиной|массой|мощностью|расстояни[еимюя]{1,2}|шириной) в (\d+)' + units, text):
+        text = text.replace(m.group(), m.group(1) + ' в ' + m.group(2) + ' ' + substant(m.group(2), m.group(3)), 1)
 
     # Творительный падеж
     for m in finditer(r'([Сс]равн(ени[еию]|ив|ивая) с )(\d+)' + units, text):
