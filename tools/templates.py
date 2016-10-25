@@ -2504,15 +2504,15 @@ def txt_prep(text):
     # Дательный падеж
     for m in finditer(r'\b([Кк] |[Пп]о |рав[нагеимоыхя]{2,4} )(\d+) ([а-я]+([аиыя]м|у|ю|е|и))\b', text):
         number = ''
-        if m.group(3)[-1] == 'м':
-            if m.group(2)[-1] != '1' or (len(m.group(2)) > 1 and m.group(2)[-2] == '1'):
+        if m.group(2) == '1' or (len(m.group(2)) > 1 and m.group(2)[-2] != '1' and m.group(2)[-1] == '1'):
+            if m.group(3) in ms_d:
                 number = cardinal(m.group(2), d_ca)
-        else:
-            if m.group(2) == '1' or (len(m.group(2)) > 1 and m.group(2)[-2] != '1' and m.group(2)[-1] == '1'):
-                if m.group(3) in ms_d and m.group(2)[-1] == '1':
-                    number = cardinal(m.group(2), d_ca)
-                if m.group(3) in zh_dp:
-                    number = cardinal(m.group(2), d_ca)[:-2] + 'й'
+            elif m.group(3) in zh_dp:
+                number = cardinal(m.group(2), d_ca)[:-2] + 'й'
+            elif m.group(3) == 'суткам':
+                number = cardinal(m.group(2), t_ca)[:-3] + 'им'
+        elif m.group(3)[-1] == 'м':
+            number = cardinal(m.group(2), d_ca)
         if number != '':
             text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
 
@@ -2524,6 +2524,8 @@ def txt_prep(text):
                 number = cardinal(m.group(1), t_ca)
             elif '|' + m.group(2) + '|' in zh_t:
                 number = cardinal(m.group(1), t_ca)[:-2] + 'ой'
+            elif m.group(2) == 'сутками':
+                number = cardinal(m.group(1), t_ca) + 'и'
         elif m.group(2)[-1] == 'и':
             number = cardinal(m.group(1), t_ca)
         if number != '':
