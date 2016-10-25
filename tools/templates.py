@@ -2501,20 +2501,20 @@ def txt_prep(text):
         if number != '':
             text = text.replace(m.group(), m.group(1) + ' ' + number + ' ' + m.group(3), 1)
 
-    # Дательный падеж
-    for m in finditer(r'\b([Кк] |[Пп]о |рав[нагеимоыхя]{2,4} )(\d+) ([а-я]+([аиыя]м|у|ю|е|и))\b', text):
+    # Дательный падеж (мн. ч. и муж./ср. род ед. ч.)
+    for m in finditer(r'(\d+) (([а-я]+([иы]м|[ео]му) |)([а-я]+([ая]м|у|ю|е)))\b', text):
         number = ''
-        if m.group(2) == '1' or (len(m.group(2)) > 1 and m.group(2)[-2] != '1' and m.group(2)[-1] == '1'):
-            if m.group(3) in ms_d:
-                number = cardinal(m.group(2), d_ca)
-            elif m.group(3) in zh_dp:
-                number = cardinal(m.group(2), d_ca)[:-2] + 'й'
-            elif m.group(3) == 'суткам':
-                number = cardinal(m.group(2), t_ca)[:-3] + 'им'
-        elif m.group(3)[-1] == 'м':
-            number = cardinal(m.group(2), d_ca)
+        if m.group(1) == '1' or (len(m.group(1)) > 1 and m.group(1)[-2] != '1' and m.group(1)[-1] == '1'):
+            if m.group(5) in ms_d:
+                number = cardinal(m.group(1), d_ca)
+            elif m.group(5) in zh_dp:
+                number = cardinal(m.group(1), d_ca)[:-2] + 'й'
+            elif m.group(5) == 'суткам':
+                number = cardinal(m.group(1), t_ca)[:-3] + 'им'
+        elif m.group(6) == 'ам' or m.group(6) == 'ям':
+            number = cardinal(m.group(1), d_ca)
         if number != '':
-            text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
+            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Творительный падеж
     for m in finditer(r'(\d+) ([а-я]+([аиыя]ми|[ео]м|[ео]й|ью))\b', text):
@@ -2575,20 +2575,28 @@ def txt_prep(text):
                 number = m.group(2)[:-1] + '0_одну'
             text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
 
-    # Предложный падеж
-    for m in finditer(r'([Вв] |[Нн]а |[Оо]б? |[Пп]ри )(\d+) (([а-я]+[иы]х |)[а-я]{2,})\b', text):
+    # Предложный падеж (мн. ч. и муж./ср. род ед. ч.)
+    for m in finditer(r'(\d+) (([а-я]+([иы]х|[ео]м) |)([а-я]+([ая]х|е|и)))\b', text):
         number = ''
-        if m.group(3)[-2:] == 'ах' or m.group(3)[-2:] == 'ях':
-            number = cardinal(m.group(2), p_ca)
-        if m.group(2) == '1' or (len(m.group(2)) > 1 and m.group(2)[-2] != '1' and m.group(2)[-1] == '1'):
-            if m.group(3) in ms_p:
-                number = cardinal(m.group(2), p_ca)
-            elif m.group(3) in zh_dp:
-                number = cardinal(m.group(2), p_ca)[:-1] + 'й'
-            elif m.group(3) == 'сутках':
-                number = cardinal(m.group(2), p_ca)[:-2] + 'их'
+        if m.group(6) == 'ах' or m.group(6) == 'ях':
+            number = cardinal(m.group(1), p_ca)
+        if m.group(1) == '1' or (len(m.group(1)) > 1 and m.group(1)[-2] != '1' and m.group(1)[-1] == '1'):
+            if m.group(5) in ms_p:
+                number = cardinal(m.group(1), p_ca)
+            elif m.group(5) == 'сутках':
+                number = cardinal(m.group(1), p_ca)[:-2] + 'их'
+        elif m.group(6) == 'ах' or m.group(6) == 'ях':
+            number = cardinal(m.group(1), p_ca)
         if number != '':
-            text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
+            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
+
+    # Женский род (дат./предл. пад.)
+    for m in finditer(r'\b(\d*[02-9]1|1) (([а-я]+[ео]й |)([а-я]+[еи]))\b', text):
+        number = ''
+        if '|' + m.group(4) + '|' in zh_dp:
+            number = cardinal(m.group(1), p_ca)[:-1] + 'й'
+        if number != '':
+            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Женский род (им./вин. пад.)
     for m in finditer(r'\b(\d*[02-9][12]|[12]) ((([а-я]+[ая]я|[а-я]+[иы][ех]) |)([а-я]+))', text):
