@@ -2585,6 +2585,8 @@ def txt_prep(text):
                 number = cardinal(m.group(2), p_ca)
             elif m.group(3) in zh_dp:
                 number = cardinal(m.group(2), p_ca)[:-1] + 'й'
+            elif m.group(3) == 'сутках':
+                number = cardinal(m.group(2), p_ca)[:-2] + 'их'
         if number != '':
             text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
 
