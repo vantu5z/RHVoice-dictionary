@@ -2472,6 +2472,17 @@ def txt_prep(text):
                 number = number[:-3] + 'их'
         text = text.replace(m.group(), m.group(1) + number + m.group(3) + m.group(4), 1)
 
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв]место|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв]озраст[аемоу]{,2}|[Сс]) (\d+)( ?- ?| или )(\d+) ([а-я]+)\b', text):
+        num1 = cardinal(m.group(2), r_ca)
+        num2 = cardinal(m.group(4), r_ca)
+        if m.group(5) in zh_r or m.group(5) in mn_r[903:]:
+            if num1[-6:] == 'одного': num1 = num1[:-2] + 'й'
+            if num2[-6:] == 'одного': num2 = num2[:-2] + 'й'
+        elif m.group(5) == 'суток':
+            if num1[-6:] == 'одного': num1 = num1[:-3] + 'их'
+            if num2[-6:] == 'одного': num2 = num2[:-3] + 'их'
+        text = text.replace(m.group(), m.group(1) + ' ' + num1 + m.group(3) + num2 + ' ' + m.group(5), 1)
+
     for m in finditer(r'\b(\d*[02-9][2-4]|[2-4]) (([а-я]+[иы]х |)([а-я]+))\b', text):
         if m.group(4) in mn_r:
             text = text.replace(m.group(), cardinal(m.group(1), r_ca) + ' ' + m.group(2), 1)
@@ -2518,6 +2529,12 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Творительный падеж
+    for m in finditer(r'(\d+)(( ?- ?| или )\d+ ([а-я]+[аиыя]ми))\b', text):
+        number = cardinal(m.group(1), d_ca)
+        if m.group(4) == 'сутками':
+            number = cardinal(m.group(1), t_ca)[:-3] + 'ими'
+        text = text.replace(m.group(), number + m.group(2), 1)
+
     for m in finditer(r'(\d+) ([а-я]+([аиыя]ми|[ео]м|[ео]й|ью))\b', text):
         number = ''
         if m.group(1) == '1' or (len(m.group(1)) > 1 and m.group(1)[-2] != '1' and m.group(1)[-1] == '1'):
