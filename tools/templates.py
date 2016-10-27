@@ -2487,15 +2487,15 @@ def txt_prep(text):
             if num2[-6:] == 'одного': num2 = num2[:-3] + 'их'
         text = text.replace(m.group(), m.group(1) + num1 + ' ' + num2 + ' ' + m.group(4), 1)
 
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв]место|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв]озраст[аемоу]{,2}|[Сс]) (\d+) ([а-я]{2,})\b', text):
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв]место|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв]озраст[аемоу]{,2}|[Сс]) (\d+) (([а-я]+([иы]х|[ео]го|[ео]й) |)([а-я]{2,}))\b', text):
         number = ''
-        if m.group(3) in ms_r:
+        if m.group(6) in ms_r:
             if m.group(2) == '1' or (len(m.group(2)) > 1 and m.group(2)[-2] != '1' and m.group(2)[-1] == '1'):
                 number = cardinal(m.group(2), r_ca)
-        elif m.group(3) in zh_r:
+        elif m.group(6) in zh_r:
             if m.group(2) == '1' or (len(m.group(2)) > 1 and m.group(2)[-2] != '1' and m.group(2)[-1] == '1'):
                 number = cardinal(m.group(2), r_ca)[:-2] + 'й'
-        elif m.group(3) in mn_r:
+        elif m.group(6) in mn_r:
             number = cardinal(m.group(2), r_ca)
             if m.group(3) == 'суток' and number[-6:] == 'одного':
                 number = number[:-3] + 'их'
