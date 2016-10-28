@@ -2586,20 +2586,14 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Творительный падеж
-    for m in finditer(r'(\d+)( ?- ?| или )(\d+) ([а-я]+([ая]ми|[ео]м|[ео]й|ью))\b', text):
-        num1 = cardinal(m.group(1), t_ca)
-        if num1[-5:] == 'одним':
+    for m in finditer(r'(\d+)(( ?- ?| или )\d+ ([а-я]+([ая]ми|[ео]м|[ео]й|ью)))\b', text):
+        number = cardinal(m.group(1), t_ca)
+        if number[-5:] == 'одним':
             if m.group(4) in ze_t or m.group(4) in zm_t:
-                num1 = num1[:-2] + 'ой'
+                number = number[:-2] + 'ой'
             elif m.group(4) == 'сутками':
-                num1 += 'и'
-        num2 = cardinal(m.group(3), t_ca)
-        if num2[-5:] == 'одним':
-            if m.group(4) in ze_t or m.group(4) in zm_t:
-                num2 = num2[:-2] + 'ой'
-            elif m.group(4) == 'сутками':
-                num2 += 'и'
-        text = text.replace(m.group(), num1 + m.group(2) + num2 + ' ' + m.group(4), 1)
+                number += 'и'
+        text = text.replace(m.group(), number + m.group(2), 1)
 
     for m in finditer(r'(\d+) ([а-я]+([аиыя]ми|[ео]м|[ео]й|ью))\b', text):
         number = ''
