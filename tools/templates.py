@@ -2861,7 +2861,7 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Наращения при количественных числительных недопустимы, но распространены
-    for m in finditer(r'(\d+)(-ти|-х)\b', text):
+    for m in finditer(r'\b(\d*[1-9]0|\d*1\d)-ти\b', text):
         text = text.replace(m.group(), cardinal(m.group(1), r_ca), 1)
 
     # Необязательная замена "_" (используется при обработке)
