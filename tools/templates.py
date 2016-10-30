@@ -2717,7 +2717,7 @@ def txt_prep(text):
             text = text.replace(m.group(), m.group(1) + ' ' + number + ' ' + m.group(3), 1)
 
     # Дательный падеж (мн. ч. и муж./ср. род ед. ч.)
-    for m in finditer(r'(\d+) (([а-я]+([иы]м|[ео]му) |)([а-я]+([ая]м|у|ю|е)))\b', text):
+    for m in finditer(r'(\d+) (([а-я]+([иы]м|[ео]му) |)([а-я]+([аиыя]м|у|ю|е)))\b', text):
         number = ''
         if m.group(1) == '1' or (len(m.group(1)) > 1 and m.group(1)[-2] != '1' and m.group(1)[-1] == '1'):
             if m.group(5) in ms_d:
@@ -2733,7 +2733,7 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Творительный падеж
-    for m in finditer(r'(\d+)(( ?- ?| или )\d+ ([а-я]+([ая]ми|[ео]м|[ео]й|ью)))\b', text):
+    for m in finditer(r'(\d+)(( ?- ?| или )\d+ ([а-я]+([ая]ми|[еиоы]м|[ео]й|ью)))\b', text):
         number = cardinal(m.group(1), t_ca)
         if number[-5:] == 'одним':
             if m.group(4) in ze_t or m.group(4) in zm_t:
@@ -2742,7 +2742,7 @@ def txt_prep(text):
                 number += 'и'
         text = text.replace(m.group(), number + m.group(2), 1)
 
-    for m in finditer(r'(\d+) ([а-я]+([аиыя]ми|[ео]м|[ео]й|ью))\b', text):
+    for m in finditer(r'(\d+) ([а-я]+([аиыя]ми|[ео]м|[еиоы]й|ью))\b', text):
         number = ''
         if m.group(1) == '1' or (len(m.group(1)) > 1 and m.group(1)[-2] != '1' and m.group(1)[-1] == '1'):
             if m.group(2) in ms_t:
@@ -2751,7 +2751,8 @@ def txt_prep(text):
                 number = cardinal(m.group(1), t_ca)[:-2] + 'ой'
             elif m.group(2) == 'сутками':
                 number = cardinal(m.group(1), t_ca) + 'и'
-        elif m.group(2)[-1] == 'и':
+#        elif m.group(2)[-1] == 'и':
+        elif m.group(2)[:-1] in mn_d:
             number = cardinal(m.group(1), t_ca)
         if number != '':
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
