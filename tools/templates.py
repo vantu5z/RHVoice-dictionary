@@ -2138,6 +2138,9 @@ samples = (
   (r'(\w)(\n|\Z)', r'\1.\2')
 )
 
+greekletters = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσΤτΥυΦφΧχΨψΩως'
+letternames = ('альфа', 'бета', 'гамма', 'дельта', 'эпсилон', 'дзета', 'эта', 'тета', 'йота', 'каппа', 'лямбда', 'мю', 'ню', 'кси', 'омикрон', 'пи', 'ро', 'сигма', 'тау', 'ипсилон', 'фи', 'хи', 'пси', 'омега', 'сигма')
+
 def cardinal(num, casus):
     rem = len(num) % 3
     if rem != 0: num = '0' * (3 - rem) + num
@@ -2744,7 +2747,7 @@ def txt_prep(text):
                 number += 'и'
         text = text.replace(m.group(), number + m.group(2), 1)
 
-    for m in finditer(r'(\d+) ([а-я]+([аиыя]ми|[ео]м|[еиоы]й|ью))\b', text):
+    for m in finditer(r'(\d+) ([а-я]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b', text):
         number = ''
         if m.group(1) == '1' or (len(m.group(1)) > 1 and m.group(1)[-2] != '1' and m.group(1)[-1] == '1'):
             if m.group(2) in ms_t:
@@ -2753,8 +2756,7 @@ def txt_prep(text):
                 number = cardinal(m.group(1), t_ca)[:-2] + 'ой'
             elif m.group(2) == 'сутками':
                 number = cardinal(m.group(1), t_ca) + 'и'
-#        elif m.group(2)[-1] == 'и':
-        elif m.group(2)[:-1] in mn_d:
+        elif m.group(2)[-1] == 'и':
             number = cardinal(m.group(1), t_ca)
         if number != '':
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
@@ -2873,8 +2875,6 @@ def txt_prep(text):
     text = sub('_', ' ', text)
 
     # Буквы греческого алфавита
-    greekletters = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσΤτΥυΦφΧχΨψΩως'
-    letternames = ('альфа', 'бета', 'гамма', 'дельта', 'эпсилон', 'дзета', 'эта', 'тета', 'йота', 'каппа', 'лямбда', 'мю', 'ню', 'кси', 'омикрон', 'пи', 'ро', 'сигма', 'тау', 'ипсилон', 'фи', 'хи', 'пси', 'омега', 'сигма')
     for j in greekletters:
         text = text.replace(j, letternames[greekletters.index(j)//2], 1)
 
