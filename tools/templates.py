@@ -2861,7 +2861,10 @@ def txt_prep(text):
             elif m.group(1) == '4':
                 number = 'четверо'
             elif len(m.group(1)) > 1 and m.group(1)[-2] != '1':
-                number = cardinal(m.group(1), r_ca)
+                if 5 > int(m.group(1)[-1]) > 0:
+                    number = cardinal(m.group(1), r_ca)
+                    if number[-6:] == 'одного':
+                        number = number[:-3] + 'их'  
         if number != '':
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
