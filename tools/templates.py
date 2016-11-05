@@ -1931,12 +1931,6 @@ presamples = (
   (r'(?<=\d) (?=\d{3})\b', ''),
   (r'(\d+,)((\d{3})+) (\d{1,2}\b)', r'\1\2\4'),
 
-  ('L-образн', 'эль-образн'),
-  ('V-образн', 'вэ-образн'),
-  ('X-образн', 'икс-образн'),
-  (r'\bID\b', 'ай-ди'),
-  (r'I( [a-zA-Z][a-z]+)', r'i\1'),
-
   (r'(?<!\d )\bсм\.', 'смотри'),
   (r' им\. ((|(|[А-Я]\.)[А-Я]\. ?)[А-Я][а-я]+)', r' имени \1'),
 
@@ -1957,7 +1951,7 @@ presamples = (
   (r'\bруб\.', '₽'),
   (r'(млн|млрд|трлн)\. ' + units, r'\1\2'), # По правилам без точки
   (r'(млн|млрд|трлн)\.(?! [А-Я]|\n|\Z)', r'\1'),
-  (r'(\$|€|£|₽) ?([0-9,-]+)', r'\2\1'),
+  (r'(\$|€|£|₽) ?([0-9]+)', r'\2\1'),
   (r'(\$|€|£|₽) ?(тыс\.|млн|млрд|трлн|тысяч(|а|и)\b|(миллион|миллиард|триллион)(|а|ов)\b)', r' \2 \1'),
   (' ?€', ' евро',),
   (r'кв\. ?((|к|с|м)м)\b', r'\1²'),
@@ -1993,6 +1987,7 @@ samples = (
   (r'(?<=\d-)ом\b', 'м'),
   (r'\bг\.г\.', 'гг.'),
   (r'\bХХ\b', '20'),
+  (r'\bID\b', 'ай-ди'),
   (r'ВКП\(б\)', 'вэкапэ-бэ'),
   ('[Вв]се-таки', 'всё-таки'),
 
@@ -2008,7 +2003,7 @@ samples = (
   (r'\b[Пп]рим\. пер\.', 'примечание переводчика'),
   (r'\b[Рр]ед\.', 'редактор'),
   (r'\b[Пп]рим\.', 'примечание'),
-  ('точки над i', 'точки над и-'),
+  (r'точк([аеийоу]{1,2}) над i', r'точк\1 над и-'),
   (r'\b([Дд])-(р|ра|ре|ром|ру)\b', r'\1окто\2'),
   (r'\b([Гг])-(н|на|не|ном|ну)\b', r'\1осподи\2'),
   (r'\b([Гг])-(жа|же|жи|жой|жу)\b', r'\1оспо\2'),
@@ -2129,9 +2124,8 @@ samples = (
   (r'(1\d|[02-9][02-9]|\b[2-9])(| [а-я]+[иы]й) год\b', r'\1-й\2 год'),
   (r'(\d+)(|-й) ?г\.', r'\1-й год'),
 
-  (r'(\d+) ?- ?(\d+) ((тысяче|сто)летия|поколения)\b', r'\1-е-\2-е \3'),
   (r'\b([Сс]о?)( \d+)( по \d+) ((тысяче|сто)летие|поколение)\b', r'\1\2-го\3-е \4'),
-  (r'\b([Вв]о?)( \d+) ?- ?(\d+) ((тысяче|сто)летиях|поколениях)', r'\1\2-м \3-м \4'),
+  (r'\b([Вв]о?)( \d+)(-| и | или )(\d+) ((тысяче|сто)летиях|поколениях)', r'\1\2-м\3\4-м \5'),
 
   (r'(\d)( ранга)\b', r'\1-го\2'),
 
@@ -2507,8 +2501,12 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
 
     # Римские цифры
-    for m in finditer(r'\b[IVXLCDM]+\b', text):
-        text = text.replace(m.group(), roman2arabic(m.group()), 1)
+    for m in finditer(r'\b(([IVXCDLM]+)( ?- ?| и | или )|)([IVXCDLM]+) ([в]{1,2}\.| век[ауовми]{,3}|(сто|тысяче)лети[еяюмих]{1,3}|Съезд[аеуоми]{,3}|квартал[ауыми]{,3})', text):
+        if m.group(1) == '':
+            part1 = ''
+        else:
+            part1 = roman2arabic(m.group(2)) + m.group(3)
+        text = text.replace(m.group(), part1 + roman2arabic(m.group(4)) + ' ' + m.group(5), 1)
 
     # Обработка по шаблонам
     for sample in samples:
@@ -2516,8 +2514,17 @@ def txt_prep(text):
 
     # Порядковые числительные
 
+    # Склонение при именах собственных
+    for m in finditer(r'(Александр|Иван|Иоанн|Пав[е]?л|П[её]тр|Ф[её]дор|Васили|Лжедмитри|Никола)' + '(|а|е|ем|й|ом|у|ю|я)' + r' ([IVX]+)', text):
+        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(roman2arabic(m.group(3)), mu_pad[m.group(2)]), 1)
+    for m in finditer(r'(Анн|Екатерин)' + '(|а|е|ой|у|ы)' + r' ([IVX]+)', text):
+        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(roman2arabic(m.group(3)), zh_pad[m.group(2)]), 1)
+
     for m in finditer(r'(\d+)( зимни[еимх]{1,2}| летни[еимх]{1,2}|)( Олимпийски)(е|ми|м\b|х)', text):
         text = text.replace(m.group(), ordinal(m.group(1), mn_pad[m.group(4)]) + m.group(2) + m.group(3) + m.group(4), 1)
+
+    for m in finditer(r'(\d+)(-| и | или )(\d+) ((тысяче|сто)летия|поколения)\b', text):
+        text = text.replace(m.group(), ordinal(m.group(1), i_sr) + m.group(2) + ordinal(m.group(3), i_sr) + ' ' + m.group(4), 1)
 
     for m in finditer(r'(\d+)( ((тысяче|сто)лети|поколени)(е|и|ем|ю|я))\b', text):
         text = text.replace(m.group(), ordinal(m.group(1), sr_pad[m.group(5)]) + m.group(2), 1)
@@ -2614,12 +2621,6 @@ def txt_prep(text):
         if number != '':
             text = text.replace(m.group(), m.group(1) + ' ' + number + ' ' + m.group(3), 1)
 
-    # Склонение порядковых числительных при именах собственных
-    for m in finditer(r'(Александр|Иван|Иоанн|Пав[е]?л|П[её]тр|Ф[её]дор|Васили|Лжедмитри|Никола)' + '(|а|е|ем|й|ом|у|ю|я)' + r' (\d+)', text):
-        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(m.group(3), mu_pad[m.group(2)]), 1)
-    for m in finditer(r'(Анн|Екатерин)' + '(|а|е|ой|у|ы)' + r' (\d+)', text):
-        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(m.group(3), zh_pad[m.group(2)]), 1)
-
     # Время в формате (ч)ч:мм/(ч)ч.мм
 
     for m in finditer(r'\b([Вв] \d{1,2})[:.](\d{2})\b', text):
@@ -2680,7 +2681,7 @@ def txt_prep(text):
                 number = number[:-3] + 'их'
         text = text.replace(m.group(), m.group(1) + number + m.group(3) + m.group(4), 1)
 
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв]место|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв]озраст[аемоу]{,2}|[Сс]) (\d+)( ?- ?| или )(\d+) ([а-я]+)\b', text):
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв]место|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв]озраст[аемоу]{,2}|[Сс]) (\d+)(-| или )(\d+) ([а-я]+)\b', text):
         num1 = cardinal(m.group(2), r_ca)
         num2 = cardinal(m.group(4), r_ca)
         if m.group(5) in ze_r or m.group(5) in zm_r:
@@ -2695,7 +2696,7 @@ def txt_prep(text):
         if m.group(4) in mn_r:
             text = text.replace(m.group(), cardinal(m.group(1), r_ca) + ' ' + m.group(2), 1)
 
-    for m in finditer(r'\b([Вв]озраст[аемоу]{,2} |[Вв] течение )(\d+) ?- ?(\d+) ([а-я]+)\b', text):
+    for m in finditer(r'\b([Вв]озраст[аемоу]{,2} |[Вв] течение )(\d+)-(\d+) ([а-я]+)\b', text):
         num1 = cardinal(m.group(2), r_ca)
         num2 = cardinal(m.group(3), r_ca)
         if m.group(4) == 'секунд' or m.group(4) == 'минут' or m.group(4) == 'недель' or m.group(4) == 'секунды' or m.group(4) == 'минуты' or m.group(4) == 'недели':
@@ -2738,7 +2739,7 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Творительный падеж
-    for m in finditer(r'(\d+)(( ?- ?| или )\d+ ([а-я]+([ая]ми|[еиоы]м|[ео]й|ью)))\b', text):
+    for m in finditer(r'(\d+)((-| или )\d+ ([а-я]+([ая]ми|[еиоы]м|[ео]й|ью)))\b', text):
         number = cardinal(m.group(1), t_ca)
         if number[-5:] == 'одним':
             if m.group(4) in ze_t or m.group(4) in zm_t:
