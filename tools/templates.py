@@ -2520,8 +2520,12 @@ def txt_prep(text):
     for m in finditer(r'(Анн|Екатерин)' + '(|а|е|ой|у|ы)' + r' ([IVX]+)', text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(roman2arabic(m.group(3)), zh_pad[m.group(2)]), 1)
 
-    for m in finditer(r'(\d+)( зимни[еимх]{1,2}| летни[еимх]{1,2}|)( Олимпийски)(е|ми|м\b|х)', text):
-        text = text.replace(m.group(), ordinal(m.group(1), mn_pad[m.group(4)]) + m.group(2) + m.group(3) + m.group(4), 1)
+    for m in finditer(r'(\d+|[IVX]+)( зимни[еимх]{1,2}| летни[еимх]{1,2}|)( Олимпийски)(е|ми|м\b|х)', text):
+        if m.group(1).isdigit():
+            number = m.group(1)
+        else:
+            number = roman2arabic(m.group(1))
+        text = text.replace(m.group(), ordinal(number, mn_pad[m.group(4)]) + m.group(2) + m.group(3) + m.group(4), 1)
 
     for m in finditer(r'(\d+)(-| и | или )(\d+) ((тысяче|сто)летия|поколения)\b', text):
         text = text.replace(m.group(), ordinal(m.group(1), i_sr) + m.group(2) + ordinal(m.group(3), i_sr) + ' ' + m.group(4), 1)
