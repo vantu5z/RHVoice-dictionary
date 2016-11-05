@@ -2501,7 +2501,7 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
 
     # Римские цифры
-    for m in finditer(r'\b(([IVXCDLM]+)( ?- ?| и | или )|)([IVXCDLM]+) ([в]{1,2}\.| век[ауовми]{,3}|(сто|тысяче)лети[еяюмих]{1,3}|Съезд[аеуоми]{,3}|квартал[ауыми]{,3})', text):
+    for m in finditer(r'\b(([IVXCDLM]+)( ?- ?| и | или )|)([IVXCDLM]+) ([в]{1,2}\.| век[ауовми]{,3}|(сто|тысяче)лети[еяюмих]{1,3}|[Сс]ъезд[аеуоми]{,3}|квартал[ауыми]{,3})', text):
         if m.group(1) == '':
             part1 = ''
         else:
@@ -2529,8 +2529,8 @@ def txt_prep(text):
     for m in finditer(r'(\d+)( ((тысяче|сто)лети|поколени)(е|и|ем|ю|я))\b', text):
         text = text.replace(m.group(), ordinal(m.group(1), sr_pad[m.group(5)]) + m.group(2), 1)
 
-    for m in finditer(r'(\d+)( Съезд)(|а|е|ом|у)\b', text):
-        text = text.replace(m.group(), ordinal(m.group(1), mu_pad[m.group(3)]) + m.group(2) + m.group(3), 1)
+#    for m in finditer(r'(\d+)( [Сс]ъезд)(|а|е|ом|у)\b', text):
+ #       text = text.replace(m.group(), ordinal(m.group(1), mu_pad[m.group(3)]) + m.group(2) + m.group(3), 1)
 
     for m in finditer(r'(\d+0)(-\d+0-е годы)', text):
         text = text.replace(m.group(), ordinal(m.group(1), i_mn) + m.group(2), 1)
