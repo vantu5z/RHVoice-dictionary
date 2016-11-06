@@ -2533,8 +2533,8 @@ def txt_prep(text):
     for m in finditer(r'(\d+)( ((тысяче|сто)лети|поколени)(е|и|ем|ю|я))\b', text):
         text = text.replace(m.group(), ordinal(m.group(1), sr_pad[m.group(5)]) + m.group(2), 1)
 
-#    for m in finditer(r'(\d+)( [Сс]ъезд)(|а|е|ом|у)\b', text):
- #       text = text.replace(m.group(), ordinal(m.group(1), mu_pad[m.group(3)]) + m.group(2) + m.group(3), 1)
+    for m in finditer(r'(\d+)( [Сс]ъезд)(|а|е|ом|у)\b', text):
+        text = text.replace(m.group(), ordinal(m.group(1), mu_pad[m.group(3)]) + m.group(2) + m.group(3), 1)
 
     for m in finditer(r'(\d+0)(-\d+0-е годы)', text):
         text = text.replace(m.group(), ordinal(m.group(1), i_mn) + m.group(2), 1)
@@ -2607,7 +2607,7 @@ def txt_prep(text):
 
     for m in finditer(r'\b(\d*[02-9][02-9]|\d*1\d|[02-9]) ([а-я]+)\b', text):
         number = ''
-        if '|' + m.group(2) + '|' in sr_iv:
+        if m.group(2) in sr_iv:
             number = ordinal(m.group(1), i_sr)
     elif m.group(2) in ms_d:
             number = ordinal(m.group(1), d_mu)
