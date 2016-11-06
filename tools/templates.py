@@ -2609,7 +2609,7 @@ def txt_prep(text):
         number = ''
         if m.group(2) in sr_iv:
             number = ordinal(m.group(1), i_sr)
-    elif m.group(2) in ms_d:
+        elif m.group(2) in ms_d:
             number = ordinal(m.group(1), d_mu)
         elif m.group(2) in ms_p:
             number = ordinal(m.group(1), p_mu)
