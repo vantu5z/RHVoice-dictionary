@@ -2835,6 +2835,10 @@ def txt_prep(text):
         if number != '':
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
+    # Предлоги предложного падежа
+    for m in finditer(r'\b([Оо]б? |[Пп]ри )(\d+)\b', text):
+        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), p_ca), 1)
+
     # Женский род (им./вин. пад.)
     for m in finditer(r'\b(\d*[02-9][12]|[12]) ((([а-я]+[ая]я|[а-я]+[иы][ех]) |)([а-я]+))', text):
         if (m.group(1)[-1] == '1' or m.group(1)[-1] == '2') and m.group(5) in ze_r:
