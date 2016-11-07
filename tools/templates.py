@@ -2835,6 +2835,14 @@ def txt_prep(text):
         if number != '':
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
+    # Предлоги дательного падежа
+    for m in finditer(r'\b([Кк] |[Пп]о )(\d+)\b', text):
+        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), d_ca), 1)
+
+    # Предлоги творительного падежа
+    for m in finditer(r'\b([Нн]ад |[Пп]еред )(\d+)\b', text):
+        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), t_ca), 1)
+
     # Предлоги предложного падежа
     for m in finditer(r'\b([Оо]б? |[Пп]ри )(\d+)\b', text):
         text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), p_ca), 1)
