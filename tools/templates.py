@@ -2606,18 +2606,22 @@ def txt_prep(text):
 
     # Числительное может быть только порядковым
 
-    for m in finditer(r'\b(\d*[02-9][02-9]|\d*1\d|[02-9]) ([а-я]+)\b', text):
-        number = ''
-        if m.group(2) in sr_iv:
-            number = ordinal(m.group(1), i_sr)
-        elif m.group(2) in ms_d:
-            number = ordinal(m.group(1), d_mu)
-        elif m.group(2) in ms_p:
-            number = ordinal(m.group(1), p_mu)
-        elif m.group(2) in ze_dp or m.group(2) in ze_t:
-            number = ordinal(m.group(1), r_zh)
-        if number != '':
-            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
+#    for m in finditer(r'\b(\d*[02-9][02-9]|\d*1\d|[02-9]) ([а-я]+)\b', text):
+#        number = ''
+#        if m.group(2) in sr_iv:
+#            number = ordinal(m.group(1), i_sr)
+#        elif m.group(2) in ms_d:
+#            number = ordinal(m.group(1), d_mu)
+#        elif m.group(2) in ms_p:
+#            number = ordinal(m.group(1), p_mu)
+#        elif m.group(2) in ze_dp or m.group(2) in ze_t:
+#            number = ordinal(m.group(1), r_zh)
+#        if number != '':
+#            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
+
+#    for m in finditer(r'\b(\d*[02-9][05-9]|\d*1\d|[5-9]) ([а-я]+)\b', text):
+#        if '|' + m.group(2) + '|' in ze_dp:
+#            text = text.replace(m.group(), ordinal(m.group(1), d_zh) + ' ' + m.group(2), 1)
 
     for m in finditer(r'\b([Оо]коло|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв] течение|[Пп]осле|[Пп]ротив|[Сс]) (\d*[02-9][02-9]|\d*1\d|[02-9]) ([а-я]+)\b', text):
         number = ''
