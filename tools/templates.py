@@ -1949,7 +1949,7 @@ presamples = (
   (r'(?<=\d) ?USD\b', '$ США'),
   (r'\bдолл\.', '$'),
   (r'\bруб\.', '₽'),
-  (r'(млн|млрд|трлн)\. ' + units, r'\1\2'), # По правилам без точки
+  (r'(млн|млрд|трлн)\. ' + units, r'\1 \2'), # По правилам без точки
   (r'(млн|млрд|трлн)\.(?! [А-Я]|\n|\Z)', r'\1'),
   (r'(\$|€|£|₽) ?([0-9]+)', r'\2\1'),
   (r'(\$|€|£|₽) ?(тыс\.|млн|млрд|трлн|тысяч(|а|и)\b|(миллион|миллиард|триллион)(|а|ов)\b)', r' \2 \1'),
@@ -2720,7 +2720,7 @@ def txt_prep(text):
             if num2[-6:] == 'одного': num2 = num2[:-3] + 'их'
         text = text.replace(m.group(), m.group(1) + num1 + ' ' + num2 + ' ' + m.group(4), 1)
 
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв]место|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв]озраст[аемоу]{,2}|[Сс]) (\d+) (([а-я]+([иы]х|[ео]го|[ео]й) |)([а-я]{2,}))\b', text):
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв]место|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв]озраст[аемоу]{,2}) (\d+) (([а-я]+([иы]х|[ео]го|[ео]й) |)([а-я]{2,}))\b', text):
         number = ''
         if m.group(6) in ms_r:
             if m.group(2) == '1' or (len(m.group(2)) > 1 and m.group(2)[-2] != '1' and m.group(2)[-1] == '1'):
@@ -2752,14 +2752,14 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Творительный падеж
-    for m in finditer(r'(\d+)((-| или )\d+ ([а-я]+([ая]ми|[еиоы]м|[ео]й|ью)))\b', text):
-        number = cardinal(m.group(1), t_ca)
-        if number[-5:] == 'одним':
-            if m.group(4) in ze_t or m.group(4) in zm_t:
-                number = number[:-2] + 'ой'
-            elif m.group(4) == 'сутками':
-                number += 'и'
-        text = text.replace(m.group(), number + m.group(2), 1)
+#    for m in finditer(r'(\d+)((-| или )\d+ ([а-я]+([ая]ми|[еиоы]м|[ео]й|ью)))\b', text):
+#        number = cardinal(m.group(1), t_ca)
+#        if number[-5:] == 'одним':
+#            if m.group(4) in ze_t or m.group(4) in zm_t:
+#                number = number[:-2] + 'ой'
+#            elif m.group(4) == 'сутками':
+#                number += 'и'
+#        text = text.replace(m.group(), number + m.group(2), 1)
 
     for m in finditer(r'(\d+) ([а-я]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b', text):
         number = ''
@@ -2851,7 +2851,7 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), d_ca), 1)
 
     # Предлоги творительного падежа
-    for m in finditer(r'\b([Нн]ад |[Пп]еред )(\d+)\b', text):
+    for m in finditer(r'\b([Нн]ад |[Пп]еред |[Сс] )(\d+)\b', text):
         text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), t_ca), 1)
 
     # Предлоги предложного падежа
