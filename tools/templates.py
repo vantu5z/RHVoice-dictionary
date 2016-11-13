@@ -2850,7 +2850,7 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + ' ' + cardinal(m.group(2), r_ca), 1)
 
     # Предлоги дательного падежа
-    for m in finditer(r'\b([Кк] |[Пп]о )(\d+)\b', text):
+    for m in finditer(r'\b([Кк] )(\d+)\b', text):
         text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), d_ca), 1)
 
     # Предлоги творительного падежа
