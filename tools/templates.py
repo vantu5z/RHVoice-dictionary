@@ -2173,10 +2173,10 @@ def cardinal(num, casus):
         else:
              c_num += t_num
         if t_num != '' and len(num) != 0:
-            if number[2] != '1':
-                n = 1
-            else:
+            if number[2] == '1' and number[1] != '1':
                 n = 0
+            else:
+                n = 1
             c_num = c_num + ' ' + casus[0][0][0][triple - t - 1][n]
 
     c_num = sub(r'одно(го|му|м) тысяч(е|и)', r'одной тысяч\2', c_num)
