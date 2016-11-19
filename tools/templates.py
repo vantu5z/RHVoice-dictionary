@@ -2078,7 +2078,7 @@ samples = (
 
   (r'\b(\d+)-(\d+) (века\b|вв\.)', r'\1-й \2-й века'),
   (r'\b(\d+) века\b', r'\1-го века'), # Спорный шаблон
-  (r'\b([Вв] \d+) (веке|в\.)', r'\1-м веке'),
+  (r'\b(([Вв]|[Оо]б?) \d+) ?в\.', r'\1-м веке'),
   (r'\b([Кк] \d+)(|-му) (веку|в\.)', r'\1-му веку'),
   (r'\b([Дд]о|[Пп]осле|[Сс])( \d+) (века|в\.)', r'\1\2-го века'),
   (r'\b([Вв] \d+)(-| и )(\d+) (веках|вв\.)', r'\1-м\2\3-м веках'),
@@ -2086,6 +2086,7 @@ samples = (
   (r'(начал[аемоу]{1,2}|кон[аемоуц]{2,3}|середин[аейоуы]{1,2}|половин[аейоуы]{1,2}) (\d+) в\.', r'\1 \2-го века'),
   (r'\b(\d+) (век\b|в\.)', r'\1-й век'),
 
+  (r'\b([Оо]б? \d+) ?г\.', r'\1 годе'),
   (r'\b([Вв] ([а-я]+м |)\d+) (году|г\.)', r'\1-м году'),
   (r'\b([Кк] ([а-я]+му |)\d+) (году|г\.)', r'\1-му году'),
 
@@ -2570,7 +2571,16 @@ def txt_prep(text):
     for m in finditer(r'(\d+)-ю\b', text):
         text = text.replace(m.group(), ordinal(m.group(1), v_zh), 1)
 
-    for m in finditer(r'\b([Вв]о? |[Нн]а |[Пп]ри )(\d+)-м\b', text):
+    for m in finditer(r'\b([Вв]о? |[Нн]а |[Оо]б? |[Пп]ри )(\d+) ([а-я]+)\b', text):
+        number = ''
+        if m.group(3) in ms_p:
+            number = ordinal(m.group(2), p_mu)
+        elif m.group(3) in ze_dp:
+            number = ordinal(m.group(2), p_zh)
+        if number != '':
+            text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
+
+    for m in finditer(r'\b([Вв]о? |[Нн]а |[Оо]б? |[Пп]ри )(\d+)-м\b', text):
         text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), p_mu), 1)
 
     for m in finditer(r'\b([Сс] )(\d+)-м\b', text):
