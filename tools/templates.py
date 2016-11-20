@@ -2571,7 +2571,7 @@ def txt_prep(text):
     for m in finditer(r'(\d+)-ю\b', text):
         text = text.replace(m.group(), ordinal(m.group(1), v_zh), 1)
 
-    for m in finditer(r'\b([Вв]о? |[Нн]а |[Оо]б? |[Пп]ри )(\d+) ([а-я]+)\b', text):
+    for m in finditer(r'\b([Вв]о? |[Нн]а |[Оо]б? |[Пп]ри )(\d*[02-9]|\d*1\d) ([а-я]+)\b', text):
         number = ''
         if m.group(3) in ms_p:
             number = ordinal(m.group(2), p_mu)
@@ -2857,7 +2857,7 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Предлоги родительного падежа
-    for m in finditer(r'\b([Бб]ез|[Уу]|[Оо]коло|[Ии]з|[Пп]осле|[Дд]ля) (\d+)\b', text):
+    for m in finditer(r'\b([Бб]ез|[Бб]олее|[Уу]|[Оо]коло|[Ии]з|[Пп]осле|[Дд]ля|[Дд]о|[Оо]т) (\d+)\b', text):
         text = text.replace(m.group(), m.group(1) + ' ' + cardinal(m.group(2), r_ca), 1)
 
     # Предлоги дательного падежа
