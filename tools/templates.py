@@ -2749,6 +2749,10 @@ def txt_prep(text):
         if number != '':
             text = text.replace(m.group(), m.group(1) + ' ' + number + ' ' + m.group(3), 1)
 
+    for m in finditer(r'\b([А-Я]?[а-я]+[иы]х )(\d+) ([а-я]+)\b', text):
+        if m.group(3) in mn_r or m.group(3) in zm_r:
+            text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), r_ca) + ' ' + m.group(3), 1)
+
     # Дательный падеж (мн. ч. и муж./ср. род ед. ч.)
     for m in finditer(r'(\d+) (([а-я]+([иы]м|[ео]му) |)([а-я]+([аиыя]м|у|ю|е)))\b', text):
         number = ''
