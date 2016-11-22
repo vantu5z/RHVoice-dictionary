@@ -2724,9 +2724,9 @@ def txt_prep(text):
             text = text.replace(m.group(), cardinal(m.group(1), r_ca) + ' ' + m.group(2), 1)
 
     for m in finditer(r'\b(\d*[02-9]1|1) ([а-я]+)\b', text):
-        if '|' + m.group(2) + '|' in ms_r and '|' + m.group(2) + '|' not in me_v:
+        if m.group(2) in ms_r and m.group(2) not in me_v:
             text = text.replace(m.group(), cardinal(m.group(1), r_ca) + ' ' + m.group(2), 1)
-        elif '|' + m.group(2) + '|' in ze_r:
+        elif m.group(2) in ze_r:
             text = text.replace(m.group(), cardinal(m.group(1), r_ca)[:-2] + 'й ' + m.group(2), 1)
 
     for m in finditer(r'\b([Вв]озраст[аемоу]{,2} |[Вв] течение )(\d+)-(\d+) ([а-я]+)\b', text):
