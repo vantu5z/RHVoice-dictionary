@@ -2723,6 +2723,12 @@ def txt_prep(text):
         if m.group(4) in mn_r:
             text = text.replace(m.group(), cardinal(m.group(1), r_ca) + ' ' + m.group(2), 1)
 
+    for m in finditer(r'\b(\d*[02-9]1|1) ([а-я]+)\b', text):
+        if '|' + m.group(2) + '|' in ms_r and '|' + m.group(2) + '|' not in me_v:
+            text = text.replace(m.group(), cardinal(m.group(1), r_ca) + ' ' + m.group(2), 1)
+        elif '|' + m.group(2) + '|' in ze_r:
+            text = text.replace(m.group(), cardinal(m.group(1), r_ca)[:-2] + 'й ' + m.group(2), 1)
+
     for m in finditer(r'\b([Вв]озраст[аемоу]{,2} |[Вв] течение )(\d+)-(\d+) ([а-я]+)\b', text):
         num1 = cardinal(m.group(2), r_ca)
         num2 = cardinal(m.group(3), r_ca)
