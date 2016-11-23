@@ -2509,6 +2509,7 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
 
     # Римские цифры
+
     for m in finditer(r'\b(([IVXCDLM]+)( ?- ?| и | или )|)([IVXCDLM]+) ([в]?в\.|век[аеуовмих]{,3}\b|(сто|тысяче)лети[еяюмих]{1,3}\b|[Сс]ъезд[аеуомих]{,3}\b|квартал[аеуымих]{,3}\b)', text):
         if m.group(1) == '':
             part1 = ''
@@ -2516,13 +2517,6 @@ def txt_prep(text):
             part1 = roman2arabic(m.group(2)) + m.group(3)
         text = text.replace(m.group(), part1 + roman2arabic(m.group(4)) + ' ' + m.group(5), 1)
 
-    # Обработка по шаблонам
-    for sample in samples:
-        text = sub(sample[0], sample[1], text)
-
-    # Порядковые числительные
-
-    # Склонение при именах собственных
     for m in finditer(r'(Александр|Иван|Иоанн|Пав[е]?л|П[её]тр|Ф[её]дор|Васили|Лжедмитри|Никола)' + '(|а|е|ем|й|ом|у|ю|я)' + r' ([IVX]+)', text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(roman2arabic(m.group(3)), mu_pad[m.group(2)]), 1)
     for m in finditer(r'(Анн|Екатерин)' + '(|а|е|ой|у|ы)' + r' ([IVX]+)', text):
@@ -2534,6 +2528,12 @@ def txt_prep(text):
         else:
             number = roman2arabic(m.group(1))
         text = text.replace(m.group(), ordinal(number, mn_pad[m.group(4)]) + m.group(2) + m.group(3) + m.group(4), 1)
+
+    # Обработка по шаблонам
+    for sample in samples:
+        text = sub(sample[0], sample[1], text)
+
+    # Порядковые числительные
 
     for m in finditer(r'(\d+)( ?- ?| и | или )(\d+) ((тысяче|сто)летия|поколения)\b', text):
         text = text.replace(m.group(), ordinal(m.group(1), i_sr) + m.group(2) + ordinal(m.group(3), i_sr) + ' ' + m.group(4), 1)
@@ -2883,9 +2883,9 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), p_ca), 1)
 
     # Женский род (им./вин. пад.)
-    for m in finditer(r'\b(\d*[02-9][12]|[12]) ((([а-я]+[ая]я|[а-я]+[иы][ех]) |)([а-я]+))', text):
-        if (m.group(1)[-1] == '1' or m.group(1)[-1] == '2') and m.group(5) in ze_r:
-            text = text.replace(m.group(), feminin(m.group(1)) + ' ' + m.group(2), 1)
+    for m in finditer(r'\b(\d*[02-9][12]|[12])(( [а-я]+([ая]я|[иы][ех])|) ([а-я]+))', text):
+        if (m.group(1)[-1] == '1' and m.group(5) in ze_i) or m.group(5) in ze_r:
+            text = text.replace(m.group(), feminin(m.group(1)) + m.group(2), 1)
 
     # Средний род (им./вин. пад.)
     for m in finditer(r'\b(\d*[02-9]1|1) (([а-я]+[ео]е |)([а-я]+[ео]))\b', text):
