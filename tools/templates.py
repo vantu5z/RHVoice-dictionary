@@ -2298,8 +2298,16 @@ def txt_prep(text):
     # Единицы измерения
 
     # Часто встречающаяся конструкция
-    for m in finditer(r'(высот[аейоуы]{1,2}|глубин[аейоуы]{1,2}|дальност[иью]{1,2}|длин[аейоуы]{1,2}|масс[аейоуы]{1,2}|ширин[аейоуы]{1,2}|вес[аемоу]{1,2}|мощност[иью]{1,2}|расстояни[еимхюя]{1,2}|оцени[авеийлмстшыья]{,6}) в (\d+)' + units, text):
-        text = text.replace(m.group(), m.group(1) + ' в ' + m.group(2) + ' ' + substant(m.group(2), m.group(3)), 1)
+    for m in finditer(r'(высот[аейоуы]{1,2}|глубин[аейоуы]{1,2}|дальност[иью]{1,2}|длин[аейоуы]{1,2}|масс[аейоуы]{1,2}|ширин[аейоуы]{1,2}|вес[аемоу]{1,2}|мощност[иью]{1,2}|скорост[иью]{1,2}|расстояни[еимхюя]{1,2}|оцени[авеийлмстшыья]{,6}) в (\d+)' + units, text):
+        subst = substant(m.group(2), m.group(3))
+        if subst == 'тонна':
+            subst = 'тонну'
+        elif subst == 'лошадиная сила':
+            subst = 'лошадиную силу'
+        number = cardinal(m.group(2), v_ca)
+        if subst == 'тонну' or subst == 'лошадиную силу':
+            number = number[:-2] + 'ну'
+        text = text.replace(m.group(), m.group(1) + ' в ' + number + ' ' + subst, 1)
 
     # Творительный падеж
     for m in finditer(r'([Сс]равн(ени[еию]|ив|ивая) с |[Вв]ладе[авеийлмтюшщья]{1,7} )(\d+)' + units, text):
@@ -2826,7 +2834,7 @@ def txt_prep(text):
             text = text.replace(m.group(), number + m.group(2), 1)
 
     for m in finditer(r'\b([Вв] |[Нн]а |[Пп]ро |[Чч]ерез )(\d*[02-9]1|1) ([а-я]+)\b', text):
-        if m.group(3) in ze_i:
+        if m.group(3) in ze_v:
             if m.group(2) == '1':
                 number = 'одну'
             else:
