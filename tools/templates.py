@@ -2622,22 +2622,16 @@ def txt_prep(text):
 
     # Числительное может быть только порядковым
 
-#    for m in finditer(r'\b(\d*[02-9][02-9]|\d*1\d|[02-9]) ([а-я]+)\b', text):
-#        number = ''
-#        if m.group(2) in sr_iv:
-#            number = ordinal(m.group(1), i_sr)
-#        elif m.group(2) in ms_d:
-#            number = ordinal(m.group(1), d_mu)
-#        elif m.group(2) in ms_p:
-#            number = ordinal(m.group(1), p_mu)
-#        elif m.group(2) in ze_dp or m.group(2) in ze_t:
-#            number = ordinal(m.group(1), r_zh)
-#        if number != '':
-#            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
-
-#    for m in finditer(r'\b(\d*[02-9][05-9]|\d*1\d|[5-9]) ([а-я]+)\b', text):
-#        if '|' + m.group(2) + '|' in ze_dp:
-#            text = text.replace(m.group(), ordinal(m.group(1), d_zh) + ' ' + m.group(2), 1)
+    # Родительный падеж
+    for m in finditer(r'\b(\d*1\d|\d*[02-9][02-9]|[2-9])( ([а-я]+[ео](го|й) |)([а-я]+))\b', text):
+        number = ''
+        if m.group(3) != '' or (m.group(3) == '' and (4 < int(m.group(1)) < 20 or (int(m.group(1)) > 19 and  m.group(1)[-1] not in '1234'))):
+            if m.group(5) in ze_r:
+                number = ordinal(m.group(1), r_zh)
+            elif m.group(5) in ms_r:
+                number = ordinal(m.group(1), r_mu)
+        if number != '':
+            text = text.replace(m.group(), number + m.group(2) , 1)
 
     for m in finditer(r'\b([Оо]коло|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв] течение|[Пп]осле|[Пп]ротив|[Сс]) (\d*[02-9][02-9]|\d*1\d|[02-9]) ([а-я]+)\b', text):
         number = ''
@@ -2800,14 +2794,14 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Винительный падеж (муж. род)
-    for m in finditer(r'\b(\d*[02-9]1|[1-4]) ([а-я]+)', text):
+    for m in finditer(r'\b(\d*[02-9]1|[1-4])( ([а-я]+[ео]го |)([а-я]+))', text):
         number = ''
-        if m.group(2) in me_v:
+        if m.group(4) in me_v:
             if m.group(1) == '1':
                 number = 'одного'
             elif m.group(1)[:-1] == '1' or (len(m.group(1)) > 1 and m.group(1)[-2] != '1'):
                 number = m.group(1)[:-1] + '0_одного'
-        elif m.group(2) in mm_v:
+        elif m.group(4) in mm_v:
             if m.group(1) == '2':
                 number = 'двух'
             elif m.group(1) == '3':
@@ -2815,17 +2809,17 @@ def txt_prep(text):
             elif m.group(1) == '4':
                 number = 'четырех'
         if number != '':
-            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
+            text = text.replace(m.group(), number + m.group(2), 1)
 
     # Винительный падеж (жен. род)
-    for m in finditer(r'\b(\d*[02-9]1|[1-4]) ([а-я]+)', text):
+    for m in finditer(r'\b(\d*[02-9]1|[1-4])( ([а-я]+[ую]ю |)([а-я]+))', text):
         number = ''
-        if m.group(2) in ze_v:
+        if m.group(4) in ze_v:
             if m.group(1) == '1':
                 number = 'одну'
             elif m.group(1)[-1] == '1':
                 number = m.group(1)[:-1] + '0_одну'
-        elif m.group(2) in zm_v:
+        elif m.group(4) in zm_v:
             if m.group(1) == '2':
                 number = 'двух'
             elif m.group(1) == '3':
@@ -2833,7 +2827,7 @@ def txt_prep(text):
             elif m.group(1) == '4':
                 number = 'четырех'
         if number != '':
-            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
+            text = text.replace(m.group(), number + m.group(2), 1)
 
     for m in finditer(r'\b([Вв] |[Нн]а |[Пп]ро |[Чч]ерез )(\d*[02-9]1|1) ([а-я]+)\b', text):
         if m.group(3) in ze_i:
