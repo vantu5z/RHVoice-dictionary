@@ -2713,10 +2713,6 @@ def txt_prep(text):
             if num2[-6:] == 'одного': num2 = num2[:-3] + 'их'
         text = text.replace(m.group(), m.group(1) + ' ' + num1 + m.group(3) + num2 + ' ' + m.group(5), 1)
 
-    for m in finditer(r'\b(\d*[02-9][2-4]|[2-4]) (([а-я]+[иы]х |)([а-я]+))\b', text):
-        if m.group(4) in mn_r:
-            text = text.replace(m.group(), cardinal(m.group(1), r_ca) + ' ' + m.group(2), 1)
-
     for m in finditer(r'\b(\d*[02-9]1|1) ([а-я]+)\b', text):
         if m.group(2) in ms_r and m.group(2) not in me_v:
             text = text.replace(m.group(), cardinal(m.group(1), r_ca) + ' ' + m.group(2), 1)
@@ -2794,14 +2790,14 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Винительный падеж (муж. род)
-    for m in finditer(r'\b(\d*[02-9]1|[1-4])( ([а-я]+[ео]го |)([а-я]+))', text):
+    for m in finditer(r'\b(\d*[02-9]1|[1-4])( ([а-я]+([ео]го|[иы]х) |)([а-я]+))', text):
         number = ''
-        if m.group(4) in me_v:
+        if m.group(5) in me_v:
             if m.group(1) == '1':
                 number = 'одного'
             elif m.group(1)[:-1] == '1' or (len(m.group(1)) > 1 and m.group(1)[-2] != '1'):
                 number = m.group(1)[:-1] + '0_одного'
-        elif m.group(4) in mm_v:
+        elif m.group(5) in mm_v:
             if m.group(1) == '2':
                 number = 'двух'
             elif m.group(1) == '3':
@@ -2812,14 +2808,14 @@ def txt_prep(text):
             text = text.replace(m.group(), number + m.group(2), 1)
 
     # Винительный падеж (жен. род)
-    for m in finditer(r'\b(\d*[02-9]1|[1-4])( ([а-я]+[ую]ю |)([а-я]+))', text):
+    for m in finditer(r'\b(\d*[02-9]1|[1-4])( ([а-я]+([ую]ю|[иы][ех]) |)([а-я]+))', text):
         number = ''
-        if m.group(4) in ze_v:
+        if m.group(5) in ze_v:
             if m.group(1) == '1':
                 number = 'одну'
             elif m.group(1)[-1] == '1':
                 number = m.group(1)[:-1] + '0_одну'
-        elif m.group(4) in zm_v:
+        elif m.group(5) in zm_v:
             if m.group(1) == '2':
                 number = 'двух'
             elif m.group(1) == '3':
