@@ -2304,9 +2304,10 @@ def txt_prep(text):
             subst = 'тонну'
         elif subst == 'лошадиная сила':
             subst = 'лошадиную силу'
-        number = cardinal(m.group(2), v_ca)
         if subst == 'тонну' or subst == 'лошадиную силу':
-            number = number[:-2] + 'ну'
+            number = cardinal(m.group(2), v_ca)[:-2] + 'ну'
+        else:
+            number = m.group(2)
         text = text.replace(m.group(), m.group(1) + ' в ' + number + ' ' + subst, 1)
 
     # Творительный падеж
