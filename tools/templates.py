@@ -2299,15 +2299,18 @@ def txt_prep(text):
 
     # Часто встречающаяся конструкция
     for m in finditer(r'(высот[аейоуы]{1,2}|глубин[аейоуы]{1,2}|дальност[иью]{1,2}|длин[аейоуы]{1,2}|масс[аейоуы]{1,2}|ширин[аейоуы]{1,2}|вес[аемоу]{1,2}|мощност[иью]{1,2}|скорост[иью]{1,2}|расстояни[еимхюя]{1,2}|оцени[авеийлмстшыья]{,6}) в (\d+)' + units, text):
+        number = cardinal(m.group(2), v_ca)
         subst = substant(m.group(2), m.group(3))
         if subst == 'тонна':
             subst = 'тонну'
         elif subst == 'лошадиная сила':
             subst = 'лошадиную силу'
-        if subst == 'тонну' or subst == 'лошадиную силу':
-            number = cardinal(m.group(2), v_ca)[:-2] + 'ну'
-        else:
-            number = m.group(2)
+        elif subst == 'астрономическая единица':
+            subst = 'астрономическую единицу'
+        if subst == 'тонну' or subst == 'лошадиную силу' or subst == 'астрономическую единицу':
+            number = number[:-2] + 'ну'
+        elif subst == 'тонны' or subst == 'лошадиные силы' or subst == 'астрономические единицы':
+            number = number[:-1] + 'е'
         text = text.replace(m.group(), m.group(1) + ' в ' + number + ' ' + subst, 1)
 
     # Творительный падеж
