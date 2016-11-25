@@ -2180,7 +2180,7 @@ def cardinal(num, casus):
                 n = 1
             c_num = c_num + ' ' + casus[0][0][0][triple - t - 1][n]
 
-    c_num = sub(r'одно(го|му|м) тысяч(е|и)', r'одной тысяч\2', c_num)
+    c_num = sub(r'одн(им|ого|ому|ом) тысяч(ей|е|и)', r'одной тысяч\2', c_num)
     c_num = sub('один тысячу', 'одну тысячу', c_num)
     if c_num == '': c_num = casus[0][0][0][0]
     return c_num
