@@ -2579,11 +2579,11 @@ def txt_prep(text):
     for m in finditer(r'(\d+)-я\b', text):
         text = text.replace(m.group(), ordinal(m.group(1), i_zh), 1)
 
-    for m in finditer(r'\b([Вв]о? |[Нн]а )(\d+)-ю\b', text):
-        text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), r_zh), 1)
+    for m in finditer(r'\b([Вв]о? |[Нн]а |[Сс]квозь |[Чч]ерез )(\d+)-ю\b', text):
+        text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), v_zh), 1)
 
-    for m in finditer(r'(\d+)-ю\b', text):
-        text = text.replace(m.group(), ordinal(m.group(1), v_zh), 1)
+#    for m in finditer(r'(\d+)-ю\b', text):
+#        text = text.replace(m.group(), ordinal(m.group(1), v_zh), 1)
 
     for m in finditer(r'\b([Вв]о? |[Нн]а |[Оо]б? |[Пп]ри )(\d*[02-9]|\d*1\d) ([а-я]+)\b', text):
         number = ''
