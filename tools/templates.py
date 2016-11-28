@@ -2346,7 +2346,7 @@ def txt_prep(text):
     # Десятичные дроби (до миллионых включительно)
 
     # Именительный
-    for m in finditer(r'(\d+),(\d{1,6})(\W)', text):
+    for m in finditer(r'(\d+),(\d{1,6})(\W|$)', text):
         full = feminin(m.group(1))
         if full[-1] == 'а':
             full += '_целая '
