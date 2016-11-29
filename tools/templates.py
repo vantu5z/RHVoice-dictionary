@@ -2531,6 +2531,9 @@ def txt_prep(text):
             number = roman2arabic(m.group(1))
         text = text.replace(m.group(), ordinal(number, mn_pad[m.group(4)]) + m.group(2) + m.group(3) + m.group(4), 1)
 
+    for m in finditer(r'\b([A-Z][a-z]*[ -]|[А-Я][а-я]*[ -])([IVX]+)($|\n|[.,;:]| [^a-z])', text):
+        text = text.replace(m.group(), m.group(1) + roman2arabic(m.group(2)) + m.group(3), 1)
+
     # Обработка по шаблонам
     for sample in samples:
         text = sub(sample[0], sample[1], text)
