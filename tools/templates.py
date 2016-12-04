@@ -2649,7 +2649,7 @@ def txt_prep(text):
     for m in finditer(r'(\d+)-х-', text):
         text = text.replace(m.group(), ordinal(m.group(1), r_mn) + ' ', 1)
 
-    for m in finditer(r'(\d+)-я\b', text):
+    for m in finditer(r'(\d+)-[а]?я\b', text):
         text = text.replace(m.group(), ordinal(m.group(1), i_zh), 1)
 
     for m in finditer(r'\b([Вв]о? |[Нн]а |[Сс]квозь |[Чч]ерез )(\d+)-ю\b', text):
@@ -2703,6 +2703,9 @@ def txt_prep(text):
 
     for m in finditer(r'(\d+)-е' + months, text):
         text = text.replace(m.group(), ordinal(m.group(1), i_sr) + ' ' + m.group(2), 1)
+
+    for m in finditer(r'(\d+)-ю\b', text):
+        text = text.replace(m.group(), ordinal(m.group(1), v_zh), 1)
 
     for m in finditer(r'(\d+)-й\b', text):
         text = text.replace(m.group(), ordinal(m.group(1), i_mu), 1)
