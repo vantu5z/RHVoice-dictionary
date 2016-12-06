@@ -2716,38 +2716,6 @@ def txt_prep(text):
     for m in finditer(r'([Мм]ежду |[Пп]о сравнению с )(\d+)(-| и )(\d+)( годами| годом)\b', text):
         text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), t_mu) + m.group(3) + ordinal(m.group(4), t_mu) + m.group(5), 1)
 
-    # Числительное может быть только порядковым
-
-    # Родительный падеж
-    for m in finditer(r'\b(\d*1\d|\d*[02-9][02-9]|[2-9])( ([а-я]+[ео](го|й) |)([а-я]+))\b', text):
-        number = ''
-        if m.group(3) != '' or (m.group(3) == '' and (4 < int(m.group(1)) < 20 or (int(m.group(1)) > 19 and  m.group(1)[-1] not in '1234'))):
-            if m.group(5) in ze_r:
-                number = ordinal(m.group(1), r_zh)
-            elif m.group(5) in ms_r:
-                number = ordinal(m.group(1), r_mu)
-        if number != '':
-            text = text.replace(m.group(), number + m.group(2) , 1)
-
-    for m in finditer(r'\b([Оо]коло|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв] течение|[Пп]осле|[Пп]ротив|[Сс]) (\d*[02-9][02-9]|\d*1\d|[02-9]) ([а-я]+)\b', text):
-        number = ''
-        if m.group(3) in ms_r:
-            number = ordinal(m.group(2), r_mu)
-        elif m.group(3) in ze_r:
-            number = ordinal(m.group(2), r_zh)
-        if number != '':
-            text = text.replace(m.group(), m.group(1) + ' ' + number + ' ' + m.group(3), 1)
-
-# Творительный падеж
-    for m in finditer(r'\b(\d*[02-9][02-9]|\d*1\d|[02-9]) ([а-я]+)\b', text):
-        number = ''
-        if m.group(2) in ms_t:
-            number = ordinal(m.group(1), t_mu)
-        elif m.group(2) in ze_t:
-            number = ordinal(m.group(1), t_zh)
-        if number != '':
-            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
-
     # Количественные числительные
 
     for m in finditer(r'(\d+)-(часов[агеиймоухыюя]{2,3}|(силь|стволь|тон|каналь|странич|тысяч|миллион|миллиард|процент|секунд|минут|месяч|недель|днев|мест)н[агеиймоухыюя]{2,3}|лет[геиймнохюя]{2,4}|(|кило)граммов|(|кило|милли|санти)метров[агеиймоухыюя]{2,3})\b', text):
