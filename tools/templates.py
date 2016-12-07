@@ -2177,6 +2177,32 @@ samples = (
   (r'(\w)(\n|\Z)', r'\1.\2')
 )
 
+patterns = (
+  (r'(\d+0)( ?- ?\d+0-е годы)', 'ordinal(m.group(1), i_mn) + m.group(2)'),
+  (r'(\d+0)-е( годы)', 'ordinal(m.group(1), i_mn) + m.group(2)'),
+  (r'([Кк] )(\d+0)-м\b', 'm.group(1) + ordinal(m.group(2), d_mn)'),
+  (r'(\d+)( ?- ?| и | или )(\d+) ((тысяче|сто)летия|поколения)\b', 'ordinal(m.group(1), i_sr) + m.group(2) + ordinal(m.group(3), i_sr) + " " + m.group(4)'),
+  (r'(\d+)( ((тысяче|сто)лети|поколени)(е|и|ем|ю|я))\b', 'ordinal(m.group(1), sr_pad[m.group(5)]) + m.group(2)'),
+  (r'(\d+)( [Сс]ъезд)(|а|е|ом|у)\b', 'ordinal(m.group(1), mu_pad[m.group(3)]) + m.group(2) + m.group(3)'),
+  (r'([Вв] )(\d*0)-е\b', 'm.group(1) + ordinal(m.group(2), i_mn)'),
+  (r'(\d+0)( ?- ?\d+0-м годам)', 'ordinal(m.group(1), d_mn) + m.group(2)'),
+  (r'(\d+)-х-', 'ordinal(m.group(1), r_mn) + " "'),
+  (r'\b([Вв]о? |[Нн]а |[Сс]квозь |[Чч]ерез )(\d+)-ю\b', 'm.group(1) + ordinal(m.group(2), v_zh)'),
+  (r'\b([Вв]о? |[Нн]а |[Оо]б? |[Пп]ри )(\d+)-м\b', 'm.group(1) + ordinal(m.group(2), p_mu)'),
+  (r'\b([Сс] )(\d+)-м\b', 'm.group(1) + ordinal(m.group(2), t_mu)'),
+  (r'(\d+)-му\b', 'ordinal(m.group(1), d_mu)'),
+  (r'(\d+)-го\b', 'ordinal(m.group(1), r_mu)'),
+  (r'(\d+)-ми\b', 'ordinal(m.group(1), t_mn)'),
+  (r'\b(\d*1\d|\d*[02-9][015-9]|[015-9])-х\b', 'ordinal(m.group(1), r_mn)'),
+  (r'\b([Дд]о|[Пп]осле|[Сс]о?) (\d+)-й\b', 'm.group(1) + " " + ordinal(m.group(2), r_zh)'),
+  (r'(\d+)( ?- ?| и )(\d+)( годами| веками| (сто|тысяче)летиями)', 'ordinal(m.group(1), t_mu) + m.group(2) + ordinal(m.group(3), t_mu) + m.group(4)'),
+  (r'(\d+)-м (год(у|ах)|век(е|ах)|(сто|тысяче)лети(и|ях))', 'ordinal(m.group(1), p_mu) + " " + m.group(2)'),
+  (r'(\d+)-м( [а-яА-Я]+[иы]м)\b', 'ordinal(m.group(1), t_mu) + m.group(2)'),
+  (r'(\d+)-ю\b', 'ordinal(m.group(1), v_zh)'),
+  (r'(\d+)-й\b', 'ordinal(m.group(1), i_mu)'),
+  (r'([Мм]ежду |[Пп]о сравнению с )(\d+)(-| и )(\d+)( годами| годом)\b', 'm.group(1) + ordinal(m.group(2), t_mu) + m.group(3) + ordinal(m.group(4), t_mu) + m.group(5)')
+)
+
 greekletters = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσΤτΥυΦφΧχΨψΩως'
 letternames = ('альфа', 'бета', 'гамма', 'дельта', 'эпсилон', 'дзета', 'эта', 'тета', 'йота', 'каппа', 'лямбда', 'мю', 'ню', 'кси', 'омикрон', 'пи', 'ро', 'сигма', 'тау', 'ипсилон', 'фи', 'хи', 'пси', 'омега', 'сигма')
 
@@ -2625,96 +2651,25 @@ def txt_prep(text):
 
     # Порядковые числительные
 
-    for m in finditer(r'(\d+)( ?- ?| и | или )(\d+) ((тысяче|сто)летия|поколения)\b', text):
-        text = text.replace(m.group(), ordinal(m.group(1), i_sr) + m.group(2) + ordinal(m.group(3), i_sr) + ' ' + m.group(4), 1)
-
-    for m in finditer(r'(\d+)( ((тысяче|сто)лети|поколени)(е|и|ем|ю|я))\b', text):
-        text = text.replace(m.group(), ordinal(m.group(1), sr_pad[m.group(5)]) + m.group(2), 1)
-
-    for m in finditer(r'(\d+)( [Сс]ъезд)(|а|е|ом|у)\b', text):
-        text = text.replace(m.group(), ordinal(m.group(1), mu_pad[m.group(3)]) + m.group(2) + m.group(3), 1)
-
-    for m in finditer(r'(\d+0)(-\d+0-е годы)', text):
-        text = text.replace(m.group(), ordinal(m.group(1), i_mn) + m.group(2), 1)
-
-    for m in finditer(r'(\d+0)-е( годы)', text):
-        text = text.replace(m.group(), ordinal(m.group(1), i_mn) + m.group(2), 1)
-
-    for m in finditer(r'([Вв] )(\d*0)-е\b', text):
-        text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), i_mn), 1)
-
-    for m in finditer(r'(\d+0)(-\d+0-м годам)', text):
-        text = text.replace(m.group(), ordinal(m.group(1), d_mn) + m.group(2), 1)
-
-    for m in finditer(r'([Кк] )(\d+0)-м\b', text):
-        text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), d_mn), 1)
-
-    for m in finditer(r'(\d+)-х-', text):
-        text = text.replace(m.group(), ordinal(m.group(1), r_mn) + ' ', 1)
-
-    for m in finditer(r'(\d+)-[а]?я\b', text):
-        text = text.replace(m.group(), ordinal(m.group(1), i_zh), 1)
-
-    for m in finditer(r'\b([Вв]о? |[Нн]а |[Сс]квозь |[Чч]ерез )(\d+)-ю\b', text):
-        text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), v_zh), 1)
-
-#    for m in finditer(r'(\d+)-ю\b', text):
-#        text = text.replace(m.group(), ordinal(m.group(1), v_zh), 1)
+    for pattern in patterns:
+        for m in finditer(pattern[0], text):
+            text = text.replace(m.group(), eval(pattern[1]), 1)
 
     for m in finditer(r'\b([Вв]о? |[Нн]а |[Оо]б? |[Пп]ри )(\d*[02-9]|\d*1\d) ([а-я]+)\b', text):
         number = ''
-        if m.group(3) in ms_p:
+        if '|' + m.group(3) + '|' in ms_p:
             number = ordinal(m.group(2), p_mu)
-        elif m.group(3) in ze_dp:
+        elif '|' + m.group(3) + '|' in ze_dp:
             number = ordinal(m.group(2), p_zh)
         if number != '':
             text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
 
-    for m in finditer(r'\b([Вв]о? |[Нн]а |[Оо]б? |[Пп]ри )(\d+)-м\b', text):
-        text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), p_mu), 1)
-
-    for m in finditer(r'\b([Сс] )(\d+)-м\b', text):
-        text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), t_mu), 1)
-
-    for m in finditer(r'(\d+)-му\b', text):
-        text = text.replace(m.group(), ordinal(m.group(1), d_mu), 1)
-
-    for m in finditer(r'(\d+)-го\b', text):
-        text = text.replace(m.group(), ordinal(m.group(1), r_mu), 1)
-
-    for m in finditer(r'(\d+)-ми\b', text):
-        text = text.replace(m.group(), ordinal(m.group(1), t_mn), 1)
-
-    for m in finditer(r'\b(\d*1\d|\d*[02-9][015-9]|[015-9])-х\b', text):
-        text = text.replace(m.group(), ordinal(m.group(1), r_mn), 1)
-
-    for m in finditer(r'\b([Дд]о|[Пп]осле|[Сс]о?) (\d+)-й\b', text):
-        text = text.replace(m.group(), m.group(1) + ' ' + ordinal(m.group(2), r_zh), 1)
-
-    for m in finditer(r'(\d+)( ?- ?| и )(\d+)( годами| веками| (сто|тысяче)летиями)', text):
-        text = text.replace(m.group(), ordinal(m.group(1), t_mu) + m.group(2) + ordinal(m.group(3), t_mu) + m.group(4), 1)
-
-    for m in finditer(r'(\d+)-м (год(у|ах)|век(е|ах)|(сто|тысяче)лети(и|ях))', text):
-        text = text.replace(m.group(), ordinal(m.group(1), p_mu) + ' ' + m.group(2), 1)
-
-    for m in finditer(r'(\d+)-м( [а-яА-Я]+[иы]м)\b', text):
-        text = text.replace(m.group(), ordinal(m.group(1), t_mu) + m.group(2), 1)
-
     for m in finditer(r'(\d+)-е ([а-я]+[ео])\b', text):
-        if m.group(2) in sr_iv:
+        if '|' + m.group(2) + '|' in sr_iv:
             text = text.replace(m.group(), ordinal(m.group(1), i_sr) + ' ' + m.group(2), 1)
 
     for m in finditer(r'(\d+)-е' + months, text):
         text = text.replace(m.group(), ordinal(m.group(1), i_sr) + ' ' + m.group(2), 1)
-
-    for m in finditer(r'(\d+)-ю\b', text):
-        text = text.replace(m.group(), ordinal(m.group(1), v_zh), 1)
-
-    for m in finditer(r'(\d+)-й\b', text):
-        text = text.replace(m.group(), ordinal(m.group(1), i_mu), 1)
-
-    for m in finditer(r'([Мм]ежду |[Пп]о сравнению с )(\d+)(-| и )(\d+)( годами| годом)\b', text):
-        text = text.replace(m.group(), m.group(1) + ordinal(m.group(2), t_mu) + m.group(3) + ordinal(m.group(4), t_mu) + m.group(5), 1)
 
     # Количественные числительные
 
