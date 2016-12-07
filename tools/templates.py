@@ -2657,15 +2657,15 @@ def txt_prep(text):
 
     for m in finditer(r'\b([Вв]о? |[Нн]а |[Оо]б? |[Пп]ри )(\d*[02-9]|\d*1\d) ([а-я]+)\b', text):
         number = ''
-        if '|' + m.group(3) + '|' in ms_p:
+        if m.group(3) in ms_p:
             number = ordinal(m.group(2), p_mu)
-        elif '|' + m.group(3) + '|' in ze_dp:
+        elif m.group(3) in ze_dp:
             number = ordinal(m.group(2), p_zh)
         if number != '':
             text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
 
     for m in finditer(r'(\d+)-е ([а-я]+[ео])\b', text):
-        if '|' + m.group(2) + '|' in sr_iv:
+        if m.group(2) in sr_iv:
             text = text.replace(m.group(), ordinal(m.group(1), i_sr) + ' ' + m.group(2), 1)
 
     for m in finditer(r'(\d+)-е' + months, text):
