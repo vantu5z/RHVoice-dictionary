@@ -2119,6 +2119,7 @@ samples = (
   (r'\b(([Вв]|[Оо]б?) \d+) (веке|в\.)', r'\1-м веке'),
   (r'\b([Кк] \d+)(|-му) (веку|в\.)', r'\1-му веку'),
   (r'\b([Дд]о|[Нн]е позднее|[Нн]е ранее|[Пп]осле|[Сс])( \d+) (века|в\.)', r'\1\2-го века'),
+  (r'\b(\d+)( ?- ?| и )(\d+) веков', r'\1-го\2\3-го веков'),
   (r'\b([Вв] \d+)( ?- ?| и )(\d+) (веках|вв\.)', r'\1-м\2\3-м веках'),
   (r'\b([Кк] \d+)-(\d+) векам', r'\1-му \2-му векам'),
   (r'(начал[аемоу]{1,2}|кон[аемоуц]{2,3}|середин[аейоуы]{1,2}|половин[аейоуы]{1,2}) (\d+) в\.', r'\1 \2-го века'),
@@ -2200,7 +2201,8 @@ patterns = (
   (r'(\d+)-м( [а-яА-Я]+[иы]м)\b', 'ordinal(m.group(1), t_mu) + m.group(2)'),
   (r'(\d+)-ю\b', 'ordinal(m.group(1), v_zh)'),
   (r'(\d+)-й\b', 'ordinal(m.group(1), i_mu)'),
-  (r'([Мм]ежду |[Пп]о сравнению с )(\d+)(-| и )(\d+)( годами| годом)\b', 'm.group(1) + ordinal(m.group(2), t_mu) + m.group(3) + ordinal(m.group(4), t_mu) + m.group(5)')
+  (r'([Мм]ежду |[Пп]о сравнению с )(\d+)(-| и )(\d+)( годами| годом)\b', 'm.group(1) + ordinal(m.group(2), t_mu) + m.group(3) + ordinal(m.group(4), t_mu) + m.group(5)'),
+  (r'(\d+)-е' + months, 'ordinal(m.group(1), i_sr) + " " + m.group(2)')
 )
 
 greekletters = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσΤτΥυΦφΧχΨψΩως'
@@ -2653,7 +2655,7 @@ def txt_prep(text):
 
     for pattern in patterns:
         for m in finditer(pattern[0], text):
-            text = text.replace(m.group(), eval(pattern[1]), 1)
+            text = sub(m.group(), eval(pattern[1]), text)
 
     for m in finditer(r'\b([Вв]о? |[Нн]а |[Оо]б? |[Пп]ри )(\d*[02-9]|\d*1\d) ([а-я]+)\b', text):
         number = ''
@@ -2667,9 +2669,6 @@ def txt_prep(text):
     for m in finditer(r'(\d+)-е ([а-я]+[ео])\b', text):
         if m.group(2) in sr_iv:
             text = text.replace(m.group(), ordinal(m.group(1), i_sr) + ' ' + m.group(2), 1)
-
-    for m in finditer(r'(\d+)-е' + months, text):
-        text = text.replace(m.group(), ordinal(m.group(1), i_sr) + ' ' + m.group(2), 1)
 
     # Количественные числительные
 
