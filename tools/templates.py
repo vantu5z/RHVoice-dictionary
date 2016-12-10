@@ -2200,6 +2200,7 @@ patterns = (
   (r'(\d+)( ?- ?| и )(\d+)( годами| веками| (сто|тысяче)летиями)', 'ordinal(m.group(1), t_mu) + m.group(2) + ordinal(m.group(3), t_mu) + m.group(4)'),
   (r'(\d+)-м (год(у|ах)|век(е|ах)|(сто|тысяче)лети(и|ях))', 'ordinal(m.group(1), p_mu) + " " + m.group(2)'),
   (r'(\d+)-м( [а-яА-Я]+[иы]м)\b', 'ordinal(m.group(1), t_mu) + m.group(2)'),
+  (r'(\d+)-я\b', 'ordinal(m.group(1), i_zh)'),
   (r'(\d+)-ю\b', 'ordinal(m.group(1), v_zh)'),
   (r'(\d+)-й\b', 'ordinal(m.group(1), i_mu)'),
   (r'([Мм]ежду |[Пп]о сравнению с )(\d+)(-| и )(\d+)( годами| годом)\b', 'm.group(1) + ordinal(m.group(2), t_mu) + m.group(3) + ordinal(m.group(4), t_mu) + m.group(5)'),
