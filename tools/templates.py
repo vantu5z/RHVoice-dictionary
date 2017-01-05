@@ -2181,6 +2181,7 @@ samples = (
 )
 
 patterns = (
+  (r'\b([IV]+) степени', 'ordinal(roman2arabic(m.group(1)), r_zh) + " степени"'),
   (r'(\d+)( этаж(а|е|у|ом|))', 'ordinal(m.group(1), mu_pad[m.group(3)]) + m.group(2)'),
   (r'(\d+0)-е( годы)', 'ordinal(m.group(1), i_mn) + m.group(2)'),
   (r'([Кк] )(\d+0)-м\b', 'm.group(1) + ordinal(m.group(2), d_mn)'),
