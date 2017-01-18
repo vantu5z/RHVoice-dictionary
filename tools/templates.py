@@ -2750,11 +2750,11 @@ def txt_prep(text):
         if number != '':
             text = text.replace(m.group(), m.group(1) + ' ' + number + ' ' + m.group(3), 1)
 
-#    for m in finditer(r'\b([А-Я]?[а-я]+[иы]х )(\d+) ([а-я]+)\b', text):
-#        if m.group(3) in mn_r or m.group(3) in zm_r:
-#            text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), r_ca) + ' ' + m.group(3), 1)
+    for m in finditer(r'\b([А-Я]?[а-я]+[иы]х )(\d+) ([а-я]+)\b', text):
+        if m.group(3) in mn_r or m.group(3) in zm_r:
+            text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), r_ca) + ' ' + m.group(3), 1)
 
-    for m in finditer(r'\b(\d+) ([а-я]+)\b', text):
+    for m in finditer(r'\b(\d*[02-9][234]|[234]) ([а-я]+)\b', text):
         if m.group(2) in mn_r or m.group(2) in zm_r:
             text = text.replace(m.group(), cardinal(m.group(1), r_ca) + ' ' + m.group(2), 1)
 
