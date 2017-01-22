@@ -2917,6 +2917,8 @@ def txt_prep(text):
     # Предлоги родительного падежа
     for m in finditer(r'\b([Бб]ез|[Бб]олее|[Уу]|[Оо]коло|[Ии]з|[Пп]осле|[Дд]ля|[Дд]о|[Оо]т) (\d+)\b', text):
         text = text.replace(m.group(), m.group(1) + ' ' + cardinal(m.group(2), r_ca), 1)
+    for m in finditer(r'\b([Сс] )(\d+)( до )', text):
+        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), r_ca) + m.group(3), 1)
 
     # Предлоги дательного падежа
     for m in finditer(r'\b([Кк] )(\d+)\b', text):
