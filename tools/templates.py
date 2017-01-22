@@ -2206,10 +2206,10 @@ patterns = (
   (r'(\d+)-м (год(у|ах)|век(е|ах)|(сто|тысяче)лети(и|ях))', 'ordinal(m.group(1), p_mu) + " " + m.group(2)'),
   (r'(\d+)-м( [а-яА-Я]+[иы]м)\b', 'ordinal(m.group(1), t_mu) + m.group(2)'),
   (r'(\d+)-я\b', 'ordinal(m.group(1), i_zh)'),
-  (r'(\d+)-ю\b', 'ordinal(m.group(1), v_zh)'),
   (r'(\d+)-й\b', 'ordinal(m.group(1), i_mu)'),
   (r'([Мм]ежду |[Пп]о сравнению с )(\d+)(-| и )(\d+)( годами| годом)\b', 'm.group(1) + ordinal(m.group(2), t_mu) + m.group(3) + ordinal(m.group(4), t_mu) + m.group(5)'),
-  (r'(\d+)-е' + months, 'ordinal(m.group(1), i_sr) + " " + m.group(2)')
+  (r'(\d+)-е' + months, 'ordinal(m.group(1), i_sr) + " " + m.group(2)'),
+  (r'(\d+)-ю ([а-я]+ми)\b', 'cardinal(m.group(1), t_ca) + " " + m.group(2)')
 )
 
 greekletters = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσΤτΥυΦφΧχΨψΩως'
@@ -2680,6 +2680,10 @@ def txt_prep(text):
     for m in finditer(r'(\d+)-е ([а-я]+[ео])\b', text):
         if m.group(2) in sr_iv:
             text = text.replace(m.group(), ordinal(m.group(1), i_sr) + ' ' + m.group(2), 1)
+
+    for m in finditer(r'(\d+)-ю ([а-я]+)\b', text):
+        if m.group(2) in ze_v:
+            text = text.replace(m.group(), ordinal(m.group(1), v_zh) + ' ' + m.group(2))
 
     for pattern in patterns:
         for m in finditer(pattern[0], text):
