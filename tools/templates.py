@@ -2677,8 +2677,8 @@ def txt_prep(text):
         if number != '':
             text = text.replace(m.group(), number + ' ' + m.group(3), 1)
 
-    for m in finditer(r'(\d+)-е ([а-я]+[ео])\b', text):
-        if m.group(2) in sr_iv:
+    for m in finditer(r'(\d+)-е (([а-я]+ое |)([а-я]+[ео]))\b', text):
+        if m.group(4) in sr_iv:
             text = text.replace(m.group(), ordinal(m.group(1), i_sr) + ' ' + m.group(2), 1)
 
     for m in finditer(r'(\d+)-ю ([а-я]+)\b', text):
