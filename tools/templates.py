@@ -1997,6 +1997,8 @@ samples = (
   (r' ?± ?', ' плюс-минус '),
   (r' ?= ?', ' равно '),
   (r' ?≈ ?', ' приближённо равно '),
+  (r' ?> ?', ' более '),
+  (r' ?< ?', ' менее '),
 
   (r'\b[Вв]/ч\b', 'вэ-че'),
   (r'/(сек|с)\b', ' в секунду'),
@@ -2699,9 +2701,9 @@ def txt_prep(text):
         if number != '':
             text = text.replace(m.group(), m.group(1) + ' ' + number + ' ' + m.group(3), 1)
 
-    for m in finditer(r'\b([А-Я]?[а-я]+[иы]х )(\d+) ([а-я]+)\b', text):
-        if m.group(3) in mn_r or m.group(3) in zm_r:
-            text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), r_ca) + ' ' + m.group(3), 1)
+#    for m in finditer(r'\b([А-Я]?[а-я]+[иы]х )(\d+) ([а-я]+)\b', text):
+#        if m.group(3) in mn_r or m.group(3) in zm_r:
+#            text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), r_ca) + ' ' + m.group(3), 1)
 
     for m in finditer(r'\b(\d*[02-9][234]|[234]) ([а-я]+)\b', text):
         if m.group(2) in mn_r or m.group(2) in zm_r:
