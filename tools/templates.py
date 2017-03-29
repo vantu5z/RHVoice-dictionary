@@ -2553,7 +2553,7 @@ def txt_prep(text):
             part1 = roman2arabic(m.group(2)) + m.group(3)
         text = text.replace(m.group(), part1 + roman2arabic(m.group(4)) + ' ' + m.group(5), 1)
 
-    for m in finditer(r'(Александр|Иван|Иоанн|Пав[е]?л|П[её]тр|Ф[её]дор|Васили|Лжедмитри|Никола)' + '(|а|е|ем|й|ом|у|ю|я)' + r' ([IVX]+)', text):
+    for m in finditer(r'(Александр|Иван|Иоанн|Пав[е]?л|П[её]тр|Ф[её]дор|Васили|Лжедмитри|Никола|Карл|Людовик)' + '(|а|е|ем|й|ом|у|ю|я)' + r' ([IVX]+)', text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(roman2arabic(m.group(3)), mu_pad[m.group(2)]), 1)
     for m in finditer(r'(Анн|Екатерин)' + '(|а|е|ой|у|ы)' + r' ([IVX]+)', text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(roman2arabic(m.group(3)), zh_pad[m.group(2)]), 1)
