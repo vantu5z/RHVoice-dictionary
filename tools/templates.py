@@ -2764,6 +2764,9 @@ def txt_prep(text):
         if number != '':
             text = text.replace(m.group(), number + m.group(2), 1)
 
+    for m in finditer(r'\b([Вв] )(\d*[02-9]?1\d{3} раз)\b', text):
+        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2)[:-4], v_ca) + ' раз', 1)
+
     # Винительный падеж (жен. род)
     for m in finditer(r'\b(\d*[02-9]1|[1-4])( ([а-я]+([ую]ю|[иы][ех]) |)([а-я]+))', text):
         number = ''
