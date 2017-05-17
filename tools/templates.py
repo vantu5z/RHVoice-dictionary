@@ -2354,20 +2354,20 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + ' в ' + number + ' ' + subst, 1)
 
     # Творительный падеж
-    for m in finditer(r'([Сс]равн(ени[еию]|ив|ивая) с |[Вв]ладе[авеийлмтюшщья]{1,7} )(\d+)' + units, text):
-        text = text.replace(m.group(), m.group(1) + m.group(3) + ' ' + substant(m.group(3), m.group(4), 3), 1)
+    for m in finditer(r'(([Сс]равн(ени[еию]|ив|ивая) с|[Вв]ладе[авеийлмтюшщья]{1,7})( | плюс | минус ))(\d+)' + units, text):
+        text = text.replace(m.group(), m.group(1) + m.group(5) + ' ' + substant(m.group(5), m.group(6), 3), 1)
 
     # Родительный падеж
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Вв]место|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Сс]|[Вв]ладел[аеимухцыь]{2,5}) (\d+)' + units, text):
-        text = text.replace(m.group(), m.group(1) + ' ' + m.group(2) + ' ' + substant(m.group(2), m.group(3), 1), 1)
+    for m in finditer(r'\b(([Бб]олее|[Мм]енее|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Вв]место|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Сс]|[Вв]ладел[аеимухцыь]{2,5})( | плюс | минус ))(\d+)' + units, text):
+        text = text.replace(m.group(), m.group(1) + m.group(4) + ' ' + substant(m.group(4), m.group(5), 1), 1)
 
     # Дательный падеж
-    for m in finditer(r'\b([Кк]о? |рав[нагеимоыхя]{2,4} )(\d+)' + units, text):
-        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + substant(m.group(2), m.group(3), 2), 1)
+    for m in finditer(r'\b(([Кк]о?|рав[нагеимоыхя]{2,4})( | плюс | минус ))(\d+)' + units, text):
+        text = text.replace(m.group(), m.group(1) + m.group(4) + ' ' + substant(m.group(4), m.group(5), 2), 1)
 
     # Предложный падеж
-    for m in finditer(r'\b([Вв] |[Оо]б? |[Пп]ри )(\d+)' + units, text):
-        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + substant(m.group(2), m.group(3), 4), 1)
+    for m in finditer(r'\b(([Вв]|[Оо]б?|[Пп]ри)( | плюс | минус ))(\d+)' + units, text):
+        text = text.replace(m.group(), m.group(1) + m.group(4) + ' ' + substant(m.group(4), m.group(5), 4), 1)
 
     # Именительный
     for m in finditer(r'(\d+,\d+)' + units, text):
