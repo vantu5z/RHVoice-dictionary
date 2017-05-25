@@ -2496,7 +2496,7 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
 
     # Винительный
-    for m in finditer(r'\b([Вв] )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)\b', text):
+    for m in finditer(r'\b([Вв] |[Нн]а )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)\b', text):
         if m.group(2) != '':
             full = cardinal(m.group(2)[:-1], v_ca) + '_'
         else:
@@ -2696,7 +2696,7 @@ def txt_prep(text):
         elif m.group(6) in ze_r:
             if m.group(2) == '1' or (len(m.group(2)) > 1 and m.group(2)[-2] != '1' and m.group(2)[-1] == '1'):
                 number = cardinal(m.group(2), r_ca)[:-2] + 'й'
-        elif m.group(6) in mn_r or m.group(6) in zm_r:
+        elif m.group(6) in mn_r or m.group(6) in zm_r or m.group(6) == 'суток':
             number = cardinal(m.group(2), r_ca)
             if m.group(3) == 'суток' and number[-6:] == 'одного':
                 number = number[:-3] + 'их'
