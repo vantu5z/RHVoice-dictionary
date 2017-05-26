@@ -2650,7 +2650,7 @@ def txt_prep(text):
 
     # Количественные числительные
 
-    for m in finditer(r'(\d+)-(часов[агеиймоухыюя]{2,3}|(силь|стволь|тон|каналь|странич|тысяч|миллион|миллиард|процент|секунд|минут|месяч|недель|днев|мест)н[агеиймоухыюя]{2,3}|лет[геиймнохюя]{2,4}|(|кило)граммов|(|кило|милли|санти)метров[агеиймоухыюя]{2,3})\b', text):
+    for m in finditer(r'(\d+)-(часов[агеиймоухыюя]{2,3}|(силь|стволь|тон|каналь|странич|тысяч|миллион|миллиард|процент|секунд|минут|месяч|недель|днев|мест)н[агеиймоухыюя]{2,3}|лет[геиймноухюя]{2,4}|(|кило)граммов|(|кило|милли|санти)метров[агеиймоухыюя]{2,3})\b', text):
         if m.group(1) == '100':
             num = 'сто'
         elif m.group(1)[-3:] == '000':
@@ -2688,20 +2688,20 @@ def txt_prep(text):
         elif m.group(2) in ze_r:
             text = text.replace(m.group(), cardinal(m.group(1), r_ca)[:-2] + 'й ' + m.group(2), 1)
 
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв]место|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв] возрасте|[Дд]остиг[авеийлнтшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5}) (\d+) (([а-я]+([иы]х|[ео]го|[ео]й) |)([а-я]{2,}))\b', text):
+    for m in finditer(r'\b(([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв]место|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв] возрасте|[Дд]остиг[авеийлнтшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5})( [а-я]+([иы]х|[ео]го|[ео]й)|)) (\d+) (([а-я]+([иы]х|[ео]го|[ео]й) |)([а-я]{2,}))\b', text):
         number = ''
-        if m.group(6) in ms_r:
-            if m.group(2) == '1' or (len(m.group(2)) > 1 and m.group(2)[-2] != '1' and m.group(2)[-1] == '1'):
-                number = cardinal(m.group(2), r_ca)
-        elif m.group(6) in ze_r:
-            if m.group(2) == '1' or (len(m.group(2)) > 1 and m.group(2)[-2] != '1' and m.group(2)[-1] == '1'):
-                number = cardinal(m.group(2), r_ca)[:-2] + 'й'
-        elif m.group(6) in mn_r or m.group(6) in zm_r or m.group(6) == 'суток':
-            number = cardinal(m.group(2), r_ca)
-            if m.group(3) == 'суток' and number[-6:] == 'одного':
+        if m.group(9) in ms_r:
+            if m.group(5) == '1' or (len(m.group(5)) > 1 and m.group(5)[-2] != '1' and m.group(5)[-1] == '1'):
+                number = cardinal(m.group(5), r_ca)
+        elif m.group(9) in ze_r:
+            if m.group(5) == '1' or (len(m.group(5)) > 1 and m.group(5)[-2] != '1' and m.group(5)[-1] == '1'):
+                number = cardinal(m.group(5), r_ca)[:-2] + 'й'
+        elif m.group(9) in mn_r or m.group(9) in zm_r or m.group(9) == 'суток':
+            number = cardinal(m.group(5), r_ca)
+            if m.group(9) == 'суток' and number[-6:] == 'одного':
                 number = number[:-3] + 'их'
         if number != '':
-            text = text.replace(m.group(), m.group(1) + ' ' + number + ' ' + m.group(3), 1)
+            text = text.replace(m.group(), m.group(1) + ' ' + number + ' ' + m.group(6), 1)
 
 #    for m in finditer(r'\b([А-Я]?[а-я]+[иы]х )(\d+) ([а-я]+)\b', text):
 #        if m.group(3) in mn_r or m.group(3) in zm_r:
