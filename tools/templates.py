@@ -2648,6 +2648,15 @@ def txt_prep(text):
         for m in finditer(pattern[0], text):
             text = text.replace(m.group(), eval(pattern[1]), 1)
 
+    for m in finditer(r'(\d*1\d|[02-9]?[02-9]) ([а-я]+)\b', text):
+        number = ''
+        if m.group(2) in ms_t:
+            number = ordinal(m.group(1), t_mu)
+        elif m.group(2) in ze_t:
+            number = ordinal(m.group(2), t_zh)
+        if number != '':
+            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
+
     # Количественные числительные
 
     for m in finditer(r'(\d+)-(часов[агеиймоухыюя]{2,3}|(силь|стволь|тон|каналь|странич|тысяч|миллион|миллиард|процент|секунд|минут|месяч|недель|днев|мест)н[агеиймоухыюя]{2,3}|лет[геиймноухюя]{2,4}|(|кило)граммов|(|кило|милли|санти)метров[агеиймоухыюя]{2,3})\b', text):
