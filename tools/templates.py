@@ -2048,7 +2048,7 @@ samples = (
 #  ('⁸', '8'),
 #  ('⁹', '9'),
 #  ('⁻', 'минус '),
-  (r'\b(\d+) ?х ?(\d+)\b', r'\1 на \2'),
+  (r'\b(\d+) ?[×xXхХ] ?(\d+)\b', r'\1 на \2'),
 
   (r'(\d) - (\d)', r'\1-\2'),
   (r'(?<=\d)(г\.|гг\.)', r' \1'),
@@ -2101,9 +2101,10 @@ samples = (
 
   (r'\b([Вв] \d+0)(|-х) (годах|гг\.)', r'\1-х годах'),
   (r'\b([Дд]о|[Пп]осле|[Сс])( \d+) (годов|гг\.)', r'\1\2-х годов'),
-  (r'\b([Сс] \d+) по (\d+) (год[ы]?)\b', r'\1-го по \2-й \3'),
-  (r'\b([Сс] \d+) по (\d+) г\.', r'\1-го по \2-й год'),
-  (r'\b([Сс] \d+) по (\d+) гг\.', r'\1-го по \2-й годы'),
+  (r'\b([Сс] \d+)( по \d+)( год[ы]?)\b', r'\1-го\2-й\3'),
+  (r'\b([Сс] \d+)( по \d+) г\.', r'\1-го\2-й год'),
+  (r'\b([Сс] \d+)( по \d+) гг\.', r'\1-го\2-й годы'),
+  (r'\b([Сс] \d+)( на \d+)( год\b| ?г\.)', r'\1-го\2-й год'),
 
   (r'([Зз]им[аеойуы]{1,2} \d+)-(\d+)', r'\1-го \2-го'),
 
@@ -2326,6 +2327,27 @@ def feminin(num):
         elif num == '2':
             num = 'две'
     return num
+
+def daynight(num, nom):
+    number = num
+    if nom == 'сутки':
+        if numer == '1':
+            number = 'одни'
+        elif len(num) > 1 and num[-2] != '1' and num[-1] == '1':
+            number = num[:-1] + '0_одни'
+    else:
+        if num == '2':
+            number = 'двое'
+        elif num == '3':
+            number = 'трое'
+        elif num == '4':
+            number = 'четверо'
+        elif len(num) > 1 and num[-2] != '1':
+            if 5 > int(num[-1]) > 0:
+                number = cardinal(num, r_ca)
+                if number[-6:] == 'одного':
+                    number = numb [:-3] + 'их'
+    return number
 
 # =================================
 # Основная функция обработки текста
@@ -2843,27 +2865,13 @@ def txt_prep(text):
     for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Ии]з|[Пп]осле|[Дд]ля|[Дд]о|[Оо]т|[Вв]место) (1|[02-9]1) суток', text):
         text = text.replace(m.group(), m.group(1) + ' ' +cardinal(m.group(2), r_ca)[:-2] + 'их суток', 1)
 
-    for m in finditer(r'(\d+) (сутки|суток)', text):
-        number = ''
-        if m.group(2) == 'сутки':
-            if m.group(1) == '1':
-                number = 'одни'
-            elif len(m.group(1)) > 1 and m.group(1)[-2] != '1' and m.group(1)[-1] == '1':
-                number = m.group(1)[:-1] + '0_одни'
+    for m in finditer(r'\b((\d+)-|)((\d+) (сутки|суток))', text):
+        if m.group(1) != '':
+            number1 = daynight(m.group(2), m.group(5)) + '-'
         else:
-            if m.group(1) == '2':
-                number = 'двое'
-            elif m.group(1) == '3':
-                number = 'трое'
-            elif m.group(1) == '4':
-                number = 'четверо'
-            elif len(m.group(1)) > 1 and m.group(1)[-2] != '1':
-                if 5 > int(m.group(1)[-1]) > 0:
-                    number = cardinal(m.group(1), r_ca)
-                    if number[-6:] == 'одного':
-                        number = number[:-3] + 'их'  
-        if number != '':
-            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
+            number1 = ''
+        number2 = daynight(m.group(4), m.group(5))
+        text = text.replace(m.group(), number1 + number2 + ' ' + m.group(5), 1)
 
     # Предлоги родительного падежа
     for m in finditer(r'\b(([Бб]ез|[Бб]олее|[Бб]ольше|[Вв]место|[Дд]ля|[Дд]о|[Ии]з|[Мм]енее|[Мм]еньше|[Оо]коло|[Оо]т|[Пп]осле|[Сс]выше|[Уу]) \d+-)(\d+)', text):
