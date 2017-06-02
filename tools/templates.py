@@ -2152,6 +2152,7 @@ patterns = (
   (r'(\d+0)( ?- ?\d+0-е годы)', 'ordinal(m.group(1), i_mn) + m.group(2)'),
   (r'([Вв] )(\d*0)-е\b', 'm.group(1) + ordinal(m.group(2), i_mn)'),
   (r'(\d+0)( ?- ?\d+0-м годам)', 'ordinal(m.group(1), d_mn) + m.group(2)'),
+  (r'(\d+0)-м( годам| числам)\b', 'ordinal(m.group(1), t_mu) + m.group(2)'),
   (r'(\d+)-х-', 'ordinal(m.group(1), r_mn) + " "'),
   (r'\b([Вв]о? |[Нн]а |[Сс]квозь |[Чч]ерез )(\d+)-ю\b', 'm.group(1) + ordinal(m.group(2), v_zh)'),
   (r'\b([Вв]о? |[Нн]а |[Оо]б? |[Пп]ри )(\d+)(|-м)( ?- ?| или | и )(\d+)-м\b', 'm.group(1) + ordinal(m.group(2), p_mu) + m.group(4) + ordinal(m.group(5), p_mu)'),
@@ -2759,19 +2760,26 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Творительный падеж
-    for m in finditer(r'(\d+) ([а-я]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b', text):
-        number = ''
-        if m.group(1) == '1' or (len(m.group(1)) > 1 and m.group(1)[-2] != '1' and m.group(1)[-1] == '1'):
-            if m.group(2) in ms_t:
-                number = cardinal(m.group(1), t_ca)
-            elif m.group(2) in ze_t:
-                number = cardinal(m.group(1), t_ca)[:-2] + 'ой'
-            elif m.group(2) == 'сутками':
-                number = cardinal(m.group(1), t_ca) + 'и'
-        elif m.group(2)[-1] == 'и':
-            number = cardinal(m.group(1), t_ca)
-        if number != '':
-            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
+    for m in finditer(r'(([Мм]ежду )(\d+) и |)(\d+) ([а-я]+([аиыя]ми|[ео]м|[еиоы]й|ью))\b', text):
+        if m.group(1) != '':
+            number = cardinal(m.group(3), t_ca)
+            if (m.group(3) == '1' or (len(m.group(3)) > 1 and m.group(3)[-2] != '1' and m.group(3)[-1] == '1')) and (m.group(5) in ze_t or m.group(5)[:-2] in ze_i or m.group(5)[:-3] + 'ь' in ze_i):
+                pre = m.group(2) + number[:-2] + 'ой и '
+            else:
+                pre = m.group(2) + number + ' и '
+        else:
+            pre = ''
+        number = m.group(4)
+        if m.group(4) == '1' or (len(m.group(4)) > 1 and m.group(4)[-2] != '1' and m.group(4)[-1] == '1'):
+            if m.group(5) in ms_t:
+                number = cardinal(m.group(4), t_ca)
+            elif m.group(5) in ze_t:
+                number = cardinal(m.group(4), t_ca)[:-2] + 'ой'
+            elif m.group(5) == 'сутками':
+                number = cardinal(m.group(4), t_ca) + 'и'
+        elif m.group(5)[-1] == 'и':
+            number = cardinal(m.group(4), t_ca)
+        text = text.replace(m.group(), pre + number + ' ' + m.group(5), 1)
 
     # Винительный падеж (муж. род)
     for m in finditer(r'\b(\d*[02-9]1|[1-4])( ([а-я]+([ео]го|[иы]х) |)([а-я]+))', text):
@@ -2882,7 +2890,7 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), r_ca) + m.group(3), 1)
 
     # Предлоги дательного падежа
-    for m in finditer(r'\b([Кк] )(\d+)\b', text):
+    for m in finditer(r'\b([Кк] |[Рр]авн[еолстья]{1,6} )(\d+)\b', text):
         text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), d_ca), 1)
 
     # Предлоги творительного падежа
