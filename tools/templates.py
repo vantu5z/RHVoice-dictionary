@@ -1903,6 +1903,7 @@ presamples = (
   (r' +(\n|\Z)', r'\1'),
   (r'\n{2,}', r'\n'),
   (r'[‑–−—]', '-'),
+  ('…', '...'),
 
   ('л\. с\.', 'л.с.'),
   (r' ?\& ?', ' and '),
@@ -2329,6 +2330,7 @@ def feminin(num):
             num = 'две'
     return num
 
+# Счет суток (num - число, nom - существитедьное)
 def daynight(num, nom):
     number = num
     if nom == 'сутки':
