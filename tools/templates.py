@@ -1905,6 +1905,8 @@ presamples = (
   (r'[‑–−—]', '-'),
   ('…', '...'),
 
+  (r'(\w-\d+) ', r'\1_'), # Предотвращает склонение числит. в названиях
+
   ('л\. с\.', 'л.с.'),
   (r' ?\& ?', ' and '),
 
@@ -2334,7 +2336,7 @@ def substant(num, key, cas = 0):
         else:
             if (len(num) > 1 and num[-2] == '1') or num[-1] != '1':
                 form = forms[key][2 * cas + 1]
-            else:       
+            else:
                 form = forms[key][2 * cas]
     return form
 
