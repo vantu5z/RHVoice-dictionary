@@ -2181,6 +2181,11 @@ patterns = (
 greekletters = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσΤτΥυΦφΧχΨψΩως'
 letternames = ('альфа', 'бета', 'гамма', 'дельта', 'эпсилон', 'дзета', 'эта', 'тета', 'йота', 'каппа', 'лямбда', 'мю', 'ню', 'кси', 'омикрон', 'пи', 'ро', 'сигма', 'тау', 'ипсилон', 'фи', 'хи', 'пси', 'омега', 'сигма')
 
+# Число оканчивается на "1", но не на "11"
+def condition(value):
+    if value == '1' or (len(value) > 1 and value[-2] != '1' and value[-1] == '1'): return True
+    else: return False
+
 # Склонение количественного числительного (num - число, casus - падеж)
 def cardinal(num, casus):
     rem = len(num) % 3
@@ -2301,18 +2306,35 @@ def substant(num, key, cas = 0):
                 if num[-1] == '1':
                     form = forms[key][0]
                 elif 1 < int(num[-1]) < 5:
-                    if key == 'л.с.':
-                        form = 'лошадиные силы'
-                    elif key == 'а.е.':
-                        form = 'астрономические единицы'
+                    if key in ('л.с.', 'а.е.'):
+                        form = {'л.с.': 'лошадиные силы', 'а.е.': 'астрономические единицы'}[key]
                     else:
                         form = forms[key][2]
                 else:
                     form = forms[key][1]
+        elif cas == 5:
+            if key in ('т', 'а.е.', 'л.с.', 'сек'):
+
+                if condition(num):
+                    form = {'т': 'тонну', 'а.е.': 'астрономическую единицу', 'л.с.': 'лошадиную силу', 'сек': 'секунду'}[key]
+                elif num in '234' or (len(num) > 1 and num[-2] != '1' and num[-1] in '234'):
+                    if key in ('л.с.', 'а.е.'):
+                        form = {'л.с.': 'лошадиные силы', 'а.е.': 'астрономические единицы'}[key]
+                    else:
+                        form = forms[key][2]
+                else:
+                    form = forms[key][1]
+            else:
+                if (len(num) > 1 and num[-2] != '1' and num[-1] in '234') or num[-1] in '234':
+                    form = forms[key][2]
+                elif (len(num) > 1 and num[-2] == '1') or num[-1] != '1':
+                    form = forms[key][1]
+                else:
+                    form = forms[key][0]
         else:
             if (len(num) > 1 and num[-2] == '1') or num[-1] != '1':
                 form = forms[key][2 * cas + 1]
-            else:
+            else:       
                 form = forms[key][2 * cas]
     return form
 
@@ -2729,10 +2751,10 @@ def txt_prep(text):
     for m in finditer(r'\b(([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв]место|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв] возрасте|[Дд]остиг[авеийлнтшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5})( [а-я]+([иы]х|[ео]го|[ео]й)|)) (\d+) (([а-я]+([иы]х|[ео]го|[ео]й) |)([а-я]{2,}))\b', text):
         number = ''
         if m.group(9) in ms_r:
-            if m.group(5) == '1' or (len(m.group(5)) > 1 and m.group(5)[-2] != '1' and m.group(5)[-1] == '1'):
+            if condition(m.group(5)):
                 number = cardinal(m.group(5), r_ca)
         elif m.group(9) in ze_r:
-            if m.group(5) == '1' or (len(m.group(5)) > 1 and m.group(5)[-2] != '1' and m.group(5)[-1] == '1'):
+            if condition(m.group(5)):
                 number = cardinal(m.group(5), r_ca)[:-2] + 'й'
         elif m.group(9) in mn_r or m.group(9) in zm_r or m.group(9) == 'суток':
             number = cardinal(m.group(5), r_ca)
@@ -2752,7 +2774,7 @@ def txt_prep(text):
     # Дательный падеж (мн. ч. и муж./ср. род ед. ч.)
     for m in finditer(r'(\d+) (([а-я]+([иы]м|[ео]му) |)([а-я]+([аиыя]м|у|ю|е)))\b', text):
         number = ''
-        if m.group(1) == '1' or (len(m.group(1)) > 1 and m.group(1)[-2] != '1' and m.group(1)[-1] == '1'):
+        if condition(m.group(1)):
             if m.group(5) in ms_d:
                 number = cardinal(m.group(1), d_ca)
             elif m.group(5) in ze_dp:
@@ -2769,14 +2791,14 @@ def txt_prep(text):
     for m in finditer(r'(([Мм]ежду )(\d+) и |)(\d+) ([а-я]+([аиыя]ми|[ео]м|[еиоы]й|ью))\b', text):
         if m.group(1) != '':
             number = cardinal(m.group(3), t_ca)
-            if (m.group(3) == '1' or (len(m.group(3)) > 1 and m.group(3)[-2] != '1' and m.group(3)[-1] == '1')) and (m.group(5) in ze_t or m.group(5)[:-2] in ze_i or m.group(5)[:-3] + 'ь' in ze_i):
+            if condition(m.group(3)) and (m.group(5) in ze_t or m.group(5)[:-2] in ze_i or m.group(5)[:-3] + 'ь' in ze_i):
                 pre = m.group(2) + number[:-2] + 'ой и '
             else:
                 pre = m.group(2) + number + ' и '
         else:
             pre = ''
         number = m.group(4)
-        if m.group(4) == '1' or (len(m.group(4)) > 1 and m.group(4)[-2] != '1' and m.group(4)[-1] == '1'):
+        if condition(m.group(4)):
             if m.group(5) in ms_t:
                 number = cardinal(m.group(4), t_ca)
             elif m.group(5) in ze_t:
@@ -2839,7 +2861,7 @@ def txt_prep(text):
         number = ''
         if m.group(6) == 'ах' or m.group(6) == 'ях':
             number = cardinal(m.group(1), p_ca)
-        if m.group(1) == '1' or (len(m.group(1)) > 1 and m.group(1)[-2] != '1' and m.group(1)[-1] == '1'):
+        if condition(m.group(1)):
             if m.group(5) in ms_p:
                 number = cardinal(m.group(1), p_ca)
             elif m.group(5) == 'сутках':
