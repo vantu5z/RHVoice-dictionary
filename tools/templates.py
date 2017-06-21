@@ -1955,6 +1955,7 @@ presamples = (
   (r'(?<=\d) ?млрд', '000000000'),
   (r'(?<=\d) ?трлн', '000000000000'),
 
+  (r'(?<=\d)[×xXхХ](?=\d)', ' на '),
   (r' ?± ?', ' плюс-минус '),
   (r' ?= ?', ' равно '),
   (r' ?≠ ?', ' не равно '),
@@ -2054,7 +2055,6 @@ samples = (
 #  ('⁸', '8'),
 #  ('⁹', '9'),
 #  ('⁻', 'минус '),
-  (r'(?<=\d)[×xXхХ](?=\d)', ' на '),
 
   (r'(\d) - (\d)', r'\1-\2'),
   (r'(?<=\d)(г\.|гг\.)', r' \1'),
@@ -2874,9 +2874,11 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Женский род (им./вин. пад.)
-    for m in finditer(r'\b(\d*[02-9][12]|[12])(( [а-я]+([ая]я|[иы][ех])|) ([а-я]+))', text):
-        if (m.group(1)[-1] == '1' and m.group(5) in ze_i) or m.group(5) in ze_r:
-            text = text.replace(m.group(), feminin(m.group(1)) + m.group(2), 1)
+    for m in finditer(r'\b(((\d+)(-| или | и ))|)(\d+)(( [а-я]+([ая]я|[иы][ех])|) ([а-я]+))', text):
+        if m.group(9) in ze_i or m.group(9) in ze_r or m.group(9) in zm_r:
+            if m.group(1) == '': pre = ''
+            else: pre = feminin(m.group(3)) + m.group(4)
+            text = text.replace(m.group(), pre + feminin(m.group(5)) + m.group(6), 1)
 
     # Средний род (им./вин. пад.)
     for m in finditer(r'\b(\d*[02-9]1|1) (([а-я]+[ео]е |)([а-я]+[ео]))\b', text):
