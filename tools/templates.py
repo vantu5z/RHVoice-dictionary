@@ -1905,8 +1905,6 @@ presamples = (
   (r'[‑–−—]', '-'),
   ('…', '...'),
 
-  (r'([a-zA-Zа-яА-Я]-\d+) ', r'\1_'), # Предотвращает склонение числит. в названиях
-
   ('л\. с\.', 'л.с.'),
   (r' ?\& ?', ' and '),
 
@@ -1982,11 +1980,12 @@ presamples = (
   (r'(?<=\d) ' + units,  r'\1')
 )
 samples = (
-  (r'\b([Вв] )№№ ?', r'\1номерах '),
-  (r'\b([Вв] )№( ?\d+)', r'\1 номере \2'),
-  (r'(№ ?|(стать(я|е|ю|и|ей)) \d+) ', r'\1_'),
-  ('№№ ?', 'номера '),
-  ('№ ?', 'номер '),
+  (r'([A-Za-zА-Яа-я])-(?=\d+)', r'\1–'),
+  (r'([Сс]тать)(я|е|ю|и|ей) (?=\d+)', r'\1\2_'),
+  (r'\b([Вв] )№№ ?', r'\1номерах_'),
+  (r'\b([Вв] )№( ?\d+)', r'\1 номере_\2'),
+  ('№№ ?', 'номера_'),
+  ('№ ?', 'номер_'),
   (r'(?<=\d) ?V\b', ' вольт'),
 
   (r'(?<=\d-)ом\b', 'м'),
@@ -2708,6 +2707,12 @@ def txt_prep(text):
         num = sub(r'\bодного', 'одно', num)
         text = text.replace(m.group(), num + m.group(2), 1)
 
+    # Наращения при количественных числительных недопустимы, но распространены
+    for m in finditer(r'\b(\d*[1-9]0|\d*1\d|\d*[02-9]?[569])-ти\b', text):
+        text = text.replace(m.group(), cardinal(m.group(1), r_ca), 1)
+    for m in finditer(r'\b(\d*[02-9]?[234])-х\b', text):
+        text = text.replace(m.group(), cardinal(m.group(1), r_ca), 1)
+
     # Родительный падеж
     for m in finditer(r'\b([Оо]т |[Сс] )(\d+)( до \d+ )([а-я]+)\b', text):
         number = cardinal(m.group(2), r_ca)
@@ -2906,12 +2911,10 @@ def txt_prep(text):
         text = text.replace(m.group(), number1 + number2 + ' ' + m.group(5), 1)
 
     # Предлоги родительного падежа
-    for m in finditer(r'\b(([Бб]ез|[Бб]олее|[Бб]ольше|[Вв]место|[Дд]ля|[Дд]о|[Ии]з|[Мм]енее|[Мм]еньше|[Оо]коло|[Оо]т|[Пп]осле|[Сс]выше|[Уу]) \d+-)(\d+)', text):
-        text = text.replace(m.group(), m.group(1) + cardinal(m.group(3), r_ca), 1)
-    for m in finditer(r'\b([Бб]ез|[Бб]олее|[Бб]ольше|[Вв]место|[Дд]ля|[Дд]о|[Ии]з|[Мм]енее|[Мм]еньше|[Оо]коло|[Оо]т|[Пп]осле|[Сс]выше|[Уу]) (\d+)\b', text):
-        text = text.replace(m.group(), m.group(1) + ' ' + cardinal(m.group(2), r_ca), 1)
-    for m in finditer(r'\b([Сс] )(\d+)( до )', text):
-        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), r_ca) + m.group(3), 1)
+    for m in finditer(r'\b([Бб]ез|[Бб]олее|[Бб]ольше|[Вв]место|[Дд]ля|[Дд]о|[Ии]з|[Мм]енее|[Мм]еньше|[Оо]коло|[Оо]т|[Пп]осле|[Сс]выше|[Уу]) (\d+)((-| или | и )(\d+)|)\b', text):
+        if m.group(3) == '': pre = ''
+        else: pre = m.group(4) + cardinal(m.group(5), r_ca)
+        text = text.replace(m.group(), m.group(1) + ' ' + cardinal(m.group(2), r_ca) + pre, 1)
 
     # Предлоги дательного падежа
     for m in finditer(r'\b([Кк] |[Рр]авн[еолстья]{1,6} )(\d+)\b', text):
@@ -2924,12 +2927,6 @@ def txt_prep(text):
     # Предлоги предложного падежа
     for m in finditer(r'\b([Оо]б? |[Пп]ри )(\d+)\b', text):
         text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), p_ca), 1)
-
-    # Наращения при количественных числительных недопустимы, но распространены
-    for m in finditer(r'\b(\d*[1-9]0|\d*1\d|\d*[02-9]?[569])-ти\b', text):
-        text = text.replace(m.group(), cardinal(m.group(1), r_ca), 1)
-    for m in finditer(r'\b(\d*[02-9]?[234])-х\b', text):
-        text = text.replace(m.group(), cardinal(m.group(1), r_ca), 1)
 
     # Необязательная замена "_" (используется при обработке)
     text = sub('_', ' ', text)
