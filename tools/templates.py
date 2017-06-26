@@ -2858,11 +2858,11 @@ def txt_prep(text):
                 number = m.group(2)[:-1] + '0_одну'
             text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
 
-    for m in finditer(r'([Сс]тои(т[ь]?|л[аио]?|мость{ю]|вш[аеиймя]{2,3})) (\d+) ([а-я]+)\b', text):
+    for m in finditer(r'([Сс]тои(т[ь]?|л[аио]?|вш[аеиймя]{2,3})) (\d+) ([а-я]+)\b', text):
         number = cardinal(m.group(3), v_ca)
         if number[-4:] == 'один' and m.group(4) in ('копейку', 'гривну', 'драхму', 'марку'):
             number = number[:-2] + 'ну'
-       elif number[-3:] == 'два' and m.group(4) in ('копейки', 'гривны', 'драхмы', 'марки'):
+        elif number[-3:] == 'два' and m.group(4) in ('копейки', 'гривны', 'драхмы', 'марки'):
             number = number[:-1] + 'е'
         text = text.replace(m.group(), m.group(1) + ' ' + number + ' ' + m.group(4), 1)
 
