@@ -2794,16 +2794,15 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Творительный падеж
-    for m in finditer(r'(([Мм]ежду )(\d+) и |)(\d+) ([а-я]+([аиыя]ми|[ео]м|[еиоы]й|ью))\b', text):
+    for m in finditer(r'((\d+)(-| или | и )|)(\d+) ([а-я]+([аиыя]ми|[ео]м|[еиоы]й|ью))\b', text):
         if m.group(1) != '':
-            number = cardinal(m.group(3), t_ca)
-            if condition(m.group(3)) and (m.group(5) in ze_t or m.group(5)[:-2] in ze_i or m.group(5)[:-3] + 'ь' in ze_i):
-                pre = m.group(2) + number[:-2] + 'ой и '
+            number = cardinal(m.group(2), t_ca)
+            if condition(m.group(2)) and (m.group(5) in ze_t or m.group(5)[:-2] in ze_i or m.group(5)[:-3] + 'ь' in ze_i):
+                pre = number[:-2] + 'ой' + m.group(3)
             else:
-                pre = m.group(2) + number + ' и '
+                pre = number + m.group(3)
         else:
             pre = ''
-        number = m.group(4)
         if condition(m.group(4)):
             if m.group(5) in ms_t:
                 number = cardinal(m.group(4), t_ca)
@@ -2812,6 +2811,7 @@ def txt_prep(text):
             elif m.group(5) == 'сутками':
                 number = cardinal(m.group(4), t_ca) + 'и'
         elif m.group(5)[-1] == 'и':
+    #    elif nom[:-1] in mn_d:
             number = cardinal(m.group(4), t_ca)
         text = text.replace(m.group(), pre + number + ' ' + m.group(5), 1)
 
