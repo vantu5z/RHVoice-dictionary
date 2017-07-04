@@ -2748,20 +2748,20 @@ def txt_prep(text):
         elif m.group(2) in ze_r:
             text = text.replace(m.group(), cardinal(m.group(1), r_ca)[:-2] + 'й ' + m.group(2), 1)
 
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Сс]|[Уу]|[Вв]место|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв] возрасте|[Дд]остиг[авеийлнтшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5}) (\d+) ([а-я]+)\b', text):
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Сс]|[Уу]|[Вв]место|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв] возрасте|[Дд]остиг[авеийлнтшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5})( | минус )(\d+) ([а-я]+)\b', text):
         number = ''
-        if m.group(3) in ms_r:
-            if condition(m.group(2)):
-                number = cardinal(m.group(2), r_ca)
-        elif m.group(3) in ze_r:
-            if condition(m.group(2)):
-                number = cardinal(m.group(2), r_ca)[:-2] + 'й'
-        elif m.group(3) in mn_r or m.group(3) in zm_r or m.group(3) == 'суток':
-            number = cardinal(m.group(2), r_ca)
-            if m.group(3) == 'суток' and number[-6:] == 'одного':
+        if m.group(4) in ms_r:
+            if condition(m.group(3)):
+                number = cardinal(m.group(3), r_ca)
+        elif m.group(4) in ze_r:
+            if condition(m.group(3)):
+                number = cardinal(m.group(3), r_ca)[:-2] + 'й'
+        elif m.group(4) in mn_r or m.group(4) in zm_r or m.group(4) == 'суток':
+            number = cardinal(m.group(3), r_ca)
+            if m.group(4) == 'суток' and number[-6:] == 'одного':
                 number = number[:-3] + 'их'
         if number != '':
-            text = text.replace(m.group(), m.group(1) + ' ' + number + ' ' + m.group(3), 1)
+            text = text.replace(m.group(), m.group(1) + m.group(2) + number + ' ' + m.group(4), 1)
 
 #    for m in finditer(r'\b([А-Я]?[а-я]+[иы]х )(\d+) ([а-я]+)\b', text):
 #        if m.group(3) in mn_r or m.group(3) in zm_r:
