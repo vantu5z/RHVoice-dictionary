@@ -1904,6 +1904,7 @@ presamples = (
   (r'\n{2,}', r'\n'),
   (r'[‑–−—]', '-'),
   ('…', '...'),
+  (r'\b(\d+)-ой\b', r'\1-й'), # Лишнее "о"
 
   ('л\. с\.', 'л.с.'),
   (r' ?\& ?', ' and '),
@@ -2794,7 +2795,8 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Творительный падеж
-    for m in finditer(r'((\d+)(-| или | и )|)(\d+) ([а-я]+([аиыя]ми|[ео]м|[еиоы]й|ью))\b', text):
+    for m in finditer(r'((\d+)(-| или | и )|)(\d+) ([а-я]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b', text):
+        number = ''
         if m.group(1) != '':
             number = cardinal(m.group(2), t_ca)
             if condition(m.group(2)) and (m.group(5) in ze_t or m.group(5)[:-2] in ze_i or m.group(5)[:-3] + 'ь' in ze_i):
@@ -2811,9 +2813,9 @@ def txt_prep(text):
             elif m.group(5) == 'сутками':
                 number = cardinal(m.group(4), t_ca) + 'и'
         elif m.group(5)[-2:] == 'ми':
-#        elif m.group(5)[:-1] in mn_d:
             number = cardinal(m.group(4), t_ca)
-        text = text.replace(m.group(), pre + number + ' ' + m.group(5), 1)
+        if number != '':
+            text = text.replace(m.group(), pre + number + ' ' + m.group(5), 1)
 
     # Винительный падеж (муж. род)
     for m in finditer(r'\b(\d*[02-9]1|[1-4])( ([а-я]+([ео]го|[иы]х) |)([а-я]+))', text):
