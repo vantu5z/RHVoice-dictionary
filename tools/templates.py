@@ -2120,6 +2120,7 @@ samples = (
   (r'\b([Сс] \d+)( на \d+) (год\b|г\.)', r'\1-го\2-й год'),
 
   (r'([Зз]им[аеойуы]{1,2} \d+)-(\d+)', r'\1-го \2-го'),
+  (r'(?<=\d)\.(?=\d)', '_точка_'),
 
   (r'(\d)( квартал)\b', r'\1-й\2'),
   (r'(\d)( квартала)\b', r'\1-го\2'),
@@ -2357,13 +2358,20 @@ def substant(num, key, cas = 0):
 
 # Форма женского рода количественного числительного в им. пад.
 def feminin(num):
-    t_num = '0' + num
-    if t_num[-1] in '12' and t_num[-2] != '1':
-        if t_num[-1] == '1': last = 'одна'
-        else: last = 'две'
-        if len(num) > 1: pre = num[:-1] + '0_'
-        else: pre =''
-        num = pre + last
+    if len(num) > 1:
+        if num[-2] != '1':
+            pre = num[:-1]
+            if int(pre) != 0:
+                pre = num[:-1] + '0'
+            if num[-1] == '1':
+                num = pre + '_одна'
+            elif num[-1] == '2':
+                num = pre + '_две'
+    else:
+        if num == '1':
+            num = 'одна'
+        elif num == '2':
+            num = 'две'
     return num
 
 # Счет суток (num - число, nom - существитедьное)
@@ -2598,6 +2606,36 @@ def txt_prep(text):
             rd = 'ых'
         text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
 
+    # Время в формате (ч)ч:мм/(ч)ч.мм
+
+    for m in finditer(r'\b([Вв] \d{1,2})[:.](\d\d)\b', text):
+        minutes = feminin(m.group(2))
+        if minutes[-2:] == 'на':
+            minutes = minutes[:-1] + 'у'
+        text = text.replace(m.group(), m.group(1) + ' ' + minutes, 1)
+
+    for m in finditer(r'\b([Кк] )(\d{1,2})[:.](\d\d)\b', text):
+        hours = cardinal(m.group(2), d_ca)
+        minutes = cardinal(m.group(3), d_ca)
+        if minutes[-2:] == 'му':
+            minutes = minutes[:-2] + 'й'
+        if m.group(3) == '00':
+            minutes = '00'
+        elif m.group(3)[0] == '0':
+            minutes = '0_' + minutes
+        text = text.replace(m.group(), m.group(1) + hours + ' ' + minutes, 1)
+
+    for m in finditer(r'\b([Дд]о |[Пп]осле |[Оо]коло |[Сс] )(\d{1,2})[:.](\d\d)\b', text):
+        hours = cardinal(m.group(2), r_ca)
+        minutes = cardinal(m.group(3), r_ca)
+        if minutes[-2:] == 'го':
+            minutes = minutes[:-2] + 'й'
+        if m.group(3) == '00':
+            minutes = '00'
+        elif m.group(3)[0] == '0':
+            minutes = '0_' + minutes
+        text = text.replace(m.group(), m.group(1) + hours + ' ' + minutes, 1)
+
     # Римские цифры
 
     for m in finditer(r'\b(([IVXCDLM]+)( ?- ?| и | или )|)([IVXCDLM]+) ([в]?в\.|век[аеуовмих]{,3}\b|(сто|тысяче)лети[ейяюмих]{1,3}\b|[Сс]ъезд[аеуомих]{,3}\b|квартал[аеуымих]{,3}\b)', text):
@@ -2621,44 +2659,6 @@ def txt_prep(text):
 
     for m in finditer(r'\b([A-Z][a-z]*[ -]|[А-Я]?[а-я]*[ -])([IVX]+)($|\n|[.,;:]| [^a-z])', text):
         text = text.replace(m.group(), m.group(1) + roman2arabic(m.group(2)) + m.group(3), 1)
-
-    # Время в формате (ч)ч:мм/(ч)ч.мм
-
-    for m in finditer(r'\b([Вв] \d{1,2})[:.](\d{2})\b', text):
-        minutes = feminin(m.group(2))
-        if minutes[-2:] == 'на':
-            minutes = minutes[:-1] + 'у'
-        text = text.replace(m.group(), m.group(1) + ' ' + minutes, 1)
-
-    for m in finditer(r'\b([Кк] )(\d{1,2})[:.](\d{2})\b', text):
-        hours = cardinal(m.group(2), d_ca)
-        minutes = cardinal(m.group(3), d_ca)
-        if minutes[-2:] == 'му':
-            minutes = minutes[:-2] + 'й'
-        if m.group(3) == '00':
-            minutes = '00'
-        elif m.group(3)[0] == '0':
-            minutes = '0_' + minutes
-        text = text.replace(m.group(), m.group(1) + hours + ' ' + minutes, 1)
-
-    for m in finditer(r'\b([Дд]о |[Пп]осле |[Оо]коло |[Сс] )(\d{1,2})[:.](\d{2})\b', text):
-        hours = cardinal(m.group(2), r_ca)
-        minutes = cardinal(m.group(3), r_ca)
-        if minutes[-2:] == 'го':
-            minutes = minutes[:-2] + 'й'
-        if m.group(3) == '00':
-            minutes = '00'
-        elif m.group(3)[0] == '0':
-            minutes = '0_' + minutes
-        text = text.replace(m.group(), m.group(1) + hours + ' ' + minutes, 1)
-
-#    for m in finditer(r'\b(\d{1,2})[:.](\d{2})\b', text):
-#        minutes = feminin(m.group(2))
-#        if m.group(2) == '00':
-#            minutes = '00'
-#        elif m.group(2)[0] == '0':
-#            minutes = '0_' + minutes
-#        text = text.replace(m.group(), m.group(1) + ' ' + minutes, 1)
 
     # Обработка по шаблонам
     for sample in samples:
