@@ -2695,15 +2695,6 @@ def txt_prep(text):
         for m in finditer(pattern[0], text):
             text = text.replace(m.group(), eval(pattern[1]), 1)
 
-    for m in finditer(r'(\d*1\d|[02-9]?[02-9]) ([а-я]+)\b', text):
-        number = ''
-        if m.group(2) in ms_t:
-            number = ordinal(m.group(1), t_mu)
-        elif m.group(2) in ze_t:
-            number = ordinal(m.group(2), t_zh)
-        if number != '':
-            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
-
     # Количественные числительные
 
     for m in finditer(r'(\d+)-(часов[агеиймоухыюя]{2,3}|(градус|силь|стволь|тон|каналь|странич|тысяч|миллион|миллиард|процент|секунд|минут|месяч|недель|днев|мест)н[агеиймоухыюя]{2,3}|лет[геиймноухюя]{2,4}|(|кило)граммов|(|кило|милли|санти)метров[агеиймоухыюя]{2,3})\b', text):
@@ -2744,11 +2735,11 @@ def txt_prep(text):
             if num2[-6:] == 'одного': num2 = num2[:-3] + 'их'
         text = text.replace(m.group(), m.group(1) + ' ' + num1 + m.group(3) + num2 + ' ' + m.group(5), 1)
 
-    for m in finditer(r'\b(\d*[02-9]1|1) ([а-я]+)\b', text):
-        if m.group(2) in ms_r and m.group(2) not in me_v:
-            text = text.replace(m.group(), cardinal(m.group(1), r_ca) + ' ' + m.group(2), 1)
-        elif m.group(2) in ze_r:
-            text = text.replace(m.group(), cardinal(m.group(1), r_ca)[:-2] + 'й ' + m.group(2), 1)
+#    for m in finditer(r'\b(\d*[02-9]1|1) ([а-я]+)\b', text):
+#        if m.group(2) in ms_r and m.group(2) not in me_v:
+#            text = text.replace(m.group(), cardinal(m.group(1), r_ca) + ' ' + m.group(2), 1)
+#        elif m.group(2) in ze_r:
+#            text = text.replace(m.group(), cardinal(m.group(1), r_ca)[:-2] + 'й ' + m.group(2), 1)
 
     for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Сс]|[Уу]|[Вв]место|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв] возрасте|[Дд]остиг[авеийлнтшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5})( | минус )(\d+) ([а-я]+)\b', text):
         number = ''
@@ -2765,20 +2756,26 @@ def txt_prep(text):
         if number != '':
             text = text.replace(m.group(), m.group(1) + m.group(2) + number + ' ' + m.group(4), 1)
 
-#    for m in finditer(r'\b([А-Я]?[а-я]+[иы]х )(\d+) ([а-я]+)\b', text):
-#        if m.group(3) in mn_r or m.group(3) in zm_r:
-#            text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), r_ca) + ' ' + m.group(3), 1)
-
-    for m in finditer(r'\b((\d+)( и | или |-)|)(\d*[02-9][234]|[234]) ([а-я]+)\b', text):
-        if  m.group(5) in mn_r or m.group(5) in zm_r:
-            if m.group(1) == '':
-                pre = ''
-            else:
-                pre = cardinal(m.group(2), r_ca)
-                if condition(m.group(2)) and m.group(5) in zm_r:
-                    pre = pre[:-2] + 'й'
-                    pre += m.group(3)
-            text = text.replace(m.group(), pre + cardinal(m.group(4), r_ca) + ' ' + m.group(5), 1)
+    for m in finditer(r'\b((\d+)( и | или |-)|)(\d*[02-9][1-4]|[1-4])( [а-я]+([ео]й|[ео]го|[иы]х) | )([а-я]+)\b', text):
+        if m.group(1) == '': pre = ''
+        else:
+            pre = cardinal(m.group(2), r_ca)
+            if condition(m.group(2)):
+                if m.group(7) in ze_r or m.group(7) in zm_r: pre = pre[:-2] + 'й'
+                elif m.group(7) == 'суток': pre = pre[:-3] + 'их'
+            pre += m.group(3)
+        number = ''
+        if condition(m.group(4)):
+            if  m.group(7) in ms_r:
+                number = cardinal(m.group(4), r_ca)
+            elif m.group(7) in ze_r:
+                number = cardinal(m.group(4), r_ca)[:-2] + 'й'
+            elif m.group(7) == 'суток':
+                number = cardinal(m.group(4), r_ca)[:-3] + 'их'
+        elif m.group(7) in mn_r or m.group(7) in zm_r:
+            number = cardinal(m.group(4), r_ca)
+        if number != '':
+            text = text.replace(m.group(), pre + number + m.group(5) + m.group(7), 1)
 
     # Дательный падеж (мн. ч. и муж./ср. род ед. ч.)
     for m in finditer(r'(\d+) (([а-я]+([иы]м|[ео]му) |)([а-я]+([аиыя]м|у|ю|е)))\b', text):
@@ -2798,15 +2795,14 @@ def txt_prep(text):
 
     # Творительный падеж
     for m in finditer(r'((\d+)(-| или | и )|)(\d+) ([а-я]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b', text):
-        number = ''
         if m.group(1) != '':
-            number = cardinal(m.group(2), t_ca)
+            pre = cardinal(m.group(2), t_ca)
             if condition(m.group(2)) and (m.group(5) in ze_t or m.group(5)[:-2] in ze_i or m.group(5)[:-3] + 'ь' in ze_i):
-                pre = number[:-2] + 'ой' + m.group(3)
-            else:
-                pre = number + m.group(3)
+                pre = pre[:-2] + 'ой'
+            pre += m.group(3)
         else:
             pre = ''
+        number = ''
         if condition(m.group(4)):
             if m.group(5) in ms_t:
                 number = cardinal(m.group(4), t_ca)
