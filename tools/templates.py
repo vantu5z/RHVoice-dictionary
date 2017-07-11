@@ -1999,6 +1999,10 @@ samples = (
   (r'\b([Вв]с)е( [а-я]+ое)\b', r'\1ё\2'),
   (r'\b([Сс]упер)([а-я]+)\b', r'\1-\2'), # Предотвращает неправильное ударение
 
+  # Замена "е" на "ё" по сложному шаблону
+  (r'\b([Зз]в)е(зды [а-я]+(ли|[ауюя]т|ся|ись|ны))\b', r'\1ё\2'),
+  (r'\b([Вв]с)е( это [а-я]+([еи]т|[иы]ло))\b', r'\1ё\2'),
+
   (r'P\.((P\.)*)S\.', r'Пост-\1скриптум.'),
   (r'(P\.)(?=(P\.)*скриптум.)', 'пост-'),
   (r'\b[Тт]\. ?е\.', 'то есть'),
@@ -2426,7 +2430,7 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + m.group(4) + ' ' + substant(m.group(4), m.group(5), 1), 1)
 
     # Дательный падеж
-    for m in finditer(r'\b(([Кк]о?|рав[нагеимоыхя]{2,4})( | плюс | минус ))(\d+)' + units, text):
+    for m in finditer(r'\b(([Кк]о?|рав[нагеилмоcуюыхья]{2,6})( | плюс | минус ))(\d+)' + units, text):
         text = text.replace(m.group(), m.group(1) + m.group(4) + ' ' + substant(m.group(4), m.group(5), 2), 1)
 
     # Предложный падеж
@@ -2936,7 +2940,7 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + ' ' + cardinal(m.group(2), r_ca) + pre, 1)
 
     # Предлоги дательного падежа
-    for m in finditer(r'\b([Кк] |[Рр]авн[еолстья]{1,6} )(\d+)\b', text):
+    for m in finditer(r'\b([Кк] |рав[нагеилмоcуюыхья]{2,6} )(\d+)\b', text):
         text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), d_ca), 1)
 
     # Предлоги творительного падежа
