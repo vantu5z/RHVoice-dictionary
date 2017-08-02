@@ -2832,6 +2832,9 @@ def txt_prep(text):
                 number = number[:-1] + 'ёх'
             text = text.replace(m.group(), number + m.group(2), 1)
 
+    for m in finditer(r'\b([Вв] )(\d*[02-9]?1\d{3} раз)\b', text):
+        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2)[:-4], v_ca) + ' раз', 1)
+
     for m in finditer(r'\b([Вв] |[Нн]а |[Пп]ро |[Чч]ерез )(\d*[02-9]1|1) ([а-я]+)\b', text):
         if m.group(3) in ze_v:
             if m.group(2) == '1':
