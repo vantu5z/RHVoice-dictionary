@@ -2071,7 +2071,7 @@ samples = (
   (r'(\d) - (\d)', r'\1-\2'),
   (r'(?<=\d)(г\.|гг\.)', r' \1'),
 
-  (r'([Яя]нвар[еюьям]{1,2}|[Фф]еврал[еюьям]{1,2}|[Мм]арт[аеуом]{0,2}|[Аа]прел[еюьям]{1,2}|[Мм]а[йюяем]{1,2}|[Ии]ю[лн][еюьям]{1,2}|[Аа]вгуст[аеуом]{0,2}|[Сс]ентябр[еюьям]{1,2}|[Оо]ктябр[еюьям]{1,2}|[Нн]оябр[еюьям]{1,2}|[Дд]екабр[еюьям]{1,2}|[Зз]им[аеуой]{1,2}|[Лл]ет[ауом]{1,2}|[Вв]есн[аеуыой]{1,2}|[Оо]сен[иью]{1,2})( \d+\b)(?!-|[.:]\d)', r'\1\2-го'),
+  (r'\b([Яя]нвар[еюьям]{1,2}|[Фф]еврал[еюьям]{1,2}|[Мм]арт[аеуом]{0,2}|[Аа]прел[еюьям]{1,2}|[Мм]а[йюяем]{1,2}|[Ии]ю[лн][еюьям]{1,2}|[Аа]вгуст[аеуом]{0,2}|[Сс]ентябр[еюьям]{1,2}|[Оо]ктябр[еюьям]{1,2}|[Нн]оябр[еюьям]{1,2}|[Дд]екабр[еюьям]{1,2}|[Зз]им[аеуой]{1,2}|[Лл]ет[ауом]{1,2}|[Вв]есн[аеуыой]{1,2}|[Оо]сен[иью]{1,2})( \d+\b)(?!-|[.:]\d)', r'\1\2-го'),
   (r'([Зз]им[аеуой]{1,2} \d+-го-\d+\b)(?!-го)', r'\1-го'),
 
   (r'([а-я]{3,8} )(\d+) ?- ?([а-я]{3,8} )(\d+-го)', r'\1\2-го \3\4'),
@@ -2775,27 +2775,6 @@ def txt_prep(text):
 #        elif m.group(2) in ze_r:
 #            text = text.replace(m.group(), cardinal(m.group(1), r_ca)[:-2] + 'й ' + m.group(2), 1)
 
-    for m in finditer(r'\b((\d+)( и | или |-)|)(\d*[02-9][1-4]|[1-4])( [а-я]+([ео]й|[ео]го|[иы]х) | )([а-я]+)\b', text):
-        if m.group(1) == '': pre = ''
-        else:
-            pre = cardinal(m.group(2), r_ca)
-            if condition(m.group(2)):
-                if m.group(7) in ze_r or m.group(7) in zm_r: pre = pre[:-2] + 'й'
-                elif m.group(7) == 'суток': pre = pre[:-3] + 'их'
-            pre += m.group(3)
-        number = ''
-        if condition(m.group(4)):
-            if  m.group(7) in ms_r:
-                number = cardinal(m.group(4), r_ca)
-            elif m.group(7) in ze_r:
-                number = cardinal(m.group(4), r_ca)[:-2] + 'й'
-            elif m.group(7) == 'суток':
-                number = cardinal(m.group(4), r_ca)[:-3] + 'их'
-        elif m.group(7) in mn_r or m.group(7) in zm_r:
-            number = cardinal(m.group(4), r_ca)
-        if number != '':
-            text = text.replace(m.group(), pre + number + m.group(5) + m.group(7), 1)
-
     # Дательный падеж (мн. ч. и муж./ср. род ед. ч.)
     for m in finditer(r'(\d+) (([а-я]+([иы]м|[ео]му) |)([а-я]+([аиыя]м|у|ю|е)))\b', text):
         number = ''
@@ -2834,43 +2813,23 @@ def txt_prep(text):
         if number != '':
             text = text.replace(m.group(), pre + number + ' ' + m.group(5), 1)
 
-    # Винительный падеж (муж. род)
-    for m in finditer(r'\b(\d*[02-9]1|[1-4])( ([а-я]+([ео]го|[иы]х) |)([а-я]+))', text):
-        number = ''
-        if m.group(5) in me_v:
-            if m.group(1) == '1':
-                number = 'одного'
-            elif m.group(1)[:-1] == '1' or (len(m.group(1)) > 1 and m.group(1)[-2] != '1'):
-                number = m.group(1)[:-1] + '0_одного'
-        elif m.group(5) in mm_v:
-            if m.group(1) == '2':
-                number = 'двух'
-            elif m.group(1) == '3':
-                number = 'трех'
-            elif m.group(1) == '4':
-                number = 'четырех'
-        if number != '':
-            text = text.replace(m.group(), number + m.group(2), 1)
+    # Винительный падеж
 
-    for m in finditer(r'\b([Вв] )(\d*[02-9]?1\d{3} раз)\b', text):
-        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2)[:-4], v_ca) + ' раз', 1)
+    for m in finditer(r'\b(\d*[02-9]1|1)(( [а-я]+[ео]го | )([а-я]+))\b', text):
+        if m.group(4) in me_v:
+            text = text.replace(m.group(), cardinal(m.group(1), v_ca)[:-2] + 'ного' + m.group(2), 1)
 
-    # Винительный падеж (жен. род)
-    for m in finditer(r'\b(\d*[02-9]1|[1-4])( ([а-я]+([ую]ю|[иы][ех]) |)([а-я]+))', text):
-        number = ''
-        if m.group(5) in ze_v:
-            if m.group(1) == '1':
-                number = 'одну'
-            elif m.group(1)[-1] == '1':
-                number = m.group(1)[:-1] + '0_одну'
-        elif m.group(5) in zm_v:
-            if m.group(1) == '2':
-                number = 'двух'
-            elif m.group(1) == '3':
-                number = 'трех'
-            elif m.group(1) == '4':
-                number = 'четырех'
-        if number != '':
+    for m in finditer(r'\b(\d*[02-9]1|1)(( [а-я]+[ую]ю | )([а-я]+))', text):
+        if m.group(4) in ze_v:
+            text = text.replace(m.group(), cardinal(m.group(1), v_ca)[:-2] + 'ну' + m.group(2), 1)
+
+    for m in finditer(r'\b(\d*[02-9][2-4]|[2-4])(( [а-я]+[иы]х | )([а-я]+))', text):
+        if m.group(4) in mm_v or m.group(4) in zm_v:
+            number = cardinal(m.group(1), v_ca)
+            if number[-3:] == 'два':
+                number = number[:-1] + 'ух'
+            else:
+                number = number[:-1] + 'ёх'
             text = text.replace(m.group(), number + m.group(2), 1)
 
     for m in finditer(r'\b([Вв] |[Нн]а |[Пп]ро |[Чч]ерез )(\d*[02-9]1|1) ([а-я]+)\b', text):
