@@ -2817,8 +2817,11 @@ def txt_prep(text):
 
     for m in finditer(r'\b([Зз]а |[Пп]ро |[Чч]ерез )(\d+) ([а-я]+)\b', text):
         number = cardinal(m.group(2), v_ca)
-        if number[-3:] == 'дин' and m.group(3) in ze_v:
-            number = number[:-2] + 'ну'
+        if number[-3:] == 'дин':
+            if m.group(3) in ze_v:
+                number = number[:-2] + 'ну'
+            elif m.group(3) in sr_iv:
+                number = number[:-2] + 'но'
         text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
 
     for m in finditer(r'\b(\d*[02-9]1|1)(( [а-я]+[ео]го | )([а-я]+))\b', text):
