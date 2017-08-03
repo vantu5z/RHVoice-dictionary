@@ -2815,6 +2815,12 @@ def txt_prep(text):
 
     # Винительный падеж
 
+    for m in finditer(r'\b([Зз]а |[Пп]ро |[Чч]ерез )(\d+) ([а-я]+)\b', text):
+        number = cardinal(m.group(2), v_ca)
+        if number[-3:] == 'дин' and m.group(3) in ze_v:
+            number = number[:-2] + 'ну'
+        text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
+
     for m in finditer(r'\b(\d*[02-9]1|1)(( [а-я]+[ео]го | )([а-я]+))\b', text):
         if m.group(4) in me_v:
             text = text.replace(m.group(), cardinal(m.group(1), v_ca)[:-2] + 'ного' + m.group(2), 1)
@@ -2832,20 +2838,12 @@ def txt_prep(text):
                 number = number[:-1] + 'ёх'
             text = text.replace(m.group(), number + m.group(2), 1)
 
-    for m in finditer(r'\b([Вв] )(\d*[02-9]?1\d{3} раз)\b', text):
-        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2)[:-4], v_ca) + ' раз', 1)
-
-    for m in finditer(r'\b([Вв] |[Нн]а |[Пп]ро |[Чч]ерез )(\d*[02-9]1|1) ([а-я]+)\b', text):
-        if m.group(3) in ze_v:
-            if m.group(2) == '1':
-                number = 'одну'
-            else:
-                number = m.group(2)[:-1] + '0_одну'
-            text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
+    for m in finditer(r'\b([Вв] )(\d+)( раз[а]?)\b', text):
+        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), v_ca) + m.group(3), 1)
 
     for m in finditer(r'([Сс]тои(т[ь]?|л[аио]?|вш[аеиймя]{2,3})) (\d+) ([а-я]+)\b', text):
         number = cardinal(m.group(3), v_ca)
-        if number[-4:] == 'один' and m.group(4) in ('копейку', 'гривну', 'драхму', 'марку'):
+        if number[-3:] == 'дин' and m.group(4) in ('копейку', 'гривну', 'драхму', 'марку'):
             number = number[:-2] + 'ну'
         elif number[-3:] == 'два' and m.group(4) in ('копейки', 'гривны', 'драхмы', 'марки'):
             number = number[:-1] + 'е'
