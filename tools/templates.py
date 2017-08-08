@@ -2208,8 +2208,7 @@ patterns = (
   (r'([Мм]ежду |[Пп]о сравнению с )(\d+)(-| и )(\d+)( годами| годом)\b', 'm.group(1) + ordinal(m.group(2), t_mu) + m.group(3) + ordinal(m.group(4), t_mu) + m.group(5)'),
   (r'(\d+)-е' + months, 'ordinal(m.group(1), i_sr) + " " + m.group(2)'),
   (r'(\d+)-ю ([а-я]+ми)\b', 'cardinal(m.group(1), t_ca) + " " + m.group(2)'),
-  (r'\b(\d+)-е сутки', 'ordinal(m.group(1), i_mn) + " сутки"'),
-  (r'\b([Сс] )(\d+)( до )\b', 'm.group(1) + cardinal(m.group(2), r_ca) + m.group(3)')
+  (r'\b(\d+)-е сутки', 'ordinal(m.group(1), i_mn) + " сутки"')
 )
 
 greekletters = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσΤτΥυΦφΧχΨψΩως'
@@ -2909,6 +2908,8 @@ def txt_prep(text):
         text = text.replace(m.group(), number1 + number2 + ' ' + m.group(5), 1)
 
     # Предлоги родительного падежа
+    for m in finditer(r'\b([Оо]т |[Сс] )(\d+)( до \d+)\b', text):
+        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), r_ca) + m.group(3), 1)
     for m in finditer(r'\b([Бб]ез|[Бб]олее|[Бб]ольше|[Вв]место|[Дд]ля|[Дд]о|[Ии]з|[Мм]енее|[Мм]еньше|[Оо]коло|[Оо]т|[Пп]осле|[Пп]орядка|[Пп]ротив|[Сс]выше|[Уу]) (\d+)((-| или | и )(\d+)|)\b', text):
         if m.group(3) == '': pre = ''
         else: pre = m.group(4) + cardinal(m.group(5), r_ca)
