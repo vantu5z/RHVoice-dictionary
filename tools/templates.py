@@ -2621,6 +2621,16 @@ def txt_prep(text):
             rd = 'ых'
         text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
 
+    # Время в формате (h)h ч (m)m мин
+    for m in finditer(r'\b(\d{1,2}) ?ч ?(\d{1,2}) ?мин\b', text):
+        if condition(m.group(1)): hours = ' час '
+        elif m.group(1)[-1] in ('2', '3', '4'): hours = ' часа '
+        else: hours = ' часов '
+        if condition(m.group(2)): minutes = ' минута'
+        elif m.group(2)[-1] in ('2', '3', '4'): minutes = ' минуты'
+        else: minutes = ' минут'
+        text = text.replace(m.group(), m.group(1) + hours + feminin(m.group(2)) + minutes, 1)
+
     # Время в формате (ч)ч:мм/(ч)ч.мм
 
     for m in finditer(r'\b(([Вв]|[Нн]а) \d{1,2})[:.](\d\d)\b', text):
