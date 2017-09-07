@@ -2263,8 +2263,13 @@ def cardinal(num, casus):
             c_num = c_num + ' ' + casus[0][0][0][triple - t - 1][n]
 
     c_num = sub(r'одн(им|ого|ому|ом) тысяч(ей|е|и)', r'одной тысяч\2', c_num)
-    c_num = sub('один тысячу', 'одну тысячу', c_num)
     if c_num == '': c_num = casus[0][0][0][0]
+    if casus[0][0][0][0] == 'ноль':
+        c_num = sub(r'(два|три|четыре) (миллион|миллиард|триллион|квадриллион|квинтиллион|секстиллион|септиллион|октиллион)ов', r'\1 \2а', c_num)
+        c_num = sub('один тысячу', 'одну тысячу', c_num)
+        c_num = sub('два тысяч', 'две тысячи', c_num)
+        c_num = sub(r'((три|четыре) тысяч)', r'\1и', c_num)
+
     return c_num
 
 # Склонение порядковых числительных (num - число, casus - падеж)
@@ -2444,6 +2449,10 @@ def txt_prep(text):
     # Предложный падеж
     for m in finditer(r'\b(([Вв]|[Оо]б?|[Пп]ри)( | плюс | минус ))(\d+)' + units, text):
         text = text.replace(m.group(), m.group(1) + m.group(4) + ' ' + substant(m.group(4), m.group(5), 4), 1)
+
+    # Предлог "по" при указании количества
+    for m in finditer(r'\b([Пп]о )(\d*[02-9]1|1)' + units, text):
+        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + substant(m.group(2), m.group(3), 2), 1)
 
     # Именительный
     for m in finditer(r'(\d+,\d+)' + units, text):
@@ -2927,6 +2936,10 @@ def txt_prep(text):
             number1 = ''
         number2 = daynight(m.group(4), m.group(5))
         text = text.replace(m.group(), number1 + number2 + ' ' + m.group(5), 1)
+
+    # Предлог "по" при указании количества
+    for m in finditer(r'\b([Пп]о )(\d*1(000){1,8})\b', text):
+        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), d_ca), 1)
 
     # Предлоги родительного падежа
     for m in finditer(r'\b([Оо]т |[Сс] )(\d+)( до \d+)\b', text):
