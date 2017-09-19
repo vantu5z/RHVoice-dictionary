@@ -2767,29 +2767,30 @@ def txt_prep(text):
                 number = number[:-3] + 'их'
         text = text.replace(m.group(), m.group(1) + m.group(2) + number + m.group(4) + m.group(6), 1)
 
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Дд]ороже|[Дд]ешевле|[Оо]коло|[Сс]выше|[Сс]реди|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Сс]|[Уу]|[Вв]место|[Вв] размере|[Вв] течение|[Нн]а протяжении|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв] возрасте|[Дд]остиг[авеийлнотшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5}|[Сс]тарше|[Мм]оложе|не превы[шаеситьло]{3,4})( | плюс | минус )((\d+)(-| или )|)(\d+)( [а-я]+([ео]й|[ео]го|[иы]х) | )([а-я]+)\b', text):
-        if m.group(3) == '': pre = ''
-        else:
-            pre = cardinal(m.group(4), r_ca)
-            if condition(m.group(4)):
-                if m.group(9) in ze_r or m.group(9) in zm_r:
-                    pre = pre[:-2] + 'й'
-                elif m.group(9) == 'суток':
-                    pre = pre[:-3] + 'их'
-            pre += m.group(5)
-        number = ''
-        if m.group(9) in ms_r:
-            if condition(m.group(6)):
-                number = cardinal(m.group(6), r_ca)
-        elif m.group(9) in ze_r:
-            if condition(m.group(6)):
-                number = cardinal(m.group(6), r_ca)[:-2] + 'й'
-        elif m.group(9) in mn_r or m.group(9) in zm_r or m.group(9) == 'суток':
-            number = cardinal(m.group(6), r_ca)
-            if m.group(9) == 'суток' and number[-6:] == 'одного':
-                number = number[:-3] + 'их'
-        if number != '':
-            text = text.replace(m.group(), m.group(1) + m.group(2) + pre + number + m.group(7) + m.group(9), 1)
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Дд]ороже|[Дд]ешевле|[Оо]коло|[Сс]выше|[Сс]реди|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Сс]|[Уу]|[Вв]место|[Вв] размере|[Вв] течение|[Нн]а протяжении|[Пп]орядка|[Пп]осле|[Пп]ротив|[Вв] возрасте|[Дд]остиг[авеийлнотшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5}|[Сс]тарше|[Мм]оложе|не превы[шаеситьло]{3,4})( | плюс | минус | [а-я]+([ео]й|[ео]го|[иы]х) )((\d+)(-| или )|)(\d+)( [а-я]+([ео]й|[ео]го|[иы]х) | )([а-я]+)\b', text):
+        if m.group(2) not in (' которых ', ' которого ', ' которой '):
+            if m.group(4) == '': pre = ''
+            else:
+                pre = cardinal(m.group(5), r_ca)
+                if condition(m.group(5)):
+                    if m.group(10) in ze_r or m.group(10) in zm_r:
+                        pre = pre[:-2] + 'й'
+                    elif m.group(10) == 'суток':
+                        pre = pre[:-3] + 'их'
+                pre += m.group(6)
+            number = ''
+            if m.group(10) in ms_r:
+                if condition(m.group(7)):
+                    number = cardinal(m.group(7), r_ca)
+            elif m.group(10) in ze_r:
+                if condition(m.group(7)):
+                    number = cardinal(m.group(7), r_ca)[:-2] + 'й'
+            elif m.group(10) in mn_r or m.group(10) in zm_r or m.group(10) == 'суток':
+                number = cardinal(m.group(7), r_ca)
+                if m.group(10) == 'суток' and number[-6:] == 'одного':
+                    number = number[:-3] + 'их'
+            if number != '':
+                text = text.replace(m.group(), m.group(1) + m.group(2) + pre + number + m.group(8) + m.group(10), 1)
 
 #    for m in finditer(r'\b(\d*[02-9]1|1) ([а-я]+)\b', text):
 #        if m.group(2) in ms_r and m.group(2) not in me_v:
