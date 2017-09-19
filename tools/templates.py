@@ -2030,11 +2030,6 @@ presamples = (
   (r'/(час|ч)\b', ' в час'),
   (r'(?<=\d) ?V\b', 'В'),
 
-  # Замена "е" на "ё" по сложному шаблону
-  (r'\b([Вв]с)е(( это|) [а-я]+([еи]т|[иы]ло)(|с[ья]))\b', r'\1ё\2')
-)
-samples = (
-
 #  (r'(\d)(½|¼|¾|⅕|⅖|⅗|⅘|⅙|⅚|⅐|⅛|⅜|⅝|⅞|⅑)', r'\1 и \2'),
 #  ('½', 'одна вторая'),
 #  ('⅓', 'одна треть'),
@@ -2054,21 +2049,14 @@ samples = (
 #  ('⅞', 'семь восьмых'),
 #  ('⅑', 'одна девятая'),
 
-#  (r'(\d+)([⁻]?[⁰¹²³⁴⁵⁶⁸⁹]+)', r'\1 в степени \2'),
-#  (r'(\d+|ых|ая) ?[·×xXхХ*] ?(10 в степени)', r'\1 на \2'),
-#  ('⁰', '0'),
-#  ('¹', '1'),
-#  ('²', '2'),
-#  ('³', '3'),
-#  ('⁴', '4'),
-#  ('⁵', '5'),
-#  ('⁶', '6'),
-#  ('⁷', '7'),
-#  ('⁸', '8'),
-#  ('⁹', '9'),
-#  ('⁻', 'минус '),
+  (r'(\d)( ранга)\b', r'\1-го\2'),
 
   (r'(\d) - (\d)', r'\1-\2'),
+
+  # Замена "е" на "ё" по сложному шаблону
+  (r'\b([Вв]с)е(( это|) [а-я]+([еи]т|[иы]ло)(|с[ья]))\b', r'\1ё\2')
+)
+samples = (
   (r'(?<=\d)(г\.|гг\.)', r' \1'),
 
   (r'\b([Яя]нвар[еюьям]{1,2}|[Фф]еврал[еюьям]{1,2}|[Мм]арт[аеуом]{0,2}|[Аа]прел[еюьям]{1,2}|[Мм]а[йюяем]{1,2}|[Ии]ю[лн][еюьям]{1,2}|[Аа]вгуст[аеуом]{0,2}|[Сс]ентябр[еюьям]{1,2}|[Оо]ктябр[еюьям]{1,2}|[Нн]оябр[еюьям]{1,2}|[Дд]екабр[еюьям]{1,2}|[Зз]им[аеуой]{1,2}|[Лл]ет[ауом]{1,2}|[Вв]есн[аеуыой]{1,2}|[Оо]сен[иью]{1,2})( \d+\b)(?!-|[.:]\d)', r'\1\2-го'),
@@ -2172,12 +2160,15 @@ samples = (
   (r'\b([Вв]о?)( \d+)(-| и | или )(\d+) ((тысяче|сто)летиях|поколениях)', r'\1\2-м\3\4-м \5'),
   (r'(\d+)(-| и | или )(\d+) ((тысяче|сто)летий|поколений)', r'\1-го\2\3-го \4'),
 
-  (r'(\d)( ранга)\b', r'\1-го\2'),
-
   (r'(\w)(\n|\Z)', r'\1.\2')
 )
-
 patterns = (
+  # Наращения при количественных числительных недопустимы, но распространены
+  (r'\b(\d*[1-9]0|\d*1\d|\d*[02-9]?[569])-ти\b', 'cardinal(m.group(1), r_ca)'),
+  (r'\b(\d*[02-9]?[234])-х\b', 'cardinal(m.group(1), r_ca)'),
+  (r'(\d+)-ю ([а-я]+ми)\b', 'cardinal(m.group(1), t_ca) + " " + m.group(2)'),
+  (r'\b([Сс]о? )(\d*1[0-4]|\d*\d[5-9]|[5-9])-ю\b', 'm.group(1) + cardinal(m.group(2), t_ca)'),
+
   (r'\b([IV]+) степени', 'ordinal(roman2arabic(m.group(1)), r_zh) + " степени"'),
   (r'(\d+)( этаж(а|е|у|ом|))', 'ordinal(m.group(1), mu_pad[m.group(3)]) + m.group(2)'),
   (r'(\d+0)-е( годы)', 'ordinal(m.group(1), i_mn) + m.group(2)'),
@@ -2210,7 +2201,6 @@ patterns = (
   (r'(\d+)( годовщин([аейоуы]{1,2}))\b', 'ordinal(m.group(1), zh_pad[m.group(3)]) + m.group(2)'),
   (r'([Мм]ежду |[Пп]о сравнению с )(\d+)(-| и )(\d+)( годами| годом)\b', 'm.group(1) + ordinal(m.group(2), t_mu) + m.group(3) + ordinal(m.group(4), t_mu) + m.group(5)'),
   (r'(\d+)-е' + months, 'ordinal(m.group(1), i_sr) + " " + m.group(2)'),
-  (r'(\d+)-ю ([а-я]+ми)\b', 'cardinal(m.group(1), t_ca) + " " + m.group(2)'),
   (r'\b(\d+)-е сутки', 'ordinal(m.group(1), i_mn) + " сутки"')
 )
 
@@ -2697,11 +2687,15 @@ def txt_prep(text):
     for m in finditer(r'\b([A-Z][a-z]*[ -]|[А-Я]?[а-я]*[ -])([IVX]+)($|\n|[.,;:]| [^a-z])', text):
         text = text.replace(m.group(), m.group(1) + roman2arabic(m.group(2)) + m.group(3), 1)
 
+    # Даты
+    for m in finditer(r'(датир(ован[а,о,ы]?|у[еюмтся]{1,4}) )(\d+)' + months, text):
+        text = text.replace(m.group(), m.group(1) + cardinal(m.group(3), t_mu) + ' ' + m.group(4), 1)
     # Обработка по шаблонам
     for sample in samples:
         text = sub(sample[0], sample[1], text)
 
     # Порядковые числительные
+
     for m in finditer(r'\b([Вв]о? |[Нн]а |[Оо]б? |[Пп]ри )(\d*[02-9]|\d*1\d) ([а-я]+)\b', text):
         number = ''
         if m.group(3) in ms_p:
@@ -2730,9 +2724,9 @@ def txt_prep(text):
         if m.group(4) in sr_iv:
             text = text.replace(m.group(), ordinal(m.group(1), i_sr) + ' ' + m.group(2), 1)
 
-    for m in finditer(r'(\d+)-ю ([а-я]+)\b', text):
-        if m.group(2) in ze_v:
-            text = text.replace(m.group(), ordinal(m.group(1), v_zh) + ' ' + m.group(2))
+#    for m in finditer(r'(\d+)-ю ([а-я]+)\b', text):
+#        if m.group(2) in ze_v:
+#            text = text.replace(m.group(), ordinal(m.group(1), v_zh) + ' ' + m.group(2))
 
     for pattern in patterns:
         for m in finditer(pattern[0], text):
@@ -2750,12 +2744,6 @@ def txt_prep(text):
         num = sub(r'(одной тысячи|одноготысяче)', 'тысяче', num)
         num = sub(r'\bодного', 'одно', num)
         text = text.replace(m.group(), num + m.group(2), 1)
-
-    # Наращения при количественных числительных недопустимы, но распространены
-    for m in finditer(r'\b(\d*[1-9]0|\d*1\d|\d*[02-9]?[569])-ти\b', text):
-        text = text.replace(m.group(), cardinal(m.group(1), r_ca), 1)
-    for m in finditer(r'\b(\d*[02-9]?[234])-х\b', text):
-        text = text.replace(m.group(), cardinal(m.group(1), r_ca), 1)
 
     # Родительный падеж
     for m in finditer(r'\b([Оо]т|[Сс])( | плюс | минус )(\d+)( до( | плюс | минус )\d+ )([а-я]+)\b', text):
