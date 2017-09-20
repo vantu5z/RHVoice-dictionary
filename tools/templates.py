@@ -1981,6 +1981,7 @@ presamples = (
   (r' ?(⩾|≥) ?', ' больше или равно '),
   (r' ?(⩽|≤) ?', ' меньше или равно '),
   (r' ?~(?=\d)', ' приблизительно '),
+  (r'(?<=\d)\.(?=\d)', '_точка_'),
 
   (r'(([Вв] течение|[Сс]о?|[Дд]о|[Пп]осле) [IV]{1,3} кв)\.', r'\1артала'),
   (r'([Вв]о? [IV]{1,3} кв)\.', r'\1артале'),
@@ -2723,6 +2724,13 @@ def txt_prep(text):
     for m in finditer(r'(\d+)-е (([а-я]+ое |)([а-я]+[ео]))\b', text):
         if m.group(4) in sr_iv:
             text = text.replace(m.group(), ordinal(m.group(1), i_sr) + ' ' + m.group(2), 1)
+
+    for m in finditer(r'\b(\d*11|\d*[05-9]) ([а-я]+)\b', text):
+        if m.group(2) in me_v:
+            text = text.replace(m.group(), ordinal(m.group(1), r_mu) + ' ' + m.group(2))
+    for m in finditer(r'\b(\d*11|\d*[02-9]) ([а-я]+)\b', text):
+        if m.group(2) in ze_v:
+            text = text.replace(m.group(), ordinal(m.group(1), r_mu)[:-3] + 'ую ' + m.group(2))
 
 #    for m in finditer(r'(\d+)-ю ([а-я]+)\b', text):
 #        if m.group(2) in ze_v:
