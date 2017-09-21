@@ -2148,7 +2148,6 @@ samples = (
 
   (r'\b(\d+)( годом)', r'\1-м\2'),
   (r'(1\d|[02-9][05-9]|\b[5-9]) года\b', r'\1-го года'),
-  (r'([12]\d{3}) года\b', r'\1-го года'),
   (r'(1\d|[02-9][02-9]|\b[2-9])(| [а-я]+[иы]й) год\b', r'\1-й\2 год'),
   (r'\b((1\d|20)\d\d)((| [а-я]+[иы]й) год)\b', r'\1-й\3'), # Спорный шаблон
   (r'(\d+)(|-й) г\.', r'\1-й год'),
@@ -2159,11 +2158,11 @@ samples = (
 
   (r'\b([Сс]о?)( \d+)( по \d+) ((тысяче|сто)летие|поколение)\b', r'\1\2-го\3-е \4'),
   (r'\b([Вв]о?)( \d+)(-| и | или )(\d+) ((тысяче|сто)летиях|поколениях)', r'\1\2-м\3\4-м \5'),
-  (r'(\d+)(-| и | или )(\d+) ((тысяче|сто)летий|поколений)', r'\1-го\2\3-го \4'),
 
   (r'(\w)(\n|\Z)', r'\1.\2')
 )
 patterns = (
+  (r'\b(\d*1\d{3})( (год[а]|лет) назад)\b', 'cardinal(m.group(1), v_ca) + m.group(2)'),
   # Наращения при количественных числительных недопустимы, но распространены
   (r'\b(\d*[1-9]0|\d*1\d|\d*[02-9]?[569])-ти\b', 'cardinal(m.group(1), r_ca)'),
   (r'\b(\d*[02-9]?[234])-х\b', 'cardinal(m.group(1), r_ca)'),
@@ -2806,20 +2805,18 @@ def txt_prep(text):
             text = text.replace(m.group(), number + cardinal(m.group(3), r_ca) + ' ' + m.group(4) + m.group(5), 1)
 
     # Дательный падеж (мн. ч. и муж./ср. род ед. ч.)
-    for m in finditer(r'(\d+) (([а-я]+([иы]м|[ео]му) |)([а-я]+([аиыя]м|у|ю|е)))\b', text):
+    for m in finditer(r'(\d+)(( [а-я]+([иы]м|[ео]му)|) ([а-я]+([аиыя]м|у|ю|е)))\b', text):
         number = ''
         if condition(m.group(1)):
             if m.group(5) in ms_d:
                 number = cardinal(m.group(1), d_ca)
-            elif m.group(5) in ze_dp:
-                number = cardinal(m.group(1), d_ca)[:-2] + 'й'
             elif m.group(5) == 'суткам':
                 number = cardinal(m.group(1), t_ca)[:-3] + 'им'
 #        elif m.group(6) == 'ам' or m.group(6) == 'ям':
         elif m.group(5) in mn_d:
             number = cardinal(m.group(1), d_ca)
         if number != '':
-            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
+            text = text.replace(m.group(), number + m.group(2), 1)
 
     # Творительный падеж
     for m in finditer(r'((\d+)(-| или | и )|)(\d+) ([а-я]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b', text):
@@ -2902,13 +2899,13 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Женский род (дат./предл. пад.)
-    for m in finditer(r'\b([Пп]ри |[Оо]б? |)(\d*[02-9]1|1) (([а-я]+[ео]й |)([а-я]+[еи]))\b', text):
+    for m in finditer(r'\b([Пп]ри |[Оо]б? |)(\d*[02-9]1|1)(( [а-я]+[ео]й|) ([а-я]+[еи]))\b', text):
         number = ''
         if '|' + m.group(5) + '|' in ze_dp:
             if m.group(1) == '': number = cardinal(m.group(2), d_ca)[:-2] + 'й'
             else: number = cardinal(m.group(2), p_ca)[:-1] + 'й'
         if number != '':
-            text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
+            text = text.replace(m.group(), m.group(1) + number + m.group(3), 1)
 
     # Женский род (им./вин. пад.)
     for m in finditer(r'\b(((\d+)(-| или | и ))|)(\d+)(( [а-я]+([ая]я|[иы][ех])|) ([а-я]+))', text):
