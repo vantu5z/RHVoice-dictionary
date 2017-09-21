@@ -2902,12 +2902,13 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Женский род (дат./предл. пад.)
-    for m in finditer(r'\b(\d*[02-9]1|1) (([а-я]+[ео]й |)([а-я]+[еи]))\b', text):
+    for m in finditer(r'\b([Пп]ри |[Оо]б? |)(\d*[02-9]1|1) (([а-я]+[ео]й |)([а-я]+[еи]))\b', text):
         number = ''
-        if m.group(4) in ze_dp:
-            number = cardinal(m.group(1), p_ca)[:-1] + 'й'
+        if '|' + m.group(5) + '|' in ze_dp:
+            if m.group(1) == '': number = cardinal(m.group(2), d_ca)[:-2] + 'й'
+            else: number = cardinal(m.group(2), p_ca)[:-1] + 'й'
         if number != '':
-            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
+            text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
 
     # Женский род (им./вин. пад.)
     for m in finditer(r'\b(((\d+)(-| или | и ))|)(\d+)(( [а-я]+([ая]я|[иы][ех])|) ([а-я]+))', text):
