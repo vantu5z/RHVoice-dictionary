@@ -2893,7 +2893,7 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + ' ' + number + ' ' + m.group(4), 1)
 
     # Предложный падеж (мн. ч. и муж./ср. род ед. ч.)
-    for m in finditer(r'(\d+) (([а-я]+([иы]х|[ео]м) |)([А-Яа-я]+([ая]х|е|и)))\b', text):
+    for m in finditer(r'(\d+) (([а-я]+([иы]х|[ео]м) |)([А-Я]?[а-я]+([ая]х|е|и)))\b', text):
         number = ''
         if m.group(6) == 'ах' or m.group(6) == 'ях':
             number = cardinal(m.group(1), p_ca)
