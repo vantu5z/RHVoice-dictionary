@@ -2585,32 +2585,36 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
 
     # Винительный
-    for m in finditer(r'\b([Вв] |[Зз]а |[Нн]а |состав[аеилотя]{2,4} )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)\b', text):
-        if m.group(2) != '':
-            full = cardinal(m.group(2)[:-1], v_ca) + '_'
+    for m in finditer(r'\b([Вв] |[Зз]а |[Нн]а |состав[аеилотя]{2,4} )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)(( - | и | или )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)|)\b', text):
+        if m.group(2) != '': full = cardinal(m.group(2)[:-1], v_ca) + '_'
+        else: full = ''
+        if m.group(3) == 'одна_': full += 'одну_'
+        else: full += m.group(3)
+        if m.group(4) == 'целая': full += 'целую'
+        else: full += 'целых'
+        if m.group(5) != '': frac = cardinal(m.group(5)[:-1], v_ca) + '_'
+        else: frac = ''
+        if m.group(6) == 'одна_': frac += 'одну_'
+        else: frac += m.group(6)
+        if m.group(8) == 'ая': rd = 'ую'
+        else: rd = 'ых'
+        number = full + ' ' + frac + m.group(7) + rd
+        if m.group(9) == '' : num = ''
         else:
-            full = ''
-        if m.group(3) == 'одна_':
-            full += 'одну_'
-        else:
-            full += m.group(3)
-        if m.group(4) == 'целая':
-            full += 'целую'
-        else:
-            full += 'целых'
-        if m.group(5) != '':
-            frac = cardinal(m.group(5)[:-1], v_ca) + '_'
-        else:
-            frac = ''
-        if m.group(6) == 'одна_':
-            frac += 'одну_'
-        else:
-            frac += m.group(6)
-        if m.group(8) == 'ая':
-            rd = 'ую'
-        else:
-            rd = 'ых'
-        text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
+            if m.group(11) != '': full = cardinal(m.group(11)[:-1], v_ca) + '_'
+            else: full = ''
+            if m.group(12) == 'одна_': full += 'одну_'
+            else: full += m.group(12)
+            if m.group(13) == 'целая': full += 'целую'
+            else: full += 'целых'
+            if m.group(14) != '': frac = cardinal(m.group(14)[:-1], v_ca) + '_'
+            else: frac = ''
+            if m.group(15) == 'одна_': frac += 'одну_'
+            else: frac += m.group(15)
+            if m.group(17) == 'ая': rd = 'ую'
+            else: rd = 'ых'
+            num = m.group(10) + full + ' ' + frac + m.group(16) + rd
+        text = text.replace(m.group(), m.group(1) + number + num, 1)
 
     # Предложный
     for m in finditer(r'\b([Оо]б? |[Пп]ри )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)\b', text):
