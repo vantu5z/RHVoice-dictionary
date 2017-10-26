@@ -1974,8 +1974,7 @@ presamples = (
 
   (r'(\d) ?g\b', r'\1 же'), # Ускорение свободного падения на поверхности Земли
 
-  (r'(?<=\d) ' + units,  r'_\1'),
-  (r'((\A| )((\d+,|)\d+-|-?)(\d+,|)\d+)' + units, r'\1_\6'),
+  (r'(?<=\d) ?' + units,  r'_\1'),
 
   (r'(?<=\d)[×xXхХ](?=\d)', ' на '),
   (r' ?± ?', ' плюс-минус '),
@@ -2470,11 +2469,7 @@ def txt_prep(text):
     for m in finditer(r'(\d+,\d+)_' + units, text):
         text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(2)][2], 1)
     for m in finditer(r'(\d+)_' + units, text):
-        if m.group(2) == 'л.с.' or m.group(2) == 'а.е.':
-            number = feminin(m.group(1))
-        else:
-            number = m.group(1)
-        text = text.replace(m.group(), number + ' ' + substant(m.group(1), m.group(2)), 1)
+        text = text.replace(m.group(), m.group(1) + ' ' + substant(m.group(1), m.group(2)), 1)
     for m in finditer(r'(тысяч[аимх]{,3}|(миллион|миллиард|триллион)(а[имх]{,2}|ов)) ' + units, text):
         text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(4)][1], 1)
 
@@ -2785,7 +2780,7 @@ def txt_prep(text):
                 number = number[:-3] + 'их'
         text = text.replace(m.group(), m.group(1) + m.group(2) + number + m.group(4) + m.group(6), 1)
 
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Дд]ороже|[Дд]ешевле|[Оо]коло|[Сс]выше|[Сс]реди|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Сс]|[Уу]|[Вв]место|[Вв] возрасте|[Вв] размере|[Вв] пределах|[Вв] течение|[Нн]а протяжении|[Нн]ач[инаетсялоь]{2,7} с|[Пп]орядка|[Пп]осле|[Пп]ротив|[Дд]остиг[авеийлнотшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5}|[Сс]тарше|[Мм]оложе|не превы[шаеситьло]{3,4})( | плюс | минус | [а-я]+([ео]й|[ео]го|[иы]х) )((\d+)( - | или )|)(\d+)( [а-я]+([ео]й|[ео]го|[иы]х) | и более | и менее | )([а-я]+)\b', text):
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Дд]ороже|[Дд]ешевле|[Оо]коло|[Сс]выше|[Сс]реди|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Сс]|[Уу]|[Вв]место|[Вв] возрасте|[Вв] размере|[Вв] пределах|[Вв] течение|[Нн]а протяжении|[Нн]ач[инаетялсьо]{2,7} с|[Пп]орядка|[Пп]осле|[Пп]ротив|[Дд]остиг[авеийлнотшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5}|[Сс]тарше|[Мм]оложе|не превы[шаеситьло]{3,4})( | плюс | минус | [а-я]+([ео]й|[ео]го|[иы]х) )((\d+)( - | или )|)(\d+)( [а-я]+([ео]й|[ео]го|[иы]х) | и более | и менее | )([а-я]+)\b', text):
         if m.group(2) not in (' которых ', ' которого ', ' которой '):
             if m.group(4) == '': pre = ''
             else:
@@ -2796,19 +2791,14 @@ def txt_prep(text):
                     elif m.group(10) == 'суток':
                         pre = pre[:-3] + 'их'
                 pre += m.group(6)
-            number = ''
-            if m.group(10) in ms_r:
-                if condition(m.group(7)):
-                    number = cardinal(m.group(7), r_ca)
-            elif m.group(10) in ze_r:
-                if condition(m.group(7)):
-                    number = cardinal(m.group(7), r_ca)[:-2] + 'й'
+            number = cardinal(m.group(7), r_ca)
+            if condition(m.group(7)) and m.group(10) in ze_r:
+                number = number[:-2] + 'й'
             elif m.group(10) in mn_r or m.group(10) in zm_r or m.group(10) == 'суток':
                 number = cardinal(m.group(7), r_ca)
                 if m.group(10) == 'суток' and number[-6:] == 'одного':
                     number = number[:-3] + 'их'
-            if number != '':
-                text = text.replace(m.group(), m.group(1) + m.group(2) + pre + number + m.group(8) + m.group(10), 1)
+            text = text.replace(m.group(), m.group(1) + m.group(2) + pre + number + m.group(8) + m.group(10), 1)
 
 #    for m in finditer(r'\b(\d*[02-9]1|1) ([а-я]+)\b', text):
 #        if m.group(2) in ms_r and m.group(2) not in me_v:
@@ -2960,14 +2950,6 @@ def txt_prep(text):
     # Предлог "по" при указании количества
     for m in finditer(r'\b([Пп]о )(\d*1(000){1,3})\b', text):
         text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), d_ca), 1)
-
-    # Предлоги родительного падежа
-    for m in finditer(r'\b([Оо]т |[Сс] )(\d+)( до \d+)\b', text):
-        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), r_ca) + m.group(3), 1)
-    for m in finditer(r'\b([Бб]ез|[Бб]олее|[Бб]ольше|[Вв]место|[Дд]ля|[Дд]о|[Ии]з|[Мм]енее|[Мм]еньше|[Нн]ач[инаетсялоь]{2,7} с|[Оо]коло|[Оо]т|[Пп]осле|[Пп]орядка|[Пп]ротив|[Сс]выше|[Уу]) (\d+)((-| или | и )(\d+)|)\b', text):
-        if m.group(3) == '': pre = ''
-        else: pre = m.group(4) + cardinal(m.group(5), r_ca)
-        text = text.replace(m.group(), m.group(1) + ' ' + cardinal(m.group(2), r_ca) + pre, 1)
 
     # Предлоги дательного падежа
     for m in finditer(r'\b([Кк] |рав[нагеилмоcуюыхья]{2,6} )(\d+)\b', text):
