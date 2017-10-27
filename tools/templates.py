@@ -2663,7 +2663,7 @@ def txt_prep(text):
 
     # Количественные числительные
 
-    for m in finditer(r'\b((\d+) - |)(\d+)-(часов[агеиймоухыюя]{2,3}|(силь|стволь|тон|каналь|странич|тысяч|миллион|миллиард|процент|секунд|минут|месяч|недель|днев|крат|мест|этаж)н[агеиймоухыюя]{2,3}|лет[геиймноухюя]{2,4}|(|кило|милли|санти)(граммов|метров)[агеиймоухыюя]{2,3})\b', text):
+    for m in finditer(r'\b((\d+) - |)(\d+)-(часов[агеиймоухыюя]{2,3}|(градус|силь|стволь|тон|каналь|странич|тысяч|миллион|миллиард|процент|секунд|минут|месяч|недель|днев|крат|мест|этаж)н[агеиймоухыюя]{2,3}|лет[геиймноухюя]{2,4}|(|кило|милли|санти)(граммов|метров)[агеиймоухыюя]{2,3})\b', text):
         if m.group(1) == '': pre = ''
         else:
             if m.group(2)[-3:] == '000': pre = cardinal(m.group(2)[:-3], r_ca) + 'тысяче - '
@@ -2675,6 +2675,28 @@ def txt_prep(text):
         num = sub(r'(одной тысячи|одноготысяче)', 'тысяче', num)
         num = sub(r'\bодного', 'одно', num)
         text = text.replace(m.group(), num + m.group(4), 1)
+
+    # Творительный падеж
+    for m in finditer(r'((\d+)( - | или | и )|)(плюс |минус |)(\d+) ([а-я]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b', text):
+        if m.group(1) != '':
+            pre = cardinal(m.group(2), t_ca)
+            if condition(m.group(2)) and ( m.group(6) in ze_t or m.group(6)[:-2] in ze_i or m.group(6)[:-3] + 'ь' in ze_i):
+                pre = pre[:-2] + 'ой'
+            pre += m.group(3)
+        else:
+            pre = ''
+        number = ''
+        if condition(m.group(5)):
+            if m.group(6) in ms_t:
+                number = cardinal(m.group(5), t_ca)
+            elif m.group(6) in ze_t:
+                number = cardinal(m.group(5), t_ca)[:-2] + 'ой'
+            elif m.group(6) == 'сутками':
+                number = cardinal(m.group(5), t_ca) + 'и'
+        elif m.group(6)[-2:] == 'ми':
+            number = cardinal(m.group(5), t_ca)
+        if number != '':
+            text = text.replace(m.group(), pre + m.group(4) + number + ' ' + m.group(6), 1)
 
     # Родительный падеж
     for m in finditer(r'\b([Оо]т|[Сс])( | плюс | минус )(\d+)( до( | плюс | минус )\d+ )([а-я]+)\b', text):
@@ -2730,28 +2752,6 @@ def txt_prep(text):
             number = cardinal(m.group(1), d_ca)
         if number != '':
             text = text.replace(m.group(), number + m.group(2), 1)
-
-    # Творительный падеж
-    for m in finditer(r'((\d+)( - | или | и )|)(плюс |минус |)(\d+) ([а-я]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b', text):
-        if m.group(1) != '':
-            pre = cardinal(m.group(2), t_ca)
-            if condition(m.group(2)) and ( m.group(6) in ze_t or m.group(6)[:-2] in ze_i or m.group(6)[:-3] + 'ь' in ze_i):
-                pre = pre[:-2] + 'ой'
-            pre += m.group(3)
-        else:
-            pre = ''
-        number = ''
-        if condition(m.group(5)):
-            if m.group(6) in ms_t:
-                number = cardinal(m.group(5), t_ca)
-            elif m.group(6) in ze_t:
-                number = cardinal(m.group(5), t_ca)[:-2] + 'ой'
-            elif m.group(6) == 'сутками':
-                number = cardinal(m.group(5), t_ca) + 'и'
-        elif m.group(6)[-2:] == 'ми':
-            number = cardinal(m.group(5), t_ca)
-        if number != '':
-            text = text.replace(m.group(), pre + m.group(4) + number + ' ' + m.group(6), 1)
 
     # Винительный падеж
 
