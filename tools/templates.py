@@ -2265,10 +2265,10 @@ def substant(num, key, cas = 0):
                 else:
                     form = forms[key][1]
         elif cas == 5:
-            if key in ('т', 'а.е.', 'л.с.', 'сек', 'ед.'):
+            if key in ('т', 'а.е.', 'л.с.', 'сек', "'", 'ед.'):
 
                 if condition(num):
-                    form = {'т': 'тонну', 'а.е.': 'астрономическую единицу', 'л.с.': 'лошадиную силу', 'сек': 'секунду', 'ед.': 'единицу'}[key]
+                    form = {'т': 'тонну', 'а.е.': 'астрономическую единицу', 'л.с.': 'лошадиную силу', 'сек': 'секунду', "'": 'минуту', 'ед.': 'единицу'}[key]
                 elif num in '234' or (len(num) > 1 and num[-2] != '1' and num[-1] in '234'):
                     form = forms[key][1]
                 else:
@@ -2283,7 +2283,7 @@ def substant(num, key, cas = 0):
         else:
             if (len(num) > 1 and num[-2] == '1') or num[-1] != '1':
                 form = forms[key][2 * cas + 1]
-            else:       
+            else:
                 form = forms[key][2 * cas]
     return form
 
