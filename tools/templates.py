@@ -806,6 +806,7 @@ mn_pad = {'е': i_mn, 'м': d_mn, 'х': r_mn, 'ми': t_mn}
 mu_pad = {'': i_mu, 'а': r_mu, 'у': d_mu, 'ом': t_mu, 'е': p_mu, 'й': i_mu, 'я': r_mu, 'ю': d_mu, 'ем': t_mu, 'и': p_mu}
 sr_pad = {'е': i_sr, 'у': d_sr, 'ю': d_sr, 'я': r_sr, 'ем': t_sr, 'и': p_sr}
 zh_pad = {'а': i_zh, 'ы': r_zh, 'е': d_zh, 'ой': t_zh, 'у': v_zh}
+adj_pad = {'ий': i_mu, 'его': r_mu, 'ему': d_mu, 'им': t_mu, 'ем': p_mu, 'ый': i_mu, 'ого': r_mu, 'ому': d_mu, 'ым': t_mu, 'ом': p_mu, 'ее': i_sr, 'ое': i_sr,'ая': i_zh, 'яя': i_zh, 'ей': r_zh, 'ой': r_zh, 'ую': v_zh, 'юю': v_zh, 'ие': i_mn, 'им': d_mn, 'их': r_mn, 'ими': t_mn, 'ые': i_mn, 'ым': d_mn, 'ых': r_mn, 'ыми': t_mn}
 
 months = r' (января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)'
 
@@ -1887,7 +1888,7 @@ presamples = (
 
   (r'(?<=\d) ?' + units,  r'_\1'),
 
-  (r'(?<=\d)[×xXхХ](?=\d)', ' на '),
+  (r'(?<=\d) ?[×xXхХ] ?(?=\d)', ' на '),
   (r' ?± ?', ' плюс-минус '),
   (r' ?= ?', ' равно '),
   (r' ?≠ ?', ' не равно '),
@@ -2129,7 +2130,8 @@ patterns = (
   (r'([Мм]ежду )(\d+) и (\d+)' + months, 'm.group(1) + ordinal(m.group(2), t_mu) + " и " + ordinal(m.group(3), t_mu) + " " + m.group(4)'),
   (r'(датир(ован[а,о,ы]?|у[еюмтся]{1,4}) )(\d+)' + months, 'm.group(1) + ordinal(m.group(3), t_mu) + " " + m.group(4)'),
   (r'\b(\d+)' + months, 'ordinal(m.group(1), r_mu) + " " + m.group(2)'),
-  (r'\b(\d+)-[еи] сутки', 'ordinal(m.group(1), i_mn) + " сутки"')
+  (r'\b(\d+)-[еи] сутки', 'ordinal(m.group(1), i_mn) + " сутки"'),
+  (r'(\d+|[IVX]+)( зимни[еимх]{1,2}| летни[еимх]{1,2}|)( Олимпийски)(е|ми|м\b|х)\b', 'ordinal(m.group(1), mn_pad[m.group(4)]) + m.group(2) + m.group(3) + m.group(4)')
 )
 
 greekletters = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσΤτΥυΦφΧχΨψΩως'
@@ -2601,12 +2603,8 @@ def txt_prep(text):
     for m in finditer(r'(Анн|Екатерин)(|а|е|ой|у|ы) ([IVX]+)', text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(roman2arabic(m.group(3)), zh_pad[m.group(2)]), 1)
 
-    for m in finditer(r'(\d+|[IVX]+)( зимни[еимх]{1,2}| летни[еимх]{1,2}|)( Олимпийски)(е|ми|м\b|х)', text):
-        if m.group(1).isdigit():
-            number = m.group(1)
-        else:
-            number = roman2arabic(m.group(1))
-        text = text.replace(m.group(), ordinal(number, mn_pad[m.group(4)]) + m.group(2) + m.group(3) + m.group(4), 1)
+    for m in finditer(r'\b([IVXCDM]+)( [А-Я]?[а-я]+([иы]([йх]|ми?)|[ая]я|[ео](му?|го|[ей])|[ую]ю))\b', text):
+        text = text.replace(m.group(), ordinal(roman2arabic(m.group(1)), adj_pad[m.group(3)]) + m.group(2), 1)
 
     for m in finditer(r'\b([A-Z][a-z]*[ -]|[А-Я]?[а-я]*[ -])([IVX]+)($|\n|[.,;:]| [^a-z])', text):
         text = text.replace(m.group(), m.group(1) + roman2arabic(m.group(2)) + m.group(3), 1)
