@@ -2694,6 +2694,21 @@ def txt_prep(text):
                 number += m.group(3)
             text = text.replace(m.group(), number + cardinal(m.group(4), r_ca) + m.group(5) + m.group(8), 1)
 
+    # Предложный падеж (мн. ч. и муж./ср. род ед. ч.)
+    for m in finditer(r'\b([Вв] |[Нн]а |[Оо]б? |[Пп]ри )(\d+) (([а-я]+([иы]х|[ео]м) |)([а-я]+([ая]х|е|и|у)))\b', text):
+        number = ''
+        if m.group(7) == 'ах' or m.group(7) == 'ях':
+            number = cardinal(m.group(2), p_ca)
+        if condition(m.group(2)):
+            if m.group(6) in ms_p:
+                number = cardinal(m.group(2), p_ca)
+            elif m.group(6) == 'сутках':
+                number = cardinal(m.group(2), p_ca)[:-2] + 'их'
+        elif m.group(7) == 'ах' or m.group(7) == 'ях':
+            number = cardinal(m.group(2), p_ca)
+        if number != '':
+            text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
+
     # Дательный падеж (мн. ч. и муж./ср. род ед. ч.)
     for m in finditer(r'(\d+)(( [а-я]+([иы]м|[ео]му)|) ([а-я]+([аиыя]м|у|ю|е)))\b', text):
         number = ''
@@ -2750,21 +2765,6 @@ def txt_prep(text):
         elif number[-3:] == 'два' and m.group(4) in ('копейки', 'гривны', 'драхмы', 'марки'):
             number = number[:-1] + 'е'
         text = text.replace(m.group(), m.group(1) + ' ' + number + ' ' + m.group(4), 1)
-
-    # Предложный падеж (мн. ч. и муж./ср. род ед. ч.)
-    for m in finditer(r'(\d+) (([а-я]+([иы]х|[ео]м) |)([А-Я]?[а-я]+([ая]х|е|и)))\b', text):
-        number = ''
-        if m.group(6) == 'ах' or m.group(6) == 'ях':
-            number = cardinal(m.group(1), p_ca)
-        if condition(m.group(1)):
-            if m.group(5) in ms_p:
-                number = cardinal(m.group(1), p_ca)
-            elif m.group(5) == 'сутках':
-                number = cardinal(m.group(1), p_ca)[:-2] + 'их'
-        elif m.group(6) == 'ах' or m.group(6) == 'ях':
-            number = cardinal(m.group(1), p_ca)
-        if number != '':
-            text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Женский род (дат./предл. пад.)
     for m in finditer(r'\b([Пп]ри |[Оо]б? |)(\d*[02-9]1|1)(( [а-я]+[ео]й|) ([а-я]+[еи]))\b', text):
