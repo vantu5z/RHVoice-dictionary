@@ -1964,8 +1964,6 @@ presamples = (
 #  ('⅞', 'семь восьмых'),
 #  ('⅑', 'одна девятая'),
 
-  (r'(\d)( ранга)\b', r'\1-го\2'),
-
   (r'(\d)-(\d)', r'\1 - \2'),
   (r'\b([IVX]+)-([IVX]+)\b', r'\1 - \2'),
 
@@ -2080,20 +2078,24 @@ samples = (
   (r'\b(\d+) (и|или|-) (\d+)-(го|ми|му|х|ю|я)\b', r'\1-\4 \2 \3-\4'),
   (r'\b(\d+)(?=(, \d+)*, \d+-(го|ми|му|х|ю|я))', r'\1-\3'),
 
-  (r'\b([Сс]о? \d+)( по \d+) ((тысяче|сто)летие|поколение)\b', r'\1-го\2-е \3'),
-  (r'\b([Вв]о? \d+)( [-и] \d+) ((тысяче|сто)летиях|поколениях)', r'\1-м\2-м \3'),
+  (r'(\d)( ранга)\b', r'\1-го\2'),
 
-  (r'(\w)(\n|\Z)', r'\1.\2')
+  (r'\b([Сс]о? \d+)( по \d+) ((тысяче|сто)летие|поколение)\b', r'\1-го\2-е \3'),
+  (r'\b([Вв]о? \d+)( [-и] \d+) ((тысяче|сто)летиях|поколениях)', r'\1-м\2-м \3')
 )
 patterns = (
-  (r'(триллион(|а|ов) )' + units, 'm.group(1) + forms[m.group(3)][1]'),
   # Наращения при количественных числительных недопустимы, но распространены
   (r'\b(\d*[1-9]0|\d*1\d|\d*[02-9]?[569])-[т]?и\b', 'cardinal(m.group(1), r_ca)'),
   (r'\b(\d*[02-9]?[234])-х\b', 'cardinal(m.group(1), r_ca)'),
   (r'(\d+)-ю ([а-я]+ми)\b', 'cardinal(m.group(1), t_ca) + " " + m.group(2)'),
   (r'\b([Сс]о? )(\d*1[0-4]|\d*\d[5-9]|[5-9])-ю\b', 'm.group(1) + cardinal(m.group(2), t_ca)'),
 
+  (r'(Александр|Иван|Иоанн|Пав[е]?л|П[её]тр|Ф[её]дор|Васили|Лжедмитри|Никола|Карл|Людовик)(|а|е|ем|й|ом|у|ю|я) ([IVX]+)\b', 'm.group(1) + m.group(2) + " " + ordinal(roman2arabic(m.group(3)), mu_pad[m.group(2)])'),
+  (r'(Анн|Екатерин)(|а|е|ой|у|ы) ([IVX]+)', 'm.group(1) + m.group(2) + " " + ordinal(roman2arabic(m.group(3)), zh_pad[m.group(2)])'),
+  (r'\b([IVXCDM]+)( [А-Я]?[а-я]+([иы]([ейх]|ми?)|[ая]я|[ео](му?|го|[ей])|[ую]ю))\b', 'ordinal(roman2arabic(m.group(1)), adj_pad[m.group(3)]) + m.group(2)'),
+  (r'\b([A-Z][a-z]*[ -]|[А-Я]?[а-я]*[ -])([IVX]+)($|\n|[.,;:]| [^a-z])', 'm.group(1) + roman2arabic(m.group(2)) + m.group(3)'),
   (r'\b([IV]+) степени', 'ordinal(roman2arabic(m.group(1)), r_zh) + " степени"'),
+  (r'(\d+)( зимни[еимх]{1,2}| летни[еимх]{1,2}|)( Олимпийски)(е|ми|м\b|х)\b', 'ordinal(m.group(1), mn_pad[m.group(4)]) + m.group(2) + m.group(3) + m.group(4)'),
   (r'(\d+)( этаж(а|е|у|ом|))', 'ordinal(m.group(1), mu_pad[m.group(3)]) + m.group(2)'),
   (r'(\d+0)( - \d+0-е годы)', 'ordinal(m.group(1), i_mn) + m.group(2)'),
   (r'(\d+0)-е( годы)', 'ordinal(m.group(1), i_mn) + m.group(2)'),
@@ -2131,7 +2133,18 @@ patterns = (
   (r'(датир(ован[а,о,ы]?|у[еюмтся]{1,4}) )(\d+)' + months, 'm.group(1) + ordinal(m.group(3), t_mu) + " " + m.group(4)'),
   (r'\b(\d+)' + months, 'ordinal(m.group(1), r_mu) + " " + m.group(2)'),
   (r'\b(\d+)-[еи] сутки', 'ordinal(m.group(1), i_mn) + " сутки"'),
-  (r'(\d+|[IVX]+)( зимни[еимх]{1,2}| летни[еимх]{1,2}|)( Олимпийски)(е|ми|м\b|х)\b', 'ordinal(m.group(1), mn_pad[m.group(4)]) + m.group(2) + m.group(3) + m.group(4)')
+  # Единицы измерения
+  (r'([Рр]азниц[аейуы]{1,2}|[Вв]ысот[аейоуы]{1,2}|[Гг]лубин[аейоуы]{1,2}|[Дд]альност[иью]{1,2}|[Дд]альност[иью]{1,2} стрельбы|длин[аейоуы]{1,2}|[Мм]асс[аейоуы]{1,2}|[Шш]ирин[аейоуы]{1,2}|[Вв]ес[аемоу]{,2}|[Мм]ощност[иью]{1,2}|[Сс]корост[иью]{1,2}|[Сс]тоимост[иью]{1,2}|[Рр]асстояни[еимхюя]{1,2}|[Дд]лительност[иью]{1,2}|[Пп]родолжительност[иью]{1,2}|оцени[авеийлмстшыья]{,6}|[Уу]далени[еимюя]{1,2}) в (\d+)_' + units, 'm.group(1) + " в " + m.group(2) + " " + substant(m.group(2), m.group(3), 5)'),
+  (r'(([Сс]равн(ени[еию]|ив|ивая) с|[Вв]ладе[авеийлмтюшщья]{1,7})( | плюс | минус ))(\d+)_' + units, 'm.group(1) + m.group(5) + " " + substant(m.group(5), m.group(6), 3)'),
+  (r'([Мм]ежду( плюс | минус | )(\d+))_' + units, 'm.group(1) + " " + substant(m.group(3), m.group(4), 3)'),
+  (r'([Мм]ежду( плюс | минус | )\d+( [а-яА-Я]+ ?[а-яА-Я]+ | )и( плюс | минус | )(\d+))_' + units, 'm.group(1) + " " + substant(m.group(5), m.group(6), 3)'),
+  (r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Вв]место|[Вв] размере|[Вв] течение|[Нн]ач[инаетсялоь]{2,7} с|[Вв]ладел[аеимухцыь]{2,5}|[Пп]ротив|[Пп]орядка|[Пп]осле)(( | плюс | минус )\d+(-| или | и )| )(|плюс |минус )(\d+)_' + units, 'm.group(1) + m.group(2) + m.group(5) + m.group(6) + " " + substant(m.group(6), m.group(7), 1)'),
+  (r'\b(([Кк]|рав[нагеилмоcуюыхья]{2,6})( | плюс | минус ))(\d+)_' + units, 'm.group(1) + m.group(4) + " " + substant(m.group(4), m.group(5), 2)'),
+  (r'\b(([Вв]|[Оо]б?|[Пп]ри)( | плюс | минус ))(\d+)_' + units, 'm.group(1) + m.group(4) + " " + substant(m.group(4), m.group(5), 4)'),
+  (r'\b([Пп]о )(\d*[02-9]1|1)_' + units, 'm.group(1) + m.group(2) + " " + substant(m.group(2), m.group(3), 2)'),
+  (r'\b(\d+,\d+)_' + units, 'm.group(1) + " " + forms[m.group(2)][2]'),
+  (r'\b(\d+)_' + units, 'm.group(1) + " " + substant(m.group(1), m.group(2))',),
+  (r'(тысяч[аимх]{,3}|(миллион|миллиард|триллион)(|а[имх]{,2}|ов)) ' + units, 'm.group(1) + " " + forms[m.group(4)][1]')
 )
 
 greekletters = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσΤτΥυΦφΧχΨψΩως'
@@ -2342,215 +2355,6 @@ def txt_prep(text):
     for sample in presamples:
         text = sub(sample[0], sample[1], text)
 
-    # Единицы измерения
-
-    # Винительный падеж
-    for m in finditer(r'([Рр]азниц[аейуы]{1,2}|[Вв]ысот[аейоуы]{1,2}|[Гг]лубин[аейоуы]{1,2}|[Дд]альност[иью]{1,2}|[Дд]альност[иью]{1,2} стрельбы|длин[аейоуы]{1,2}|[Мм]асс[аейоуы]{1,2}|[Шш]ирин[аейоуы]{1,2}|[Вв]ес[аемоу]{,2}|[Мм]ощност[иью]{1,2}|[Нн]ач[инаетсялоь]{2,7} с|[Сс]корост[иью]{1,2}|[Сс]тоимост[иью]{1,2}|[Рр]асстояни[еимхюя]{1,2}|[Дд]лительност[иью]{1,2}|[Пп]родолжительност[иью]{1,2}|оцени[авеийлмстшыья]{,6}|[Уу]далени[еимюя]{1,2}) в (\d+)_' + units, text):
-        text = text.replace(m.group(), m.group(1) + ' в ' + m.group(2) + ' ' + substant(m.group(2), m.group(3), 5), 1)
-
-    # Творительный падеж
-    for m in finditer(r'(([Сс]равн(ени[еию]|ив|ивая) с|[Вв]ладе[авеийлмтюшщья]{1,7})( | плюс | минус ))(\d+)_' + units, text):
-        text = text.replace(m.group(), m.group(1) + m.group(5) + ' ' + substant(m.group(5), m.group(6), 3), 1)
-    for m in finditer(r'([Мм]ежду( плюс | минус | )(\d+))_' + units, text):
-        text = text.replace(m.group(), m.group(1) + ' ' + substant(m.group(3), m.group(4), 3), 1)
-    for m in finditer(r'([Мм]ежду( плюс | минус | )\d+( [а-яА-Я]+ ?[а-яА-Я]+ | )и( плюс | минус | )(\d+))_' + units, text):
-        text = text.replace(m.group(), m.group(1) + ' ' + substant(m.group(5), m.group(6), 3), 1)
-
-    # Родительный падеж
-    for m in finditer(r'\b(([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Вв]место|[Вв] размере|[Вв] течение|[Пп]орядка|[Пп]осле|[Пп]ротив|[Сс]|[Вв]ладел[аеимухцыь]{2,5})( | плюс | минус ))(\d+)_' + units, text):
-        text = text.replace(m.group(), m.group(1) + m.group(4) + ' ' + substant(m.group(4), m.group(5), 1), 1)
-
-    # Дательный падеж
-    for m in finditer(r'\b(([Кк]|рав[нагеилмоcуюыхья]{2,6})( | плюс | минус ))(\d+)_' + units, text):
-        text = text.replace(m.group(), m.group(1) + m.group(4) + ' ' + substant(m.group(4), m.group(5), 2), 1)
-
-    # Предложный падеж
-    for m in finditer(r'\b(([Вв]|[Оо]б?|[Пп]ри)( | плюс | минус ))(\d+)_' + units, text):
-        text = text.replace(m.group(), m.group(1) + m.group(4) + ' ' + substant(m.group(4), m.group(5), 4), 1)
-
-    # Предлог "по" при указании количества
-    for m in finditer(r'\b([Пп]о )(\d*[02-9]1|1)_' + units, text):
-        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + substant(m.group(2), m.group(3), 2), 1)
-
-    # Именительный
-    for m in finditer(r'(\d+,\d+)_' + units, text):
-        text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(2)][2], 1)
-    for m in finditer(r'(\d+)_' + units, text):
-        text = text.replace(m.group(), m.group(1) + ' ' + substant(m.group(1), m.group(2)), 1)
-    for m in finditer(r'(тысяч[аимх]{,3}|(миллион|миллиард|триллион)(а[имх]{,2}|ов)) ' + units, text):
-        text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(4)][1], 1)
-
-    # Десятичные дроби (до миллионных включительно)
-
-    # Именительный
-    for m in finditer(r'(\d+),(\d{1,6})(\W|$)', text):
-        full = feminin(m.group(1))
-        if full[-1] == 'а':
-            full += '_целая '
-        else:
-            full += '_целых '
-        frac = '_' + ('десят', 'сот', 'тысячн', 'десятитысячн', 'стотысячн', 'миллионн')[len(m.group(2)) - 1]
-        decimal = feminin(m.group(2))
-        if decimal[-1] == 'а':
-            frac += 'ая'
-        else:
-            frac += 'ых'
-        text = text.replace(m.group(),  full + decimal + frac + m.group(3), 1)
-
-    # Коррекция чтения в косвенных падежах
-
-    # Творительный
-    for m in finditer(r'([Пп]о сравнению с |[Вв]ладе[авеийлмтюшщья]{1,7} )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)\b', text):
-        if m.group(2) != '':
-            full = cardinal(m.group(2)[:-1], t_ca) + '_'
-        else:
-            full = ''
-        if m.group(3) == 'одна_':
-            full += 'одной_'
-        elif m.group(3) == 'две_':
-            full += 'двумя_'
-        if full == 'нолём_':
-            full += 'целых'
-        elif m.group(4) == 'целая':
-            full += 'целой'
-        else:
-            full += 'целыми'
-        if m.group(5) != '':
-            frac = cardinal(m.group(5)[:-1], t_ca) + '_'
-        else:
-            frac = ''
-        if m.group(6) == 'одна_':
-            frac += 'одной_'
-        elif m.group(6) == 'две_':
-            frac += 'двумя_'
-        if frac == 'нолём_':
-            rd = 'ых'
-        elif m.group(8) == 'ая':
-            rd = 'ой'
-        else:
-            rd = 'ыми'
-        text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
-
-    # Родительный 
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Дд]ороже|[Дд]ешевле|[Оо]коло|[Сс]|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв]место|[Вв] течение|[Нн]ач[инаетсялоь]{2,7} с|[Пп]орядка|[Пп]ротив|[Пп]осле|достиг[алнш][веиотуьщюя]{1,4}|[Вв]ладел[аеимухцыь]{2,5}) (|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)\b', text):
-        if m.group(2) != '':
-            full = cardinal(m.group(2)[:-1], r_ca) + '_'
-        else:
-            full = ''
-        if m.group(3) == 'одна_':
-            full += 'одной_'
-        elif m.group(3) == 'две_':
-            full += 'двух_'
-        if m.group(4) == 'целая':
-            full += 'целой'
-        else:
-            full += 'целых'
-        if m.group(5) != '':
-            frac = cardinal(m.group(5)[:-1], r_ca) + '_'
-        else:
-            frac = ''
-        if m.group(6) == 'одна_':
-            frac += 'одной_'
-        elif m.group(6) == 'две_':
-            frac += 'двух_'
-        if m.group(8) == 'ая':
-            rd = 'ой'
-        else:
-            rd = 'ых'
-        text = text.replace(m.group(), m.group(1) + ' ' + full + ' ' + frac + m.group(7) + rd, 1)
-
-    # Дательный
-    for m in finditer(r'\b([Кк] |рав[аеоын]{2} |равня[аеилостья]{3,4} )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)\b', text):
-        if m.group(2) != '':
-            full = cardinal(m.group(2)[:-1], d_ca) + '_'
-        else:
-            full = ''
-        if m.group(3) == 'одна_':
-            full += 'одной_'
-        elif m.group(3) == 'две_':
-            full += 'двум_'
-        if full == 'нолю_':
-            full += 'целых'
-        elif m.group(4) == 'целая':
-            full += 'целой'
-        else:
-            full += 'целым'
-        if m.group(5) != '':
-            frac = cardinal(m.group(5)[:-1], d_ca) + '_'
-        else:
-            frac = ''
-        if m.group(6) == 'одна_':
-            frac += 'одной_'
-        elif m.group(6) == 'две_':
-            frac += 'двум_'
-        if frac == 'нолю_':
-            rd = 'ых'
-        elif m.group(8) == 'ая':
-            rd = 'ой'
-        else:
-            rd = 'ым'
-        text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
-
-    # Винительный
-    for m in finditer(r'\b([Вв] |[Зз]а |[Нн]а |состав[аеилотя]{2,4} )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)(( - | и | или )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)|)\b', text):
-        if m.group(2) != '': full = cardinal(m.group(2)[:-1], v_ca) + '_'
-        else: full = ''
-        if m.group(3) == 'одна_': full += 'одну_'
-        else: full += m.group(3)
-        if m.group(4) == 'целая': full += 'целую'
-        else: full += 'целых'
-        if m.group(5) != '': frac = cardinal(m.group(5)[:-1], v_ca) + '_'
-        else: frac = ''
-        if m.group(6) == 'одна_': frac += 'одну_'
-        else: frac += m.group(6)
-        if m.group(8) == 'ая': rd = 'ую'
-        else: rd = 'ых'
-        number = full + ' ' + frac + m.group(7) + rd
-        if m.group(9) == '' : num = ''
-        else:
-            if m.group(11) != '': full = cardinal(m.group(11)[:-1], v_ca) + '_'
-            else: full = ''
-            if m.group(12) == 'одна_': full += 'одну_'
-            else: full += m.group(12)
-            if m.group(13) == 'целая': full += 'целую'
-            else: full += 'целых'
-            if m.group(14) != '': frac = cardinal(m.group(14)[:-1], v_ca) + '_'
-            else: frac = ''
-            if m.group(15) == 'одна_': frac += 'одну_'
-            else: frac += m.group(15)
-            if m.group(17) == 'ая': rd = 'ую'
-            else: rd = 'ых'
-            num = m.group(10) + full + ' ' + frac + m.group(16) + rd
-        text = text.replace(m.group(), m.group(1) + number + num, 1)
-
-    # Предложный
-    for m in finditer(r'\b([Оо]б? |[Пп]ри )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)\b', text):
-        if m.group(2) != '':
-            full = cardinal(m.group(2)[:-1], p_ca) + '_'
-        else:
-            full = ''
-        if m.group(3) == 'одна_':
-            full += 'одной_'
-        elif m.group(3) == 'две_':
-            full += 'двух_'
-        if m.group(4) == 'целая':
-            full += 'целой'
-        else:
-            full += 'целых'
-        if m.group(5) != '':
-            frac = cardinal(m.group(5)[:-1], p_ca) + '_'
-        else:
-            frac = ''
-        if m.group(6) == 'одна_':
-            frac += 'одной_'
-        elif m.group(6) == 'две_':
-            frac += 'двух_'
-        if m.group(8) == 'ая':
-            rd = 'ой'
-        else:
-            rd = 'ых'
-        text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
-
     # Время в формате (h)h ч (m)m мин
     for m in finditer(r'\b(\d{1,2}) ?ч ?(\d{1,2}) ?мин\b', text):
         if condition(m.group(1)): hours = ' час '
@@ -2591,29 +2395,15 @@ def txt_prep(text):
             minutes = '0_' + minutes
         text = text.replace(m.group(), m.group(1) + hours + ' ' + minutes, 1)
 
-    # Римские цифры
+    # Порядковые числительные
 
-    for m in finditer(r'\b(([IVXCDLM]+)( - | (и|или)( | в ))|)([IVXCDLM]+) ([в]?в\.|век[аеуовмих]{,3}\b|(сто|тысяче)лети[ейяюмих]{1,3}\b|[Сс]ъезд[аеуоыми]{,3}\b|квартал[аеуыовми]{,3}\b)', text):
+    for m in finditer(r'\b(([IVXCDLM]+)( - | (и|или)( | в ))|)([IVXCDLM]+) ([в]?в\.|век[аеуовмих]{,3}\b|(сто|тысяче)лети[ейяюмих]{1,3}\b|[Сс]ъезд[аеуоымих]{,3}\b|квартал[аеуыовмих]{,3}\b)', text):
         if m.group(1) == '': pre = ''
         else: pre = roman2arabic(m.group(2)) + m.group(3)
         text = text.replace(m.group(), pre + roman2arabic(m.group(6)) + ' ' + m.group(7), 1)
 
-    for m in finditer(r'(Александр|Иван|Иоанн|Пав[е]?л|П[её]тр|Ф[её]дор|Васили|Лжедмитри|Никола|Карл|Людовик)(|а|е|ем|й|ом|у|ю|я) ([IVX]+)', text):
-        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(roman2arabic(m.group(3)), mu_pad[m.group(2)]), 1)
-    for m in finditer(r'(Анн|Екатерин)(|а|е|ой|у|ы) ([IVX]+)', text):
-        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + ordinal(roman2arabic(m.group(3)), zh_pad[m.group(2)]), 1)
-
-    for m in finditer(r'\b([IVXCDM]+)( [А-Я]?[а-я]+([иы]([йх]|ми?)|[ая]я|[ео](му?|го|[ей])|[ую]ю))\b', text):
-        text = text.replace(m.group(), ordinal(roman2arabic(m.group(1)), adj_pad[m.group(3)]) + m.group(2), 1)
-
-    for m in finditer(r'\b([A-Z][a-z]*[ -]|[А-Я]?[а-я]*[ -])([IVX]+)($|\n|[.,;:]| [^a-z])', text):
-        text = text.replace(m.group(), m.group(1) + roman2arabic(m.group(2)) + m.group(3), 1)
-
-    # Обработка по шаблонам
     for sample in samples:
         text = sub(sample[0], sample[1], text)
-
-    # Порядковые числительные
 
     for m in finditer(r'\b([Вв]о? |[Нн]а |[Оо]б? |[Пп]ри )(\d*[02-9]|\d*1\d) ([а-я]+)\b', text):
         number = ''
@@ -2658,6 +2448,172 @@ def txt_prep(text):
         for m in finditer(pattern[0], text):
             text = text.replace(m.group(), eval(pattern[1]), 1)
 
+    # Десятичные дроби (до миллионных включительно)
+
+    # Именительный
+    for m in finditer(r'(\d+),(\d{1,6})(\W|$)', text):
+        full = feminin(m.group(1))
+        if full[-1] == 'а':
+            full += '_целая '
+        else:
+            full += '_целых '
+        frac = '_' + ('десят', 'сот', 'тысячн', 'десятитысячн', 'стотысячн', 'миллионн')[len(m.group(2)) - 1]
+        decimal = feminin(m.group(2))
+        if decimal[-1] == 'а':
+            frac += 'ая'
+        else:
+            frac += 'ых'
+        text = text.replace(m.group(),  full + decimal + frac + m.group(3), 1)
+
+    # Коррекция чтения в косвенных падежах
+    # Творительный
+    for m in finditer(r'([Пп]о сравнению с |[Вв]ладе[авеийлмтюшщья]{1,7} )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)\b', text):
+        if m.group(2) != '':
+            full = cardinal(m.group(2)[:-1], t_ca) + '_'
+        else:
+            full = ''
+        if m.group(3) == 'одна_':
+            full += 'одной_'
+        elif m.group(3) == 'две_':
+            full += 'двумя_'
+        if full == 'нолём_':
+            full += 'целых'
+        elif m.group(4) == 'целая':
+            full += 'целой'
+        else:
+            full += 'целыми'
+        if m.group(5) != '':
+            frac = cardinal(m.group(5)[:-1], t_ca) + '_'
+        else:
+            frac = ''
+        if m.group(6) == 'одна_':
+            frac += 'одной_'
+        elif m.group(6) == 'две_':
+            frac += 'двумя_'
+        if frac == 'нолём_':
+            rd = 'ых'
+        elif m.group(8) == 'ая':
+            rd = 'ой'
+        else:
+            rd = 'ыми'
+        text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
+    # Родительный 
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Дд]ороже|[Дд]ешевле|[Оо]коло|[Сс]|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв]место|[Вв] течение|[Нн]ач[инаетсялоь]{2,7} с|[Пп]орядка|[Пп]ротив|[Пп]осле|достиг[алнш][веиотуьщюя]{1,4}|[Вв]ладел[аеимухцыь]{2,5}) (|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)\b', text):
+        if m.group(2) != '':
+            full = cardinal(m.group(2)[:-1], r_ca) + '_'
+        else:
+            full = ''
+        if m.group(3) == 'одна_':
+            full += 'одной_'
+        elif m.group(3) == 'две_':
+            full += 'двух_'
+        if m.group(4) == 'целая':
+            full += 'целой'
+        else:
+            full += 'целых'
+        if m.group(5) != '':
+            frac = cardinal(m.group(5)[:-1], r_ca) + '_'
+        else:
+            frac = ''
+        if m.group(6) == 'одна_':
+            frac += 'одной_'
+        elif m.group(6) == 'две_':
+            frac += 'двух_'
+        if m.group(8) == 'ая':
+            rd = 'ой'
+        else:
+            rd = 'ых'
+        text = text.replace(m.group(), m.group(1) + ' ' + full + ' ' + frac + m.group(7) + rd, 1)
+    # Дательный
+    for m in finditer(r'\b([Кк] |рав[аеоын]{2} |равня[аеилостья]{3,4} )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)\b', text):
+        if m.group(2) != '':
+            full = cardinal(m.group(2)[:-1], d_ca) + '_'
+        else:
+            full = ''
+        if m.group(3) == 'одна_':
+            full += 'одной_'
+        elif m.group(3) == 'две_':
+            full += 'двум_'
+        if full == 'нолю_':
+            full += 'целых'
+        elif m.group(4) == 'целая':
+            full += 'целой'
+        else:
+            full += 'целым'
+        if m.group(5) != '':
+            frac = cardinal(m.group(5)[:-1], d_ca) + '_'
+        else:
+            frac = ''
+        if m.group(6) == 'одна_':
+            frac += 'одной_'
+        elif m.group(6) == 'две_':
+            frac += 'двум_'
+        if frac == 'нолю_':
+            rd = 'ых'
+        elif m.group(8) == 'ая':
+            rd = 'ой'
+        else:
+            rd = 'ым'
+        text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
+    # Винительный
+    for m in finditer(r'\b([Вв] |[Зз]а |[Нн]а |состав[аеилотя]{2,4} )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)(( - | и | или )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)|)\b', text):
+        if m.group(2) != '': full = cardinal(m.group(2)[:-1], v_ca) + '_'
+        else: full = ''
+        if m.group(3) == 'одна_': full += 'одну_'
+        else: full += m.group(3)
+        if m.group(4) == 'целая': full += 'целую'
+        else: full += 'целых'
+        if m.group(5) != '': frac = cardinal(m.group(5)[:-1], v_ca) + '_'
+        else: frac = ''
+        if m.group(6) == 'одна_': frac += 'одну_'
+        else: frac += m.group(6)
+        if m.group(8) == 'ая': rd = 'ую'
+        else: rd = 'ых'
+        number = full + ' ' + frac + m.group(7) + rd
+        if m.group(9) == '' : num = ''
+        else:
+            if m.group(11) != '': full = cardinal(m.group(11)[:-1], v_ca) + '_'
+            else: full = ''
+            if m.group(12) == 'одна_': full += 'одну_'
+            else: full += m.group(12)
+            if m.group(13) == 'целая': full += 'целую'
+            else: full += 'целых'
+            if m.group(14) != '': frac = cardinal(m.group(14)[:-1], v_ca) + '_'
+            else: frac = ''
+            if m.group(15) == 'одна_': frac += 'одну_'
+            else: frac += m.group(15)
+            if m.group(17) == 'ая': rd = 'ую'
+            else: rd = 'ых'
+            num = m.group(10) + full + ' ' + frac + m.group(16) + rd
+        text = text.replace(m.group(), m.group(1) + number + num, 1)
+    # Предложный
+    for m in finditer(r'\b([Оо]б? |[Пп]ри )(|\d+_)(|одна_|две_)(целая|целых) (|\d+_)(|одна_|две_)(десят|сот|тысячн|десятитысячн|стотысячн|миллионн)(ая|ых)\b', text):
+        if m.group(2) != '':
+            full = cardinal(m.group(2)[:-1], p_ca) + '_'
+        else:
+            full = ''
+        if m.group(3) == 'одна_':
+            full += 'одной_'
+        elif m.group(3) == 'две_':
+            full += 'двух_'
+        if m.group(4) == 'целая':
+            full += 'целой'
+        else:
+            full += 'целых'
+        if m.group(5) != '':
+            frac = cardinal(m.group(5)[:-1], p_ca) + '_'
+        else:
+            frac = ''
+        if m.group(6) == 'одна_':
+            frac += 'одной_'
+        elif m.group(6) == 'две_':
+            frac += 'двух_'
+        if m.group(8) == 'ая':
+            rd = 'ой'
+        else:
+            rd = 'ых'
+        text = text.replace(m.group(), m.group(1) + full + ' ' + frac + m.group(7) + rd, 1)
+
     # Количественные числительные
 
     for m in finditer(r'\b((\d+) - |)(\d+)-(часов[агеиймоухыюя]{2,3}|(градус|силь|стволь|тон|каналь|странич|тысяч|миллион|миллиард|процент|секунд|минут|месяч|недель|днев|крат|мест|этаж)н[агеиймоухыюя]{2,3}|лет[геиймноухюя]{2,4}|(|кило|милли|санти)(граммов|метров)[агеиймоухыюя]{2,3})\b', text):
@@ -2696,6 +2652,7 @@ def txt_prep(text):
             text = text.replace(m.group(), pre + m.group(4) + number + ' ' + m.group(6), 1)
 
     # Родительный падеж
+
     for m in finditer(r'\b([Оо]т|[Сс])( | плюс | минус )(\d+)( до( | плюс | минус )(\d+))( ([а-я]+)\b|\b)', text):
         number = cardinal(m.group(3), r_ca)
         if number[-6:] == 'одного':
@@ -2838,12 +2795,14 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Существует только во множественном числе
-
     for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Ии]з|[Пп]осле|[Дд]ля|[Дд]о|[Оо]т|[Вв]место) (1|[02-9]1) суток', text):
         text = text.replace(m.group(), m.group(1) + ' ' +cardinal(m.group(2), r_ca)[:-2] + 'их суток', 1)
-
-    for m in finditer(r'\b(\d+) (сутки|суток)', text):
-        text = text.replace(m.group(), daynight(m.group(1), m.group(1)) + ' ' + m.group(2), 1)
+    for m in finditer(r'\b((\d+) - |)((\d+) (сутки|суток))', text):
+        if m.group(1) != '':
+            pre = daynight(m.group(2), m.group(5)) + '-'
+        else:
+            pre = ''
+        text = text.replace(m.group(), pre + daynight(m.group(4), m.group(5)) + ' ' + m.group(5), 1)
 
     # Предлог "по" при указании количества
     for m in finditer(r'\b([Пп]о )(\d*1(000){1,3})\b', text):
@@ -2863,6 +2822,9 @@ def txt_prep(text):
 
     # Необязательная замена "_" (используется при обработке)
     text = sub('_', ' ', text)
+    # Добавление точки в конце строки. Почему-то не выполняется
+    # корректно на более ранних этапах обработки
+    text = sub(r'(?<=\w)(\Z|\n)', r'.\1', text)
 
     # Буквы греческого алфавита
     for j in greekletters:
