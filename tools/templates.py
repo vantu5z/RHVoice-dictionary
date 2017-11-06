@@ -2636,16 +2636,6 @@ def txt_prep(text):
                 number = m.group(1)[:-1] + 'одно'
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
-    # Существует только во множественном числе
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Оо]коло|[Ии]з|[Пп]осле|[Дд]ля|[Дд]о|[Оо]т|[Вв]место) (1|[02-9]1) суток', text):
-        text = text.replace(m.group(), m.group(1) + ' ' +cardinal(m.group(2), r_ca)[:-2] + 'их суток', 1)
-    for m in finditer(r'\b((\d+) - |)((\d+) (сутки|суток))', text):
-        if m.group(1) != '':
-            pre = daynight(m.group(2), m.group(5)) + '-'
-        else:
-            pre = ''
-        text = text.replace(m.group(), pre + daynight(m.group(4), m.group(5)) + ' ' + m.group(5), 1)
-
     # Предлог "по" при указании количества
     for m in finditer(r'\b([Пп]о )(\d*1(000){1,3})\b', text):
         text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), d_ca), 1)
