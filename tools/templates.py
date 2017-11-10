@@ -1950,18 +1950,6 @@ patterns = (
   (r'(датир(ован[а,о,ы]?|у[еюмтся]{1,4}) )(\d+)' + months, 'm.group(1) + ordinal(m.group(3), t_mu) + " " + m.group(4)'),
   (r'\b(\d+)' + months, 'ordinal(m.group(1), r_mu) + " " + m.group(2)'),
   (r'\b(\d+)-[еи] сутки', 'ordinal(m.group(1), i_mn) + " сутки"'),
-  # Единицы измерения
-  (r'([Рр]азниц[аейуы]{1,2}|[Вв]ысот[аейоуы]{1,2}|[Гг]лубин[аейоуы]{1,2}|[Дд]альност[иью]{1,2}|[Дд]альност[иью]{1,2} стрельбы|длин[аейоуы]{1,2}|[Мм]асс[аейоуы]{1,2}|[Шш]ирин[аейоуы]{1,2}|[Вв]ес[аемоу]{,2}|[Мм]ощност[иью]{1,2}|[Сс]корост[иью]{1,2}|[Сс]тоимост[иью]{1,2}|[Рр]асстояни[еимхюя]{1,2}|[Дд]лительност[иью]{1,2}|[Пп]родолжительност[иью]{1,2}|оцени[авеийлмстшыья]{,6}|[Уу]далени[еимюя]{1,2}) в (\d+)_' + units, 'm.group(1) + " в " + m.group(2) + " " + substant(m.group(2), m.group(3), 5)'),
-  (r'(([Сс]равн(ени[еию]|ив|ивая) с|[Вв]ладе[авеийлмтюшщья]{1,7})( | плюс | минус ))(\d+)_' + units, 'm.group(1) + m.group(5) + " " + substant(m.group(5), m.group(6), 3)'),
-  (r'([Мм]ежду( плюс | минус | )(\d+))_' + units, 'm.group(1) + " " + substant(m.group(3), m.group(4), 3)'),
-  (r'([Мм]ежду( плюс | минус | )\d+( [а-яА-Я]+ ?[а-яА-Я]+ | )и( плюс | минус | )(\d+))_' + units, 'm.group(1) + " " + substant(m.group(5), m.group(6), 3)'),
-  (r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Вв]место|[Вв] размере|[Вв] течение|[Нн]ач[инаетсялоь]{2,7} с|[Вв]ладел[аеимухцыь]{2,5}|[Пп]ротив|[Пп]орядка|[Пп]осле)(( | плюс | минус )\d+(-| или | и )| )(|плюс |минус )(\d+)_' + units, 'm.group(1) + m.group(2) + m.group(5) + m.group(6) + " " + substant(m.group(6), m.group(7), 1)'),
-  (r'\b(([Кк]|рав[нагеилмоcуюыхья]{2,6})( | плюс | минус ))(\d+)_' + units, 'm.group(1) + m.group(4) + " " + substant(m.group(4), m.group(5), 2)'),
-  (r'\b(([Вв]|[Оо]б?|[Пп]ри)( | плюс | минус ))(\d+)_' + units, 'm.group(1) + m.group(4) + " " + substant(m.group(4), m.group(5), 4)'),
-  (r'\b([Пп]о )(\d*[02-9]1|1)_' + units, 'm.group(1) + m.group(2) + " " + substant(m.group(2), m.group(3), 2)'),
-  (r'\b(\d+,\d+)_' + units, 'm.group(1) + " " + forms[m.group(2)][2]'),
-  (r'\b(\d+)_' + units, 'm.group(1) + " " + substant(m.group(1), m.group(2))',),
-  (r'(тысяч[аимх]{,3}|(миллион|миллиард|триллион)(|а[имх]{,2}|ов)) ' + units, 'm.group(1) + " " + forms[m.group(4)][1]'),
   # Наращения при количественных числительных недопустимы, но распространены
   (r'\b(\d*[1-9]0|\d*1\d|\d*[02-9]?[569])-[т]?и\b', 'cardinal(m.group(1), r_ca)'),
   (r'\b(\d*[02-9]?[234])-х\b', 'cardinal(m.group(1), r_ca)'),
@@ -2106,7 +2094,7 @@ def substant(num, key, cas = 0):
                 else:
                     form = forms[key][1]
         elif cas == 5:
-            if key in ('т', 'а.е.', 'л.с.', 'сек', "'", 'ед.'):
+            if key in zh_units:
 
                 if condition(num):
                     form = {'т': 'тонну', 'а.е.': 'астрономическую единицу', 'л.с.': 'лошадиную силу', 'сек': 'секунду', "'": 'минуту', 'ед.': 'единицу'}[key]
@@ -2168,6 +2156,81 @@ def daynight(num, nom):
                     number = number[:-3] + 'их'
     return number
 
+# Чтение десятичных дробей
+# (full - целая часть, frac - дробная часть, cas - падеж)
+def fraction(full, frac, cas = 0):
+    f_part = feminin(full)
+    if f_part[-1] == 'а': fp= 'ая'
+    else: fp = 'ых'
+    dec = ' ' + ('десят', 'сот', 'тысячн', 'десятитысячн', 'стотысячн', 'миллионн')[len(frac) - 1]
+    d_part = feminin(frac)
+    if d_part[-1] == 'а': dp = 'ая'
+    else: dp = 'ых'
+    if cas == 1:
+        f_part = cardinal(full, r_ca)
+        if condition(full):
+            f_part = f_part[:-2] + 'й'
+            fp = 'ой'
+        else:
+            fp = 'ых'
+        d_part = cardinal(frac, r_ca)
+        if condition(frac):
+            d_part = d_part[:-2] + 'й'
+            dp = 'ой'
+        else:
+            dp = 'ых'
+    if cas == 2:
+        f_part = cardinal(full, d_ca)
+        if condition(full):
+            f_part = f_part[:-2] + 'й'
+            fp = 'ой'
+        else:
+            fp = 'ым'
+        d_part = cardinal(frac, d_ca)
+        if condition(frac):
+            d_part = d_part[:-2] + 'й'
+            dp = 'ой'
+        else:
+            dp = 'ым'
+    if cas == 3:
+        f_part = cardinal(full, t_ca)
+        if condition(full):
+            f_part = f_part[:-2] + 'й'
+            fp = 'ой'
+        else:
+            fp = 'ыми'
+        d_part = cardinal(frac, t_ca)
+        if condition(frac):
+            d_part = d_part[:-2] + 'й'
+            dp = 'ой'
+        else:
+            dp = 'ыми'
+    if cas == 4:
+        f_part = cardinal(full, p_ca)
+        if condition(full):
+            f_part = f_part[:-1] + 'й'
+            fp = 'ой'
+        else:
+            fp = 'ых'
+        d_part = cardinal(frac, p_ca)
+        if condition(frac):
+            d_part = d_part[:-1] + 'й'
+            dp = 'ой'
+        else:
+            dp = 'ых'
+    if cas == 5:
+        if f_part[-1] == 'а':
+            f_part = f_part[:-1] + 'у'
+            fp = 'ую'
+        else:
+            fp = 'ых'
+        if d_part[-1] == 'а':
+            d_part = d_part[:-1] + 'у'
+            dp = 'ую'
+        else:
+            dp = 'ых'
+    return f_part + ' цел' + fp + ' ' + d_part + dec + dp
+
 # =================================
 # Основная функция обработки текста
 # =================================
@@ -2176,6 +2239,82 @@ def txt_prep(text):
 
     for sample in presamples:
         text = sub(sample[0], sample[1], text)
+
+    # Единицы измерения
+
+    # Винительный падеж
+    for m in finditer(r'([Рр]азниц[аейуы]{1,2}|[Вв]ысот[аейоуы]{1,2}|[Гг]лубин[аейоуы]{1,2}|[Дд]альност[иью]{1,2}|[Дд]альност[иью]{1,2} стрельбы|длин[аейоуы]{1,2}|[Мм]асс[аейоуы]{1,2}|[Шш]ирин[аейоуы]{1,2}|[Вв]ес[аемоу]{,2}|[Мм]ощност[иью]{1,2}|[Сс]корост[иью]{1,2}|[Сс]тоимост[иью]{1,2}|[Рр]асстояни[еимхюя]{1,2}|[Дд]лительност[иью]{1,2}|[Пп]родолжительност[иью]{1,2}|оцени[авеийлмстшыья]{,6}|[Уу]далени[еимюя]{1,2}) в (\d+,|)(\d+)_' + units, text):
+        if m.group(2) != '':
+            number = fraction(m.group(2)[:-1], m.group(3), 5) + ' ' + forms[m.group(4)][2]
+        else:
+            number = m.group(2) + ' ' + substant(m.group(3), m.group(4), 5)
+        text = text.replace(m.group(), m.group(1) + ' в ' + number, 1)
+
+    # Творительный падеж
+    for m in finditer(r'(([Сс]равн(ени[еию]|ив|ивая) с|[Вв]ладе[авеийлмтюшщья]{1,7})( плюс | минус | ))(\d+,|)(\d+)_' + units, text):
+        if m.group(5) != '':
+            number = fraction(m.group(5)[:-1], m.group(6), 3) + ' ' + forms[m.group(7)][2]
+        else:
+            number = m.group(6) + ' ' + substant(m.group(6), m.group(7), 3)
+        text = text.replace(m.group(), m.group(1) + number, 1)
+    for m in finditer(r'([Мм]ежду( плюс | минус | ))(\d+,|)(\d+)( и( плюс | минус | ))(\d+,|)(\d+)_' + units, text):
+        if m.group(3) != '':
+            prenum = fraction(m.group(3)[:-1], m.group(4), 3)
+        else:
+            prenum = cardinal(m.group(4), t_ca)
+            if condition(m.group(4)) and m.group(9) in zh_units:
+                prenum = prenum[:-2] + 'ой'
+        if m.group(7) != '':
+            number = fraction(m.group(7)[:-1], m.group(8), 3) + ' ' + forms[m.group(9)][2]
+        else:
+            number = m.group(8) + ' ' + substant(m.group(8), m.group(9), 3)
+        text = text.replace(m.group(), m.group(1) + prenum + m.group(5) + number, 1)
+
+    # Родительный падеж
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Вв]место|[Вв] размере|[Вв] течение|[Нн]ач[инаетсялоь]{2,7} с|[Вв]ладел[аеимухцыь]{2,5}|[Дд]остиг[авеийлнотшщюуья]{,5}|[Пп]ротив|[Пп]орядка|[Пп]осле)( плюс | минус | )((\d+,|)(\d+)( - | или | и )(плюс |минус |)|)(\d+,|)(\d+)_' + units, text):
+        if m.group(3) != '':
+            if m.group(4) != '':
+                prenum = fraction(m.group(4)[:-1], m.group(5), 1)
+            else:
+                prenum = cardinal(m.group(5), r_ca)
+                if condition(m.group(5)) and m.group(10) in zh_units:
+                    prenum = prenum[:-2] + 'й'
+                prenum += m.group(6) + m.group(7)
+        else:
+            prenum = ''
+        if m.group(8) != '':
+            number = fraction(m.group(8)[:-1], m.group(9), 1) + ' ' + forms[m.group(10)][2]
+        else:
+            number = m.group(9) + ' ' + substant(m.group(9), m.group(10), 1)
+        text = text.replace(m.group(), m.group(1) + m.group(2) + prenum  + number, 1)
+
+    # Дательный падеж
+    for m in finditer(r'\b(([Кк]|рав[нагеилмоcуюыхья]{2,6})( плюс | минус | ))(\d+,|)(\d+)_' + units, text):
+        if m.group(4) != '':
+            number = fraction(m.group(4)[:-1], m.group(5), 2) + ' ' + forms[m.group(6)][2]
+        else:
+            number = m.group(5) + ' ' + substant(m.group(5), m.group(6), 2)
+        text = text.replace(m.group(), m.group(1) + number, 1)
+
+    # Предложный падеж
+    for m in finditer(r'\b(([Вв]|[Оо]б?|[Пп]ри)( плюс | минус | ))(\d+,|)(\d+)_' + units, text):
+        if m.group(4) != '':
+            number = fraction(m.group(4)[:-1], m.group(5), 4) + ' ' + forms[m.group(6)][2]
+        else:
+            number = m.group(5) + ' ' + substant(m.group(5), m.group(6), 4)
+        text = text.replace(m.group(), m.group(1) + number, 1)
+
+    # Предлог "по" при указании количества
+    for m in finditer(r'\b([Пп]о )(\d*[02-9]1|1)_' + units, text):
+        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + substant(m.group(2), m.group(3), 2), 1)
+
+    # Именительный
+    for m in finditer(r'\b(\d+,\d+)_' + units, text):
+        text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(2)][2], 1)
+    for m in finditer(r'\b(\d+)_' + units, text):
+        text = text.replace(m.group(), m.group(1) + ' ' + substant(m.group(1), m.group(2)), 1)
+    for m in finditer(r'(тысяч[аимх]{,3}|(миллион|миллиард|триллион)(а[имх]{,2}|ов)) ' + units, text):
+        text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(4)][1], 1)
 
     # Время в формате (h)h ч (m)m мин
     for m in finditer(r'\b(\d{1,2}) ?ч ?(\d{1,2}) ?мин\b', text):
