@@ -2262,7 +2262,7 @@ def txt_prep(text):
         if m.group(2) != '':
             number = fraction(m.group(2)[:-1], m.group(3), 5) + ' ' + forms[m.group(4)][2]
         else:
-            number = m.group(2) + ' ' + substant(m.group(3), m.group(4), 5)
+            number = m.group(3) + ' ' + substant(m.group(3), m.group(4), 5)
         text = text.replace(m.group(), m.group(1) + ' в ' + number, 1)
 
     # Творительный падеж
