@@ -2304,7 +2304,7 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + prenum  + number, 1)
 
     # Дательный падеж
-    for m in finditer(r'\b(([Кк]|рав[нагеилмоcуюыхья]{2,6})( плюс | минус | ))(\d+,|)(\d+)_' + units, text):
+    for m in finditer(r'\b(([Кк]|рав[нагеийлмоcуюыхья]{2,6})( плюс | минус | ))(\d+,|)(\d+)_' + units, text):
         if m.group(4) != '':
             number = fraction(m.group(4)[:-1], m.group(5), 2) + ' ' + forms[m.group(6)][2]
         else:
@@ -2530,39 +2530,23 @@ def txt_prep(text):
         if number != '':
             text = text.replace(m.group(), m.group(1) + pre + number + m.group(6), 1)
 
-    # Дательный падеж
-    for m in finditer(r'((\d+)( [-и] | или )|)(\d+)(( [а-я]+([иы]м|[ео]му) | )([а-я]+([аиыя]м|у|ю|е)))\b', text):
-        if m.group(1) == '':
-            pre = ''
-        else:
-            pre = ' ' + cardinal(m.group(2), d_ca)
-            if condition(m.group(2)) and (m.group(8) in ze_dp or m.group(8) in zm_d):
-                pre = pre[:-2] + 'й'
-            elif m.group(8) == 'суткам':
-                pre = pre[:-3] + 'им'
-            pre += m.group(3)
-        number = ''
-        if condition(m.group(4)):
-            number = cardinal(m.group(4), d_ca)
-            if m.group(8) in ze_dp:
-                number = number[:-2] + 'й'
-            elif m.group(8) == 'суткам':
-                number = number[:-3] + 'им'
-        elif m.group(9) == 'ам' or m.group(9) == 'ям':
-            number = cardinal(m.group(4), d_ca)
-        if number != '':
-            text = text.replace(m.group(), pre + number + m.group(5), 1)
+    # Женский род (им./вин. пад.)
+    for m in finditer(r'\b(((\d+)( - | или | и ))|)(\d+)(( [а-я]+([ая]я|[иы][ех])|) ([а-я]+))', text):
+        if m.group(9) in ze_i or m.group(9) in ze_r or m.group(9) in zm_r:
+            if m.group(1) == '': pre = ''
+            else: pre = feminin(m.group(3)) + m.group(4)
+            text = text.replace(m.group(), pre + feminin(m.group(5)) + m.group(6), 1)
 
     # Винительный падеж
 
-    for m in finditer(r'\b([Зз]а |[Пп]ро |[Чч]ерез |состав[аеилотя]{2,4} )(\d+) ([а-я]+)\b', text):
+    for m in finditer(r'\b([Зз]а |[Пп]ро |[Чч]ерез |состав[аеилотя]{2,4} )(\d+)(( [а-я]+([ая]я|[ую]ю|[ео]е|[иы][йх]) | )([а-я]+))\b', text):
         number = cardinal(m.group(2), v_ca)
         if number[-3:] == 'дин':
-            if m.group(3) in ze_v:
+            if m.group(6) in ze_v:
                 number = number[:-2] + 'ну'
-            elif m.group(3) in sr_iv:
+            elif m.group(6) in sr_iv:
                 number = number[:-2] + 'но'
-        text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
+        text = text.replace(m.group(), m.group(1) + number + m.group(3), 1)
 
     for m in finditer(r'\b([Нн]а )(\d+) ([а-я]+)\b', text):
         if m.group(3) in mn_r or m.group(3) in zm_r:
@@ -2596,13 +2580,6 @@ def txt_prep(text):
             number = number[:-1] + 'е'
         text = text.replace(m.group(), m.group(1) + ' ' + number + ' ' + m.group(4), 1)
 
-    # Женский род (им./вин. пад.)
-    for m in finditer(r'\b(((\d+)( - | или | и ))|)(\d+)(( [а-я]+([ая]я|[иы][ех])|) ([а-я]+))', text):
-        if m.group(9) in ze_i or m.group(9) in ze_r or m.group(9) in zm_r:
-            if m.group(1) == '': pre = ''
-            else: pre = feminin(m.group(3)) + m.group(4)
-            text = text.replace(m.group(), pre + feminin(m.group(5)) + m.group(6), 1)
-
     # Средний род (им./вин. пад.)
     for m in finditer(r'\b(\d*[02-9]1|1) (([а-я]+[ео]е |)([а-я]+[ео]))\b', text):
         if m.group(4) in sr_iv:
@@ -2614,6 +2591,29 @@ def txt_prep(text):
             else:
                 number = m.group(1)[:-1] + 'одно'
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
+
+    # Дательный падеж
+    for m in finditer(r'((\d+)( [-и] | или )|)(\d+)(( [а-я]+([иы]м|[ео]му) | )([а-я]+([аиыя]м|у|ю|е)))\b', text):
+        if m.group(1) == '':
+            pre = ''
+        else:
+            pre = ' ' + cardinal(m.group(2), d_ca)
+            if condition(m.group(2)) and (m.group(8) in ze_dp or m.group(8) in zm_d):
+                pre = pre[:-2] + 'й'
+            elif m.group(8) == 'суткам':
+                pre = pre[:-3] + 'им'
+            pre += m.group(3)
+        number = ''
+        if condition(m.group(4)):
+            number = cardinal(m.group(4), d_ca)
+            if m.group(8) in ze_dp:
+                number = number[:-2] + 'й'
+            elif m.group(8) == 'суткам':
+                number = number[:-3] + 'им'
+        elif m.group(9) == 'ам' or m.group(9) == 'ям':
+            number = cardinal(m.group(4), d_ca)
+        if number != '':
+            text = text.replace(m.group(), pre + number + m.group(5), 1)
 
     # Существует только во мн. числе
     for m in finditer(r'\b((\d+) - |)((\d+) (сутки|суток))', text):
