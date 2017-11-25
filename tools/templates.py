@@ -2633,6 +2633,14 @@ def txt_prep(text):
     for m in finditer(r'\b([Пп]о )(\d*1(000){1,3})\b', text):
         text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), d_ca), 1)
 
+    # Предлоги родительного падежа
+    for m in finditer(r'\b([Оо]т |[Сс] )(\d+)( до \d+)\b', text):
+        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), r_ca) + m.group(3), 1)
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Дд]ороже|[Дд]ешевле|[Оо]коло|[Сс]выше|[Сс]реди|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Сс]|[Уу]|[Вв]место|[Вв] возрасте|[Вв] размере|[Вв] пределах|[Вв] течение|[Нн]а протяжении|[Нн]ач[инаетялсьо]{2,7} с|[Пп]орядка|[Пп]осле|[Пп]ротив|[Дд]остиг[авеийлнотшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5}|[Сс]тарше|[Мм]оложе|не превы[шаеситьло]{3,4})( | плюс | минус | [а-я]+([ео]й|[ео]го|[иы]х) )(\d+)(( - | или | и )(\d+)|)\b', text):
+        if m.group(5) == '': pre = ''
+        else: pre = m.group(6) + cardinal(m.group(7), r_ca)
+        text = text.replace(m.group(), m.group(1) + m.group(2) + cardinal(m.group(4), r_ca) + pre, 1)
+
     # Предлоги дательного падежа
     for m in finditer(r'\b([Кк] |рав[нагеилмоcуюыхья]{2,6} )(\d+)\b', text):
         text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), d_ca), 1)
