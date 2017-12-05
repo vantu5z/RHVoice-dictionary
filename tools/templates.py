@@ -2214,7 +2214,7 @@ def fraction(full, frac, cas = 0):
     if cas == 3:
         f_part = cardinal(full, t_ca)
         if condition(full):
-            f_part = f_part[:-2] + 'й'
+            f_part = f_part[:-2] + 'ой'
             fp = 'ой'
         elif f_part == 'нолём':
             fp = 'ых'
@@ -2222,8 +2222,10 @@ def fraction(full, frac, cas = 0):
             fp = 'ыми'
         d_part = cardinal(frac, t_ca)
         if condition(frac):
-            d_part = d_part[:-2] + 'й'
+            d_part = d_part[:-2] + 'ой'
             dp = 'ой'
+        elif d_part == 'нолём':
+            dp = 'ых'
         else:
             dp = 'ыми'
     if cas == 4:
