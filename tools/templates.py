@@ -2207,7 +2207,7 @@ def substant(num, key, cas = 0):
             if key in zh_units:
 
                 if condition(num):
-                    form = {'т': 'тонну', 'а.е.': 'астрономическую единицу', 'л.с.': 'лошадиную силу', 'сек': 'секунду', "'": 'минуту', 'ед.': 'единицу'}[key]
+                    form = {'т': 'тонну', 'а.е.': 'астрономическую единицу', 'л.с.': 'лошадиную силу', 'сек': 'секунду', "'": 'минуту', 'ед.': 'единицу', 'шт.': 'штуку'}[key]
                 elif num in '234' or (len(num) > 1 and num[-2] != '1' and num[-1] in '234'):
                     form = forms[key][1]
                 else:
@@ -2371,7 +2371,7 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + ' в ' + number, 1)
 
     # Творительный падеж
-    for m in finditer(r'(([Сс]|[Вв]ладе[авеийлмтюшщья]{1,7})( плюс | минус | ))(\d+,|)(\d+)_' + units, text):
+    for m in finditer(r'\b(([Сс]|[Вв]ладе[авеийлмтюшщья]{1,7})( плюс | минус | ))(\d+,|)(\d+)_' + units, text):
         if m.group(4) != '':
             number = fraction(m.group(4)[:-1], m.group(5), 3) + ' ' + forms[m.group(6)][2]
         else:
@@ -2419,12 +2419,21 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + number, 1)
 
     # Предложный падеж
-    for m in finditer(r'\b(([Вв]|[Оо]б?|[Пп]ри)( плюс | минус | ))(\d+,|)(\d+)_' + units, text):
-        if m.group(4) != '':
-            number = fraction(m.group(4)[:-1], m.group(5), 4) + ' ' + forms[m.group(6)][2]
+    for m in finditer(r'\b([Вв]|[Оо]б?|[Пп]ри)(( плюс | минус | )(\d+,|)(\d+)( [-и] | или )| )(плюс |минус |)(\d+,|)(\d+)_' + units, text):
+        if m.group(2) == ' ':
+            pre = ' '
         else:
-            number = m.group(5) + ' ' + substant(m.group(5), m.group(6), 4)
-        text = text.replace(m.group(), m.group(1) + number, 1)
+            if m.group(4) != '':
+                pre = fraction(m.group(4)[:-1], m.group(5), 4) + ' ' + forms[m.group(10)][2]
+            else:
+                pre = m.group(5)
+            pre = m.group(3) + pre + m.group(6)
+        number = m.group(7)
+        if m.group(8) != '':
+            number += fraction(m.group(8)[:-1], m.group(9), 4) + ' ' + forms[m.group(10)][2]
+        else:
+            number += m.group(9) + ' ' + substant(m.group(9), m.group(10), 4)
+        text = text.replace(m.group(), m.group(1) + pre + number, 1)
 
     # Предлог "по" при указании количества
     for m in finditer(r'\b([Пп]о )(\d*[02-9]1|1)_' + units, text):
@@ -2626,30 +2635,30 @@ def txt_prep(text):
             text = text.replace(m.group(), number + cardinal(m.group(4), r_ca) + m.group(5) + m.group(8), 1)
 
     # Предложный падеж
-    for m in finditer(r'\b([Вв]|[Нн]а|[Оо]б?|[Пп]ри)( (\d+)( [-и] | или )| )(\d+)( ([а-я]+([иы]х|[ео]м) |)([а-я]+([ая]х|е|и|у)))\b', text):
+    for m in finditer(r'\b([Вв]|[Нн]а|[Оо]б?|[Пп]ри)(( плюс | минус | )(\d+)( [-и] | или )| )(плюс |минус |)(\d+)( ([а-я]+([иы]х|[ео]м) |)([а-я]+([ая]х|е|и|у)))\b', text):
         if m.group(2) == ' ':
             pre = ' '
         else:
-            pre = ' ' + cardinal(m.group(3), p_ca)
-            if condition(m.group(3)) and (m.group(9) in ze_dp or m.group(9)[:-1] + 'м' in zm_d):
+            pre = m.group(3) + cardinal(m.group(4), p_ca)
+            if condition(m.group(4)) and (m.group(11) in ze_dp or m.group(11)[:-1] + 'м' in zm_d):
                 pre = pre[:-1] + 'й'
-            elif m.group(9) == 'сутках':
+            elif m.group(11) == 'сутках':
                 pre = pre[:-2] + 'их'
-            pre += m.group(4)
+            pre += m.group(5)
         number = ''
-        if m.group(10) == 'ах' or m.group(10) == 'ях':
-            number = cardinal(m.group(5), p_ca)
-        if condition(m.group(5)):
-            if m.group(9) in ms_p:
-                number = cardinal(m.group(5), p_ca)
-            elif m.group(9) in ze_dp:
-                number = cardinal(m.group(5), p_ca)[:-1] + 'й'
-            elif m.group(9) == 'сутках':
-                number = cardinal(m.group(5), p_ca)[:-2] + 'их'
-        elif m.group(10) == 'ах' or m.group(10) == 'ях':
-            number = cardinal(m.group(5), p_ca)
+        if m.group(12) == 'ах' or m.group(12) == 'ях':
+            number = cardinal(m.group(7), p_ca)
+        if condition(m.group(7)):
+            if m.group(11) in ms_p:
+                number = cardinal(m.group(7), p_ca)
+            elif m.group(11) in ze_dp:
+                number = cardinal(m.group(7), p_ca)[:-1] + 'й'
+            elif m.group(11) == 'сутках':
+                number = cardinal(m.group(7), p_ca)[:-2] + 'их'
+        elif m.group(12) == 'ах' or m.group(12) == 'ях':
+            number = cardinal(m.group(7), p_ca)
         if number != '':
-            text = text.replace(m.group(), m.group(1) + pre + number + m.group(6), 1)
+            text = text.replace(m.group(), m.group(1) + pre + m.group(6) + number + m.group(8), 1)
 
     # Женский род (им./вин. пад.)
     for m in finditer(r'\b(((\d+)( - | или | и ))|)(\d+)(( [а-я]+([ая]я|[иы][ех])|) ([а-я]+))', text):
