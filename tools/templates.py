@@ -2577,6 +2577,12 @@ def txt_prep(text):
         if number != '':
             text = text.replace(m.group(), pre + m.group(4) + number + ' ' + m.group(6), 1)
 
+    # Предлоги творительного падежа
+    for m in finditer(r'\b([Нн]ад|[Пп]еред|[Пп]о сравнению с)( (\d+)( [-и] | или )| )(\d+)\b', text):
+        number = ' '
+        if m.group(2) !=' ' : number += cardinal(m.group(3), t_ca) + m.group(4)
+        text = text.replace(m.group(), m.group(1) + number + cardinal(m.group(5), t_ca), 1)
+
     # Родительный падеж
 
     for m in finditer(r'\b([Оо]т|[Сс])( почти | примерно | приблизительно | плюс | минус | )(\d+)( до( почти | примерно | приблизительно | плюс | минус | )(\d+))( ([а-я]+)\b|\b)', text):
@@ -2623,16 +2629,15 @@ def txt_prep(text):
                 pre += ' - '
             text = text.replace(m.group(), pre + number + m.group(4), 1)
 
-    for m in finditer(r'\b((\d+)( [-и] | или )|)(\d*[02-9][234]|[234])(( [а-я]+[иы]х | )([а-я]+))\b(.)', text):
-        if m.group(7) in mn_r or m.group(7) in zm_r:
-            if m.group(1) == '':
+    for m in finditer(r'(\s|\A| )((\d+)( [-и] | или )|)(\d*[02-9][234]|[234])(( [а-я]+[иы]х | )([а-я]+))\b(.)', text):
+        if m.group(8) in mn_r or m.group(8) in zm_r:
+            if m.group(2) == '':
                 number = ''
             else:
-                number = cardinal(m.group(2), r_ca)
-                if m.group(7) in zm_r and number[-2:] == 'го':
+                number = cardinal(m.group(3), r_ca) + m.group(4)
+                if m.group(8) in zm_r and number[-2:] == 'го':
                     number = number[:-2] + 'й'
-                number += m.group(3)
-            text = text.replace(m.group(), number + cardinal(m.group(4), r_ca) + m.group(5) + m.group(8), 1)
+            text = text.replace(m.group(), m.group(1) + number + cardinal(m.group(5), r_ca) + m.group(6) + m.group(9), 1)
 
     # Предложный падеж
     for m in finditer(r'\b([Вв]|[Нн]а|[Оо]б?|[Пп]ри)(( почти | примерно | приблизительно | плюс | минус | )(\d+)( [-и] | или )| )(почти |примерно |приблизительноплюс |минус |)(\d+)( ([а-я]+([иы]х|[ео]м) |)([а-я]+([ая]х|е|и|у)))\b', text):
@@ -2659,6 +2664,12 @@ def txt_prep(text):
             number = cardinal(m.group(7), p_ca)
         if number != '':
             text = text.replace(m.group(), m.group(1) + pre + m.group(6) + number + m.group(8), 1)
+
+    # Предлоги предложного падежа
+    for m in finditer(r'\b([Оо]б?|[Пп]ри)( (\d+)( [-и] | или )| )(\d+)\b', text):
+        number = ' '
+        if m.group(2) !=' ' : number += cardinal(m.group(3), p_ca) + m.group(4)
+        text = text.replace(m.group(), m.group(1) + number + cardinal(m.group(5), p_ca), 1)
 
     # Женский род (им./вин. пад.)
     for m in finditer(r'\b(((\d+)( - | или | и ))|)(\d+)(( [а-я]+([ая]я|[иы][ех])|) ([а-я]+))', text):
@@ -2745,6 +2756,12 @@ def txt_prep(text):
         if number != '':
             text = text.replace(m.group(), pre + number + m.group(5), 1)
 
+    # Предлоги дательного падежа
+    for m in finditer(r'\b([Кк]|рав[нагеилмоcуюыхья]{2,6})( (\d+)( [-и] | или )| )(\d+)\b', text):
+        number = ' '
+        if m.group(2) !=' ' : number += cardinal(m.group(3), d_ca) + m.group(4)
+        text = text.replace(m.group(), m.group(1) + number + cardinal(m.group(5), d_ca), 1)
+
     # Существует только во мн. числе
     for m in finditer(r'\b((\d+) - |)((\d+) (сутки|суток))', text):
         if m.group(1) != '':
@@ -2756,18 +2773,6 @@ def txt_prep(text):
     # Предлог "по" при указании количества
     for m in finditer(r'\b([Пп]о )(\d*1(000){1,3})\b', text):
         text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), d_ca), 1)
-
-    # Предлоги дательного падежа
-    for m in finditer(r'\b([Кк] |рав[нагеилмоcуюыхья]{2,6} )(\d+)\b', text):
-        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), d_ca), 1)
-
-    # Предлоги творительного падежа
-    for m in finditer(r'\b([Нн]ад |[Пп]еред |[Пп]о сравнению с )(\d+)\b', text):
-        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), t_ca), 1)
-
-    # Предлоги предложного падежа
-    for m in finditer(r'\b([Оо]б? |[Пп]ри )(\d+)\b', text):
-        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), p_ca), 1)
 
     # Необязательная замена "_" (используется при обработке)
     text = sub('_', ' ', text)
