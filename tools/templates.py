@@ -1802,7 +1802,7 @@ presamples = (
   (r'(\d) ?g\b', r'\1 же'), # Ускорение свободного падения на поверхности Земли
 
 #  (r'(?<=\d) ?' + units,  r'_\1'),
-  (r'((\A| )((\d+,|)\d+|)[+-]?(\d+,|)\d+) ?' + units, r'\1_\6'),
+  (r'((\A|\(| )((\d+,|)\d+|)[+-]?(\d+,|)\d+) ?' + units, r'\1_\6'),
 
   (r'(?<=\d) ?[×xXхХ] ?(?=\d)', ' на '),
   (r' ?± ?', ' плюс-минус '),
@@ -2055,11 +2055,9 @@ patterns = (
   (r'\b(\d+)-[еи] сутки', 'ordinal(m.group(1), i_mn) + " сутки"'),
   # Десятичные дроби (до миллионых включительно)
   (r'\b([Пп]о сравнению с |[Вв]ладе[авеийлмтюшщья]{1,7} )(\d+),(\d{1,6})\b', 'm.group(1) + fraction(m.group(2), m.group(3), 3)'),
-  (r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Дд]ороже|[Дд]ешевле|[Оо]коло|[Сс]|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв]место|[Вв] течение|[Нн]ач[инаетсялоь]{2,7} с|[Пп]орядка|[Пп]ротив|[Пп]осле|[Дд]остиг[авеийлнотшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5}) (\d+),(\d{1,6})\b', 'm.group(1) + " " + fraction(m.group(2), m.group(3), 1)'),
   (r'\b([Кк] |рав[аеоын]{2} |равня[аеилостья]{3,4} )(\d+),(\d{1,6})\b', 'm.group(1) + fraction(m.group(2), m.group(3), 2)'),
   (r'\b([Оо]б? |[Пп]ри )(\d+),(\d{1,6})\b', 'm.group(1) + fraction(m.group(2), m.group(3), 4)'),
   (r'\b([Вв] |[Зз]а |состав[аеилотя]{2,4} )(\d+),(\d{1,6})\b', 'm.group(1) + fraction(m.group(2), m.group(3), 5)'),
-  (r'\b(\d+),(\d{1,6})(\b|\Z)', 'fraction(m.group(1), m.group(2)) + m.group(3)'),
   # Наращения при количественных числительных недопустимы, но распространены
   (r'\b(\d*[1-9]0|\d*1\d|\d*[02-9]?[569])-[т]?и\b', 'cardinal(m.group(1), r_ca)'),
   (r'\b(\d*[02-9]?[234])-х\b', 'cardinal(m.group(1), r_ca)'),
@@ -2266,13 +2264,19 @@ def daynight(num, nom):
                     number = number[:-3] + 'их'
     return number
 
-# Чтение десятичных дробей
+# Чтение десятичных дробей до миллионных включительно
 # (full - целая часть, frac - дробная часть, cas - падеж)
 def fraction(full, frac, cas = 0):
+    try:
+        dec = ' ' + ('десят', 'сот', 'тысячн', 'десятитысячн', 'стотысячн', 'миллионн')[len(frac) - 1]
+    except:
+        dec = ' запятая'
+        for t in range(len(frac)):
+            dec += ', ' + frac[t]
+        return full + dec
     f_part = feminin(full)
     if f_part[-1] == 'а': fp= 'ая'
     else: fp = 'ых'
-    dec = ' ' + ('десят', 'сот', 'тысячн', 'десятитысячн', 'стотысячн', 'миллионн')[len(frac) - 1]
     d_part = feminin(frac)
     if d_part[-1] == 'а': dp = 'ая'
     else: dp = 'ых'
@@ -2585,35 +2589,56 @@ def txt_prep(text):
 
     # Родительный падеж
 
-    for m in finditer(r'\b([Оо]т|[Сс])( почти | примерно | приблизительно | плюс | минус | )(\d+)( до( почти | примерно | приблизительно | плюс | минус | )(\d+))( ([а-я]+)\b|\b)', text):
-        number = cardinal(m.group(3), r_ca)
-        if number[-6:] == 'одного':
-            if m.group(7) != '':
-                if m.group(8) in ze_r or m.group(8) in zm_r:
-                    number = number[:-2] + 'й'
-                elif m.group(8) == 'суток':
-                    number = number[:-3] + 'их'
-        text = text.replace(m.group(), m.group(1) + m.group(2) + number + m.group(4) + m.group(7), 1)
+    for m in finditer(r'\b([Оо]т|[Сс])( почти | примерно | приблизительно | плюс | минус | )((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)( до( почти | примерно | приблизительно | плюс | минус | )((\d+,|)\d+( [-и] | или )|)(\d+,|)\d+( ([а-я]+([иы]х|[ео]й|[ео]го) |и более |и менее |)([а-я]+)|))\b', text):
+        if m.group(3) != '':
+            if m.group(4) != '':
+                pre = fraction(m.group(4)[:-1], m.group(5), 1)
+            else:
+                pre = cardinal(m.group(5), r_ca)
+                if pre[-6:] == 'одного' and m.group(18) is not None:
+                    if m.group(18) in ze_r or m.group(18) in zm_r:
+                        pre = pre[:-2] + 'й'
+                    elif m.group(18) == 'суток':
+                        pre = pre[:-3] + 'их'
+            pre += m.group(6)
+        else:
+            pre = ''
+        if m.group(7) != '':
+            number = fraction(m.group(7)[:-1], m.group(8), 1)
+        else:
+            number = cardinal(m.group(8), r_ca)
+        if number[-6:] == 'одного' and m.group(18) is not None:
+            if m.group(18) in ze_r or m.group(18) in zm_r:
+                number = number[:-2] + 'й'
+            elif m.group(18) == 'суток':
+                number = number[:-3] + 'их'
+        text = text.replace(m.group(), m.group(1) + m.group(2) + pre + number + m.group(9), 1)
 
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Дд]ороже|[Дд]ешевле|[Оо]коло|[Сс]выше|[Сс]реди|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Сс]|[Уу]|[Вв]место|[Вв] возрасте|[Вв] размере|[Вв] пределах|[Вв] течение|[Нн]а протяжении|[Нн]ач[инаетялсьо]{2,7} с|[Пп]орядка|[Пп]осле|[Пп]ротив|[Дд]остиг[авеийлнотшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5}|[Сс]тарше|[Мм]оложе|не превы[шаеситьло]{3,4})( примерно | приблизительно | почти | плюс | минус | [а-я]+([ео]й|[ео]го|[еиы]х) | )((\d+)( - | или )|)(\d+)(( [а-я]+([ео]й|[ео]го|[иы]х)| и более| и менее|)( ([а-я(-]+))|)\b', text):
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Дд]ороже|[Дд]ешевле|[Оо]коло|[Сс]выше|[Сс]реди|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Сс]|[Уу]|[Вв]место|[Вв] возрасте|[Вв] размере|[Вв] пределах|[Вв] течение|[Нн]а протяжении|[Нн]ач[инаетялсьо]{2,7} с|[Пп]орядка|[Пп]осле|[Пп]ротив|[Дд]остиг[авеийлнотшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5}|[Сс]тарше|[Мм]оложе|не превы[шаеситьло]{3,4})( примерно | приблизительно | почти | плюс | минус | [а-я]+([ео]й|[ео]го|[еиы]х) | )((\d+,|)(\d+)( - | или )|)(\d+,|)(\d+)( ([а-я]+([иы]х|[ео]й|[ео]го) |и более |и менее |)([а-я]+)|)\b', text):
         if m.group(2) not in (' которых ', ' которого ', ' которой '):
             if m.group(4) == '': pre = ''
             else:
-                pre = cardinal(m.group(5), r_ca)
-                if condition(m.group(5)) and m.group(12) is not None:
-                    if m.group(8) !='' and (m.group(12) in ze_r or m.group(12) in zm_r):
+                if m.group(5) != '':
+                    pre = fraction(m.group(5)[:-1], m.group(6), 1)
+                else:
+                    pre = cardinal(m.group(6), r_ca)
+                if condition(m.group(6)) and m.group(13) is not None:
+                    if m.group(10) !='' and (m.group(13) in ze_r or m.group(14) in zm_r):
                         pre = pre[:-2] + 'й'
-                    elif m.group(12) == 'суток':
+                    elif m.group(13) == 'суток':
                         pre = pre[:-3] + 'их'
-                pre += m.group(6)
-            number = cardinal(m.group(7), r_ca)
-            if condition(m.group(7)) and m.group(12) is not None and m.group(12) in ze_r:
+                pre += m.group(7)
+            if m.group(8) != '':
+                number = fraction(m.group(8)[:-1], m.group(9), 1)
+            else:
+                number = cardinal(m.group(9), r_ca)
+            if condition(m.group(9)) and m.group(13) is not None and m.group(13) in ze_r:
                 number = number[:-2] + 'й'
-            elif m.group(8) !='' and (m.group(12) in mn_r or m.group(12) in zm_r or m.group(12) == 'суток'):
-                number = cardinal(m.group(7), r_ca)
-                if m.group(12) == 'суток' and number[-6:] == 'одного':
+            elif m.group(10) !='' and (m.group(13) in mn_r or m.group(13) in zm_r or m.group(13) == 'суток'):
+                number = cardinal(m.group(9), r_ca)
+                if m.group(13) == 'суток' and number[-6:] == 'одного':
                     number = number[:-3] + 'их'
-            text = text.replace(m.group(), m.group(1) + m.group(2) + pre + number + m.group(8), 1)
+            text = text.replace(m.group(), m.group(1) + m.group(2) + pre + number + m.group(10), 1)
 
     for m in finditer(r'\b((\d+) - |)(1|\d*[02-9]1)(( [а-я]+[ео](й|го) | )([а-я]+))\b', text):
         if m.group(7) in ms_r or m.group(7) in ze_r:
@@ -2773,6 +2798,10 @@ def txt_prep(text):
     # Предлог "по" при указании количества
     for m in finditer(r'\b([Пп]о )(\d*1(000){1,3})\b', text):
         text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), d_ca), 1)
+
+    # Десятичные дроби в им. пад.
+    for m in finditer(r'\b(\d+),(\d+)(\b|\Z)', text):
+        text = text.replace(m.group(), fraction(m.group(1), m.group(2)) + m.group(3), 1)
 
     # Необязательная замена "_" (используется при обработке)
     text = sub('_', ' ', text)
