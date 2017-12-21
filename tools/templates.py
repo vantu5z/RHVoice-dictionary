@@ -2614,31 +2614,31 @@ def txt_prep(text):
                 number = number[:-3] + 'их'
         text = text.replace(m.group(), m.group(1) + m.group(2) + pre + number + m.group(9), 1)
 
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Дд]ороже|[Дд]ешевле|[Оо]коло|[Сс]выше|[Сс]реди|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Сс]|[Уу]|[Вв]место|[Вв] возрасте|[Вв] размере|[Вв] пределах|[Вв] течение|[Нн]а протяжении|[Нн]ач[инаетялсьо]{2,7} с|[Пп]орядка|[Пп]осле|[Пп]ротив|[Дд]остиг[авеийлнотшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5}|[Сс]тарше|[Мм]оложе|не превы[шаеситьло]{3,4})( примерно | приблизительно | почти | плюс | минус | [а-я]+([ео]й|[ео]го|[еиы]х) | )((\d+,|)(\d+)( - | или )|)(\d+,|)(\d+)( ([а-я]+([иы]х|[ео]й|[ео]го) |и более |и менее |)([а-я]+)|)\b', text):
-        if m.group(2) not in (' которых ', ' которого ', ' которой '):
-            if m.group(4) == '': pre = ''
+    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Дд]ороже|[Дд]ешевле|[Оо]коло|[Сс]выше|[Сс]реди|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Сс]|[Уу]|[Вв]место|[Вв] возрасте|[Вв] размере|[Вв] пределах|[Вв] течение|[Нн]а протяжении|[Нн]ач[инаетялсьо]{2,7} с|[Пп]орядка|[Пп]осле|[Пп]ротив|[Дд]остиг[авеийлнотшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5}|[Сс]тарше|[Мм]оложе|не превы[шаеситьло]{3,4})( примерно | приблизительно | почти | плюс | минус | )((\d+,|)(\d+)( - | или )|)(\d+,|)(\d+)( ([а-я]+([иы]х|[ео]й|[ео]го) |и более |и менее |)([а-я]+)|)\b', text):
+        if m.group(3) == '':
+            pre = ''
+        else:
+            if m.group(4) != '':
+                pre = fraction(m.group(4)[:-1], m.group(5), 1)
             else:
-                if m.group(5) != '':
-                    pre = fraction(m.group(5)[:-1], m.group(6), 1)
-                else:
-                    pre = cardinal(m.group(6), r_ca)
-                if condition(m.group(6)) and m.group(13) is not None:
-                    if m.group(10) !='' and (m.group(13) in ze_r or m.group(14) in zm_r):
-                        pre = pre[:-2] + 'й'
-                    elif m.group(13) == 'суток':
-                        pre = pre[:-3] + 'их'
-                pre += m.group(7)
-            if m.group(8) != '':
-                number = fraction(m.group(8)[:-1], m.group(9), 1)
-            else:
-                number = cardinal(m.group(9), r_ca)
-            if condition(m.group(9)) and m.group(13) is not None and m.group(13) in ze_r:
+                pre = cardinal(m.group(5), r_ca)
+            if condition(m.group(5)) and m.group(12) is not None:
+                if m.group(9) !='' and (m.group(12) in ze_r or m.group(12) in zm_r):
+                    pre = pre[:-2] + 'й'
+                elif m.group(12) == 'суток':
+                    pre = pre[:-3] + 'их'
+            pre += m.group(6)
+        if m.group(7) != '':
+            number = fraction(m.group(7)[:-1], m.group(8), 1)
+        else:
+            number = cardinal(m.group(8), r_ca)
+            if condition(m.group(8)) and m.group(12) is not None and m.group(12) in ze_r:
                 number = number[:-2] + 'й'
-            elif m.group(10) !='' and (m.group(13) in mn_r or m.group(13) in zm_r or m.group(13) == 'суток'):
-                number = cardinal(m.group(9), r_ca)
-                if m.group(13) == 'суток' and number[-6:] == 'одного':
+            elif m.group(9) !='' and (m.group(12) in mn_r or m.group(12) in zm_r or m.group(12) == 'суток'):
+                number = cardinal(m.group(8), r_ca)
+                if m.group(12) == 'суток' and number[-6:] == 'одного':
                     number = number[:-3] + 'их'
-            text = text.replace(m.group(), m.group(1) + m.group(2) + pre + number + m.group(10), 1)
+        text = text.replace(m.group(), m.group(1) + m.group(2) + pre + number + m.group(9), 1)
 
     for m in finditer(r'\b((\d+) - |)(1|\d*[02-9]1)(( [а-я]+[ео](й|го) | )([а-я]+))\b', text):
         if m.group(7) in ms_r or m.group(7) in ze_r:
