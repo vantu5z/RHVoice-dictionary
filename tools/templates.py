@@ -2031,7 +2031,7 @@ patterns = (
   (r'\b([Вв]о? |[Нн]а |[Сс]квозь |[Чч]ерез )(\d+)-ю\b', 'm.group(1) + ordinal(m.group(2), v_zh)'),
   (r'\b([Вв]о? |[Нн]а |[Оо]б? |[Пп]ри )(\d+)(|-м)( ?- ?| или | и )(\d+)-м\b', 'm.group(1) + ordinal(m.group(2), p_mu) + m.group(4) + ordinal(m.group(5), p_mu)'),
   (r'\b(([Вв]о?|[Нн]а|[Оо]б?|[Пп]ри) \d+-м, )(\d+)-м\b', 'm.group(1) + ordinal(m.group(3), p_mu)'),
-  (r'\b([Вв]о? |[Нн]а |[Оо]б? |[Пп]ри )(\d+)-м\b', 'm.group(1) + ordinal(m.group(2), p_mu)'),
+  (r'\b([Вв]о?|[Нн]а|[Оо]б?|[Пп]ри)( [а-я]+[ео]м | )(\d+)-м\b', 'm.group(1) + m.group(2) + ordinal(m.group(3), p_mu)'),
   (r'\b([Сс] )(\d+)-м\b', 'm.group(1) + ordinal(m.group(2), t_mu)'),
   (r'(\d+)-му\b', 'ordinal(m.group(1), d_mu)'),
   (r'(\d+)-го\b', 'ordinal(m.group(1), r_mu)'),
@@ -2782,7 +2782,7 @@ def txt_prep(text):
             text = text.replace(m.group(), pre + number + m.group(5), 1)
 
     # Предлоги дательного падежа
-    for m in finditer(r'\b([Кк]|рав[нагеилмоcуюыхья]{2,6})( (\d+)( [-и] | или )| )(\d+)\b', text):
+    for m in finditer(r'\b([Кк]|рав[нагеийлмоcуюыхья]{2,6})( (\d+)( [-и] | или )| )(\d+)\b', text):
         number = ' '
         if m.group(2) !=' ' : number += cardinal(m.group(3), d_ca) + m.group(4)
         text = text.replace(m.group(), m.group(1) + number + cardinal(m.group(5), d_ca), 1)
