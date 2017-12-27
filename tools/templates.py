@@ -2015,6 +2015,7 @@ patterns = (
   (r'\b([A-Z][a-z]*[ -]|[А-Я]?[а-я]*[ -])([IVX]+)($|\n|[.,;:]| [^a-z])', 'm.group(1) + roman2arabic(m.group(2)) + m.group(3)'),
   (r'\b([IV]+) степени', 'ordinal(roman2arabic(m.group(1)), r_zh) + " степени"'),
   # Порядковые числительные - даты и т. д.
+  (r'\b(\d+)( класс(|а|е|ом|у))\b', 'ordinal(m.group(1), mu_pad[m.group(3)]) + m.group(2)'),
   (r'(\d+)( зимни[еимх]{1,2}| летни[еимх]{1,2}|)( Олимпийски)(е|ми|м\b|х)\b', 'ordinal(m.group(1), mn_pad[m.group(4)]) + m.group(2) + m.group(3) + m.group(4)'),
   (r'(\d+)( этаж(а|е|у|ом|))', 'ordinal(m.group(1), mu_pad[m.group(3)]) + m.group(2)'),
   (r'(\d+0)( - \d+0-е годы)', 'ordinal(m.group(1), i_mn) + m.group(2)'),
