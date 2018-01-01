@@ -2645,7 +2645,7 @@ def txt_prep(text):
                     number = number[:-3] + 'их'
         text = text.replace(m.group(), m.group(1) + m.group(2) + pre + number + m.group(9), 1)
 
-    for m in finditer(r'\b(<!,)((\d+) - |)(1|\d*[02-9]1)(( [а-я]+[ео](й|го) | )([а-я]+))\b', text):
+    for m in finditer(r'\b(?<!,)((\d+) - |)(1|\d*[02-9]1)(( [а-я]+[ео](й|го) | )([а-я]+))\b', text):
         if m.group(7) in ms_r or m.group(7) in ze_r:
             number = cardinal(m.group(3), r_ca)
             if m.group(7) in ze_r:
