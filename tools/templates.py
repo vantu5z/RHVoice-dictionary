@@ -2704,6 +2704,10 @@ def txt_prep(text):
         if m.group(2) !=' ' : number += cardinal(m.group(3), p_ca) + m.group(4)
         text = text.replace(m.group(), m.group(1) + number + cardinal(m.group(5), p_ca), 1)
 
+    # Десятичные дроби в им. пад.
+    for m in finditer(r'\b(\d+),(\d+)(\b|\Z)', text):
+        text = text.replace(m.group(), fraction(m.group(1), m.group(2)) + m.group(3), 1)
+
     # Женский род (им./вин. пад.)
     for m in finditer(r'\b(((\d+)( - | или | и ))|)(\d+)(( [а-я]+([ая]я|[иы][ех])|) ([а-я]+))', text):
         if m.group(9) in ze_i or m.group(9) in ze_r or m.group(9) in zm_r:
@@ -2807,10 +2811,6 @@ def txt_prep(text):
     # Предлог "по" при указании количества
     for m in finditer(r'\b([Пп]о )(\d*1(000){1,3})\b', text):
         text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), d_ca), 1)
-
-    # Десятичные дроби в им. пад.
-    for m in finditer(r'\b(\d+),(\d+)(\b|\Z)', text):
-        text = text.replace(m.group(), fraction(m.group(1), m.group(2)) + m.group(3), 1)
 
     # Необязательная замена "_" (используется при обработке)
     text = sub('_', ' ', text)
