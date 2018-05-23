@@ -2679,15 +2679,19 @@ def txt_prep(text):
     for m in finditer(r'(\d+)-(м|й) ([а-яё]+)\b', text):
         number = ''
         if m.group(2) == 'м':
-            if m.group(3) in ms_t:
-                number = ordinal(m.group(1), t_mu)
-            elif m.group(3) in ms_p:
-                number = ordinal(m.group(1), p_mu)
+            found, gender, plural, case = words.get_attr(m.group(3)) 
+            if found and (gender==M_GENDER or gender== S_GENDER):
+                if case[4]==1:
+                    number = ordinal(m.group(1), t_mu)
+                elif case[5]==1:
+                    number = ordinal(m.group(1), p_mu)
         elif m.group(2) == 'й':
-            if m.group(3) in ze_t:
-                number = ordinal(m.group(1), t_zh)
-            elif m.group(3) in ze_dp:
-                number = ordinal(m.group(1), t_zh)
+            found, gender, plural, case = words.get_attr(m.group(3))
+            if found and gender==Z_GENDER and not plural:
+                if case[4]==1:
+                    number = ordinal(m.group(1), t_zh)
+                elif case[2]==1 or case[5]==1:
+                    number = ordinal(m.group(1), t_zh)
         if number != '':
             text = text.replace(m.group(), number + ' ' + m.group(3), 1)
 
@@ -2808,15 +2812,16 @@ def txt_prep(text):
             text = text.replace(m.group(), m.group(1) + m.group(2) + pre + number + m.group(9), 1)
 
     for m in finditer(r'(\s|\A|\(| )((\d+) - |)(1|\d*[02-9]1)(( [а-яё]+[ео](й|го) | )([а-яё]+))\b', text):
-        if m.group(8) in ms_r or m.group(8) in ze_r:
+        found, gender, plural, case = words.get_attr(m.group(8))
+        if found and not plural and case[1]==1:
             number = cardinal(m.group(4), r_ca)
-            if m.group(8) in ze_r:
+            if gender==Z_GENDER:
                 number = number[:-2] + 'й'
             if m.group(2) == '':
                 pre = ''
             else:
                 pre = cardinal(m.group(3), r_ca)
-                if (m.group(8) in ze_r or m.group(8) in zm_r) and number[-2:] == 'го':
+                if gender==Z_GENDER and number[-2:]=='го':
                     pre = pre[:-2] + 'й'
                 pre += ' - '
             text = text.replace(m.group(), m.group(1) + pre + number + m.group(5), 1)
