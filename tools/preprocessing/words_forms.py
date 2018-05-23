@@ -29,16 +29,16 @@ class Words():
         Определение аттрибутов слова.
         Возвращает: <род>, <число>, (<список совпавших падежей>)
         """
-        res, gender, plural, case = self.muz.get_attr(word)
-        if not res:
-            res, gender, plural, case = self.zen.get_attr(word)
-        if not res:
-            res, gender, plural, case = self.sre.get_attr(word)
+        found, gender, plural, case = self.muz.get_attr(word)
+        if not found:
+            found, gender, plural, case = self.zen.get_attr(word)
+        if not found:
+            found, gender, plural, case = self.sre.get_attr(word)
 
-        if res:
-            return gender, plural, case
+        if found:
+            return found, gender, plural, case
         else:
-            return None, None, None
+            return found, None, None, None
 
     def get_gender(self, word):
         """
