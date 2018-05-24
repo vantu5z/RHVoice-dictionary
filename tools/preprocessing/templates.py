@@ -2707,17 +2707,17 @@ def txt_prep(text):
         number = ''
         if m.group(2) == 'м':
             found, gender, plural, case = words.get_attr(m.group(3)) 
-            if found and (gender==M_GENDER or gender== S_GENDER):
-                if case[4]==1:
+            if found and (not gender==Z_GENDER):
+                if case[4]:
                     number = ordinal(m.group(1), t_mu)
-                elif case[5]==1:
+                elif case[5]:
                     number = ordinal(m.group(1), p_mu)
         elif m.group(2) == 'й':
             found, gender, plural, case = words.get_attr(m.group(3))
             if found and gender==Z_GENDER and not plural:
-                if case[4]==1:
+                if case[4]:
                     number = ordinal(m.group(1), t_zh)
-                elif case[2]==1 or case[5]==1:
+                elif case[2] or case[5]:
                     number = ordinal(m.group(1), t_zh)
         if number != '':
             text = text.replace(m.group(), number + ' ' + m.group(3), 1)
@@ -2858,7 +2858,7 @@ def txt_prep(text):
 
     for m in finditer(r'(\s|\A|\(| )((\d+) - |)(1|\d*[02-9]1)(( [а-яё]+[ео](й|го) | )([а-яё]+))\b', text):
         found, gender, plural, case = words.get_attr(m.group(8))
-        if found and not plural and case[1]==1:
+        if found and not plural and case[1]:
             number = cardinal(m.group(4), r_ca)
             if gender==Z_GENDER:
                 number = number[:-2] + 'й'
