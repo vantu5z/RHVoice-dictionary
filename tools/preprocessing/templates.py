@@ -2213,7 +2213,10 @@ patterns = (
 )
 
 greekletters = 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσΤτΥυΦφΧχΨψΩως'
-letternames = ('альфа', 'бета', 'гамма', 'дельта', 'эпсилон', 'дзета', 'эта', 'тета', 'йота', 'каппа', 'лямбда', 'мю', 'ню', 'кси', 'омикрон', 'пи', 'ро', 'сигма', 'тау', 'ипсилон', 'фи', 'хи', 'пси', 'омега', 'сигма')
+letternames = ('альфа', 'бета', 'гамма', 'дельта', 'эпсилон', 'дзета', 'эта',
+               'тета', 'йота', 'каппа', 'лямбда', 'мю', 'ню', 'кси',
+               'омикрон', 'пи', 'ро', 'сигма', 'тау', 'ипсилон', 'фи', 'хи',
+               'пси', 'омега', 'сигма')
 
 def condition(value):
     """
@@ -2630,16 +2633,20 @@ def txt_prep(text):
 
     # Предлог "по" при указании количества
     for m in finditer(r'\b([Пп]о )(\d*[02-9]1|1)_' + units, text):
-        text = text.replace(m.group(), m.group(1) + m.group(2) + ' ' + substant(m.group(2), m.group(3), 2), 1)
+        new = m.group(1) + m.group(2) + ' ' + substant(m.group(2), m.group(3), 2)
+        text = text.replace(m.group(), new, 1)
 
     # Именительный
     for m in finditer(r'\b(\d+,\d+)_' + units, text):
-        text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(2)][2], 1)
+        new = m.group(1) + ' ' + forms[m.group(2)][2]
+        text = text.replace(m.group(), new, 1)
     for m in finditer(r'\b(\d+)_' + units, text):
-        text = text.replace(m.group(), m.group(1) + ' ' + substant(m.group(1), m.group(2)), 1)
+        new = m.group(1) + ' ' + substant(m.group(1), m.group(2))
+        text = text.replace(m.group(), new, 1)
 
     for m in finditer(r'(тысяч[аимх]{,3}|(миллион|миллиард|триллион)(|ам?|ами|ов)) ' + units, text):
-        text = text.replace(m.group(), m.group(1) + ' ' + forms[m.group(4)][1], 1)
+        new = m.group(1) + ' ' + forms[m.group(4)][1]
+        text = text.replace(m.group(), new, 1)
 
     # Время в формате (h)h ч (m)m мин
     for m in finditer(r'\b(\d{1,2}) ?ч ?(\d{1,2}) ?мин\b', text):
@@ -2649,7 +2656,8 @@ def txt_prep(text):
         if condition(m.group(2)): minutes = ' минута'
         elif m.group(2)[-1] in ('2', '3', '4'): minutes = ' минуты'
         else: minutes = ' минут'
-        text = text.replace(m.group(), m.group(1) + hours + feminin(m.group(2)) + minutes, 1)
+        new = m.group(1) + hours + feminin(m.group(2)) + minutes
+        text = text.replace(m.group(), new, 1)
 
     # Время в формате (ч)ч:мм/(ч)ч.мм
 
@@ -2684,9 +2692,12 @@ def txt_prep(text):
     # Порядковые числительные
 
     for m in finditer(r'\b(([IVXCDLM]+)( ?- ?(начале |середине |конце )| (и|или)( | в ))|)([IVXCDLM]+) ([в]?в\.|век[аеуовмих]{,3}\b|(сто|тысяче)лети[ейяюмих]{1,3}\b|[Сс]ъезд[аеуовмих]{,3}\b|квартал[аеуыовмих]{,3}\b)', text):
-        if m.group(1) == '': part1 = ''
-        else: part1 = roman2arabic(m.group(2)) + m.group(3)
-        text = text.replace(m.group(), part1 + roman2arabic(m.group(7)) + ' ' + m.group(8), 1)
+        if m.group(1) == '':
+            part1 = ''
+        else:
+            part1 = roman2arabic(m.group(2)) + m.group(3)
+        new = part1 + roman2arabic(m.group(7)) + ' ' + m.group(8)
+        text = text.replace(m.group(), new, 1)
 
     for sample in samples:
         text = sub(sample[0], sample[1], text)
@@ -2700,7 +2711,8 @@ def txt_prep(text):
             elif gender==Z_GENDER and (case[2] or case[5]):
                 number = ordinal(m.group(2), p_zh)
         if number != '':
-            text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
+            new = m.group(1) + number + ' ' + m.group(3)
+            text = text.replace(m.group(), new, 1)
 
     for m in finditer(r'(\d+)-(м|й) ([а-яё]+)\b', text):
         number = ''
@@ -2747,14 +2759,18 @@ def txt_prep(text):
             text = text.replace(m.group(), eval(pattern[1]), 1)
 
     # Количественные числительные
-
     for m in finditer(r'\b((\d+) - |)(\d+)-(часов[агеиймоухыюя]{2,3}|(градус|силь|стволь|тон|каналь|странич|тысяч|миллион|миллиард|процент|секунд|минут|месяч|недель|днев|крат|мест|миль|этаж)н[агеиймоухыюя]{2,3}|лет[геиймноухюя]{2,4}|(|кило|милли|санти)(граммов|метров)[агеиймоухыюя]{2,3})\b', text):
-        if m.group(1) == '': pre = ''
+        if m.group(1) == '':
+            pre = ''
         else:
-            if m.group(2)[-3:] == '000': pre = cardinal(m.group(2)[:-3], r_ca) + 'тысяче - '
-            else: pre = cardinal(m.group(2), r_ca) + ' - '
-        if m.group(3)[-3:] == '000': num = cardinal(m.group(3)[:-3], r_ca) + 'тысяче'
-        else: num = cardinal(m.group(3), r_ca)
+            if m.group(2)[-3:] == '000':
+                pre = cardinal(m.group(2)[:-3], r_ca) + 'тысяче - '
+            else:
+                pre = cardinal(m.group(2), r_ca) + ' - '
+        if m.group(3)[-3:] == '000':
+            num = cardinal(m.group(3)[:-3], r_ca) + 'тысяче'
+        else:
+            num = cardinal(m.group(3), r_ca)
         num = pre + num
         num = sub(r'ста', 'сто', num)
         num = sub(r'(одной тысячи|одноготысяче)', 'тысяче', num)
@@ -2785,13 +2801,16 @@ def txt_prep(text):
         elif m.group(6)[-2:] == 'ми':
             number = cardinal(m.group(5), t_ca)
         if number != '':
-            text = text.replace(m.group(), pre + m.group(4) + number + ' ' + m.group(6), 1)
+            new = pre + m.group(4) + number + ' ' + m.group(6)
+            text = text.replace(m.group(), new, 1)
 
     # Предлоги творительного падежа
     for m in finditer(r'\b([Нн]ад|[Пп]еред|[Пп]о сравнению с)( (\d+)( [-и] | или )| )(\d+)\b', text):
         number = ' '
-        if m.group(2) !=' ' : number += cardinal(m.group(3), t_ca) + m.group(4)
-        text = text.replace(m.group(), m.group(1) + number + cardinal(m.group(5), t_ca), 1)
+        if m.group(2)!=' ':
+            number += cardinal(m.group(3), t_ca) + m.group(4)
+        new = m.group(1) + number + cardinal(m.group(5), t_ca)
+        text = text.replace(m.group(), new, 1)
 
     # Родительный падеж
 
@@ -2834,7 +2853,7 @@ def txt_prep(text):
                     pre = cardinal(m.group(5), r_ca)
                 if condition(m.group(5)) and m.group(12) is not None:
                     found, gender, plural, case = words.get_attr(m.group(12))
-                    if m.group(9) !='' and found and gender==Z_GENDER and case[1]:
+                    if m.group(9)!='' and found and gender==Z_GENDER and case[1]:
                         pre = pre[:-2] + 'й'
                     elif m.group(12) == 'суток':
                         pre = pre[:-3] + 'их'
@@ -2848,9 +2867,9 @@ def txt_prep(text):
                     found and not plural and gender==Z_GENDER and case[1]):
                         number = number[:-2] + 'й'
                 elif (m.group(9) !='' and
-                      ((found and plural and case[1]) or m.group(12) == 'суток')):
+                      ((found and plural and case[1]) or m.group(12)=='суток')):
                         number = cardinal(m.group(8), r_ca)
-                        if m.group(12) == 'суток' and number[-6:] == 'одного':
+                        if m.group(12)=='суток' and number[-6:]=='одного':
                             number = number[:-3] + 'их'
             new = m.group(1) + m.group(2) + pre + number + m.group(9)
             text = text.replace(m.group(), new, 1)
@@ -2868,7 +2887,8 @@ def txt_prep(text):
                 if gender==Z_GENDER and number[-2:]=='го':
                     pre = pre[:-2] + 'й'
                 pre += ' - '
-            text = text.replace(m.group(), m.group(1) + pre + number + m.group(5), 1)
+            new = m.group(1) + pre + number + m.group(5)
+            text = text.replace(m.group(), new, 1)
 
     for m in finditer(r'(\s|\A|\(| )((\d+)( [-и] | или )|)(\d*[02-9][234]|[234])(( [а-яё]+[иы]х | )([а-яё]+))\b(.)', text):
         found, gender, plural, case = words.get_attr(m.group(8))
@@ -2879,7 +2899,9 @@ def txt_prep(text):
                 number = cardinal(m.group(3), r_ca) + m.group(4)
                 if gender==Z_GENDER and number[-2:] == 'го':
                     number = number[:-2] + 'й'
-            text = text.replace(m.group(), m.group(1) + number + cardinal(m.group(5), r_ca) + m.group(6) + m.group(9), 1)
+            new = (m.group(1) + number + cardinal(m.group(5), r_ca) +
+                   m.group(6) + m.group(9))
+            text = text.replace(m.group(), new, 1)
 
     # Предложный падеж
     for m in finditer(r'\b([Вв]|[Нн]а|[Оо]б?|[Пп]ри)(( почти | примерно | приблизительно | плюс | минус | )(\d+)( [-и] | или )| )(почти |примерно |приблизительноплюс |минус |)(\d+)( ([а-яё]+([иы]х|[ео]м) |)([а-яё]+([ая]х|е|и|у)))\b', text):
@@ -2909,13 +2931,16 @@ def txt_prep(text):
         elif m.group(12) == 'ах' or m.group(12) == 'ях':
             number = cardinal(m.group(7), p_ca)
         if number != '':
-            text = text.replace(m.group(), m.group(1) + pre + m.group(6) + number + m.group(8), 1)
+            new = m.group(1) + pre + m.group(6) + number + m.group(8)
+            text = text.replace(m.group(), new, 1)
 
     # Предлоги предложного падежа
     for m in finditer(r'\b([Оо]б?|[Пп]ри)( (\d+)( [-и] | или )| )(\d+)\b', text):
         number = ' '
-        if m.group(2) !=' ' : number += cardinal(m.group(3), p_ca) + m.group(4)
-        text = text.replace(m.group(), m.group(1) + number + cardinal(m.group(5), p_ca), 1)
+        if m.group(2)!=' ':
+            number += cardinal(m.group(3), p_ca) + m.group(4)
+        new = m.group(1) + number + cardinal(m.group(5), p_ca)
+        text = text.replace(m.group(), new, 1)
 
     # Женский род (иминетельный/винительный падежи)
     for m in finditer(r'(\s|\A|\(| )(((\d+)( - | или | и ))|)(\d+)(( [а-яё]+([ая]я|[иы][ех])|) ([а-яё]+))', text):
@@ -2966,7 +2991,8 @@ def txt_prep(text):
             text = text.replace(m.group(), number + m.group(2), 1)
 
     for m in finditer(r'\b([Вв] )(\d+)( раз[а]?)\b', text):
-        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), v_ca) + m.group(3), 1)
+        new = m.group(1) + cardinal(m.group(2), v_ca) + m.group(3)
+        text = text.replace(m.group(), new, 1)
 
     for m in finditer(r'([Сс]тои(т[ь]?|л[аио]?|вш[аеиймя]{2,3})) (\d+) ([а-яё]+)\b', text):
         number = cardinal(m.group(3), v_ca)
@@ -2974,7 +3000,8 @@ def txt_prep(text):
             number = number[:-2] + 'ну'
         elif number[-3:] == 'два' and m.group(4) in ('копейки', 'гривны', 'драхмы', 'марки'):
             number = number[:-1] + 'е'
-        text = text.replace(m.group(), m.group(1) + ' ' + number + ' ' + m.group(4), 1)
+        new = m.group(1) + ' ' + number + ' ' + m.group(4)
+        text = text.replace(m.group(), new, 1)
 
     # Средний род (именительный/винительный падежи)
     for m in finditer(r'\b(\d*[02-9]1|1) (([а-яё]+[ео]е |)([а-яё]+[ео]))\b', text):
@@ -3019,8 +3046,10 @@ def txt_prep(text):
     # Предлоги дательного падежа
     for m in finditer(r'\b([Кк]|рав[нагеийлмоcуюыхья]{2,6})( (\d+)( [-и] | или )| )(\d+)\b', text):
         number = ' '
-        if m.group(2) !=' ' : number += cardinal(m.group(3), d_ca) + m.group(4)
-        text = text.replace(m.group(), m.group(1) + number + cardinal(m.group(5), d_ca), 1)
+        if m.group(2)!=' ':
+            number += cardinal(m.group(3), d_ca) + m.group(4)
+        new = m.group(1) + number + cardinal(m.group(5), d_ca)
+        text = text.replace(m.group(), new, 1)
 
     # Существует только во мн. числе
     for m in finditer(r'\b((\d+) - |)((\d+) (сутки|суток))', text):
@@ -3028,15 +3057,18 @@ def txt_prep(text):
             pre = daynight(m.group(2), m.group(5)) + '-'
         else:
             pre = ''
-        text = text.replace(m.group(), pre + daynight(m.group(4), m.group(5)) + ' ' + m.group(5), 1)
+        new = pre + daynight(m.group(4), m.group(5)) + ' ' + m.group(5)
+        text = text.replace(m.group(), new, 1)
 
     # Предлог "по" при указании количества
     for m in finditer(r'\b([Пп]о )(\d*1(000){1,3})\b', text):
-        text = text.replace(m.group(), m.group(1) + cardinal(m.group(2), d_ca), 1)
+        new = m.group(1) + cardinal(m.group(2), d_ca)
+        text = text.replace(m.group(), new, 1)
 
     # Десятичные дроби в им. пад.
     for m in finditer(r'\b(\d+),(\d+)(\b|\Z)', text):
-        text = text.replace(m.group(), fraction(m.group(1), m.group(2)) + m.group(3), 1)
+        new = fraction(m.group(1), m.group(2)) + m.group(3)
+        text = text.replace(m.group(), new, 1)
 
     # Необязательная замена "_" (используется при обработке)
     text = sub('_', ' ', text)
