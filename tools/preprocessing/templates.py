@@ -2705,12 +2705,12 @@ def txt_prep(text):
     for m in finditer(r'\b([Вв]о? |[Оо]б? |[Пп]ри )(\d*[02-9]|\d*1\d) ([а-яё]+)\b', text):
         found, gender, plural, case = words.get_attr(m.group(3))
         if found and not plural:
-            number = ''
             if not gender==Z_GENDER and case[5]:
                 number = ordinal(m.group(2), p_mu)
             elif gender==Z_GENDER and (case[2] or case[5]):
                 number = ordinal(m.group(2), p_zh)
-            text = text.replace(m.group(), m.group(1) + number + ' ' + m.group(3), 1)
+            new = m.group(1) + number + ' ' + m.group(3)
+            text = text.replace(m.group(), new, 1)
 
     for m in finditer(r'(\d+)-(м|й) ([а-яё]+)\b', text):
         number = ''
