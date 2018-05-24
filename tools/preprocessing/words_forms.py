@@ -120,3 +120,15 @@ class WordsForms():
                 if word in w_case:
                     case[i] = 1
         return case
+
+    def is_in_specified(self, case_n, plural, word):
+        """
+        Проверка наличия слова с указанными параметрами.
+        """
+        if plural:
+            if word in self.mn_case[case_n]:
+                return True
+        else:
+            if word in self.ed_case[case_n]:
+                return True
+        return False
