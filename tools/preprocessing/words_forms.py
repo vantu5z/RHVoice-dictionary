@@ -46,7 +46,7 @@ class Words():
         """
         Приведение результатов разобранного слова с помощью pymorphy2
         к нужному виду.
-        Возвращает: <род>, <число>, (<список совпавших падежей>)
+        Возвращает: <существование>, <род>, <число>, (<список совпавших падежей>)
         """
         # первый разбор слова
         first_tag = records[0].tag.cyr_repr
@@ -82,13 +82,12 @@ class Words():
     def get_attr(self, word):
         """
         Определение аттрибутов слова.
-        Возвращает: <род>, <число>, (<список совпавших падежей>)
+        Возвращает: <существование>, <род>, <число>, (<список совпавших падежей>)
         """
         # если подключен pymorphy2
         if self.morph:
             result = self.morph.parse(word)
             found, gender, plural, case = self.parse_morph(result)
-            print(word, found, gender, plural, case)
             return found, gender, plural, case
 
         # поиск слова по словарю
@@ -161,7 +160,7 @@ class WordsForms():
 
         # проверка слов множественного числа
         plural = True
-        case = self.get_case(word, plural)  
+        case = self.get_case(word, plural)
         if 1 in case:
             return True, self.gender, plural, case
         else:
