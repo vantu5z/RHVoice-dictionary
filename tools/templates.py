@@ -2525,6 +2525,14 @@ def txt_prep(text):
     # Родительный падеж
     for m in finditer(r'\b([Сс] (почти |примерно |приблизительно |плюс |минус |))(\d+)_' + units + ' до ', text):
         text = text.replace(m.group(), m.group(1) + m.group(3) + ' ' + substant(m.group(3), m.group(4), 1) + ' до ', 1)
+    for m in finditer(r'\b([Оо]т |[Сс]о? )(\d+,|)(\d+)( до (\d+,|)\d+_)' + units, text):
+        if m.group(2) != '':
+            number = fraction(m.group(2)[:-1], m.group(3), 1)
+        else:
+            number = cardinal(m.group(3), r_ca)
+            if m.group(6) in zh_units:
+                number = number[:-2] + 'й'
+        text = text.replace(m.group(), m.group(1) + number + m.group(4) + m.group(6), 1)
     for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Вв]место|[Вв] размере|[Вв] течение|[Нн]ач[инаетсялоь]{2,7} с|[Вв]ладел[аеимухцыь]{2,5}|[Дд]остиг[авеийлнотшщюуья]{,5}|[Пп]ротив|[Пп]орядка|[Пп]осле)( плюс | минус | )((\d+,|)(\d+)( - | или | и )(плюс |минус |)|)(\d+,|)(\d+)_' + units, text):
         if m.group(3) != '':
             if m.group(4) != '':
