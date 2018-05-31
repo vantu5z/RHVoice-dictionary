@@ -46,7 +46,7 @@ class Words():
         """
         Приведение результатов разобранного слова с помощью pymorphy2
         к нужному виду.
-        Возвращает: <существование>, <род>, <число>, (<список совпавших падежей>)
+        Возвращает: экземпляр attr или None
         """
         # первый разбор слова
         first_tag = records[0].tag.cyr_repr
@@ -55,12 +55,12 @@ class Words():
         plural = 'мн' in first_tag
 
         # род
-        if 'ор' in first_tag: gender = O_GENDER
+        if   'ор' in first_tag: gender = O_GENDER
         elif 'мр' in first_tag: gender = M_GENDER
         elif 'жр' in first_tag: gender = Z_GENDER
         elif 'ср' in first_tag: gender = S_GENDER
         else:
-            return False, None, None, None
+            return None
 
         # совпадение падежей
         case = [0, 0, 0, 0, 0, 0]
@@ -75,54 +75,57 @@ class Words():
                 if 'пр' in tag: case[5] = 1
 
         if 1 in case:
-            return True, gender, plural, case
+            return WordAttributes(gender, plural, case)
         else:
-            return False, None, None, None
+            return None
 
     def get_attr(self, word):
         """
         Определение аттрибутов слова.
-        Возвращает: <существование>, <род>, <число>, (<список совпавших падежей>)
+        Возвращает: экземпляр attr или None
         """
         # если подключен pymorphy2
         if self.morph:
             result = self.morph.parse(word)
-            found, gender, plural, case = self.parse_morph(result)
-            return found, gender, plural, case
+            attr = self.parse_morph(result)
+            return attr
 
         # поиск слова по словарю
-        found, gender, plural, case = self.muz.get_attr(word)
-        if not found:
-            found, gender, plural, case = self.zen.get_attr(word)
-        if not found:
-            found, gender, plural, case = self.sre.get_attr(word)
+        attr = self.muz.get_attr(word)
+        if not attr:
+            attr = self.zen.get_attr(word)
+        if not attr:
+            attr = self.sre.get_attr(word)
 
-        if found:
-            return found, gender, plural, case
-        else:
-            return found, None, None, None
+        return attr
 
     def get_gender(self, word):
         """
         Определение рода.
         """
-        gender, plural, case = self.get_attr(word)
-        return gender
+        attr = self.get_attr(word)
+        return attr.gender
 
     def get_case_list(self, word):
         """
         Определение списка падежей.
         """
-        gender, plural, case = self.get_attr(word)
-        return case
+        attr = self.get_attr(word)
+        return attr.case
 
     def is_plural(self, word):
         """
         Определение числа.
         """
-        gender, plural, case = self.get_attr(word)
-        return plural
+        attr = self.get_attr(word)
+        return attr.plural
 
+    def have(self, word, gender=None, plural=None, case=None, all_case=False):
+        attr = self.get_attr(word)
+        if attr:
+            return attr.have(gender, plural, case, all_case)
+        else:
+            return False
 
 class WordsForms():
     """
@@ -156,16 +159,16 @@ class WordsForms():
         plural = False
         case = self.get_case(word, plural)
         if 1 in case:
-            return True, self.gender, plural, case
+            return WordAttributes(self.gender, plural, case)
 
         # проверка слов множественного числа
         plural = True
         case = self.get_case(word, plural)
         if 1 in case:
-            return True, self.gender, plural, case
+            return WordAttributes(self.gender, plural, case)
         else:
             # если нет указанного слова в словаре
-            return False, None, None, None
+            return None
 
     def get_case(self, word, plural):
         """
@@ -194,3 +197,44 @@ class WordsForms():
             if word in self.ed_case[case_n]:
                 return True
         return False
+
+
+class WordAttributes():
+    """
+    Аттрибуты слова.
+    """
+    def __init__(self, gender, plural, case):
+        """
+        Инициализация.
+        """
+        self.gender = gender
+        self.plural = plural
+        self.case = case
+
+    def have(self, gender=None, plural=None, case=None, all_case=False):
+        """
+        Проверка на наличие аттрибутов.
+        """
+        if gender is not None and not (self.gender in gender):
+            return False
+
+        if plural is not None and self.plural != plural:
+            return False
+
+        if case:
+            # проверка на наличие падежей
+            present = False
+            have_all = True
+            for c in case:
+                if self.case[c]:
+                    present = True
+                else:
+                    have_all = False
+            if all_case and have_all:
+                return True
+            elif not all_case and present:
+                return True
+            else:
+                return False
+
+        return True
