@@ -46,7 +46,7 @@ class Words():
         """
         Приведение результатов разобранного слова с помощью pymorphy2
         к нужному виду.
-        Возвращает: экземпляр attr или None
+        Возвращает: экземпляр attr
         """
         # первый разбор слова
         first_tag = records[0].tag.cyr_repr
@@ -77,12 +77,12 @@ class Words():
         if 1 in case:
             return WordAttributes(gender, plural, case)
         else:
-            return None
+            return WordAttributes(None)
 
     def get_attr(self, word):
         """
         Определение аттрибутов слова.
-        Возвращает: экземпляр attr или None
+        Возвращает: экземпляр attr
         """
         # если подключен pymorphy2
         if self.morph:
@@ -92,9 +92,9 @@ class Words():
 
         # поиск слова по словарю
         attr = self.muz.get_attr(word)
-        if not attr:
+        if not attr.fuzzy:
             attr = self.zen.get_attr(word)
-        if not attr:
+        if not attr.fuzzy:
             attr = self.sre.get_attr(word)
 
         return attr
@@ -168,7 +168,7 @@ class WordsForms():
             return WordAttributes(self.gender, plural, case)
         else:
             # если нет указанного слова в словаре
-            return None
+            return WordAttributes(None)
 
     def get_case(self, word, plural):
         """
@@ -203,7 +203,7 @@ class WordAttributes():
     """
     Аттрибуты слова.
     """
-    def __init__(self, gender, plural, case):
+    def __init__(self, gender=None, plural=None, case=[0, 0, 0, 0, 0, 0]):
         """
         Инициализация.
         """
@@ -211,10 +211,22 @@ class WordAttributes():
         self.plural = plural
         self.case = case
 
+        # если что-то не указано, ставим пометку об этом
+        if gender is None or plural is None or case is None:
+            self.fuzzy = True
+        else:
+            self.fuzzy = False
+
+        if self.case is None:
+            self.case = [0, 0, 0, 0, 0, 0]
+
     def have(self, gender=None, plural=None, case=None, all_case=False):
         """
         Проверка на наличие аттрибутов.
         """
+        if self.fuzzy:
+            return False
+
         if gender is not None and not (self.gender in gender):
             return False
 

@@ -1852,29 +1852,28 @@ def txt_prep(text):
     # например: "во 2 окне -> во втором окне"
     for m in finditer(r'\b([Вв]о? |[Оо]б? |[Пп]ри )(\d*[02-9]|\d*1\d) ([а-яё]+)\b', text):
         attr = words.get_attr(m.group(3))
-        if attr:
-            number = ''
-            if attr.have([S_GENDER, M_GENDER], False, [5]):
-                number = ordinal(m.group(2), p_mu)
-            elif attr.have([Z_GENDER], False, [2, 5]):
-                number = ordinal(m.group(2), p_zh)
-            if number:
-                new = m.group(1) + number + ' ' + m.group(3)
-                text = text.replace(m.group(), new, 1)
+        number = ''
+        if attr.have([S_GENDER, M_GENDER], False, [5]):
+            number = ordinal(m.group(2), p_mu)
+        elif attr.have([Z_GENDER], False, [2, 5]):
+            number = ordinal(m.group(2), p_zh)
+        if number:
+            new = m.group(1) + number + ' ' + m.group(3)
+            text = text.replace(m.group(), new, 1)
 
     # например: "на 8-м этаже -> на восьмом этаже"
     for m in finditer(r'(\d+)-(м|й) ([а-яё]+)\b', text):
         number = ''
         if m.group(2) == 'м':
             attr = words.get_attr(m.group(3))
-            if attr and (not attr.gender == Z_GENDER):
+            if not attr.gender == Z_GENDER:
                 if attr.case[4]:
                     number = ordinal(m.group(1), t_mu)
                 elif attr.case[5]:
                     number = ordinal(m.group(1), p_mu)
         elif m.group(2) == 'й':
             attr = words.get_attr(m.group(3))
-            if attr and attr.have([Z_GENDER], False, None):
+            if attr.have([Z_GENDER], False, None):
                 if attr.case[4]:
                     number = ordinal(m.group(1), t_zh)          # t_zh ?
                 elif attr.have(case=[2, 5]):
@@ -1884,25 +1883,25 @@ def txt_prep(text):
 
     for m in finditer(r'(\d+)-е (([а-яё]+[ео]е ){,2}([а-яё]+[ео]))\b', text):
         attr = words.get_attr(m.group(4))
-        if attr and attr.have([S_GENDER], False, [0, 3]):
+        if attr.have([S_GENDER], False, [0, 3]):
             new = ordinal(m.group(1), i_sr) + ' ' + m.group(2)
             text = text.replace(m.group(), new, 1)
 
     for m in finditer(r'\b(\d*11|\d*[05-9]) ([а-яё]+)\b', text):
         attr = words.get_attr(m.group(2))
-        if attr and attr.have([M_GENDER], False, [3]) and not attr.case[0]:
+        if attr.have([M_GENDER], False, [3]) and not attr.case[0]:
             new = ordinal(m.group(1), r_mu) + ' ' + m.group(2)
             text = text.replace(m.group(), new)
 
     for m in finditer(r'\b(\d*11|\d*[02-9]) ([а-яё]+)\b', text):
         attr = words.get_attr(m.group(2))
-        if attr and attr.have([Z_GENDER], False, [3]):
+        if attr.have([Z_GENDER], False, [3]):
             new = ordinal(m.group(1), r_mu)[:-3] + 'ую ' + m.group(2)
             text = text.replace(m.group(), new)
 
 #    for m in finditer(r'(\d+)-ю ([а-яё]+)\b', text):
 #        attr = words.get_attr(m.group(2))
-#        if attr and attr.have([Z_GENDER], False, [3]):
+#        if attr.have([Z_GENDER], False, [3]):
 #            new = ordinal(m.group(1), v_zh) + ' ' + m.group(2)
 #            text = text.replace(m.group(), new)
 
@@ -1945,9 +1944,9 @@ def txt_prep(text):
         number = ''
         if condition(m.group(5)):
             attr = words.get_attr(m.group(6))
-            if attr and attr.have([M_GENDER, S_GENDER], False, [4]):
+            if attr.have([M_GENDER, S_GENDER], False, [4]):
                 number = cardinal(m.group(5), t_ca)
-            elif attr and attr.have([Z_GENDER], False, [4]):
+            elif attr.have([Z_GENDER], False, [4]):
                 number = cardinal(m.group(5), t_ca)[:-2] + 'ой'
             elif m.group(6) == 'сутками':
                 number = cardinal(m.group(5), t_ca) + 'и'
@@ -1987,7 +1986,7 @@ def txt_prep(text):
             number = cardinal(m.group(8), r_ca)
         if number[-6:] == 'одного' and m.group(18) is not None:
             attr = words.get_attr(m.group(18))
-            if attr and attr.have([Z_GENDER], None, [1]):
+            if attr.have([Z_GENDER], None, [1]):
                 number = number[:-2] + 'й'
             elif m.group(18) == 'суток':
                 number = number[:-3] + 'их'
@@ -2005,7 +2004,7 @@ def txt_prep(text):
                     pre = cardinal(m.group(5), r_ca)
                 if condition(m.group(5)) and m.group(12) is not None:
                     attr = words.get_attr(m.group(12))
-                    if m.group(9) and attr and attr.have([Z_GENDER], None, [1]):
+                    if m.group(9) and attr.have([Z_GENDER], None, [1]):
                         pre = pre[:-2] + 'й'
                     elif m.group(12) == 'суток':
                         pre = pre[:-3] + 'их'
@@ -2015,10 +2014,9 @@ def txt_prep(text):
             else:
                 number = cardinal(m.group(8), r_ca)
                 attr = words.get_attr(m.group(12))
-                if (condition(m.group(8)) and
-                    attr and attr.have(Z_GENDER, False, [1])):
-                        number = number[:-2] + 'й'
-                elif (m.group(9) and attr and (attr.have(None, True, [1])
+                if condition(m.group(8)) and attr.have(Z_GENDER, False, [1]):
+                    number = number[:-2] + 'й'
+                elif (m.group(9) and (attr.have(None, True, [1])
                       or m.group(12) == 'суток')):
                         number = cardinal(m.group(8), r_ca)
                         if m.group(12) == 'суток' and number[-6:] == 'одного':
@@ -2028,7 +2026,7 @@ def txt_prep(text):
 
     for m in finditer(r'(\s|\A|\(| )((\d+) - |)(1|\d*[02-9]1)(( [а-яё]+[ео](й|го) | )([а-яё]+))\b', text):
         attr = words.get_attr(m.group(8))
-        if attr and attr.have(None, False, [1]):
+        if attr.have(None, False, [1]):
             number = cardinal(m.group(4), r_ca)
             if attr.gender == Z_GENDER:
                 number = number[:-2] + 'й'
@@ -2044,7 +2042,7 @@ def txt_prep(text):
 
     for m in finditer(r'(\s|\A|\(| )((\d+)( [-и] | или )|)(\d*[02-9][234]|[234])(( [а-яё]+[иы]х | )([а-яё]+))\b(.)', text):
         attr = words.get_attr(m.group(8))
-        if attr and attr.have(None, True, [1]):
+        if attr.have(None, True, [1]):
             if m.group(2) == '':
                 number = ''
             else:
@@ -2073,9 +2071,9 @@ def txt_prep(text):
             number = cardinal(m.group(7), p_ca)
         if condition(m.group(7)):
             attr = words.get_attr(m.group(11))
-            if attr and attr.have([M_GENDER, S_GENDER], False, [5]):
+            if attr.have([M_GENDER, S_GENDER], False, [5]):
                 number = cardinal(m.group(7), p_ca)
-            elif attr and attr.have([Z_GENDER], False, [2, 5]):
+            elif attr.have([Z_GENDER], False, [2, 5]):
                 number = cardinal(m.group(7), p_ca)[:-1] + 'й'
             elif m.group(11) == 'сутках':
                 number = cardinal(m.group(7), p_ca)[:-2] + 'их'
@@ -2096,32 +2094,30 @@ def txt_prep(text):
     # Женский род (иминетельный/винительный падежи)
     for m in finditer(r'(\s|\A|\(| )(((\d+)( - | или | и ))|)(\d+)(( [а-яё]+([ая]я|[иы][ех])|) ([а-яё]+))', text):
         attr = words.get_attr(m.group(10))
-        if attr:
-            a = attr.have([Z_GENDER], None, [1])
-            b = attr.have([Z_GENDER], False, [0])
-            if (a or b):
-                if m.group(2) == '':
-                    pre = ''
-                else:
-                    pre = feminin(m.group(4)) + m.group(5)
-                new = m.group(1) + pre + feminin(m.group(6)) + m.group(7)
-                text = text.replace(m.group(), new, 1)
+        a = attr.have([Z_GENDER], None, [1])
+        b = attr.have([Z_GENDER], False, [0])
+        if (a or b):
+            if m.group(2) == '':
+                pre = ''
+            else:
+                pre = feminin(m.group(4)) + m.group(5)
+            new = m.group(1) + pre + feminin(m.group(6)) + m.group(7)
+            text = text.replace(m.group(), new, 1)
 
     # Винительный падеж
     for m in finditer(r'\b([Зз]а |[Пп]ро |[Чч]ерез |состав[аеилотя]{2,4} )(\d+)(( [а-яё]+([ая]я|[ую]ю|[ео]е|[иы][йх]) | )([а-яё]+))\b', text):
         number = cardinal(m.group(2), v_ca)
         if number[-3:] == 'дин':
             attr = words.get_attr(m.group(6))
-            if attr:
-                if attr.have([Z_GENDER], False, [3]):
-                    number = number[:-2] + 'ну'
-                elif attr.have([S_GENDER], False, [0, 3]):
-                    number = number[:-2] + 'но'
+            if attr.have([Z_GENDER], False, [3]):
+                number = number[:-2] + 'ну'
+            elif attr.have([S_GENDER], False, [0, 3]):
+                number = number[:-2] + 'но'
         text = text.replace(m.group(), m.group(1) + number + m.group(3), 1)
 
     for m in finditer(r'\b([Нн]а )(\d+) ([а-яё]+)\b', text):
         attr = words.get_attr(m.group(3))
-        if attr and attr.have(None, True, [1]):
+        if attr.have(None, True, [1]):
             new = m.group(1) + cardinal(m.group(2), v_ca) + ' ' + m.group(3)
             text = text.replace(m.group(), new, 1)
 
@@ -2163,7 +2159,7 @@ def txt_prep(text):
     # Средний род (именительный/винительный падежи)
     for m in finditer(r'\b(\d*[02-9]1|1) (([а-яё]+[ео]е |)([а-яё]+[ео]))\b', text):
         attr = words.get_attr(m.group(4))
-        if attr and attr.have([S_GENDER], False, [0, 3]):
+        if attr.have([S_GENDER], False, [0, 3]):
             if len(m.group(1)) > 1:
                 if int(m.group(1)[:-1]) != 0:
                     number = m.group(1)[:-1] + '0_одно'
@@ -2182,7 +2178,7 @@ def txt_prep(text):
             attr = words.get_attr(m.group(8))
             a = attr.have([Z_GENDER], None, [2])
             b = attr.have([Z_GENDER], False, [5])
-            if condition(m.group(2)) and attr and (a or b):
+            if condition(m.group(2)) and (a or b):
                 pre = pre[:-2] + 'й'
             elif m.group(8) == 'суткам':
                 pre = pre[:-3] + 'им'
@@ -2192,7 +2188,7 @@ def txt_prep(text):
             attr = words.get_attr(m.group(8))
             if m.group(8)[-1] == 'у' or m.group(8)[-1] == 'ю':
                 number = cardinal(m.group(4), d_ca)
-            elif attr and attr.have([Z_GENDER], False, [2, 5]):
+            elif attr.have([Z_GENDER], False, [2, 5]):
                 number = cardinal(m.group(4), d_ca)[:-2] + 'й'
             elif m.group(8) == 'суткам':
                 number = cardinal(m.group(4), d_ca)[:-3] + 'им'
