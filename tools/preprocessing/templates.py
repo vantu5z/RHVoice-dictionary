@@ -1864,26 +1864,22 @@ def txt_prep(text):
     # например: "на 8-м этаже -> на восьмом этаже"
     for m in finditer(r'(\d+)-(м|й) ([а-яё]+)\b', text):
         number = ''
+        attr = words.get_attr(m.group(3))
         if m.group(2) == 'м':
-            attr = words.get_attr(m.group(3))
             if not attr.gender == Z_GENDER:
                 if attr.case[4]:
                     number = ordinal(m.group(1), t_mu)
                 elif attr.case[5]:
                     number = ordinal(m.group(1), p_mu)
         elif m.group(2) == 'й':
-            attr = words.get_attr(m.group(3))
-            if attr.have([Z_GENDER], False, None):
-                if attr.case[4]:
-                    number = ordinal(m.group(1), t_zh)          # t_zh ?
-                elif attr.have(case=[2, 5]):
-                    number = ordinal(m.group(1), t_zh)          # t_zh ?
+            if attr.have([Z_GENDER], False, [2, 4, 5]):
+                number = ordinal(m.group(1), t_zh)
+
         if number:
             text = text.replace(m.group(), number + ' ' + m.group(3), 1)
 
     for m in finditer(r'(\d+)-е (([а-яё]+[ео]е ){,2}([а-яё]+[ео]))\b', text):
-        attr = words.get_attr(m.group(4))
-        if attr.have([S_GENDER], False, [0, 3]):
+        if words.have(m.group(4), [S_GENDER], False, [0, 3]):
             new = ordinal(m.group(1), i_sr) + ' ' + m.group(2)
             text = text.replace(m.group(), new, 1)
 
@@ -1894,14 +1890,12 @@ def txt_prep(text):
             text = text.replace(m.group(), new)
 
     for m in finditer(r'\b(\d*11|\d*[02-9]) ([а-яё]+)\b', text):
-        attr = words.get_attr(m.group(2))
-        if attr.have([Z_GENDER], False, [3]):
+        if words.have(m.group(2), [Z_GENDER], False, [3]):
             new = ordinal(m.group(1), r_mu)[:-3] + 'ую ' + m.group(2)
             text = text.replace(m.group(), new)
 
 #    for m in finditer(r'(\d+)-ю ([а-яё]+)\b', text):
-#        attr = words.get_attr(m.group(2))
-#        if attr.have([Z_GENDER], False, [3]):
+#        if words.have(m.group(2), [Z_GENDER], False, [3]):
 #            new = ordinal(m.group(1), v_zh) + ' ' + m.group(2)
 #            text = text.replace(m.group(), new)
 
@@ -1972,8 +1966,7 @@ def txt_prep(text):
             else:
                 pre = cardinal(m.group(5), r_ca)
                 if pre[-6:] == 'одного' and m.group(18) is not None:
-                    attr = words.get_attr(m.group(18))
-                    if attr and attr.have([Z_GENDER], None, [1]):
+                    if words.have(m.group(18), [Z_GENDER], None, [1]):
                         pre = pre[:-2] + 'й'
                     elif m.group(18) == 'суток':
                         pre = pre[:-3] + 'их'
@@ -1985,8 +1978,7 @@ def txt_prep(text):
         else:
             number = cardinal(m.group(8), r_ca)
         if number[-6:] == 'одного' and m.group(18) is not None:
-            attr = words.get_attr(m.group(18))
-            if attr.have([Z_GENDER], None, [1]):
+            if words.have(m.group(18), [Z_GENDER], None, [1]):
                 number = number[:-2] + 'й'
             elif m.group(18) == 'суток':
                 number = number[:-3] + 'их'
@@ -2116,26 +2108,22 @@ def txt_prep(text):
         text = text.replace(m.group(), m.group(1) + number + m.group(3), 1)
 
     for m in finditer(r'\b([Нн]а )(\d+) ([а-яё]+)\b', text):
-        attr = words.get_attr(m.group(3))
-        if attr.have(None, True, [1]):
+        if words.have(m.group(3), None, True, [1]):
             new = m.group(1) + cardinal(m.group(2), v_ca) + ' ' + m.group(3)
             text = text.replace(m.group(), new, 1)
 
     for m in finditer(r'\b(\d*[02-9]1|1)(( [а-яё]+[ео]го | )([а-яё]+))\b', text):
-        attr = words.get_attr(m.group(4))
-        if attr.have([M_GENDER], False, [3]):
+        if words.have(m.group(4), [M_GENDER], False, [3]):
             new = cardinal(m.group(1), v_ca)[:-2] + 'ного' + m.group(2)
             text = text.replace(m.group(), new, 1)
 
     for m in finditer(r'\b(\d*[02-9]1|1)(( [а-яё]+[ую]ю | )([а-яё]+))', text):
-        attr = words.get_attr(m.group(4))
-        if attr.have([Z_GENDER], False, [3]):
+        if words.have(m.group(4), [Z_GENDER], False, [3]):
             new = cardinal(m.group(1), v_ca)[:-2] + 'ну' + m.group(2)
             text = text.replace(m.group(), new, 1)
 
     for m in finditer(r'\b(\d*[02-9][2-4]|[2-4])(( [а-яё]+[иы]х | )([а-яё]+))', text):
-        attr = words.get_attr(m.group(4))
-        if attr.have([M_GENDER], True, [3]):
+        if words.have(m.group(4), [M_GENDER], True, [3]):
             number = cardinal(m.group(1), v_ca)
             if number[-3:] == 'два':
                 number = number[:-1] + 'ух'
@@ -2158,8 +2146,7 @@ def txt_prep(text):
 
     # Средний род (именительный/винительный падежи)
     for m in finditer(r'\b(\d*[02-9]1|1) (([а-яё]+[ео]е |)([а-яё]+[ео]))\b', text):
-        attr = words.get_attr(m.group(4))
-        if attr.have([S_GENDER], False, [0, 3]):
+        if words.have(m.group(4), [S_GENDER], False, [0, 3]):
             if len(m.group(1)) > 1:
                 if int(m.group(1)[:-1]) != 0:
                     number = m.group(1)[:-1] + '0_одно'
@@ -2185,10 +2172,9 @@ def txt_prep(text):
             pre += m.group(3)
         number = ''
         if condition(m.group(4)):
-            attr = words.get_attr(m.group(8))
             if m.group(8)[-1] == 'у' or m.group(8)[-1] == 'ю':
                 number = cardinal(m.group(4), d_ca)
-            elif attr.have([Z_GENDER], False, [2, 5]):
+            elif words.have(m.group(8), [Z_GENDER], False, [2, 5]):
                 number = cardinal(m.group(4), d_ca)[:-2] + 'й'
             elif m.group(8) == 'суткам':
                 number = cardinal(m.group(4), d_ca)[:-3] + 'им'
@@ -2205,7 +2191,7 @@ def txt_prep(text):
         new = m.group(1) + number + cardinal(m.group(5), d_ca)
         text = text.replace(m.group(), new, 1)
 
-    # Существует только во мн. числе
+    # Существует только во множественном числе
     for m in finditer(r'\b((\d+) - |)((\d+) (сутки|суток))', text):
         if m.group(1):
             pre = daynight(m.group(2), m.group(5)) + '-'
@@ -2219,7 +2205,7 @@ def txt_prep(text):
         new = m.group(1) + cardinal(m.group(2), d_ca)
         text = text.replace(m.group(), new, 1)
 
-    # Десятичные дроби в им. пад.
+    # Десятичные дроби в именительном падеже
     for m in finditer(r'\b(\d+),(\d+)(\b|\Z)', text):
         new = fraction(m.group(1), m.group(2)) + m.group(3)
         text = text.replace(m.group(), new, 1)

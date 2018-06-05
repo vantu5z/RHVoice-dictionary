@@ -122,10 +122,8 @@ class Words():
 
     def have(self, word, gender=None, plural=None, case=None, all_case=False):
         attr = self.get_attr(word)
-        if attr:
-            return attr.have(gender, plural, case, all_case)
-        else:
-            return False
+        return attr.have(gender, plural, case, all_case)
+
 
 class WordsForms():
     """
