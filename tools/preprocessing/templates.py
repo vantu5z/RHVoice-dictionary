@@ -1866,11 +1866,10 @@ def txt_prep(text):
         number = ''
         attr = words.get_attr(m.group(3))
         if m.group(2) == 'м':
-            if not attr.gender == Z_GENDER:
-                if attr.case[4]:
-                    number = ordinal(m.group(1), t_mu)
-                elif attr.case[5]:
-                    number = ordinal(m.group(1), p_mu)
+            if attr.have([M_GENDER, S_GENDER], None, [4]):
+                number = ordinal(m.group(1), t_mu)
+            elif attr.have([M_GENDER, S_GENDER], None, [5]):
+                number = ordinal(m.group(1), p_mu)
         elif m.group(2) == 'й':
             if attr.have([Z_GENDER], False, [2, 4, 5]):
                 number = ordinal(m.group(1), t_zh)
@@ -1885,7 +1884,7 @@ def txt_prep(text):
 
     for m in finditer(r'\b(\d*11|\d*[05-9]) ([а-яё]+)\b', text):
         attr = words.get_attr(m.group(2))
-        if attr.have([M_GENDER], False, [3]) and not attr.case[0]:
+        if attr.have([M_GENDER], False, [3]) and not attr.have(case=[0]):
             new = ordinal(m.group(1), r_mu) + ' ' + m.group(2)
             text = text.replace(m.group(), new)
 
@@ -2020,13 +2019,13 @@ def txt_prep(text):
         attr = words.get_attr(m.group(8))
         if attr.have(None, False, [1]):
             number = cardinal(m.group(4), r_ca)
-            if attr.gender == Z_GENDER:
+            if attr.have(gender=Z_GENDER):
                 number = number[:-2] + 'й'
             if m.group(2) == '':
                 pre = ''
             else:
                 pre = cardinal(m.group(3), r_ca)
-                if attr.gender == Z_GENDER and number[-2:] == 'го':
+                if attr.have(gender=Z_GENDER) and number[-2:] == 'го':
                     pre = pre[:-2] + 'й'
                 pre += ' - '
             new = m.group(1) + pre + number + m.group(5)
@@ -2039,7 +2038,7 @@ def txt_prep(text):
                 number = ''
             else:
                 number = cardinal(m.group(3), r_ca) + m.group(4)
-                if attr.gender == Z_GENDER and number[-2:] == 'го':
+                if attr.have(gender=Z_GENDER) and number[-2:] == 'го':
                     number = number[:-2] + 'й'
             new = (m.group(1) + number + cardinal(m.group(5), r_ca) +
                    m.group(6) + m.group(9))

@@ -46,62 +46,69 @@ class Words():
         """
         Приведение результатов разобранного слова с помощью pymorphy2
         к нужному виду.
-        Возвращает: экземпляр attr
+        Возвращает: экземпляр AttrList
         """
-        # первый разбор слова
-        first_tag = records[0].tag.cyr_repr
+        attr_list = AttrList()
 
-        # число
-        plural = 'мн' in first_tag
+        # перебираем все варианты разбора
+        for rec in records:
+            tag = rec.tag.cyr_repr
 
-        # род
-        if   'ор' in first_tag: gender = O_GENDER
-        elif 'мр' in first_tag: gender = M_GENDER
-        elif 'жр' in first_tag: gender = Z_GENDER
-        elif 'ср' in first_tag: gender = S_GENDER
-        else:
-            return None
+            # отбрасываем не существительные
+            if 'СУЩ' not in tag:
+                continue
 
-        # совпадение падежей
-        case = [0, 0, 0, 0, 0, 0]
-        for item in records:
-            tag = item.tag.cyr_repr
-            if ('СУЩ' in tag):
-                if 'им' in tag: case[0] = 1
-                if 'рд' in tag: case[1] = 1
-                if 'дт' in tag: case[2] = 1
-                if 'вн' in tag: case[3] = 1
-                if 'тв' in tag: case[4] = 1
-                if 'пр' in tag: case[5] = 1
+            # род
+            if   'ор' in tag: gender = O_GENDER
+            elif 'мр' in tag: gender = M_GENDER
+            elif 'жр' in tag: gender = Z_GENDER
+            elif 'ср' in tag: gender = S_GENDER
+            else:
+                continue
 
-        if 1 in case:
-            return WordAttributes(gender, plural, case)
-        else:
-            return WordAttributes(None)
+            # число
+            plural = 'мн' in tag
+
+            # совпадение падежей
+            case = [0, 0, 0, 0, 0, 0]
+            if 'им' in tag: case[0] = 1
+            if 'рд' in tag: case[1] = 1
+            if 'дт' in tag: case[2] = 1
+            if 'вн' in tag: case[3] = 1
+            if 'тв' in tag: case[4] = 1
+            if 'пр' in tag: case[5] = 1
+
+            if 1 in case:
+                attr_list.append(WordAttributes(gender, plural, case))
+
+        return attr_list
 
     def get_attr(self, word):
         """
         Определение аттрибутов слова.
-        Возвращает: экземпляр attr
+        Возвращает: экземпляр AttrList
         """
         # если подключен pymorphy2
         if self.morph:
             result = self.morph.parse(word)
-            attr = self.parse_morph(result)
-            return attr
+            attr_list = self.parse_morph(result)
+            return attr_list
 
         # поиск слова по словарю
-        attr = self.muz.get_attr(word)
-        if attr.fuzzy:
-            attr = self.zen.get_attr(word)
-        if attr.fuzzy:
-            attr = self.sre.get_attr(word)
+        attr_list = AttrList()
+        for item in [self.muz, self.zen, self.sre]:
+            attr = item.get_attr(word)
+            if not attr.fuzzy:
+                attr_list.append(attr)
 
-        return attr
+        return attr_list
 
     def have(self, word, gender=None, plural=None, case=None, all_case=False):
-        attr = self.get_attr(word)
-        return attr.have(gender, plural, case, all_case)
+        """
+        Проверка на наличие аттрибутов.
+        """
+        attr_list = self.get_attr(word)
+        return attr_list.have(gender, plural, case, all_case)
 
 
 class WordsForms():
@@ -156,6 +163,27 @@ class WordsForms():
                 case[i] = 1
 
         return case
+
+
+class AttrList(list):
+    """
+    Список аттрибутов слова.
+    """
+    def __init__(self):
+        """
+        Инициализация.
+        """
+        # инициализация себя как списка
+        list.__init__(self)
+
+    def have(self, gender=None, plural=None, case=None, all_case=False):
+        """
+        Проверка на наличие аттрибутов.
+        """
+        for attr in self:
+            if attr.have(gender, plural, case, all_case):
+                return True
+        return False
 
 
 class WordAttributes():
