@@ -92,9 +92,9 @@ class Words():
 
         # поиск слова по словарю
         attr = self.muz.get_attr(word)
-        if not attr.fuzzy:
+        if attr.fuzzy:
             attr = self.zen.get_attr(word)
-        if not attr.fuzzy:
+        if attr.fuzzy:
             attr = self.sre.get_attr(word)
 
         return attr
