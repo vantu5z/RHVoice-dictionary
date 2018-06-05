@@ -147,13 +147,14 @@ class WordsForms():
         case = [0, 0, 0, 0, 0, 0]
 
         if plural:
-            for i, w_case in enumerate(self.mn_case):
-                if word in w_case:
-                    case[i] = 1
+            case_list = self.mn_case
         else:
-            for i, w_case in enumerate(self.ed_case):
-                if word in w_case:
-                    case[i] = 1
+            case_list = self.ed_case
+
+        for i, w_case in enumerate(case_list):
+            if word in w_case:
+                case[i] = 1
+
         return case
 
 
