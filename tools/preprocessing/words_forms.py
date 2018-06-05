@@ -99,27 +99,6 @@ class Words():
 
         return attr
 
-    def get_gender(self, word):
-        """
-        Определение рода.
-        """
-        attr = self.get_attr(word)
-        return attr.gender
-
-    def get_case_list(self, word):
-        """
-        Определение списка падежей.
-        """
-        attr = self.get_attr(word)
-        return attr.case
-
-    def is_plural(self, word):
-        """
-        Определение числа.
-        """
-        attr = self.get_attr(word)
-        return attr.plural
-
     def have(self, word, gender=None, plural=None, case=None, all_case=False):
         attr = self.get_attr(word)
         return attr.have(gender, plural, case, all_case)
@@ -153,20 +132,13 @@ class WordsForms():
         """
         Определение аттрибутов слова.
         """
-        # проверка слов единственного числа
-        plural = False
-        case = self.get_case(word, plural)
-        if 1 in case:
-            return WordAttributes(self.gender, plural, case)
+        for plural in [False, True]:
+            case = self.get_case(word, plural)
+            if 1 in case:
+                return WordAttributes(self.gender, plural, case)
 
-        # проверка слов множественного числа
-        plural = True
-        case = self.get_case(word, plural)
-        if 1 in case:
-            return WordAttributes(self.gender, plural, case)
-        else:
-            # если нет указанного слова в словаре
-            return WordAttributes(None)
+        # если нет указанного слова в словаре
+        return WordAttributes(None)
 
     def get_case(self, word, plural):
         """
@@ -183,18 +155,6 @@ class WordsForms():
                 if word in w_case:
                     case[i] = 1
         return case
-
-    def is_in_specified(self, case_n, plural, word):
-        """
-        Проверка наличия слова с указанными параметрами.
-        """
-        if plural:
-            if word in self.mn_case[case_n]:
-                return True
-        else:
-            if word in self.ed_case[case_n]:
-                return True
-        return False
 
 
 class WordAttributes():
