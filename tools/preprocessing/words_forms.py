@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from re import sub
+
 # импорт pymorphy2 для определения атрибутов слов
 try:
     import pymorphy2
@@ -158,8 +160,9 @@ class WordsForms():
         else:
             case_list = self.ed_case
 
+        word = sub('ё', 'е', word)
         for i, w_case in enumerate(case_list):
-            if word in w_case:
+            if word in [sub('ё', 'е', rem_yo) for rem_yo in w_case]:
                 case[i] = 1
 
         return case
