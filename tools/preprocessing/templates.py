@@ -1370,7 +1370,7 @@ def condition(value):
     Оканчивается ли число на "1", но не на "11"?
     (value - число в формате строки)
     """
-    if value=='1' or (len(value)>1 and value[-2]!='1' and value[-1]=='1'):
+    if value == '1' or (len(value) > 1 and value[-2] != '1' and value[-1] == '1'):
         return True
     else:
         return False
@@ -1594,7 +1594,7 @@ def fraction(full, frac, cas = 0):
             dec += ', ' + frac[t]
         return full + dec
     f_part = feminin(full)
-    if f_part[-1] == 'а': fp= 'ая'
+    if f_part[-1] == 'а': fp = 'ая'
     else: fp = 'ых'
     d_part = feminin(frac)
     if d_part[-1] == 'а': dp = 'ая'
@@ -1883,7 +1883,7 @@ def txt_prep(text):
             text = text.replace(m.group(), number + ' ' + m.group(3), 1)
 
     for m in finditer(r'(\d+)-е (([а-яё]+[ео]е ){,2}([а-яё]+[ео]))\b', text):
-        attr = words.get_attr(m.group(3))
+        attr = words.get_attr(m.group(4))
         if attr and attr.have([S_GENDER], False, [0, 3]):
             new = ordinal(m.group(1), i_sr) + ' ' + m.group(2)
             text = text.replace(m.group(), new, 1)
