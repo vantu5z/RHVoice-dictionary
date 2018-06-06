@@ -5,5 +5,5 @@
 
 Использование
 
-from preprocessing.templates import txt_prep
-new_text = txt_prep(text)
+from preprocessing.text_prepare import text_prepare
+new_text = text_prepare(text)
