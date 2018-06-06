@@ -10,7 +10,7 @@ try:
     is_morph = True
 except:
     print('Не установлен "pymorphy2".'
-          'Определение аттрибутов слова будет вестись по словарю.')
+          'Определение атрибутов слова будет вестись по словарю.')
     is_morph = False
 
 # импорт словарей
@@ -87,7 +87,7 @@ class Words():
 
     def get_attr(self, word):
         """
-        Определение аттрибутов слова.
+        Определение атрибутов слова.
         Возвращает: экземпляр AttrList
         """
         # если подключен pymorphy2
@@ -107,7 +107,7 @@ class Words():
 
     def have(self, word, gender=None, plural=None, case=None, all_case=False):
         """
-        Проверка на наличие аттрибутов.
+        Проверка на наличие атрибутов.
         """
         attr_list = self.get_attr(word)
         return attr_list.have(gender, plural, case, all_case)
@@ -139,7 +139,7 @@ class WordsForms():
 
     def get_attr(self, word):
         """
-        Определение аттрибутов слова.
+        Определение атрибутов слова.
         """
         for plural in [False, True]:
             case = self.get_case(word, plural)
@@ -170,7 +170,7 @@ class WordsForms():
 
 class AttrList(list):
     """
-    Список аттрибутов слова.
+    Список атрибутов слова.
     """
     def __init__(self):
         """
@@ -181,7 +181,7 @@ class AttrList(list):
 
     def have(self, gender=None, plural=None, case=None, all_case=False):
         """
-        Проверка на наличие аттрибутов.
+        Проверка на наличие атрибутов.
         """
         for attr in self:
             if attr.have(gender, plural, case, all_case):
@@ -191,7 +191,7 @@ class AttrList(list):
 
 class WordAttributes():
     """
-    Аттрибуты слова.
+    Атрибуты слова.
     """
     def __init__(self, gender=None, plural=None, case=[0, 0, 0, 0, 0, 0]):
         """
@@ -212,7 +212,7 @@ class WordAttributes():
 
     def have(self, gender=None, plural=None, case=None, all_case=False):
         """
-        Проверка на наличие аттрибутов.
+        Проверка на наличие атрибутов.
         """
         if self.fuzzy:
             return False
