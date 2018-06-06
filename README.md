@@ -1,23 +1,26 @@
 RHVoice-dictionary
 ==================
 
-Русский словарь в формате поддерживаемом RHVoice v0.5+ (https://github.com/Olga-Yakovleva/RHVoice)
+Русский словарь в формате поддерживаемом [RHVoice](https://github.com/Olga-Yakovleva/RHVoice) v0.5+.
 
-Установка словаря:
-- LINUX
- - Пакет в AUR для Arch пользователей https://aur.archlinux.org/packages/rhvoice-dictionary-git/
- - Остальным, положить словари в дирректорию со словарями (по умолчанию /etc/RHVoice/dicts/Russian/)
+## Установка словаря
 
-- WINDOWS
- - Путь для русских словарей: %AppData%\RHVoice\dicts\Russian\
+### LINUX
+* Пакет в AUR для Arch пользователей https://aur.archlinux.org/packages/rhvoice-dictionary-git/
+* Остальным, положить словари в дирректорию со словарями (по умолчанию /etc/RHVoice/dicts/Russian/)
 
-- ANDROID
- - Путь для русских словарей: /sdcard/Android/data/com.github.olga_yakovleva.rhvoice.android/files/dicts/Russian/
+### WINDOWS
+* Путь для русских словарей: %AppData%\RHVoice\dicts\Russian\
+
+### ANDROID
+* Путь для русских словарей: /sdcard/Android/data/com.github.olga_yakovleva.rhvoice.android/files/dicts/Russian/
 
 После добавления словарей синтезатор необходимо перезагрузить (закрыть все программы, которые его используют), чтобы новые словари начали действовать.
 
-Ведётся разработка предварительной обработки текста на Питоне "/tools/templates.py".<br>
-Включает в себя обработку:<br>
+## Предварительная обработка текста
+Ведётся разработка предварительной обработки текста на Питоне "[/tools/preprocessing](https://github.com/vantu5z/RHVoice-dictionary/tree/check_words_form/tools/preprocessing)".<br>
+Включает в себя обработку:
+
 - дат;
 - числительных;
 - единиц измерения;
@@ -27,5 +30,6 @@ RHVoice-dictionary
 - преобразование греческих букв;
 - и д.р.
 
+## Обратная связь
 Замечания, предложения, исправления и дополнения всегда приветствуются! <br>
-Их можно оставить во вклаке Issues.
+Их можно оставить во вклаке [Issues](https://github.com/vantu5z/RHVoice-dictionary/issues).
