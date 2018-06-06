@@ -6,7 +6,7 @@
 # с известным результатом, например: "в 2000 г." -> "в двухтысячном году."
 # Для проверки не сломалось ли чего после внесения изменений в templates.py.
 
-from preprocessing.templates import txt_prep
+from preprocessing.text_prepare import text_prepare
 
 # набор фраз для проверки
 test_txt=[
@@ -74,7 +74,7 @@ test_txt=[
 count_err = 0    # счётчик непройдённых проверок
 
 for txt in test_txt:
-    text = txt_prep(txt[0])
+    text = text_prepare(txt[0])
     if text != txt[1]:
         print('ВНИМАНИЕ! неверное преобразование: "'+txt[0]+'" -> "'+text+'"'+'                 должно быть: "'+txt[1]+'"')
         count_err += 1
@@ -84,6 +84,6 @@ print('\nПройдено проверок: ' + str(len(test_txt)-count_err) + '
 # дальше предлагается ввести текст вручную для проверки
 txt = input('Введите текст:\n')
 
-text = txt_prep(txt)
+text = text_prepare(txt)
 
 print('Обработанный текст:\n'+text)

@@ -1,0 +1,9 @@
+Пакет для предварительной обработки текста
+
+Описание
+...
+
+Использование
+
+from preprocessing.templates import txt_prep
+new_text = txt_prep(text)

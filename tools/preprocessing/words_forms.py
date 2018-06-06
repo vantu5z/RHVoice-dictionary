@@ -14,9 +14,9 @@ except:
     is_morph = False
 
 # импорт словарей
-from . import words_muz
-from . import words_zen
-from . import words_sre
+from .dict import words_muz
+from .dict import words_zen
+from .dict import words_sre
 
 # константы с названием рода слова
 M_GENDER = 'мужской'
