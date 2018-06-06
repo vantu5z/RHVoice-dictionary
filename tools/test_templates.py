@@ -6,7 +6,7 @@
 # с известным результатом, например: "в 2000 г." -> "в двухтысячном году."
 # Для проверки не сломалось ли чего после внесения изменений в templates.py.
 
-from templates import txt_prep
+from preprocessing.templates import txt_prep
 
 # набор фраз для проверки
 test_txt=[

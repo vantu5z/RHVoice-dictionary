@@ -6,8 +6,8 @@
 
 from re import sub, finditer
 
-from words_forms import Words
-from words_forms import M_GENDER, Z_GENDER, S_GENDER
+from .words_forms import (Words,
+                          M_GENDER, Z_GENDER, S_GENDER)
 
 # Для определения атрибутов слов
 words = Words()
