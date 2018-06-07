@@ -244,8 +244,7 @@ def text_prepare(text):
         for m in finditer(pattern[0], text):
             text = text.replace(m.group(), eval(pattern[1]), 1)
 
-    # Количественные числительные
-
+    # Прилагательные, в состав которых входят числительные (3-кратный и т.п.)
     for m in finditer(r'\b((\d+) - |)(\d+)-(([а-я]{4,})([иы][ейх]|[иы]ми?|[ая]я|[ео][ей]|[ео]го|[ео]му?))\b', text):
         if m.group(5) in adjectiv:
             if m.group(1) == '': pre = ''
@@ -261,6 +260,8 @@ def text_prepare(text):
             num = sub(r'(одной тысячи|одноготысяче)', 'тысяче', num)
             num = sub(r'\bодного', 'одно', num)
             text = text.replace(m.group(), num + '-' + m.group(4), 1)
+
+    # Количественные числительные
 
     # Творительный падеж
     for m in finditer(r'((\d+)( - | или | и )|)(плюс |минус |)(\d+) ([а-яё]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b', text):
