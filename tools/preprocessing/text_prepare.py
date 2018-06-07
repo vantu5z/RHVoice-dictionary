@@ -250,9 +250,11 @@ def text_prepare(text):
         if m.group(5) in adjectiv:
             if m.group(1) == '': pre = ''
             else:
-                if m.group(2)[-3:] == '000': pre = cardinal(m.group(2)[:-3], r_ca) + 'тысяче - '
+                if m.group(2)[-3:] == '000':
+                    pre = cardinal(m.group(2)[:-3], r_ca) + 'тысяче - '
                 else: pre = cardinal(m.group(2), r_ca) + ' - '
-            if m.group(3)[-3:] == '000': num = cardinal(m.group(3)[:-3], r_ca) + 'тысяче'
+            if m.group(3)[-3:] == '000':
+                num = cardinal(m.group(3)[:-3], r_ca) + 'тысяче'
             else: num = cardinal(m.group(3), r_ca)
             num = pre + num
             num = sub('ста', 'сто', num)
