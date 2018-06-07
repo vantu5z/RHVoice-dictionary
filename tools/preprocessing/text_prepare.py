@@ -245,23 +245,20 @@ def text_prepare(text):
             text = text.replace(m.group(), eval(pattern[1]), 1)
 
     # Количественные числительные
-    for m in finditer(r'\b((\d+) - |)(\d+)-(часов[агеиймоухыюя]{2,3}|(градус|силь|стволь|тон|каналь|странич|тысяч|миллион|миллиард|процент|секунд|минут|месяч|недель|днев|крат|мест|миль|этаж)н[агеиймоухыюя]{2,3}|лет[геиймноухюя]{2,4}|(|кило|милли|санти)(граммов|метров)[агеиймоухыюя]{2,3})\b', text):
-        if m.group(1) == '':
-            pre = ''
-        else:
-            if m.group(2)[-3:] == '000':
-                pre = cardinal(m.group(2)[:-3], r_ca) + 'тысяче - '
+
+    for m in finditer(r'\b((\d+) - |)(\d+)-(([а-я]{5,})([иы][ейх]|[иы]ми?|[ая]я|[ео][ей]|[ео]го|[ео]му?))\b', text):
+        if m.group(5) in adjectiv:
+            if m.group(1) == '': pre = ''
             else:
-                pre = cardinal(m.group(2), r_ca) + ' - '
-        if m.group(3)[-3:] == '000':
-            num = cardinal(m.group(3)[:-3], r_ca) + 'тысяче'
-        else:
-            num = cardinal(m.group(3), r_ca)
-        num = pre + num
-        num = sub(r'ста', 'сто', num)
-        num = sub(r'(одной тысячи|одноготысяче)', 'тысяче', num)
-        num = sub(r'\bодного', 'одно', num)
-        text = text.replace(m.group(), num + '-' + m.group(4), 1)
+                if m.group(2)[-3:] == '000': pre = cardinal(m.group(2)[:-3], r_ca) + 'тысяче - '
+                else: pre = cardinal(m.group(2), r_ca) + ' - '
+            if m.group(3)[-3:] == '000': num = cardinal(m.group(3)[:-3], r_ca) + 'тысяче'
+            else: num = cardinal(m.group(3), r_ca)
+            num = pre + num
+            num = sub('ста', 'сто', num)
+            num = sub(r'(одной тысячи|одноготысяче)', 'тысяче', num)
+            num = sub(r'\bодного', 'одно', num)
+            text = text.replace(m.group(), num + '-' + m.group(4), 1)
 
     # Творительный падеж
     for m in finditer(r'((\d+)( - | или | и )|)(плюс |минус |)(\d+) ([а-яё]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b', text):
