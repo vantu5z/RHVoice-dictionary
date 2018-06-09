@@ -33,36 +33,54 @@ def text_prepare(text):
 
     # Винительный падеж
     # например: "диаметром в 2 см -> диаметром в 2 сантиметра"
-    mask = compile(r'\b('
-                   r'[Дд]иаметр[аеуом]{,2}|[Рр]азниц[аейуы]{1,2}|'
-                   r'[Вв]ысот[аейоуы]{1,2}|[Гг]лубин[аейоуы]{1,2}|'
-                   r'[Дд]альност[иью]{1,2}|[Дд]альност[иью]{1,2} стрельбы|'
-                   r'[Дд]истанци[яюией]{1,2}|[Дд]лин[аейоуы]{1,2}|'
-                   r'[Мм]асс[аейоуы]{1,2}|[Шш]ирин[аейоуы]{1,2}|'
-                   r'[Вв]ес[аемоу]{,2}|[Мм]ощност[иью]{1,2}|'
-                   r'[Пп]лощад[иью]{1,2}|[Сс]корост[иью]{1,2}|'
-                   r'[Сс]тоимост[иью]{1,2}|[Рр]асстояни[еимхюя]{1,2}|'
-                   r'[Дд]лительност[иью]{1,2}|[Пп]родолжительност[иью]{1,2}|'
-                   r'оцени[авеийлмстшыья]{,6}|[Уу]далени[еимюя]{1,2}'
-                   r')'
-                   r' в( (\d+,|)(\d+) - | )(\d+,|)(\d+)_' + units)
-    for m in mask.finditer(text):
-        if m.group(2) == ' ':
-            number = ''
-        else:
-            if m.group(3):
-                number = fraction(m.group(3)[:-1], m.group(4), 5)
+#    mask = compile(r'\b('
+#                   r'[Дд]иаметр[аеуом]{,2}|[Рр]азниц[аейуы]{1,2}|'
+#                   r'[Вв]ысот[аейоуы]{1,2}|[Гг]лубин[аейоуы]{1,2}|'
+#                   r'[Дд]альност[иью]{1,2}|[Дд]альност[иью]{1,2} стрельбы|'
+#                   r'[Дд]истанци[яюией]{1,2}|[Дд]лин[аейоуы]{1,2}|'
+#                   r'[Мм]асс[аейоуы]{1,2}|[Шш]ирин[аейоуы]{1,2}|'
+#                   r'[Вв]ес[аемоу]{,2}|[Мм]ощност[иью]{1,2}|'
+#                   r'[Пп]лощад[иью]{1,2}|[Сс]корост[иью]{1,2}|'
+#                   r'[Сс]тоимост[иью]{1,2}|[Рр]асстояни[еимхюя]{1,2}|'
+#                   r'[Дд]лительност[иью]{1,2}|[Пп]родолжительност[иью]{1,2}|'
+#                   r'оцени[авеийлмстшыья]{,6}|[Уу]далени[еимюя]{1,2}'
+#                   r')'
+#                   r' в( (\d+,|)(\d+) - | )(\d+,|)(\d+)_' + units)
+#    for m in mask.finditer(text):
+#        if m.group(2) == ' ':
+#            number = ''
+#        else:
+#            if m.group(3):
+#                number = fraction(m.group(3)[:-1], m.group(4), 5)
+#            else:
+#                if condition(m.group(4)) and m.group(7) in zh_units:
+#                    number = feminin(m.group(4))[:-1] + 'у'
+#                else:
+#                    number = m.group(4)
+#            number = number + ' - '
+#        if m.group(5):
+#            number += fraction(m.group(5)[:-1], m.group(6), 5) + ' ' + forms[m.group(7)][2]
+#        else:
+#            number += m.group(6) + ' ' + substant(m.group(6), m.group(7), 5)
+#        text = text.replace(m.group(), m.group(1) + ' в ' + number, 1)
+    for m in finditer(r'\b([А-Яа-я]{3,}) в( (\d+,|)(\d+) - | )(\d+,|)(\d+)_' + units, text):
+        if m.group(1).lower() in pre_acc:
+            if m.group(2) == ' ':
+                number = ''
             else:
-                if condition(m.group(4)) and m.group(7) in zh_units:
-                    number = feminin(m.group(4))[:-1] + 'у'
+                if m.group(3):
+                    number = fraction(m.group(3)[:-1], m.group(4), 5)
                 else:
-                    number = m.group(4)
-            number = number + ' - '
-        if m.group(5):
-            number += fraction(m.group(5)[:-1], m.group(6), 5) + ' ' + forms[m.group(7)][2]
-        else:
-            number += m.group(6) + ' ' + substant(m.group(6), m.group(7), 5)
-        text = text.replace(m.group(), m.group(1) + ' в ' + number, 1)
+                    if condition(m.group(4)) and m.group(7) in zh_units:
+                        number = feminin(m.group(4))[:-1] + 'у'
+                    else:
+                        number = m.group(4)
+                number = number + ' - '
+            if m.group(5):
+                number += fraction(m.group(5)[:-1], m.group(6), 5) + ' ' + forms[m.group(7)][2]
+            else:
+                number += m.group(6) + ' ' + substant(m.group(6), m.group(7), 5)
+            text = text.replace(m.group(), m.group(1) + ' в ' + number, 1)
 
     # Родительный падеж
     # пример: "С 5 см до -> С пяти сантиметров до"

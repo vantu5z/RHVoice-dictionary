@@ -170,7 +170,7 @@ def substant(num, key, cas = 0):
                     form = forms[key][1]
             else:
                 if (len(num) > 1 and num[-2] != '1' and num[-1] in '234') or num[-1] in '234':
-                    form = forms[key][2]
+                    form = forms[key][10]
                 elif (len(num) > 1 and num[-2] == '1') or num[-1] != '1':
                     form = forms[key][1]
                 else:
