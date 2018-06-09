@@ -7,7 +7,18 @@
 
 from re import sub, finditer
 
-from .templates import *
+from .templates import (presamples, samples, patterns,
+                        units, zh_units,
+                        forms,
+                        adjectiv, pre_acc,
+                        i_mu, i_sr, i_zh, i_mn,
+                        r_ca, r_mn, r_mu, r_sr, r_zh,
+                        d_ca, d_mn, d_mu, d_sr, d_zh,
+                        v_ca, v_zh,
+                        t_ca, t_mn, t_mu, t_sr, t_zh,
+                        p_ca, p_mn, p_mu, p_sr, p_zh,
+                        adj_pad, mn_pad, mu_pad, sr_pad, zh_pad,
+                        greekletters, letternames)
 from .functions import (condition, cardinal, ordinal, roman2arabic,
                         substant, feminin, daynight, fraction)
 from .words_forms import Words, M_GENDER, Z_GENDER, S_GENDER
