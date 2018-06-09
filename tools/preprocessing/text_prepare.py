@@ -99,7 +99,16 @@ def text_prepare(text):
         new = m.group(1) + number + m.group(4) + m.group(6)
         text = text.replace(m.group(), new, 1)
 
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Оо]коло|[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Вв]место|[Вв] размере|[Вв] течение|[Нн]ач[инаетсялоь]{2,7} с|[Вв]ладел[аеимухцыь]{2,5}|[Дд]остиг[авеийлнотшщюуья]{,5}|[Пп]ротив|[Пп]орядка|[Пп]осле)( плюс | минус | )((\d+,|)(\d+)( - | или | и )(плюс |минус |)|)(\d+,|)(\d+)_' + units, text):
+    mask = (r'\b('
+            r'[Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Оо]коло|'
+            r'[Сс]выше|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Вв]место|[Вв] размере|'
+            r'[Вв] течение|[Нн]ач[инаетсялоь]{2,7} с|'
+            r'[Вв]ладел[аеимухцыь]{2,5}|[Дд]остиг[авеийлнотшщюуья]{,5}|'
+            r'[Пп]ротив|[Пп]орядка|[Пп]осле'
+            r')'
+            r'( плюс | минус | )((\d+,|)(\d+)( - | или | и )'
+            r'(плюс |минус |)|)(\d+,|)(\d+)_' + units)
+    for m in finditer(mask, text):
         if m.group(3):
             if m.group(4):
                 prenum = fraction(m.group(4)[:-1], m.group(5), 1)
@@ -117,7 +126,12 @@ def text_prepare(text):
         text = text.replace(m.group(), m.group(1) + m.group(2) + prenum  + number, 1)
 
     # Дательный падеж
-    for m in finditer(r'\b(([Кк]|рав[нагеийлмоcуюыхья]{2,6})( почти | примерно | приблизительно | плюс | минус | ))(\d+,|)(\d+)_' + units, text):
+    mask = (r'\b('
+            r'([Кк]|рав[нагеийлмоcуюыхья]{2,6})'
+            r'( почти | примерно | приблизительно | плюс | минус | )'
+            r')'
+            r'(\d+,|)(\d+)_' + units)
+    for m in finditer(mask, text):
         if m.group(4):
             number = fraction(m.group(4)[:-1], m.group(5), 2) + ' ' + forms[m.group(6)][2]
         else:
@@ -125,13 +139,25 @@ def text_prepare(text):
         text = text.replace(m.group(), m.group(1) + number, 1)
 
     # Творительный падеж
-    for m in finditer(r'\b(([Сс]|[Вв]ладе[авеийлмтюшщья]{1,7})( почти | приблизительно | примерно | плюс | минус | ))(\d+,|)(\d+)_' + units, text):
+    mask = (r'\b('
+            r'([Сс]|[Вв]ладе[авеийлмтюшщья]{1,7})'
+            r'( почти | приблизительно | примерно | плюс | минус | )'
+            r')'
+            r'(\d+,|)(\d+)_' + units)
+    for m in finditer(mask, text):
         if m.group(4):
             number = fraction(m.group(4)[:-1], m.group(5), 3) + ' ' + forms[m.group(6)][2]
         else:
             number = m.group(5) + ' ' + substant(m.group(5), m.group(6), 3)
         text = text.replace(m.group(), m.group(1) + number, 1)
-    for m in finditer(r'([Мм]ежду( почти | приблизительно | примерно | плюс | минус | ))(\d+,|)(\d+)( и( почти | приблизительно | примерно | плюс | минус | ))(\d+,|)(\d+)_' + units, text):
+
+    mask = (r'('
+            r'[Мм]ежду( почти | приблизительно | примерно | плюс | минус | )'
+            r')'
+            r'(\d+,|)(\d+)'
+            r'( и( почти | приблизительно | примерно | плюс | минус | ))'
+            r'(\d+,|)(\d+)_' + units)
+    for m in finditer(mask, text):
         if m.group(3):
             prenum = fraction(m.group(3)[:-1], m.group(4), 3)
         else:
@@ -145,7 +171,11 @@ def text_prepare(text):
         text = text.replace(m.group(), m.group(1) + prenum + m.group(5) + number, 1)
 
     # Предложный падеж
-    for m in finditer(r'\b([Вв]|[Оо]б?|[Пп]ри)(( плюс | минус | )(\d+,|)(\d+)( [-и] | или )| )(почти |примерно |приблизительно |плюс |минус |)(\d+,|)(\d+)_' + units, text):
+    mask = (r'\b([Вв]|[Оо]б?|[Пп]ри)'
+            r'(( плюс | минус | )(\d+,|)(\d+)( [-и] | или )| )'
+            r'(почти |примерно |приблизительно |плюс |минус |)'
+            r'(\d+,|)(\d+)_' + units)
+    for m in finditer(mask, text):
         if m.group(2) == ' ':
             pre = ' '
         else:
@@ -174,7 +204,11 @@ def text_prepare(text):
         new = m.group(1) + ' ' + substant(m.group(1), m.group(2))
         text = text.replace(m.group(), new, 1)
 
-    for m in finditer(r'(тысяч[аимх]{,3}|(миллион|миллиард|триллион)(|ам?|ами|ов)) ' + units, text):
+    mask = (r'('
+            r'тысяч[аимх]{,3}|'
+            r'(миллион|миллиард|триллион)(|ам?|ами|ов)'
+            r') ' + units)
+    for m in finditer(mask, text):
         new = m.group(1) + ' ' + forms[m.group(4)][1]
         text = text.replace(m.group(), new, 1)
 
@@ -219,9 +253,17 @@ def text_prepare(text):
             minutes = '0_' + minutes
         text = text.replace(m.group(), m.group(1) + hours + ' ' + minutes, 1)
 
+    # =======================
     # Порядковые числительные
+    # =======================
 
-    for m in finditer(r'\b(([IVXCDLM]+)( ?- ?(начале |середине |конце )| (и|или)( | в ))|)([IVXCDLM]+) ([в]?в\.|век[аеуовмих]{,3}\b|(сто|тысяче)лети[ейяюмих]{1,3}\b|[Сс]ъезд[аеуовмих]{,3}\b|квартал[аеуыовмих]{,3}\b)', text):
+    mask = (r'\b(([IVXCDLM]+)( ?- ?(начале |середине |конце )| (и|или)( | в ))|)'
+            r'([IVXCDLM]+) '
+            r'('
+            r'[в]?в\.|век[аеуовмих]{,3}\b|(сто|тысяче)лети[ейяюмих]{1,3}\b|'
+            r'[Сс]ъезд[аеуовмих]{,3}\b|квартал[аеуыовмих]{,3}\b'
+            r')')
+    for m in finditer(mask, text):
         if m.group(1) == '':
             part1 = ''
         else:
@@ -229,11 +271,14 @@ def text_prepare(text):
         new = part1 + roman2arabic(m.group(7)) + ' ' + m.group(8)
         text = text.replace(m.group(), new, 1)
 
+    # применение шаблонов
     for sample in samples:
         text = sub(sample[0], sample[1], text)
 
     # например: "во 2 окне -> во втором окне"
-    for m in finditer(r'\b([Вв]о? |[Оо]б? |[Пп]ри )(\d*[02-9]|\d*1\d) ([а-яё]+)\b', text):
+    mask = (r'\b([Вв]о?|[Оо]б?|[Пп]ри) '
+            r'(\d*[02-9]|\d*1\d) ([а-яё]+)\b')
+    for m in finditer(mask, text):
         attr = words.get_attr(m.group(3))
         number = ''
         if attr.have([S_GENDER, M_GENDER], False, [5]):
@@ -286,16 +331,20 @@ def text_prepare(text):
             text = text.replace(m.group(), eval(pattern[1]), 1)
 
     # Прилагательные, в состав которых входят числительные (3-кратный и т.п.)
-    for m in finditer(r'\b((\d+) - |)(\d+)-(([а-я]{4,})([иы][ейх]|[иы]ми?|[ая]я|[ео][ей]|[ео]го|[ео]му?))\b', text):
+    mask = (r'\b((\d+) - |)(\d+)-'
+            r'(([а-я]{4,})([иы][ейх]|[иы]ми?|[ая]я|[ео][ей]|[ео]го|[ео]му?))\b')
+    for m in finditer(mask, text):
         if m.group(5) in adjectiv:
             if m.group(1) == '': pre = ''
             else:
                 if m.group(2)[-3:] == '000':
                     pre = cardinal(m.group(2)[:-3], r_ca) + 'тысяче - '
-                else: pre = cardinal(m.group(2), r_ca) + ' - '
+                else:
+                    pre = cardinal(m.group(2), r_ca) + ' - '
             if m.group(3)[-3:] == '000':
                 num = cardinal(m.group(3)[:-3], r_ca) + 'тысяче'
-            else: num = cardinal(m.group(3), r_ca)
+            else:
+                num = cardinal(m.group(3), r_ca)
             num = pre + num
             num = sub('ста', 'сто', num)
             num = sub(r'(одной тысячи|одноготысяче)', 'тысяче', num)
@@ -305,7 +354,9 @@ def text_prepare(text):
     # Количественные числительные
 
     # Творительный падеж
-    for m in finditer(r'((\d+)( - | или | и )|)(плюс |минус |)(\d+) ([а-яё]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b', text):
+    mask = (r'((\d+)( - | или | и )|)(плюс |минус |)(\d+) '
+            r'([а-яё]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b')
+    for m in finditer(mask, text):
         if m.group(1):
             pre = cardinal(m.group(2), t_ca)
             if condition(m.group(2)):
@@ -333,7 +384,9 @@ def text_prepare(text):
             text = text.replace(m.group(), new, 1)
 
     # Предлоги творительного падежа
-    for m in finditer(r'\b([Нн]ад|[Пп]еред|[Пп]о сравнению с)( (\d+)( [-и] | или )| )(\d+)\b', text):
+    mask = (r'\b([Нн]ад|[Пп]еред|[Пп]о сравнению с)'
+            r'( (\d+)( [-и] | или )| )(\d+)\b')
+    for m in finditer(mask, text):
         number = ' '
         if m.group(2) != ' ':
             number += cardinal(m.group(3), t_ca) + m.group(4)
@@ -341,7 +394,15 @@ def text_prepare(text):
         text = text.replace(m.group(), new, 1)
 
     # Родительный падеж
-    for m in finditer(r'\b([Оо]т|[Сс])( почти | примерно | приблизительно | плюс | минус | )((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)( до( почти | примерно | приблизительно | плюс | минус | )((\d+,|)\d+( [-и] | или )|)(\d+,|)\d+( ([а-яё]+([иы]х|[ео]й|[ео]го) |и более |и менее |)([а-яё]+)|))\b', text):
+    mask = (r'\b([Оо]т|[Сс])'
+            r'( почти | примерно | приблизительно | плюс | минус | )'
+            r'((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)'
+            r'('
+            r' до( почти | примерно | приблизительно | плюс | минус | )'
+            r'((\d+,|)\d+( [-и] | или )|)(\d+,|)\d+'
+            r'( ([а-яё]+([иы]х|[ео]й|[ео]го) |и более |и менее |)([а-яё]+)|)'
+            r')\b')
+    for m in finditer(mask, text):
         if m.group(3):
             if m.group(4):
                 pre = fraction(m.group(4)[:-1], m.group(5), 1)
@@ -367,7 +428,19 @@ def text_prepare(text):
         new = m.group(1) + m.group(2) + pre + number + m.group(9)
         text = text.replace(m.group(), new, 1)
 
-    for m in finditer(r'\b([Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Дд]ороже|[Дд]ешевле|[Оо]коло|[Сс]выше|[Сс]реди|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Сс]|[Уу]|[Вв]место|[Вв] возрасте|[Вв] размере|[Вв] пределах|[Вв] течение|[Нн]а протяжении|[Нн]ач[инаетялсьо]{2,7} с|[Пп]орядка|[Пп]осле|[Пп]ротив|[Дд]остиг[авеийлнотшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5}|[Сс]тарше|[Мм]оложе|не превы[шаеситьло]{3,4})( примерно | приблизительно | почти | плюс | минус | )((\d+,|)(\d+)( - | или )|)(\d+,|)(\d+)( ([а-яё]+([иы]х|[ео]й|[ео]го) |и более |и менее |)([а-яё]+)|)\b', text):
+    mask = (r'\b('
+            r'[Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Дд]ороже|'
+            r'[Дд]ешевле|[Оо]коло|[Сс]выше|[Сс]реди|[Дд]ля|[Дд]о|[Ии]з|[Оо]т|'
+            r'[Бб]ез|[Сс]|[Уу]|[Вв]место|[Вв] возрасте|[Вв] размере|'
+            r'[Вв] пределах|[Вв] течение|[Нн]а протяжении|'
+            r'[Нн]ач[инаетялсьо]{2,7} с|[Пп]орядка|[Пп]осле|[Пп]ротив|'
+            r'[Дд]остиг[авеийлнотшщюуья]{,5}|[Вв]ладел[аеимухцыь]{2,5}|'
+            r'[Сс]тарше|[Мм]оложе|не превы[шаеситьло]{3,4}'
+            r')'
+            r'( примерно | приблизительно | почти | плюс | минус | )'
+            r'((\d+,|)(\d+)( - | или )|)(\d+,|)(\d+)'
+            r'( ([а-яё]+([иы]х|[ео]й|[ео]го) |и более |и менее |)([а-яё]+)|)\b')
+    for m in finditer(mask, text):
         if m.group(2)[1:-1] not in ("них", "которых"):
             if m.group(3) == '':
                 pre = ''
@@ -398,7 +471,9 @@ def text_prepare(text):
             new = m.group(1) + m.group(2) + pre + number + m.group(9)
             text = text.replace(m.group(), new, 1)
 
-    for m in finditer(r'(\s|\A|\(| )((\d+) - |)(1|\d*[02-9]1)(( [а-яё]+[ео](й|го) | )([а-яё]+))\b', text):
+    mask = (r'(\s|\A|\(| )((\d+) - |)(1|\d*[02-9]1)'
+            r'(( [а-яё]+[ео](й|го) | )([а-яё]+))\b')
+    for m in finditer(mask, text):
         attr = words.get_attr(m.group(8))
         if attr.have(None, False, [1]):
             number = cardinal(m.group(4), r_ca)
@@ -414,7 +489,9 @@ def text_prepare(text):
             new = m.group(1) + pre + number + m.group(5)
             text = text.replace(m.group(), new, 1)
 
-    for m in finditer(r'(\s|\A|\(| )((\d+)( [-и] | или )|)(\d*[02-9][234]|[234])(( [а-яё]+[иы]х | )([а-яё]+))\b(.)', text):
+    mask = (r'(\s|\A|\(| )((\d+)( [-и] | или )|)(\d*[02-9][234]|[234])'
+            r'(( [а-яё]+[иы]х | )([а-яё]+))\b(.)')
+    for m in finditer(mask, text):
         attr = words.get_attr(m.group(8))
         if attr.have(None, True, [1]):
             if m.group(2) == '':
@@ -428,7 +505,11 @@ def text_prepare(text):
             text = text.replace(m.group(), new, 1)
 
     # Предложный падеж
-    for m in finditer(r'\b([Вв]|[Нн]а|[Оо]б?|[Пп]ри)(( почти | примерно | приблизительно | плюс | минус | )(\d+)( [-и] | или )| )(почти |примерно |приблизительноплюс |минус |)(\d+)( ([а-яё]+([иы]х|[ео]м) |)([а-яё]+([ая]х|е|и|у)))\b', text):
+    mask = (r'\b([Вв]|[Нн]а|[Оо]б?|[Пп]ри)'
+            r'(( почти | примерно | приблизительно | плюс | минус | )(\d+)( [-и] | или )| )'
+            r'(почти |примерно |приблизительноплюс |минус |)(\d+)'
+            r'( ([а-яё]+([иы]х|[ео]м) |)([а-яё]+([ая]х|е|и|у)))\b')
+    for m in finditer(mask, text):
         if m.group(2) == ' ':
             pre = ' '
         else:
@@ -466,7 +547,9 @@ def text_prepare(text):
         text = text.replace(m.group(), new, 1)
 
     # Женский род (иминетельный/винительный падежи)
-    for m in finditer(r'(\s|\A|\(| )(((\d+)( - | или | и ))|)(\d+)(( [а-яё]+([ая]я|[иы][ех])|) ([а-яё]+))', text):
+    mask = (r'(\s|\A|\(| )(((\d+)( - | или | и ))|)(\d+)'
+            r'(( [а-яё]+([ая]я|[иы][ех])|) ([а-яё]+))')
+    for m in finditer(mask, text):
         attr = words.get_attr(m.group(10))
         a = attr.have([Z_GENDER], None, [1])
         b = attr.have([Z_GENDER], False, [0])
@@ -479,7 +562,10 @@ def text_prepare(text):
             text = text.replace(m.group(), new, 1)
 
     # Винительный падеж
-    for m in finditer(r'\b([Зз]а |[Пп]ро |[Чч]ерез |состав[аеилотя]{2,4} )(\d+)(( [а-яё]+([ая]я|[ую]ю|[ео]е|[иы][йх]) | )([а-яё]+))\b', text):
+    mask = (r'\b([Зз]а |[Пп]ро |[Чч]ерез |состав[аеилотя]{2,4} )'
+            r'(\d+)'
+            r'(( [а-яё]+([ая]я|[ую]ю|[ео]е|[иы][йх]) | )([а-яё]+))\b')
+    for m in finditer(mask, text):
         number = cardinal(m.group(2), v_ca)
         if number[-3:] == 'дин':
             attr = words.get_attr(m.group(6))
@@ -517,7 +603,9 @@ def text_prepare(text):
         new = m.group(1) + cardinal(m.group(2), v_ca) + m.group(3)
         text = text.replace(m.group(), new, 1)
 
-    for m in finditer(r'([Сс]тои(т[ь]?|л[аио]?|вш[аеиймя]{2,3})) (\d+) ([а-яё]+)\b', text):
+    mask = (r'([Сс]тои(т[ь]?|л[аио]?|вш[аеиймя]{2,3})) '
+            r'(\d+) ([а-яё]+)\b')
+    for m in finditer(mask, text):
         number = cardinal(m.group(3), v_ca)
         if number[-3:] == 'дин' and m.group(4) in ('копейку', 'гривну', 'драхму', 'марку'):
             number = number[:-2] + 'ну'
@@ -539,7 +627,9 @@ def text_prepare(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Дательный падеж
-    for m in finditer(r'((\d+)( [-и] | или )|)(\d+)(( [а-яё]+([иы]м|[ео]му) | )([а-яё]+([аиыя]м|у|ю|е)))\b', text):
+    mask = (r'((\d+)( [-и] | или )|)(\d+)'
+            r'(( [а-яё]+([иы]м|[ео]му) | )([а-яё]+([аиыя]м|у|ю|е)))\b')
+    for m in finditer(mask, text):
         if m.group(1) == '':
             pre = ''
         else:
@@ -566,7 +656,9 @@ def text_prepare(text):
             text = text.replace(m.group(), pre + number + m.group(5), 1)
 
     # Предлоги дательного падежа
-    for m in finditer(r'\b([Кк]|рав[нагеийлмоcуюыхья]{2,6})( (\d+)( [-и] | или )| )(\d+)\b', text):
+    mask = (r'\b([Кк]|рав[нагеийлмоcуюыхья]{2,6})'
+            r'( (\d+)( [-и] | или )| )(\d+)\b')
+    for m in finditer(mask, text):
         number = ' '
         if m.group(2) != ' ':
             number += cardinal(m.group(3), d_ca) + m.group(4)
