@@ -1293,7 +1293,7 @@ patterns = (
   # Римские цифры
   (r'(Александр|Иван|Иоанн|Пав[е]?л|П[её]тр|Ф[её]дор|Васили|Лжедмитри|Никола|Карл|Людовик)(|а|е|ем|й|ом|у|ю|я) ([IVX]+)\b', 'm.group(1) + m.group(2) + " " + ordinal(roman2arabic(m.group(3)), mu_pad[m.group(2)])'),
   (r'(Анн|Екатерин)(|а|е|ой|у|ы) ([IVX]+)', 'm.group(1) + m.group(2) + " " + ordinal(roman2arabic(m.group(3)), zh_pad[m.group(2)])'),
-  (r'\b([IVXCDM]+)( [А-Я]?[а-яё]+([иы]([ейх]|ми?)|[ая]я|[ео](му?|го|[ей])|[ую]ю))\b', 'ordinal(roman2arabic(m.group(1)), adj_pad[m.group(3)]) + m.group(2)'),
+  (r'(?<!-)\b([IVXCDM]+)( [А-Я]?[а-яё]+([иы]([ейх]|ми?)|[ая]я|[ео](му?|го|[ей])|[ую]ю))\b', 'ordinal(roman2arabic(m.group(1)), adj_pad[m.group(3)]) + m.group(2)'),
   (r'\b([A-Z][a-z]*[ -]|[А-Я][а-я]*[ -])([IVX]+)($|\n|[.,;:]| [^a-z])', 'm.group(1) + roman2arabic(m.group(2)) + m.group(3)'),
   (r'\b([IV]+) степени', 'ordinal(roman2arabic(m.group(1)), r_zh) + " степени"'),
   (r'\b([IV]+) (класс|ранг|тип)(|а|е|у|ом)\b', 'ordinal(roman2arabic(m.group(1)), mu_pad[m.group(3)]) + " " + m.group(2) + m.group(3)'),
