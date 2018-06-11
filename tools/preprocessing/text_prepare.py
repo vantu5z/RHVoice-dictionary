@@ -561,11 +561,11 @@ def text_prepare(text):
             new = m.group(1) + cardinal(m.group(2), v_ca) + ' ' + m.group(3)
             text = text.replace(m.group(), new, 1)
 
-    for m in finditer(r'\b(\d*[02-9]1|1)(( [а-яё]+[ео]го | )([а-яё]+))\b', text):
-        if (words.have(m.group(4), [M_GENDER], False, [3])
-                and not words.have(m.group(4), [M_GENDER], False, [0])):
-            new = cardinal(m.group(1), v_ca)[:-2] + 'ного' + m.group(2)
-            text = text.replace(m.group(), new, 1)
+#    for m in finditer(r'\b(\d*[02-9]1|1)(( [а-яё]+[ео]го | )([а-яё]+))\b', text):
+#        if (words.have(m.group(4), [M_GENDER], False, [3])
+#                and not words.have(m.group(4), [M_GENDER], False, [0])):
+#            new = cardinal(m.group(1), v_ca)[:-2] + 'ного' + m.group(2)
+#            text = text.replace(m.group(), new, 1)
 
     for m in finditer(r'\b(\d*[02-9]1|1)(( [а-яё]+[ую]ю | )([а-яё]+))', text):
         if words.have(m.group(4), [Z_GENDER], False, [3]):
