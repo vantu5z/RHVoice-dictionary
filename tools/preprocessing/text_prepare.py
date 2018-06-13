@@ -44,7 +44,8 @@ def text_prepare(text):
 
     # Винительный падеж
     # например: "диаметром в 2 см -> диаметром в 2 сантиметра"
-    for m in finditer(r'\b([А-Яа-я]{3,}) в( (\d+,|)(\d+) - | )(\d+,|)(\d+)_' + units, text):
+    mask = (r'\b([А-Яа-я]{3,}) в( (\d+,|)(\d+) - | )(\d+,|)(\d+)_' + units)
+    for m in finditer(mask, text):
         if m.group(1).lower() in pre_acc:
             if m.group(2) == ' ':
                 number = ''
@@ -65,7 +66,9 @@ def text_prepare(text):
 
     # Родительный падеж
     # пример: "С 5 см до -> С пяти сантиметров до"
-    for m in finditer(r'\b([Сс] (почти |примерно |приблизительно |плюс |минус |))(\d+)_' + units + ' до ', text):
+    mask = (r'\b([Сс] (почти |примерно |приблизительно |плюс |минус |))(\d+)_'
+            + units + ' до ')
+    for m in finditer(mask, text):
         new = m.group(1) + m.group(3) + ' ' + substant(m.group(3), m.group(4), 1) + ' до '
         text = text.replace(m.group(), new, 1)
 
@@ -104,7 +107,8 @@ def text_prepare(text):
             number = fraction(m.group(8)[:-1], m.group(9), 1) + ' ' + forms[m.group(10)][2]
         else:
             number = m.group(9) + ' ' + substant(m.group(9), m.group(10), 1)
-        text = text.replace(m.group(), m.group(1) + m.group(2) + prenum  + number, 1)
+        new = m.group(1) + m.group(2) + prenum  + number
+        text = text.replace(m.group(), new, 1)
 
     # Дательный падеж
     mask = (r'\b('
@@ -149,7 +153,8 @@ def text_prepare(text):
             number = fraction(m.group(7)[:-1], m.group(8), 3) + ' ' + forms[m.group(9)][2]
         else:
             number = m.group(8) + ' ' + substant(m.group(8), m.group(9), 3)
-        text = text.replace(m.group(), m.group(1) + prenum + m.group(5) + number, 1)
+        new = m.group(1) + prenum + m.group(5) + number
+        text = text.replace(m.group(), new, 1)
 
     # Предложный падеж
     mask = (r'\b([Вв]|[Оо]б?|[Пп]ри)'
@@ -223,7 +228,9 @@ def text_prepare(text):
             minutes = '0_' + minutes
         text = text.replace(m.group(), m.group(1) + hours + ' ' + minutes, 1)
 
-    for m in finditer(r'\b([Дд]о |[Пп]осле |[Оо]коло |[Сс] )(\d{1,2})[:.](\d\d)\b', text):
+    mask = (r'\b([Дд]о |[Пп]осле |[Оо]коло |[Сс] )'
+            r'(\d{1,2})[:.](\d\d)\b')
+    for m in finditer(mask, text):
         hours = cardinal(m.group(2), r_ca)
         minutes = cardinal(m.group(3), r_ca)
         if minutes[-2:] == 'го':
@@ -487,7 +494,10 @@ def text_prepare(text):
 
     # Предложный падеж
     mask = (r'\b([Вв]|[Нн]а|[Оо]б?|[Пп]ри)'
-            r'(( почти | примерно | приблизительно | плюс | минус | )(\d+)( [-и] | или )| )'
+            r'('
+            r'( почти | примерно | приблизительно | плюс | минус | )'
+            r'(\d+)( [-и] | или )| '
+            r')'
             r'(почти |примерно |приблизительноплюс |минус |)(\d+)'
             r'( ([а-яё]+([иы]х|[ео]м) |)([а-яё]+([ая]х|е|и|у)))\b')
     for m in finditer(mask, text):
@@ -520,7 +530,9 @@ def text_prepare(text):
             text = text.replace(m.group(), new, 1)
 
     # Предлоги предложного падежа
-    for m in finditer(r'\b([Оо]б?|[Пп]ри)( (\d+)( [-и] | или )| )(\d+)\b', text):
+    mask = (r'\b([Оо]б?|[Пп]ри)'
+            r'( (\d+)( [-и] | или )| )(\d+)\b')
+    for m in finditer(mask, text):
         number = ' '
         if m.group(2) != ' ':
             number += cardinal(m.group(3), p_ca) + m.group(4)
@@ -572,7 +584,9 @@ def text_prepare(text):
             new = cardinal(m.group(1), v_ca)[:-2] + 'ну' + m.group(2)
             text = text.replace(m.group(), new, 1)
 
-    for m in finditer(r'\b(\d*[02-9][2-4]|[2-4])(( [а-яё]+[иы]х | )([а-яё]+))', text):
+    mask = (r'\b(\d*[02-9][2-4]|[2-4])'
+            r'(( [а-яё]+[иы]х | )([а-яё]+))')
+    for m in finditer(mask, text):
         if words.have(m.group(4), [M_GENDER], True, [3]):
             number = cardinal(m.group(1), v_ca)
             if number[-3:] == 'два':
