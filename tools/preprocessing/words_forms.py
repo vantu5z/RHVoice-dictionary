@@ -9,7 +9,7 @@ try:
     morph = pymorphy2.MorphAnalyzer()
     is_morph = True
 except:
-    print('Не установлен "pymorphy2".'
+    print('Не установлен "pymorphy2".\n'
           'Определение атрибутов слова будет вестись по словарю.')
     is_morph = False
 
@@ -52,35 +52,50 @@ class Words():
         """
         attr_list = AttrList()
 
+        norm_form = []
         # перебираем все варианты разбора
+        # и составляем список слов в нормальной форме
         for rec in records:
-            tag = rec.tag.cyr_repr
-
             # отбрасываем не существительные
+            tag = rec.tag.cyr_repr
             if 'СУЩ' not in tag:
                 continue
 
-            # род
-            if   'ор' in tag: gender = O_GENDER
-            elif 'мр' in tag: gender = M_GENDER
-            elif 'жр' in tag: gender = Z_GENDER
-            elif 'ср' in tag: gender = S_GENDER
-            else:
-                continue
+            if rec.normal_form not in norm_form:
+                norm_form.append(rec.normal_form)
 
-            # число
-            plural = 'мн' in tag
-
-            # совпадение падежей
+        # составляем список вариантов разбора
+        for item in norm_form:
             case = [0, 0, 0, 0, 0, 0]
-            if 'им' in tag: case[0] = 1
-            if 'рд' in tag: case[1] = 1
-            if 'дт' in tag: case[2] = 1
-            if 'вн' in tag: case[3] = 1
-            if 'тв' in tag: case[4] = 1
-            if 'пр' in tag: case[5] = 1
+            gender = None
+            plural = None
 
-            if 1 in case:
+            for rec in records:
+                if rec.normal_form == item:
+                    tag = rec.tag.cyr_repr
+
+                    # род
+                    if gender is None:
+                        if   'ор' in tag: gender = O_GENDER
+                        elif 'мр' in tag: gender = M_GENDER
+                        elif 'жр' in tag: gender = Z_GENDER
+                        elif 'ср' in tag: gender = S_GENDER
+                        else:
+                            continue
+
+                    # число
+                    if plural is None:
+                        plural = 'мн' in tag
+
+                    # совпадение падежей
+                    if 'им' in tag: case[0] = 1
+                    if 'рд' in tag: case[1] = 1
+                    if 'дт' in tag: case[2] = 1
+                    if 'вн' in tag: case[3] = 1
+                    if 'тв' in tag: case[4] = 1
+                    if 'пр' in tag: case[5] = 1
+
+            if 1 in case and gender is not None and plural is not None:
                 attr_list.append(WordAttributes(gender, plural, case))
 
         return attr_list
