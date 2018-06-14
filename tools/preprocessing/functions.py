@@ -12,10 +12,12 @@ def condition(value):
     Оканчивается ли число на "1", но не на "11"?
     (value - число в формате строки)
     """
-    if value == '1' or (len(value) > 1 and value[-2] != '1' and value[-1] == '1'):
+    if value == '1':
         return True
-    else:
-        return False
+    if len(value) > 1 and value[-2] != '1' and value[-1] == '1':
+        return True
+
+    return False
 
 
 def cardinal(num, casus):
@@ -24,7 +26,8 @@ def cardinal(num, casus):
     (num - число, casus - падеж)
     """
     rem = len(num) % 3
-    if rem != 0: num = '0' * (3 - rem) + num
+    if rem != 0:
+        num = '0' * (3 - rem) + num
     c_num = ''
     triple = len(num) // 3
     for t in range(triple):
@@ -51,9 +54,9 @@ def cardinal(num, casus):
                     t_num = casus[0][0][int(number[0])] + ' ' + t_num
 
         if c_num and t_num:
-             c_num += ' ' + t_num
+            c_num += ' ' + t_num
         else:
-             c_num += t_num
+            c_num += t_num
         if t_num and len(num) != 0:
             if number[2] == '1' and number[1] != '1':
                 n = 0
@@ -62,9 +65,12 @@ def cardinal(num, casus):
             c_num = c_num + ' ' + casus[0][0][0][triple - t - 1][n]
 
     c_num = sub(r'одн(им|ого|ому|ом) тысяч(ей|е|и)', r'одной тысяч\2', c_num)
-    if c_num == '': c_num = casus[0][0][0][0]
+    if c_num == '':
+        c_num = casus[0][0][0][0]
     if casus[0][0][0][0] == 'ноль':
-        c_num = sub(r'(два|три|четыре) (миллион|миллиард|триллион|квадриллион|квинтиллион|секстиллион|септиллион|октиллион)ов', r'\1 \2а', c_num)
+        c_num = sub((r'(два|три|четыре) '
+                     r'(миллион|миллиард|триллион|квадриллион|квинтиллион|'
+                     r'секстиллион|септиллион|октиллион)ов'), r'\1 \2а', c_num)
         c_num = sub('один тысячу', 'одну тысячу', c_num)
         c_num = sub('два тысяч', 'две тысячи', c_num)
         c_num = sub(r'((три|четыре) тысяч)', r'\1и', c_num)
@@ -88,14 +94,16 @@ def ordinal(num, casus):
                         prenum = ''
                     else:
                         prenum = num[:-3]
-                        if int(prenum) != 0: prenum += '000_'
+                        if int(prenum) != 0:
+                            prenum += '000_'
                     number = casus[0][0][int(num[-3])]
             else:
                 if len(num) == 2:
                     prenum = ''
                 else:
                     prenum = num[:-2]
-                    if int(prenum) != 0: prenum += '00_'
+                    if int(prenum) != 0:
+                        prenum += '00_'
                 number = casus[0][int(num[-2])]
         except:
             prenum = ''
@@ -111,10 +119,12 @@ def ordinal(num, casus):
                     prenum = ''
                 else:
                     prenum = num[:-2]
-                    if int(prenum) != 0: prenum += '00_'
+                    if int(prenum) != 0:
+                        prenum += '00_'
             else:
                 prenum = num[:-1]
-                if int(prenum) != 0: prenum += '0_'
+                if int(prenum) != 0:
+                    prenum += '0_'
                 dec = 0
         number = casus[int(num[-1])][dec]
     return prenum + number
@@ -139,14 +149,14 @@ def roman2arabic(value):
     return total
 
 
-def substant(num, key, cas = 0):
+def substant(num, key, cas=0):
     """
     Чтение единиц измерения
     num - число, key - обозначение единицы измерения,
     cas - падеж (0 - именительный, 1 - родительный, 2 - дательный,
                  3 - творительный, 4 - предложный, 5 - винительный)
     """
-    if len (num) > 3 and num[-3:] == '000':
+    if len(num) > 3 and num[-3:] == '000':
         form = forms[key][1]
     else:
         if cas == 0:
@@ -161,9 +171,14 @@ def substant(num, key, cas = 0):
                     form = forms[key][1]
         elif cas == 5:
             if key in zh_units:
-
                 if condition(num):
-                    form = {'т': 'тонну', 'а.е.': 'астрономическую единицу', 'л.с.': 'лошадиную силу', 'сек': 'секунду', "'": 'минуту', 'ед.': 'единицу', 'шт.': 'штуку'}[key]
+                    form = {'т': 'тонну',
+                            'а.е.': 'астрономическую единицу',
+                            'л.с.': 'лошадиную силу',
+                            'сек': 'секунду',
+                            "'": 'минуту',
+                            'ед.': 'единицу',
+                            'шт.': 'штуку'}[key]
                 elif num in '234' or (len(num) > 1 and num[-2] != '1' and num[-1] in '234'):
                     form = forms[key][10]
                 else:
@@ -230,7 +245,7 @@ def daynight(num, nom):
     return number
 
 
-def fraction(full, frac, cas = 0):
+def fraction(full, frac, cas=0):
     """
     Чтение десятичных дробей до миллионных включительно.
     (full - целая часть, frac - дробная часть, cas - падеж)
@@ -244,11 +259,15 @@ def fraction(full, frac, cas = 0):
             dec += ', ' + frac[t]
         return full + dec
     f_part = feminin(full)
-    if f_part[-1] == 'а': fp = 'ая'
-    else: fp = 'ых'
+    if f_part[-1] == 'а':
+        fp = 'ая'
+    else:
+        fp = 'ых'
     d_part = feminin(frac)
-    if d_part[-1] == 'а': dp = 'ая'
-    else: dp = 'ых'
+    if d_part[-1] == 'а':
+        dp = 'ая'
+    else:
+        dp = 'ых'
     if cas == 1:
         f_part = cardinal(full, r_ca)
         if condition(full):
