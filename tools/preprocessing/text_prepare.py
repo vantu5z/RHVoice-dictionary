@@ -10,7 +10,7 @@ from re import sub, finditer
 from .templates import (presamples, samples, patterns,
                         units, zh_units,
                         forms,
-                        adjectiv, pre_acc,
+                        pre_acc,
                         i_mu, i_sr, i_zh, i_mn,
                         r_ca, r_mn, r_mu, r_sr, r_zh,
                         d_ca, d_mn, d_mu, d_sr, d_zh,
@@ -320,24 +320,26 @@ def text_prepare(text):
 
     # Прилагательные, в состав которых входят числительные (3-кратный и т.п.)
     mask = (r'\b((\d+) - |)(\d+)-'
-            r'(([а-я]{4,})([иы][ейх]|[иы]ми?|[ая]я|[ео][ей]|[ео]го|[ео]му?))\b')
+            r'((долларов|рубл[её]в|часов|градусн|мерн|сильн|ствольн|'
+            r'тонн|канальн|страничн|тысячн|миллионн|миллиардн|'
+            r'процентн|секундн|минутн|месячн|недельн|дневн|кратн|'
+            r'местн|мильн|этажн|лет[ин]|микронн|(кило|милли|)граммов|'
+            r'(кило|милли|санти|)метров)'
+            r'([еиюя]|[иы]([ейх]|ми?)|[ая]я|[ую]ю|[ео]([ей]|го|му?)))\b')
     for m in finditer(mask, text):
-        if m.group(5) in adjectiv:
-            if m.group(1) == '': pre = ''
-            else:
-                if m.group(2)[-3:] == '000':
-                    pre = cardinal(m.group(2)[:-3], r_ca) + 'тысяче - '
-                else:
-                    pre = cardinal(m.group(2), r_ca) + ' - '
-            if m.group(3)[-3:] == '000':
-                num = cardinal(m.group(3)[:-3], r_ca) + 'тысяче'
-            else:
-                num = cardinal(m.group(3), r_ca)
-            num = pre + num
-            num = sub('ста', 'сто', num)
-            num = sub(r'(одной тысячи|одноготысяче)', 'тысяче', num)
-            num = sub(r'\bодного', 'одно', num)
-            text = text.replace(m.group(), num + '-' + m.group(4), 1)
+        if m.group(1) == '': pre = ''
+        else:
+            if m.group(2)[-3:] == '000':
+                pre = cardinal(m.group(2)[:-3], r_ca) + 'тысяче - '
+            else: pre = cardinal(m.group(2), r_ca) + ' - '
+        if m.group(3)[-3:] == '000':
+            num = cardinal(m.group(3)[:-3], r_ca) + 'тысяче'
+        else: num = cardinal(m.group(3), r_ca)
+        num = pre + num
+        num = sub('ста', 'сто', num)
+        num = sub(r'(одной тысячи|одноготысяче)', 'тысяче', num)
+        num = sub(r'\bодного', 'одно', num)
+        text = text.replace(m.group(), num + '-' + m.group(4), 1)
 
     # Количественные числительные
 
