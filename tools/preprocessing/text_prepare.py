@@ -195,7 +195,7 @@ def text_prepare(text):
             r'(миллион|миллиард|триллион)(|ам?|ами|ов)'
             r') ' + units)
     for m in finditer(mask, text):
-        new = m.group(1) + ' ' + forms[m.group(4)][1]
+        new = m.group(1) + '_' + forms[m.group(4)][1]
         text = text.replace(m.group(), new, 1)
 
     # Время в формате (h)h ч (m)m мин
