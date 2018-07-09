@@ -1292,27 +1292,27 @@ samples = (
   (r'(\d)( ранга)\b', r'\1-го\2'),
   (r'([Пп]ункт(|а|е|у|ом)|[Сс]тать(я|е|ю|и|ей)) (?=\d+ )', r'\1_'),
 
-  (r'\b([Сс]о? \d+)( по \d+) ((тысяче|сто)летие|поколение)\b', r'\1-го\2-е \3'),
-  (r'\b([Вв]о? \d+)( [-и] \d+) ((тысяче|сто)летиях|поколениях)', r'\1-м\2-м \3')
+  (r'\b([Сс]о?)( \d+)( по \d+) ((тысяче|сто)летие|поколение)\b', r'\1\2-го\3-е \4'),
+  (r'\b([Вв]о?)( \d+)( - | и | или )(\d+) ((тысяче|сто)летиях|поколениях)', r'\1\2-м\3\4-м \5'),
+  (r'([02-9]?[5-90]|1\d) ((тысяче|сто)летия|поколения)\b', r'\1-го \2')
 )
 patterns = (
   # Римские цифры
   (r'(Александр|Иван|Иоанн|Пав[е]?л|П[её]тр|Ф[её]дор|Васили|Лжедмитри|Никола|Карл|Людовик)(|а|е|ем|й|ом|у|ю|я) ([IVX]+)\b', 'm.group(1) + m.group(2) + " " + ordinal(roman2arabic(m.group(3)), mu_pad[m.group(2)])'),
   (r'(Анн|Екатерин)(|а|е|ой|у|ы) ([IVX]+)', 'm.group(1) + m.group(2) + " " + ordinal(roman2arabic(m.group(3)), zh_pad[m.group(2)])'),
   (r'(?<![-.])\b([IVXCDM]+)( [А-Я]?[а-яё]+([иы]([ейх]|ми?)|[ая]я|[ео](му?|го|[ей])|[ую]ю))\b', 'ordinal(roman2arabic(m.group(1)), adj_pad[m.group(3)]) + m.group(2)'),
-  (r'\b([A-Z][a-z]*[ -.]|[А-Я][а-я]*[ -.])([IVX]+)($|\n|[.,;:]| [^a-z])', 'm.group(1) + roman2arabic(m.group(2)) + m.group(3)'),
   (r'\b([IV]+) степени', 'ordinal(roman2arabic(m.group(1)), r_zh) + " степени"'),
+  (r'\b([IVX]+)( (тысяче|сто)летия| поколения)', 'ordinal(roman2arabic(m.group(1)), r_sr) + m.group(2)'),
   (r'\b([IV]+) (класс|ранг|тип)(|а|е|у|ом)\b', 'ordinal(roman2arabic(m.group(1)), mu_pad[m.group(3)]) + " " + m.group(2) + m.group(3)'),
+  (r'\b([A-Z][a-z]*[ -.]|[А-Я][а-я]*[ -.])([IVX]+)($|\n|[.,;:]| [^a-z])', 'm.group(1) + roman2arabic(m.group(2)) + m.group(3)'),
   # Порядковые числительные - даты и т. д.
-  (r'\b(\d+)( класс(|а|е|ом|у))\b', 'ordinal(m.group(1), mu_pad[m.group(3)]) + m.group(2)'),
+  (r'(\d+)( класс| [Сс]ъезд| тип| этаж)(|а|е|ом|у)\b', 'ordinal(m.group(1), mu_pad[m.group(3)]) + m.group(2) + m.group(3)'),
   (r'(\d+)( зимни[еимх]{1,2}| летни[еимх]{1,2}|)( Олимпийски)(е|ми|м\b|х)\b', 'ordinal(m.group(1), mn_pad[m.group(4)]) + m.group(2) + m.group(3) + m.group(4)'),
-  (r'(\d+)( этаж(а|е|у|ом|))', 'ordinal(m.group(1), mu_pad[m.group(3)]) + m.group(2)'),
   (r'(\d+0)( - \d+0-е годы)', 'ordinal(m.group(1), i_mn) + m.group(2)'),
   (r'(\d+0)-е( годы)', 'ordinal(m.group(1), i_mn) + m.group(2)'),
   (r'([Кк] )(\d+0)-м\b', 'm.group(1) + ordinal(m.group(2), d_mn)'),
   (r'(\d+)( [-и] )(\d+) ((тысяче|сто)летия|поколения)\b', 'ordinal(m.group(1), i_sr) + m.group(2) + ordinal(m.group(3), i_sr) + " " + m.group(4)'),
-  (r'(\d+)( ((тысяче|сто)лети|поколени)(е|и|ем|ю|я))\b', 'ordinal(m.group(1), sr_pad[m.group(5)]) + m.group(2)'),
-  (r'(\d+)( [Сс]ъезд)(|а|е|ом|у)\b', 'ordinal(m.group(1), mu_pad[m.group(3)]) + m.group(2) + m.group(3)'),
+  (r'(\d+)( ((тысяче|сто)лети|поколени)(е|и|ем|ю))\b', 'ordinal(m.group(1), sr_pad[m.group(5)]) + m.group(2)'),
   (r'([Вв] )(\d+0)-е\b', 'm.group(1) + ordinal(m.group(2), i_mn)'),
   (r'(\d+)-е(?! [а-яё]+[аиы])\b', 'ordinal(m.group(1), i_sr)'), # Тестовый шаблон
   (r'(\d+0)( - \d+0-м годам)', 'ordinal(m.group(1), d_mn) + m.group(2)'),
