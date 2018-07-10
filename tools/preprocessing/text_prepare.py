@@ -245,19 +245,19 @@ def text_prepare(text):
     # Порядковые числительные
     # =======================
 
-#    mask = (r'\b(([IVXCDLM]+)( ?- ?(начале |середине |конце )| (и|или)( | в ))|)'
-#            r'([IVXCDLM]+) '
-#            r'('
-#            r'[в]?в\.|век[аеуовмих]{,3}\b|[Сс]ъезд[аеуовмих]{,3}\b|'
-#            r'квартал[аеуыовмих]{,3}\b'
-#            r')')
-#    for m in finditer(mask, text):
-#        if m.group(1) == '':
-#            part1 = ''
-#        else:
-#            part1 = roman2arabic(m.group(2)) + m.group(3)
-#        new = part1 + roman2arabic(m.group(7)) + ' ' + m.group(8)
-#        text = text.replace(m.group(), new, 1)
+    mask = (r'\b(([IVXCDLM]+)( ?- ?(начале |середине |конце )| (и|или)( | в ))|)'
+            r'([IVXCDLM]+) '
+            r'('
+            r'[в]?в\.|век[аеуовмих]{,3}\b|[Сс]ъезд[аеуовмих]{,3}\b|'
+            r'квартал[аеуыовмих]{,3}\b'
+            r')')
+    for m in finditer(mask, text):
+        if m.group(1) == '':
+            part1 = ''
+        else:
+            part1 = roman2arabic(m.group(2)) + m.group(3)
+        new = part1 + roman2arabic(m.group(7)) + ' ' + m.group(8)
+        text = text.replace(m.group(), new, 1)
 
     # применение шаблонов
     for sample in samples:
