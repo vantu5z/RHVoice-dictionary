@@ -10,7 +10,7 @@ from re import sub, finditer
 from .templates import (presamples, samples, patterns,
                         units, zh_units,
                         forms,
-                        pre_acc,
+                        pre_acc, pre_gen,
                         i_mu, i_sr, i_zh, i_mn,
                         r_ca, r_mn, r_mu, r_sr, r_zh,
                         d_ca, d_mn, d_mu, d_sr, d_zh,
@@ -245,19 +245,43 @@ def text_prepare(text):
     # Порядковые числительные
     # =======================
 
-    mask = (r'\b(([IVXCDLM]+)( ?- ?(начале |середине |конце )| (и|или)( | в ))|)'
-            r'([IVXCDLM]+) '
-            r'('
-            r'[в]?в\.|век[аеуовмих]{,3}\b|[Сс]ъезд[аеуовмих]{,3}\b|'
-            r'квартал[аеуыовмих]{,3}\b'
-            r')')
+    # Чтение римских цифр
+
+    for m in finditer(r'\b([А-Яа-я]+)( [IVX]+ )в\.', text):
+        pre = m.group(1).lower()
+        new = ''
+        if pre == 'к':
+            new = 'веку'
+        elif pre in ('в', 'о', 'об'):
+            new = 'веке'
+        elif pre in pre_gen:
+            new = 'века'
+        if new:
+            text = text.replace(m.group(), m.group(1) + m.group(2) + new, 1)
+
+    mask = (r'\b([IVX]+)( [-и] )([IVX]+)'
+            r'( век(ами?|ах?|ов)| (тысяче|сто)лети(ями?|ях?|й))\b')
     for m in finditer(mask, text):
-        if m.group(1) == '':
-            part1 = ''
+        ending = m.group(4)[-1]
+        if ending == 'а':
+            num1 = ordinal(roman2arabic(m.group(1)), i_mu)
+            num2 = ordinal(roman2arabic(m.group(3)), i_mu)
+        elif ending == 'я':
+            num1 = ordinal(roman2arabic(m.group(1)), i_sr)
+            num2 = ordinal(roman2arabic(m.group(3)), i_sr)
+        elif ending == 'в' or ending == 'й':
+            num1 = ordinal(roman2arabic(m.group(1)), r_mu)
+            num2 = ordinal(roman2arabic(m.group(3)), r_mu)
+        elif ending == 'м':
+            num1 = ordinal(roman2arabic(m.group(1)), d_mu)
+            num2 = ordinal(roman2arabic(m.group(3)), d_mu)
+        elif ending == 'и':
+            num1 = ordinal(roman2arabic(m.group(1)), t_mu)
+            num2 = ordinal(roman2arabic(m.group(3)), t_mu)
         else:
-            part1 = roman2arabic(m.group(2)) + m.group(3)
-        new = part1 + roman2arabic(m.group(7)) + ' ' + m.group(8)
-        text = text.replace(m.group(), new, 1)
+            num1 = ordinal(roman2arabic(m.group(1)), p_mu)
+            num2 = ordinal(roman2arabic(m.group(3)), p_mu)
+        text = text.replace(m.group(), num1 + m.group(2) + num2 + m.group(4), 1)
 
     # применение шаблонов
     for sample in samples:
