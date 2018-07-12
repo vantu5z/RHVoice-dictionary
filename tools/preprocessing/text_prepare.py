@@ -10,7 +10,7 @@ from re import sub, finditer
 from .templates import (presamples, samples, patterns,
                         units, zh_units,
                         forms,
-                        pre_acc, pre_gen,
+                        pre_acc,
                         i_mu, i_sr, i_zh, i_mn,
                         r_ca, r_mn, r_mu, r_sr, r_zh,
                         d_ca, d_mn, d_mu, d_sr, d_zh,
@@ -245,19 +245,16 @@ def text_prepare(text):
     # Порядковые числительные
     # =======================
 
-    # Чтение римских цифр
+    # Чтение римских цифр в датах
 
-    for m in finditer(r'\b([А-Яа-я]+)( [IVX]+ )в\.', text):
-        pre = m.group(1).lower()
-        new = ''
-        if pre == 'к':
-            new = 'веку'
-        elif pre in ('в', 'о', 'об'):
-            new = 'веке'
-        elif pre in pre_gen:
-            new = 'века'
-        if new:
-            text = text.replace(m.group(), m.group(1) + m.group(2) + new, 1)
+    mask = (r'\b(([IVX]+)( (-|или|и|по)( в (конце |начале |середине |)| ))|)'
+            r'([IVX]+)( в?в\.)')
+    for m in finditer(mask, text):
+        if m.group(1):
+            pre = roman2arabic(m.group(2)) + m.group(3)
+        else: pre = ''
+        new = pre + roman2arabic(m.group(7)) + m.group(8)
+        text = text.replace(m.group(), new, 1)
 
     mask = (r'\b([IVX]+)( [-и] )([IVX]+)'
             r'( век(ами?|ах?|ов)| (тысяче|сто)лети(ями?|ях?|й))\b')
