@@ -192,7 +192,7 @@ def text_prepare(text):
 
     mask = (r'('
             r'тысяч[аимх]{,3}|'
-            r'(миллион|миллиард|триллион)(|ам?|ами|ов)'
+            r'(миллион|миллиард|триллион)(|ами|а[мх]?|ов)'
             r') ' + units)
     for m in finditer(mask, text):
         new = m.group(1) + '_' + forms[m.group(4)][1]
