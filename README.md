@@ -18,7 +18,7 @@ RHVoice-dictionary
 Примечание: После добавления словарей синтезатор необходимо перезагрузить (закрыть все программы, которые его используют), чтобы новые словари начали действовать.
 
 ## Предварительная обработка текста
-Ведётся разработка предварительной обработки текста на Питоне "[/tools/preprocessing](https://github.com/vantu5z/RHVoice-dictionary/tree/check_words_form/tools/preprocessing)".<br>
+Ведётся разработка предварительной обработки текста на Питоне "[/tools/preprocessing](https://github.com/vantu5z/RHVoice-dictionary/tree/master/tools/preprocessing)".<br>
 Включает в себя обработку:
 
 - дат;
