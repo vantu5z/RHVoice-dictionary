@@ -44,7 +44,7 @@ def text_prepare(text):
 
     # Винительный падеж
     # например: "диаметром в 2 см -> диаметром в 2 сантиметра"
-    mask = (r'\b([А-Яа-я]{3,}) в( (\d+,|)(\d+) - | )(\d+,|)(\d+)_' + units)
+    mask = (r'\b([А-Яа-яё]{3,}) в( (\d+,|)(\d+) - | )(\d+,|)(\d+)_' + units)
     for m in finditer(mask, text):
         if m.group(1).lower() in pre_acc:
             if m.group(2) == ' ':
