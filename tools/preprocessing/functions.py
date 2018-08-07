@@ -125,6 +125,8 @@ def ordinal(num, casus):
                 prenum = num[:-1]
                 if int(prenum) != 0:
                     prenum += '0_'
+                else:
+                    prenum += '_'
                 dec = 0
         number = casus[int(num[-1])][dec]
     return prenum + number
