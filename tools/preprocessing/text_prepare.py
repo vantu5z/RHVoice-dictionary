@@ -472,7 +472,7 @@ def text_prepare(text):
                 pre = fraction(m.group(4)[:-1], m.group(5), 1)
             else:
                 pre = cardinal(m.group(5), r_ca)
-            if condition(m.group(5)) and m.group(12) not in (None, 'для'):
+            if condition(m.group(5)) and m.group(12) is not None:
                 attr = words.get_attr(m.group(12))
                 if m.group(9) and attr.have([Z_GENDER], None, [1]):
                     pre = pre[:-2] + 'й'
