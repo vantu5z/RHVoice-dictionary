@@ -463,37 +463,36 @@ def text_prepare(text):
             r'( примерно | приблизительно | почти | плюс | минус | )'
             r'((\d+,|)(\d+)( - | или )|)(\d+,|)(\d+)'
             r'( ([а-яё]+([иы]х|[ео]й|[ео]го) |и более |и менее |)'
-            r'([а-яё]{4,})|)\b')
+            r'([а-яё]{3,})|)\b')
     for m in finditer(mask, text):
-        if m.group(2)[1:-1] not in ("них", "которых"):
-            if m.group(3) == '':
-                pre = ''
+        if m.group(3) == '':
+            pre = ''
+        else:
+            if m.group(4):
+                pre = fraction(m.group(4)[:-1], m.group(5), 1)
             else:
-                if m.group(4):
-                    pre = fraction(m.group(4)[:-1], m.group(5), 1)
-                else:
-                    pre = cardinal(m.group(5), r_ca)
-                if condition(m.group(5)) and m.group(12) is not None:
-                    attr = words.get_attr(m.group(12))
-                    if m.group(9) and attr.have([Z_GENDER], None, [1]):
-                        pre = pre[:-2] + 'й'
-                    elif m.group(12) == 'суток':
-                        pre = pre[:-3] + 'их'
-                pre += m.group(6)
-            if m.group(7):
-                number = fraction(m.group(7)[:-1], m.group(8), 1)
-            else:
-                number = cardinal(m.group(8), r_ca)
+                pre = cardinal(m.group(5), r_ca)
+            if condition(m.group(5)) and m.group(12) not in (None, 'для'):
                 attr = words.get_attr(m.group(12))
-                if condition(m.group(8)) and attr.have(Z_GENDER, False, [1]):
-                    number = number[:-2] + 'й'
-                elif (m.group(9) and (attr.have(None, True, [1])
-                      or m.group(12) == 'суток')):
-                        number = cardinal(m.group(8), r_ca)
-                        if m.group(12) == 'суток' and number[-6:] == 'одного':
-                            number = number[:-3] + 'их'
-            new = m.group(1) + m.group(2) + pre + number + m.group(9)
-            text = text.replace(m.group(), new, 1)
+                if m.group(9) and attr.have([Z_GENDER], None, [1]):
+                    pre = pre[:-2] + 'й'
+                elif m.group(12) == 'суток':
+                    pre = pre[:-3] + 'их'
+            pre += m.group(6)
+        if m.group(7):
+            number = fraction(m.group(7)[:-1], m.group(8), 1)
+        else:
+            number = cardinal(m.group(8), r_ca)
+            attr = words.get_attr(m.group(12))
+            if condition(m.group(8)) and attr.have(Z_GENDER, False, [1]):
+                number = number[:-2] + 'й'
+            elif (m.group(9) and (attr.have(None, True, [1])
+                  or m.group(12) == 'суток')):
+                    number = cardinal(m.group(8), r_ca)
+                    if m.group(12) == 'суток' and number[-6:] == 'одного':
+                        number = number[:-3] + 'их'
+        new = m.group(1) + m.group(2) + pre + number + m.group(9)
+        text = text.replace(m.group(), new, 1)
 
     mask = (r'(\s|\A|\(| )((\d+) - |)(1|\d*[02-9]1)'
             r'(( [а-яё]+[ео](й|го) | )([а-яё]+))\b')
