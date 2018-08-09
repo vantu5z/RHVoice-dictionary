@@ -483,14 +483,15 @@ def text_prepare(text):
             number = fraction(m.group(7)[:-1], m.group(8), 1)
         else:
             number = cardinal(m.group(8), r_ca)
-            attr = words.get_attr(m.group(12))
-            if condition(m.group(8)) and attr.have(Z_GENDER, False, [1]):
-                number = number[:-2] + 'й'
-            elif (m.group(9) and (attr.have(None, True, [1])
-                  or m.group(12) == 'суток')):
-                    number = cardinal(m.group(8), r_ca)
-                    if m.group(12) == 'суток' and number[-6:] == 'одного':
-                        number = number[:-3] + 'их'
+            if m.group(12):
+                attr = words.get_attr(m.group(12))
+                if condition(m.group(8)) and attr.have(Z_GENDER, False, [1]):
+                    number = number[:-2] + 'й'
+                elif (m.group(9) and (attr.have(None, True, [1])
+                      or m.group(12) == 'суток')):
+                        number = cardinal(m.group(8), r_ca)
+                        if m.group(12) == 'суток' and number[-6:] == 'одного':
+                            number = number[:-3] + 'их'
         new = m.group(1) + m.group(2) + pre + number + m.group(9)
         text = text.replace(m.group(), new, 1)
 
