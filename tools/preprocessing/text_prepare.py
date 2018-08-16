@@ -376,46 +376,6 @@ def text_prepare(text):
 
     # Количественные числительные
 
-    # Творительный падеж
-    mask = (r'\b((\d+)( - | или | и )|)(плюс |минус |)(\d+) '
-            r'([а-яё]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b')
-    for m in finditer(mask, text):
-        if m.group(1):
-            pre = cardinal(m.group(2), t_ca)
-            if condition(m.group(2)):
-                a = words.have(m.group(6), [Z_GENDER], False, [4])
-                b = words.have(m.group(6)[:-2], [Z_GENDER], False, [0])
-                c = words.have(m.group(6)[:-3] + 'ь', [Z_GENDER], False, [0])
-                if a or b or c:
-                    pre = pre[:-2] + 'ой'
-            pre += m.group(3)
-        else:
-            pre = ''
-        number = ''
-        if condition(m.group(5)):
-            attr = words.get_attr(m.group(6))
-            if attr.have([M_GENDER, S_GENDER], False, [4]):
-                number = cardinal(m.group(5), t_ca)
-            elif attr.have([Z_GENDER], False, [4]):
-                number = cardinal(m.group(5), t_ca)[:-2] + 'ой'
-            elif m.group(6) == 'сутками':
-                number = cardinal(m.group(5), t_ca) + 'и'
-        elif m.group(6)[-2:] == 'ми':
-            number = cardinal(m.group(5), t_ca)
-        if number:
-            new = pre + m.group(4) + number + ' ' + m.group(6)
-            text = text.replace(m.group(), new, 1)
-
-    # Предлоги творительного падежа
-    mask = (r'\b([Нн]ад|[Пп]еред|[Пп]о сравнению с)'
-            r'( (\d+)( [-и] | или )| )(\d+)\b')
-    for m in finditer(mask, text):
-        number = ' '
-        if m.group(2) != ' ':
-            number += cardinal(m.group(3), t_ca) + m.group(4)
-        new = m.group(1) + number + cardinal(m.group(5), t_ca)
-        text = text.replace(m.group(), new, 1)
-
     # Родительный падеж
     mask = (r'\b([Оо]т|[Сс])'
             r'( почти | примерно | приблизительно | плюс | минус | )'
@@ -527,6 +487,46 @@ def text_prepare(text):
             new = (m.group(1) + number + cardinal(m.group(5), r_ca) +
                    m.group(6) + m.group(9))
             text = text.replace(m.group(), new, 1)
+
+    # Творительный падеж
+    mask = (r'\b((\d+)( - | или | и )|)(плюс |минус |)(\d+) '
+            r'([а-яё]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b')
+    for m in finditer(mask, text):
+        if m.group(1):
+            pre = cardinal(m.group(2), t_ca)
+            if condition(m.group(2)):
+                a = words.have(m.group(6), [Z_GENDER], False, [4])
+                b = words.have(m.group(6)[:-2], [Z_GENDER], False, [0])
+                c = words.have(m.group(6)[:-3] + 'ь', [Z_GENDER], False, [0])
+                if a or b or c:
+                    pre = pre[:-2] + 'ой'
+            pre += m.group(3)
+        else:
+            pre = ''
+        number = ''
+        if condition(m.group(5)):
+            attr = words.get_attr(m.group(6))
+            if attr.have([M_GENDER, S_GENDER], False, [4]):
+                number = cardinal(m.group(5), t_ca)
+            elif attr.have([Z_GENDER], False, [4]):
+                number = cardinal(m.group(5), t_ca)[:-2] + 'ой'
+            elif m.group(6) == 'сутками':
+                number = cardinal(m.group(5), t_ca) + 'и'
+        elif m.group(6)[-2:] == 'ми':
+            number = cardinal(m.group(5), t_ca)
+        if number:
+            new = pre + m.group(4) + number + ' ' + m.group(6)
+            text = text.replace(m.group(), new, 1)
+
+    # Предлоги творительного падежа
+    mask = (r'\b([Нн]ад|[Пп]еред|[Пп]о сравнению с)'
+            r'( (\d+)( [-и] | или )| )(\d+)\b')
+    for m in finditer(mask, text):
+        number = ' '
+        if m.group(2) != ' ':
+            number += cardinal(m.group(3), t_ca) + m.group(4)
+        new = m.group(1) + number + cardinal(m.group(5), t_ca)
+        text = text.replace(m.group(), new, 1)
 
     # Предложный падеж
     mask = (r'\b([Вв]|[Нн]а|[Оо]б?|[Пп]ри)'
