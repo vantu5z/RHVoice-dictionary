@@ -488,7 +488,27 @@ def text_prepare(text):
                    m.group(6) + m.group(9))
             text = text.replace(m.group(), new, 1)
 
+    # Предлог "с" + родительный падеж множественного числа
+    mask = (r'\b([Сс] )(\d+) ([а-яё]+)\b')
+    for m in finditer(mask, text):
+        attr = words.get_attr(m.group(3))
+        if attr.have(None, True, [1]):
+            new = m.group(1) + cardinal(m.group(2), r_ca) + ' ' + m.group(3)
+            text = text.replace(m.group(), new, 1)
+
     # Творительный падеж
+    # Исключение
+    mask = (r'\b((состав(ил[аио]?|[ия]т|ля[ею]т)|потеря(л[аио]?|[ею]т)) \d+) '
+            r'(погибшими|ранеными|убитыми)'
+            r'(( и \d+) (погибшими|ранеными|убитыми)|)\b')
+    for m in finditer(mask, text):
+        if m.group(6):
+            new = m.group(7) + '_' + m.group(8)
+        else:
+            new = ''
+        new = m.group(1) + '_' + m.group(5) + new
+        text = text.replace(m.group(), new, 1)
+
     mask = (r'\b((\d+)( - | или | и )|)(плюс |минус |)(\d+) '
             r'([а-яё]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b')
     for m in finditer(mask, text):
