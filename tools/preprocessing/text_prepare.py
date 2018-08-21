@@ -502,7 +502,11 @@ def text_prepare(text):
         new = m.group(1) + '_' + m.group(5) + new
         text = text.replace(m.group(), new, 1)
 
-    mask = (r'\b((\d+)( - | или | и )|)(плюс |минус |)(\d+) '
+    mask = (r'\b('
+            r'(\d+)'
+            r'( - | или | и (почти |приблизительно |примерно |плюс |минус |))|'
+            r')'
+            r'(\d+) '
             r'([а-яё]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b')
     for m in finditer(mask, text):
         if m.group(1):
@@ -528,7 +532,7 @@ def text_prepare(text):
         elif m.group(6)[-2:] == 'ми':
             number = cardinal(m.group(5), t_ca)
         if number:
-            new = pre + m.group(4) + number + ' ' + m.group(6)
+            new = pre + number + ' ' + m.group(6)
             text = text.replace(m.group(), new, 1)
 
     # Предлоги творительного падежа
