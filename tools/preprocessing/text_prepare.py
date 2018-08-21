@@ -124,17 +124,20 @@ def text_prepare(text):
         text = text.replace(m.group(), m.group(1) + number, 1)
 
     # Творительный падеж
+
     mask = (r'\b('
-            r'([Пп]о сравнению с|[Вв]ладе[авеийлмтюшщья]{1,7})'
-            r'( почти | приблизительно | примерно | плюс | минус | )'
+            r'([Пп]о сравнению с|[Вв]ладе[авеийлмтюшщья]{1,7}) '
+            r'(почти |приблизительно |примерно |плюс |минус |)'
+            r'((\d+,|)(\d+) - '
+            r'(почти |приблизительно |примерно |плюс |минус |)|)'
             r')'
             r'(\d+,|)(\d+)_' + units)
     for m in finditer(mask, text):
-        if m.group(4):
-            number = fraction(m.group(4)[:-1], m.group(5), 3) + ' ' + forms[m.group(6)][2]
+        if m.group(8):
+            new = fraction(m.group(8)[:-1], m.group(9), 3) + ' ' + forms[m.group(10)][2]
         else:
-            number = m.group(5) + ' ' + substant(m.group(5), m.group(6), 3)
-        text = text.replace(m.group(), m.group(1) + number, 1)
+            new = m.group(9) + ' ' + substant(m.group(9), m.group(10), 3)
+        text = text.replace(m.group(), m.group(1) + new, 1)
 
     mask = (r'('
             r'([Мм]ежду (почти |приблизительно |примерно |плюс |минус |))'
