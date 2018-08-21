@@ -137,24 +137,17 @@ def text_prepare(text):
         text = text.replace(m.group(), m.group(1) + number, 1)
 
     mask = (r'('
-            r'[Мм]ежду( почти | приблизительно | примерно | плюс | минус | )'
-            r')'
+            r'([Мм]ежду (почти |приблизительно |примерно |плюс |минус |))'
             r'(\d+,|)(\d+)'
-            r'( и( почти | приблизительно | примерно | плюс | минус | ))'
-            r'(\d+,|)(\d+)_' + units)
+            r'( и (почти |приблизительно |примерно |плюс |минус |))'
+            r'(\d+,|)(\d+)'
+            r')_' + units)
     for m in finditer(mask, text):
-        if m.group(3):
-            prenum = fraction(m.group(3)[:-1], m.group(4), 3)
+        if m.group(8):
+            new = forms[m.group(10)][2]
         else:
-            prenum = cardinal(m.group(4), t_ca)
-            if condition(m.group(4)) and m.group(9) in zh_units:
-                prenum = prenum[:-2] + 'ой'
-        if m.group(7):
-            number = fraction(m.group(7)[:-1], m.group(8), 3) + ' ' + forms[m.group(9)][2]
-        else:
-            number = m.group(8) + ' ' + substant(m.group(8), m.group(9), 3)
-        new = m.group(1) + prenum + m.group(5) + number
-        text = text.replace(m.group(), new, 1)
+            new = substant(m.group(9), m.group(10), 3)
+        text = text.replace(m.group(), m.group(1) + ' ' + new, 1)
 
     # Предложный падеж
     mask = (r'\b([Вв]|[Оо]б?|[Пп]ри)'
