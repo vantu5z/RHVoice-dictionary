@@ -125,7 +125,7 @@ def text_prepare(text):
 
     # Творительный падеж
     mask = (r'\b('
-            r'([Сс]|[Вв]ладе[авеийлмтюшщья]{1,7})'
+            r'([Пп]о сравнению с|[Вв]ладе[авеийлмтюшщья]{1,7})'
             r'( почти | приблизительно | примерно | плюс | минус | )'
             r')'
             r'(\d+,|)(\d+)_' + units)
@@ -547,6 +547,21 @@ def text_prepare(text):
             number += cardinal(m.group(3), t_ca) + m.group(4)
         new = m.group(1) + number + cardinal(m.group(5), t_ca)
         text = text.replace(m.group(), new, 1)
+    mask = (r'\b([Мм]ежду (плюс |минус |))'
+            r'(\d+,|)(\d+)'
+            r'( и (плюс |минус |))'
+            r'(\d+,|)(\d+)\b')
+    for m in finditer(mask, text):
+        if m.group(3):
+            pre = fraction(m.group(3)[:-1], m.group(4), 3)
+        else:
+            pre = cardinal(m.group(4), t_ca)
+        pre = m.group(1) + pre + m.group(5)
+        if m.group(7):
+            number = fraction(m.group(7)[:-1], m.group(8), 3)
+        else:
+            number = cardinal(m.group(8), t_ca)
+        text = text.replace(m.group(), pre + number, 1)
 
     # Предложный падеж
     mask = (r'\b([Вв]|[Нн]а|[Оо]б?|[Пп]ри)'
