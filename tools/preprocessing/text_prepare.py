@@ -614,6 +614,15 @@ def text_prepare(text):
             new = m.group(1) + pre + m.group(6) + number + m.group(8)
             text = text.replace(m.group(), new, 1)
 
+    for m in finditer(r'\b(\d+) ([а-яё]+)\b', text):
+        attr = words.get_attr(m.group(2))
+        a = attr.have(None, True, [5])
+        b = condition(m.group(1))
+        c = attr.have([M_GENDER, S_GENDER], False, [5])
+        if a or (b and c):
+            new = cardinal(m.group(1), p_ca) + ' ' + m.group(2)
+            text = text.replace(m.group(), new, 1)
+
     # Предлоги предложного падежа
     mask = (r'\b([Оо]б?|[Пп]ри)'
             r'( (\d+)( [-и] | или )| )(\d+)\b')
