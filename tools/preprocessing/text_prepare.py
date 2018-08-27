@@ -506,7 +506,7 @@ def text_prepare(text):
         new = m.group(1) + '_' + m.group(5) + new
         text = text.replace(m.group(), new, 1)
 
-    mask = (r'\b('
+    mask = (r'(?<!\d,)\b('
             r'(\d+)'
             r'( - | или | и (почти |приблизительно |примерно |плюс |минус |))|'
             r')'
@@ -541,7 +541,7 @@ def text_prepare(text):
 
     # Предлоги творительного падежа
 
-    mask = (r'\b(([Нн]ад|[Пп]еред|[Пп]о сравнению с) '
+    mask = (r'\b(([Мм]ежду|[Нн]ад|[Пп]еред|[Пп]о сравнению с) '
             r'(почти |приблизительно |примерно |плюс |минус |))'
             r'((\d+,|)(\d+)'
             r'( [-и] | или )'
@@ -559,22 +559,6 @@ def text_prepare(text):
             number = fraction(m.group(9)[:-1], m.group(10), 3)
         else:
             number = cardinal(m.group(10), t_ca)
-        text = text.replace(m.group(), pre + number, 1)
-
-    mask = (r'\b([Мм]ежду (плюс |минус |))'
-            r'(\d+,|)(\d+)'
-            r'( и (плюс |минус |))'
-            r'(\d+,|)(\d+)\b')
-    for m in finditer(mask, text):
-        if m.group(3):
-            pre = fraction(m.group(3)[:-1], m.group(4), 3)
-        else:
-            pre = cardinal(m.group(4), t_ca)
-        pre = m.group(1) + pre + m.group(5)
-        if m.group(7):
-            number = fraction(m.group(7)[:-1], m.group(8), 3)
-        else:
-            number = cardinal(m.group(8), t_ca)
         text = text.replace(m.group(), pre + number, 1)
 
     # Предложный падеж
