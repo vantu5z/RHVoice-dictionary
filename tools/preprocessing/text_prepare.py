@@ -66,11 +66,17 @@ def text_prepare(text):
 
     # Родительный падеж
     # пример: "С 5 см до -> С пяти сантиметров до"
-    mask = (r'\b([Сс] (почти |примерно |приблизительно |плюс |минус |))(\d+)_'
-            + units + ' до ')
+    mask = (r'\b([Сс] (почти |примерно |приблизительно |плюс |минус |))'
+            r'(\d+,|)(\d+)_' + units + ' до ')
     for m in finditer(mask, text):
-        new = m.group(1) + m.group(3) + ' ' + substant(m.group(3), m.group(4), 1) + ' до '
-        text = text.replace(m.group(), new, 1)
+        new = m.group(1)
+        if m.group(3):
+            new += fraction(m.group(3)[:-1], m.group(4), 1)
+            new += ' ' + forms[m.group(5)][2]
+        else:
+            new += m.group(4)
+            new += ' ' + substant(m.group(4), m.group(5), 1)
+        text = text.replace(m.group(), new + ' до ', 1)
 
     # пример: "от 1 до 4 км -> от одного до четырёх километров"
     for m in finditer(r'\b([Оо]т |[Сс]о? )(\d+,|)(\d+)( до (\d+,|)\d+_)' + units, text):
