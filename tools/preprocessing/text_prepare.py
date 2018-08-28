@@ -125,32 +125,24 @@ def text_prepare(text):
 
     # Творительный падеж
 
-    mask = (r'\b('
-            r'([Пп]о сравнению с|[Вв]ладе[авеийлмтюшщья]{1,7}) '
-            r'(почти |приблизительно |примерно |плюс |минус |)'
-            r'((\d+,|)(\d+) - '
-            r'(почти |приблизительно |примерно |плюс |минус |)|)'
-            r')'
+    mask = (r'\b(([Мм]ежду|[Пп]о сравнению с|[Вв]ладе[авеийлмтюшщья]{1,7}) '
+            r'(почти |приблизительно |примерно |плюс |минус |))'
+            r'((\d+,|)(\d+)'
+            r'( [-и] (почти |приблизительно |примерно |плюс |минус |))|)'
             r'(\d+,|)(\d+)_' + units)
     for m in finditer(mask, text):
-        if m.group(8):
-            new = fraction(m.group(8)[:-1], m.group(9), 3) + ' ' + forms[m.group(10)][2]
+        new = m.group(1)
+        a = m.group(4) and not m.group(5)
+        if a and condition(m.group(6)) and m.group(11) in zh_units:
+            new += cardinal(m.group(6), t_ca)[:-2] + 'ой' + m.group(7)
         else:
-            new = m.group(9) + ' ' + substant(m.group(9), m.group(10), 3)
-        text = text.replace(m.group(), m.group(1) + new, 1)
-
-    mask = (r'('
-            r'([Мм]ежду (почти |приблизительно |примерно |плюс |минус |))'
-            r'(\d+,|)(\d+)'
-            r'( и (почти |приблизительно |примерно |плюс |минус |))'
-            r'(\d+,|)(\d+)'
-            r')_' + units)
-    for m in finditer(mask, text):
-        if m.group(8):
-            new = forms[m.group(10)][2]
+            new += m.group(4)
+        if m.group(9):
+            new += fraction(m.group(9)[:-1], m.group(10), 3) + ' '
+            new += forms[m.group(11)][2]
         else:
-            new = substant(m.group(9), m.group(10), 3)
-        text = text.replace(m.group(), m.group(1) + ' ' + new, 1)
+            new += m.group(10) + ' ' + substant(m.group(10), m.group(11), 3)
+        text = text.replace(m.group(), new, 1)
 
     # Предложный падеж
     mask = (r'\b([Вв]|[Оо]б?|[Пп]ри)'
@@ -299,7 +291,7 @@ def text_prepare(text):
     for m in finditer(mask, text):
         number = ''
         attr = words.get_attr(m.group(3))
-        if attr.have([M_GENDER, S_GENDER], None, [4]):
+        if attr.have([M_GENDER, S_GENDER], False, [4]):
             number = ordinal(m.group(2), t_mu)
         elif attr.have([Z_GENDER], False, [2, 4, 5]):
             number = ordinal(m.group(2), t_zh)
