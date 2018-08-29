@@ -44,25 +44,29 @@ def text_prepare(text):
 
     # Винительный падеж
     # например: "диаметром в 2 см -> диаметром в 2 сантиметра"
-    mask = (r'\b([А-Яа-яё]{3,}) в( (\d+,|)(\d+) - | )(\d+,|)(\d+)_' + units)
+    mask = (r'\b([А-Яа-яё]{3,})'
+            r'( (ориентировочно |примерно |приблизительно |)в )'
+            r'((\d+,|)(\d+) - |)(\d+,|)(\d+)_' + units)
     for m in finditer(mask, text):
         if m.group(1).lower() in pre_acc:
-            if m.group(2) == ' ':
-                number = ''
-            else:
-                if m.group(3):
-                    number = fraction(m.group(3)[:-1], m.group(4), 5)
+            if m.group(4):
+                if m.group(5):
+                    number = fraction(m.group(5)[:-1], m.group(6), 5)
                 else:
-                    if condition(m.group(4)) and m.group(7) in zh_units:
-                        number = feminin(m.group(4))[:-1] + 'у'
+                    if condition(m.group(6)) and m.group(9) in zh_units:
+                        number = feminin(m.group(6))[:-1] + 'у'
                     else:
-                        number = m.group(4)
+                        number = m.group(6)
                 number = number + ' - '
-            if m.group(5):
-                number += fraction(m.group(5)[:-1], m.group(6), 5) + ' ' + forms[m.group(7)][2]
             else:
-                number += m.group(6) + ' ' + substant(m.group(6), m.group(7), 5)
-            text = text.replace(m.group(), m.group(1) + ' в ' + number, 1)
+                number = ''
+            if m.group(7):
+                number += fraction(m.group(7)[:-1], m.group(8), 5) + ' '
+                number += forms[m.group(9)][2]
+            else:
+                number += m.group(8) + ' ' + substant(m.group(8), m.group(9), 5)
+            new = m.group(1) + m.group(2) + number
+            text = text.replace(m.group(), new, 1)
 
     # Родительный падеж
     # пример: "С 5 см до -> С пяти сантиметров до"
@@ -128,6 +132,10 @@ def text_prepare(text):
         else:
             number = m.group(5) + ' ' + substant(m.group(5), m.group(6), 2)
         text = text.replace(m.group(), m.group(1) + number, 1)
+    # С предлогом "по" при указании количества
+    for m in finditer(r'\b([Пп]о (\d*1(000){0,3}))_' + units, text):
+        new = m.group(1) + ' ' + substant(m.group(2), m.group(4), 2)
+        text = text.replace(m.group(), new, 1)
 
     # Творительный падеж
 
