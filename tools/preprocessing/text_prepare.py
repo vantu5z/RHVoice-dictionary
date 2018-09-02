@@ -349,6 +349,13 @@ def text_prepare(text):
 #            new = ordinal(m.group(1), v_zh) + ' ' + m.group(2)
 #            text = text.replace(m.group(), new)
 
+    mask = (r'\b(?<!,)(\d*[02-9][05-9]|\d*1\d|[5-9]) ([а-яё]+)\b')
+    for m in finditer(mask, text):
+        attr = words.get_attr(m.group(2))
+        if  attr.have([M_GENDER, S_GENDER], False, [1]):
+            new = ordinal(m.group(1), r_mu) + ' ' + m.group(2)
+            text = text.replace(m.group(), new, 1)
+
     for pattern in patterns:
         for m in finditer(pattern[0], text):
             text = text.replace(m.group(), eval(pattern[1]), 1)
