@@ -646,23 +646,31 @@ def text_prepare(text):
             text = text.replace(m.group(), new, 1)
 
     # Винительный падеж
-    mask = (r'\b([Зз]а |[Пп]ро |[Чч]ерез |состав[аеилотя]{2,4} )'
-            r'(\d+)'
+
+    mask = (r'\b([Зз]а|[Пп]ро|[Чч]ерез|состав[аеилотя]{2,4})'
+            r'( (\d+)( -| или)|) (\d+)'
             r'(( [а-яё]+([ая]я|[ую]ю|[ео]е|[иы][йх]) | )([а-яё]+))\b')
     for m in finditer(mask, text):
-        number = cardinal(m.group(2), v_ca)
+        if m.group(2):
+            pre = cardinal(m.group(3), v_ca)
+            if pre[-3:] == 'дин':
+                attr = words.get_attr(m.group(9))
+                if attr.have([Z_GENDER], False, [3]):
+                    pre = pre[:-2] + 'ну'
+                elif attr.have([S_GENDER], False, [0, 3]):
+                    pre = pre[:-2] + 'но'
+            pre += m.group(4) + ' '
+        else:
+            pre = ''
+        number = cardinal(m.group(5), v_ca)
         if number[-3:] == 'дин':
-            attr = words.get_attr(m.group(6))
+            attr = words.get_attr(m.group(9))
             if attr.have([Z_GENDER], False, [3]):
                 number = number[:-2] + 'ну'
             elif attr.have([S_GENDER], False, [0, 3]):
                 number = number[:-2] + 'но'
-        text = text.replace(m.group(), m.group(1) + number + m.group(3), 1)
-
-    for m in finditer(r'\b([Нн]а )(\d+) ([а-яё]+)\b', text):
-        if words.have(m.group(3), None, True, [1]):
-            new = m.group(1) + cardinal(m.group(2), v_ca) + ' ' + m.group(3)
-            text = text.replace(m.group(), new, 1)
+        new = m.group(1) + ' ' + pre + number + m.group(6)
+        text = text.replace(m.group(), new, 1)
 
 #    for m in finditer(r'\b(\d*[02-9]1|1)(( [а-яё]+[ео]го | )([а-яё]+))\b', text):
 #        if (words.have(m.group(4), [M_GENDER], False, [3])
