@@ -200,6 +200,8 @@ def text_prepare(text):
         new = m.group(1) + ' ' + forms[m.group(4)][1]
         text = text.replace(m.group(), new, 1)
 
+    text = sub('\*', '', text) # Удаление ненужного значка
+
     # Время в формате (h)h ч (m)m мин
     for m in finditer(r'\b(\d{1,2}) ?ч ?(\d{1,2}) ?мин\b', text):
         if condition(m.group(1)): hours = ' час '
