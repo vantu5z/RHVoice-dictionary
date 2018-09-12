@@ -741,9 +741,8 @@ def text_prepare(text):
             pre += m.group(3)
         number = ''
         if condition(m.group(4)):
-            if m.group(8)[-1] == 'у' or (m.group(8)[-1] == 'ю'
-                and m.group(8)[-2] != 'ь'):
-                    number = cardinal(m.group(4), d_ca)
+            if words.have(m.group(8), [M_GENDER, S_GENDER], False, [2]):
+                number = cardinal(m.group(4), d_ca)
             elif words.have(m.group(8), [Z_GENDER], False, [2, 5]):
                 number = cardinal(m.group(4), d_ca)[:-2] + 'й'
             elif m.group(8) == 'суткам':
