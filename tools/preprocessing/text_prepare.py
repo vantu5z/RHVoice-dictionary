@@ -195,12 +195,10 @@ def text_prepare(text):
     mask = (r'('
             r'тысяч[аимх]{,3}|'
             r'(миллион|миллиард|триллион)(|ами|а[мх]?|ов)'
-            r') ' + units)
+            r')_' + units)
     for m in finditer(mask, text):
         new = m.group(1) + ' ' + forms[m.group(4)][1]
         text = text.replace(m.group(), new, 1)
-
-    text = sub('"', '', text) # Удаление маркера
 
     # Время в формате (h)h ч (m)m мин
     for m in finditer(r'\b(\d{1,2}) ?ч ?(\d{1,2}) ?мин\b', text):
