@@ -7,7 +7,7 @@
 
 from re import sub, finditer
 
-from .templates import (presamples, samples, patterns,
+from .templates import (samples_1, samples_2, samples_3, samples_4,
                         units, zh_units,
                         forms,
                         pre_acc,
@@ -35,7 +35,7 @@ def text_prepare(text):
     """
 
     # предварительная обработка текста
-    for sample in presamples:
+    for sample in samples_1:
         text = sub(sample[0], sample[1], text)
 
     # =================
@@ -138,7 +138,6 @@ def text_prepare(text):
         text = text.replace(m.group(), new, 1)
 
     # Творительный падеж
-
     mask = (r'\b(([Мм]ежду|[Пп]о сравнению с|[Вв]ладе[авеийлмтюшщья]{1,7}) '
             r'(почти |приблизительно |примерно |плюс |минус |))'
             r'((\d+,|)(\d+)'
@@ -283,7 +282,7 @@ def text_prepare(text):
         text = text.replace(m.group(), num1 + m.group(2) + num2 + m.group(4), 1)
 
     # применение шаблонов
-    for sample in samples:
+    for sample in samples_2:
         text = sub(sample[0], sample[1], text)
 
     # например: "во 2 окне -> во втором окне"
@@ -361,9 +360,9 @@ def text_prepare(text):
             new = number + ' ' + m.group(2)
             text = text.replace(m.group(), new, 1)
 
-    for pattern in patterns:
-        for m in finditer(pattern[0], text):
-            text = text.replace(m.group(), eval(pattern[1]), 1)
+    for sample in samples_3:
+        for m in finditer(sample[0], text):
+            text = text.replace(m.group(), eval(sample[1]), 1)
 
     # Прилагательные, в состав которых входят числительные (3-кратный и т.п.)
     mask = (r'\b((\d+) - |)(\d+)-'
@@ -795,11 +794,12 @@ def text_prepare(text):
         new = fraction(m.group(1), m.group(2)) + m.group(3)
         text = text.replace(m.group(), new, 1)
 
-    # Необязательная замена "_" (используется при обработке)
-    text = sub('_', ' ', text)
-
     # Буквы греческого алфавита
     for j in greekletters:
         text = text.replace(j, letternames[greekletters.index(j)//2], 1)
+
+    # Окончателная обработка
+    for sample in samples_4:
+        text = sub(sample[0], sample[1], text)
 
     return text
