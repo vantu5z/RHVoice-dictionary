@@ -470,6 +470,25 @@ def text_prepare(text):
         new = m.group(1) + m.group(2) + pre + number + m.group(9)
         text = text.replace(m.group(), new, 1)
 
+    # Предлог "с" + родительный падеж множественного числа
+    mask = (r'\b([Сс] )((\d+)( [-и] | или )|)(\d+) ([а-яё]+)\b')
+    for m in finditer(mask, text):
+        attr = words.get_attr(m.group(6))
+        if attr.have(None, None, [1]):
+            if m.group(2):
+                prenum = cardinal(m.group(3), r_ca)
+                if condition(m.group(3)) and attr.have([Z_GENDER], None, [1]):
+                    prenum = prenum[:-2] + 'й'
+                prenum += m.group(4)
+            else:
+                prenum = ''
+            prenum = m.group(1) + prenum
+            number = cardinal(m.group(5), r_ca)
+            if attr.have([Z_GENDER], False, [1]):
+                number = number[:-2] + 'й'
+            new = prenum + number + ' ' + m.group(6)
+            text = text.replace(m.group(), new, 1)
+
     mask = (r'(\s|\A|\(| )((\d+) - |)(1|\d*[02-9]1)'
             r'(( [а-яё]+[ео](й|го) | )([а-яё]+))\b')
     for m in finditer(mask, text):
@@ -501,14 +520,6 @@ def text_prepare(text):
                     number = number[:-2] + 'й'
             new = (m.group(1) + number + cardinal(m.group(5), r_ca) +
                    m.group(6) + m.group(9))
-            text = text.replace(m.group(), new, 1)
-
-    # Предлог "с" + родительный падеж множественного числа
-    mask = (r'\b([Сс] )(\d+) ([а-яё]+)\b')
-    for m in finditer(mask, text):
-        attr = words.get_attr(m.group(3))
-        if attr.have(None, True, [1]):
-            new = m.group(1) + cardinal(m.group(2), r_ca) + ' ' + m.group(3)
             text = text.replace(m.group(), new, 1)
 
     # Творительный падеж
