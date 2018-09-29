@@ -482,19 +482,16 @@ def text_prepare(text):
             text = text.replace(m.group(), new, 1)
 
     mask = (r'(\s|\A|\(| )((\d+) - |)(1|\d*[02-9]1)'
-            r'(( [а-яё]+[ео](й|го) | )([а-яё]+))\b')
+            r'(( [а-яё]+[ео]го | )([а-яё]+))\b')
     for m in finditer(mask, text):
-        attr = words.get_attr(m.group(8))
-        if attr.have(None, False, [1]):
+        attr = words.get_attr(m.group(7))
+        if attr.have([M_GENDER, S_GENDER], False, [1]) and (m.group(4) == '1'
+          or not attr.have(M_GENDER, False, [3])):
             number = cardinal(m.group(4), r_ca)
-            if attr.have(gender=Z_GENDER):
-                number = number[:-2] + 'й'
             if m.group(2) == '':
                 pre = ''
             else:
                 pre = cardinal(m.group(3), r_ca)
-                if attr.have(gender=Z_GENDER) and number[-2:] == 'го':
-                    pre = pre[:-2] + 'й'
                 pre += ' - '
             new = m.group(1) + pre + number + m.group(5)
             text = text.replace(m.group(), new, 1)
