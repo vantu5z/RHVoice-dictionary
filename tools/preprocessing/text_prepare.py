@@ -660,7 +660,9 @@ def text_prepare(text):
             pre = cardinal(m.group(3), v_ca)
             if pre[-3:] == 'дин':
                 attr = words.get_attr(m.group(9))
-                if attr.have([Z_GENDER], False, [3]):
+                if attr.have([M_GENDER], False, [3]):
+                    pre = pre[:-2] + 'ного'
+                elif attr.have([Z_GENDER], False, [3]):
                     pre = pre[:-2] + 'ну'
                 elif attr.have([S_GENDER], False, [0, 3]):
                     pre = pre[:-2] + 'но'
@@ -670,7 +672,9 @@ def text_prepare(text):
         number = cardinal(m.group(5), v_ca)
         if number[-3:] == 'дин':
             attr = words.get_attr(m.group(9))
-            if attr.have([Z_GENDER], False, [3]):
+            if attr.have([M_GENDER], False, [3]):
+                number = number[:-2] + 'ного'
+            elif attr.have([Z_GENDER], False, [3]):
                 number = number[:-2] + 'ну'
             elif attr.have([S_GENDER], False, [0, 3]):
                 number = number[:-2] + 'но'
