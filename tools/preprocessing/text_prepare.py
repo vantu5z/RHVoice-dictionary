@@ -486,7 +486,7 @@ def text_prepare(text):
     for m in finditer(mask, text):
         attr = words.get_attr(m.group(7))
         if attr.have([M_GENDER, S_GENDER], False, [1]) and (m.group(4) == '1'
-          or not attr.have(M_GENDER, False, [3])):
+          or not attr.have([M_GENDER], False, [3])):
             number = cardinal(m.group(4), r_ca)
             if m.group(2) == '':
                 pre = ''
