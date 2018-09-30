@@ -485,8 +485,7 @@ def text_prepare(text):
             r'(( [а-яё]+[ео]го | )([а-яё]+))\b')
     for m in finditer(mask, text):
         attr = words.get_attr(m.group(7))
-        if attr.have([M_GENDER, S_GENDER], False, [1]) and (m.group(4) == '1'
-          or not attr.have([M_GENDER], False, [3])):
+        if attr.have([M_GENDER, S_GENDER], False, [1]) and not attr.have([M_GENDER], False, [3]):
             number = cardinal(m.group(4), r_ca)
             if m.group(2) == '':
                 pre = ''
@@ -500,7 +499,7 @@ def text_prepare(text):
             r'(( [а-яё]+[иы]х | )([а-яё]+))\b(.)')
     for m in finditer(mask, text):
         attr = words.get_attr(m.group(8))
-        if attr.have(None, True, [1]):
+        if attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1]) and not attr.have([M_GENDER], True, [3]):
             if m.group(2) == '':
                 number = ''
             else:
@@ -687,6 +686,27 @@ def text_prepare(text):
 #            new = cardinal(m.group(1), v_ca)[:-2] + 'ного' + m.group(2)
 #            text = text.replace(m.group(), new, 1)
 
+    # Вин. пад. муж. рода числительных, оканчивающихся на 1 кроме 11
+    mask = (r'(\s|\A|\(| )((\d+) - |)(1|\d*[02-9]1)'
+            r'(( [а-яё]+[ео]го | )([а-яё]+))\b')
+    for m in finditer(mask, text):
+        attr = words.get_attr(m.group(7))
+        if attr.have([M_GENDER], False, [3]):
+            number = cardinal(m.group(4), v_ca)[:-2] + 'ного'
+            if m.group(2) == '':
+                pre = ''
+            else:
+                pre = cardinal(m.group(3), v_ca)
+                if condition(m.group(3)):
+                    pre = pre[:-2] + 'ного'
+                elif pre[-3:] == 'два':
+                    pre = pre[:-1] + 'ух'
+                elif pre[-3:] == 'три' or pre[-3:] == 'ыре':
+                    pre = pre[:-1] + 'ёх'
+                pre += ' - '
+            new = m.group(1) + pre + number + m.group(5)
+            text = text.replace(m.group(), new, 1)
+    # Вин. пад. жен. рода
     for m in finditer(r'\b(\d*[02-9]1|1)(( [а-яё]+[ую]ю | )([а-яё]+))', text):
         if words.have(m.group(4), [Z_GENDER], False, [3]):
             new = cardinal(m.group(1), v_ca)[:-2] + 'ну' + m.group(2)
