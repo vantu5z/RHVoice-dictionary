@@ -808,6 +808,11 @@ def text_prepare(text):
         new = fraction(m.group(1), m.group(2)) + m.group(3)
         text = text.replace(m.group(), new, 1)
 
+    # Например: "все небо" -> "всё небо"
+    for m in finditer(r'\b([Вв]с)е ([а-яё]+)\b', text):
+        if words.have(m.group(2), [S_GENDER], False, [0, 3]):
+            text = text.replace(m.group(), m.group(1) + 'ё ' + m.group(2), 1)
+
     # Буквы греческого алфавита
     for j in greekletters:
         text = text.replace(j, letternames[greekletters.index(j)//2], 1)
