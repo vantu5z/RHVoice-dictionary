@@ -634,24 +634,9 @@ def text_prepare(text):
         new = m.group(1) + number + cardinal(m.group(5), p_ca)
         text = text.replace(m.group(), new, 1)
 
-    # Женский род (иминетельный/винительный падежи)
-    mask = (r'(\s|\A|\(| )(((\d+)( - | или | и ))|)(\d+)'
-            r'(( [а-яё]+([ая]я|[иы][ех])|) ([а-яё]+))')
-    for m in finditer(mask, text):
-        attr = words.get_attr(m.group(10))
-        a = attr.have([Z_GENDER], None, [1])
-        b = attr.have([Z_GENDER], False, [0])
-        if (a or b):
-            if m.group(2) == '':
-                pre = ''
-            else:
-                pre = feminin(m.group(4)) + m.group(5)
-            new = m.group(1) + pre + feminin(m.group(6)) + m.group(7)
-            text = text.replace(m.group(), new, 1)
-
     # Винительный падеж
 
-    mask = (r'\b([Зз]а|[Пп]ро|[Чч]ерез|состав[аеилотя]{2,4})'
+    mask = (r'\b([Вв]|[Нн]а|[Зз]а|[Пп]ро|[Чч]ерез|состав[аеилотя]{2,4})'
             r'( (\d+)( -| или)|) (\d+)'
             r'(( [а-яё]+([ая]я|[ую]ю|[ео]е|[иы][йх]) | )([а-яё]+))\b')
     for m in finditer(mask, text):
@@ -679,6 +664,21 @@ def text_prepare(text):
                 number = number[:-2] + 'но'
         new = m.group(1) + ' ' + pre + number + m.group(6)
         text = text.replace(m.group(), new, 1)
+
+    # Женский род (иминетельный/винительный падежи)
+    mask = (r'(\s|\A|\(| )(((\d+)( - | или | и ))|)(\d+)'
+            r'(( [а-яё]+([ая]я|[иы][ех])|) ([а-яё]+))')
+    for m in finditer(mask, text):
+        attr = words.get_attr(m.group(10))
+        a = attr.have([Z_GENDER], None, [1])
+        b = attr.have([Z_GENDER], False, [0])
+        if (a or b):
+            if m.group(2) == '':
+                pre = ''
+            else:
+                pre = feminin(m.group(4)) + m.group(5)
+            new = m.group(1) + pre + feminin(m.group(6)) + m.group(7)
+            text = text.replace(m.group(), new, 1)
 
 #    for m in finditer(r'\b(\d*[02-9]1|1)(( [а-яё]+[ео]го | )([а-яё]+))\b', text):
 #        if (words.have(m.group(4), [M_GENDER], False, [3])
