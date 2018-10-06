@@ -485,7 +485,9 @@ def text_prepare(text):
             r'(( [а-яё]+[ео]го | )([а-яё]+))\b')
     for m in finditer(mask, text):
         attr = words.get_attr(m.group(7))
-        if attr.have([M_GENDER, S_GENDER], False, [1]) and not attr.have([M_GENDER], False, [3]):
+        a = attr.have([M_GENDER, S_GENDER], False, [1])
+        b = attr.have([M_GENDER], False, [3])
+        if a and not b:
             number = cardinal(m.group(4), r_ca)
             if m.group(2) == '':
                 pre = ''
@@ -499,7 +501,9 @@ def text_prepare(text):
             r'(( [а-яё]+[иы]х | )([а-яё]+))\b(.)')
     for m in finditer(mask, text):
         attr = words.get_attr(m.group(8))
-        if attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1]) and not attr.have([M_GENDER], True, [3]):
+        a = attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
+        b = attr.have([M_GENDER], True, [3])
+        if a and not b:
             if m.group(2) == '':
                 number = ''
             else:
