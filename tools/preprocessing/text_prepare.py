@@ -281,6 +281,10 @@ def text_prepare(text):
             num2 = ordinal(roman2arabic(m.group(3)), p_mu)
         text = text.replace(m.group(), num1 + m.group(2) + num2 + m.group(4), 1)
 
+    for m in finditer(r'\b([Сс]о? )([IVX]+) по ', text):
+        new = m.group(1) + roman2arabic(m.group(2)) + '-го по '
+        text = text.replace(m.group(), new, 1)
+
     # применение шаблонов
     for sample in samples_2:
         text = sub(sample[0], sample[1], text)
