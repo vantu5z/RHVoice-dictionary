@@ -116,7 +116,10 @@ def text_prepare(text):
         if m.group(8):
             number = fraction(m.group(8)[:-1], m.group(9), 1) + ' ' + forms[m.group(10)][2]
         else:
-            number = m.group(9) + ' ' + substant(m.group(9), m.group(10), 1)
+            number = cardinal(m.group(9), r_ca)
+            if condition(m.group(9)) and m.group(10) in zh_units:
+                number = number[:-2] + 'й'
+            number += ' ' + substant(m.group(9), m.group(10), 1)
         new = m.group(1) + m.group(2) + prenum  + number
         text = text.replace(m.group(), new, 1)
 
