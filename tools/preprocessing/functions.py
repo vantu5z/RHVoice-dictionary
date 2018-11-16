@@ -180,6 +180,7 @@ def substant(num, key, cas=0):
                             'сек': 'секунду',
                             "'": 'минуту',
                             'ед.': 'единицу',
+                            'тыс.': 'тысячу',
                             'шт.': 'штуку'}[key]
                 elif num in '234' or (len(num) > 1 and num[-2] != '1' and num[-1] in '234'):
                     form = forms[key][10]

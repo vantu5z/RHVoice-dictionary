@@ -43,29 +43,58 @@ def text_prepare(text):
     # =================
 
     # Винительный падеж
+
+    mask = (r'\b('
+            r'(состав[авеийлотшщьюя]{2,6}|превы[сш][авеийлотшщьюя]{2,5}) (бы |)'
+            r')'
+            r'((\d+,|)(\d+) - |)(\d+,|)(\d+)_' + units)
+    for m in finditer(mask, text):
+        new = m.group(1)
+        if m.group(4):
+            if m.group(5):
+                new += fraction(m.group(5)[:-1], m.group(6), 5)
+            else:
+                if condition(m.group(6)) and m.group(9) in zh_units:
+                    new += feminin(m.group(6))[:-1] + 'у'
+                else:
+                    new += m.group(6)
+            new += ' - '
+        if m.group(7):
+            new += fraction(m.group(7)[:-1], m.group(8), 5) + ' '
+            new += forms[m.group(9)][2]
+        else:
+            if condition(m.group(8)) and m.group(9) in zh_units:
+                new += feminin(m.group(8))[:-1] + 'у'
+            else:
+                new += m.group(8)
+            new += ' ' + substant(m.group(8), m.group(9), 5)
+        text = text.replace(m.group(), new, 1)
+
     # например: "диаметром в 2 см -> диаметром в 2 сантиметра"
     mask = (r'\b([А-Яа-яё]{3,})'
             r'( (ориентировочно |примерно |приблизительно |)в )'
             r'((\d+,|)(\d+) - |)(\d+,|)(\d+)_' + units)
     for m in finditer(mask, text):
         if m.group(1).lower() in pre_acc:
+            new = m.group(1) + m.group(2)
             if m.group(4):
                 if m.group(5):
-                    number = fraction(m.group(5)[:-1], m.group(6), 5)
+                    new += fraction(m.group(5)[:-1], m.group(6), 5)
                 else:
                     if condition(m.group(6)) and m.group(9) in zh_units:
-                        number = feminin(m.group(6))[:-1] + 'у'
+                        new += feminin(m.group(6))[:-1] + 'у'
                     else:
-                        number = m.group(6)
-                number = number + ' - '
-            else:
-                number = ''
+                        new += m.group(6)
+                new += ' - '
             if m.group(7):
-                number += fraction(m.group(7)[:-1], m.group(8), 5) + ' '
-                number += forms[m.group(9)][2]
+                new += fraction(m.group(7)[:-1], m.group(8), 5) + ' '
+                new += forms[m.group(9)][2]
             else:
-                number += m.group(8) + ' ' + substant(m.group(8), m.group(9), 5)
-            new = m.group(1) + m.group(2) + number
+                if condition(m.group(8)) and m.group(9) in zh_units:
+                    new += feminin(m.group(8))[:-1] + 'у'
+                else:
+                    new += m.group(8)
+                new += ' ' + substant(m.group(8), m.group(9), 5)
             text = text.replace(m.group(), new, 1)
 
     # Родительный падеж
