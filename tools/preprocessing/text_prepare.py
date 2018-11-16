@@ -517,7 +517,7 @@ def text_prepare(text):
             new = prenum + number + ' ' + m.group(6)
             text = text.replace(m.group(), new, 1)
 
-    mask = (r'(\s|\A|\(| )((\d+) - |)(1|\d*[02-9]1)'
+    mask = (r'(\A|\(| )((\d+) - |)(1|\d*[02-9]1)'
             r'(( [а-яё]+[ео]го | )([а-яё]+))\b')
     for m in finditer(mask, text):
         attr = words.get_attr(m.group(7))
@@ -533,7 +533,7 @@ def text_prepare(text):
             new = m.group(1) + pre + number + m.group(5)
             text = text.replace(m.group(), new, 1)
 
-    mask = (r'(\s|\A|\(| )((\d+)( [-и] | или )|)(\d*[02-9][234]|[234])'
+    mask = (r'(\A|\(| )((\d+)( [-и] | или )|)(\d*[02-9][234]|[234])'
             r'(( [а-яё]+[иы]х | )([а-яё]+))\b(.)')
     for m in finditer(mask, text):
         attr = words.get_attr(m.group(8))
