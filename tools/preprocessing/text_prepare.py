@@ -52,19 +52,19 @@ def text_prepare(text):
         new = m.group(1)
         if m.group(4):
             if m.group(5):
-                new += fraction(m.group(5)[:-1], m.group(6), 5)
+                new += decimal(m.group(5)[:-1], m.group(6), 5)
             else:
-                if condition(m.group(6)) and m.group(9) in zh_units:
-                    new += feminin(m.group(6))[:-1] + 'у'
+                if m.group(9) in zh_units:
+                    new += feminin(m.group(6), 5)
                 else:
                     new += m.group(6)
             new += ' - '
         if m.group(7):
-            new += fraction(m.group(7)[:-1], m.group(8), 5) + ' '
+            new += decimal(m.group(7)[:-1], m.group(8), 5) + ' '
             new += forms[m.group(9)][2]
         else:
-            if condition(m.group(8)) and m.group(9) in zh_units:
-                new += feminin(m.group(8))[:-1] + 'у'
+            if m.group(9) in zh_units:
+                new += feminin(m.group(8), 5)
             else:
                 new += m.group(8)
             new += ' ' + substant(m.group(8), m.group(9), 5)
@@ -79,19 +79,19 @@ def text_prepare(text):
             new = m.group(1) + m.group(2)
             if m.group(4):
                 if m.group(5):
-                    new += fraction(m.group(5)[:-1], m.group(6), 5)
+                    new += decimal(m.group(5)[:-1], m.group(6), 5)
                 else:
-                    if condition(m.group(6)) and m.group(9) in zh_units:
-                        new += feminin(m.group(6))[:-1] + 'у'
+                    if m.group(9) in zh_units:
+                        new += feminin(m.group(6), 5)
                     else:
                         new += m.group(6)
                 new += ' - '
             if m.group(7):
-                new += fraction(m.group(7)[:-1], m.group(8), 5) + ' '
+                new += decimal(m.group(7)[:-1], m.group(8), 5) + ' '
                 new += forms[m.group(9)][2]
             else:
-                if condition(m.group(8)) and m.group(9) in zh_units:
-                    new += feminin(m.group(8))[:-1] + 'у'
+                if m.group(9) in zh_units:
+                    new += feminin(m.group(8), 5)
                 else:
                     new += m.group(8)
                 new += ' ' + substant(m.group(8), m.group(9), 5)
@@ -233,46 +233,52 @@ def text_prepare(text):
 
     # Время в формате (h)h ч (m)m мин
     for m in finditer(r'\b(\d{1,2}) ?ч ?(\d{1,2}) ?мин\b', text):
-        if condition(m.group(1)): hours = ' час '
-        elif m.group(1)[-1] in ('2', '3', '4'): hours = ' часа '
-        else: hours = ' часов '
-        if condition(m.group(2)): minutes = ' минута'
-        elif m.group(2)[-1] in ('2', '3', '4'): minutes = ' минуты'
-        else: minutes = ' минут'
+        if condition(m.group(1)):
+            hours = ' час '
+        elif m.group(1) in ('2', '3', '4', '22', '23', '24'):
+            hours = ' часа '
+        else:
+            hours = ' часов '
+        if condition(m.group(2)):
+            minutes = ' минута'
+        elif m.group(2) in ('2', '3', '4', '22', '23', '24'):
+            minutes = ' минуты'
+        else:
+            minutes = ' минут'
         new = m.group(1) + hours + feminin(m.group(2)) + minutes
         text = text.replace(m.group(), new, 1)
 
     # Время в формате (ч)ч:мм/(ч)ч.мм
 
     for m in finditer(r'\b(([Вв]|[Нн]а) \d{1,2})[:.](\d\d)\b', text):
-        minutes = feminin(m.group(3))
-        if minutes[-2:] == 'на':
-            minutes = minutes[:-1] + 'у'
-        text = text.replace(m.group(), m.group(1) + ' ' + minutes, 1)
+        minutes = ' ' + feminin(m.group(3), 5)
+        text = text.replace(m.group(), m.group(1) + minutes, 1)
 
-    for m in finditer(r'\b([Кк] )(\d{1,2})[:.](\d\d)\b', text):
+    for m in finditer(r'\b([Кк] )(\d{1,2}):(\d\d)\b', text):
         hours = cardinal(m.group(2), d_ca)
         minutes = cardinal(m.group(3), d_ca)
-        if minutes[-2:] == 'му':
-            minutes = minutes[:-2] + 'й'
         if m.group(3) == '00':
             minutes = '00'
-        elif m.group(3)[0] == '0':
-            minutes = '0_' + minutes
-        text = text.replace(m.group(), m.group(1) + hours + ' ' + minutes, 1)
+        else:
+            if m.group(3)[0] == '0':
+                minutes = '0_' + minutes
+            minutes = feminin(minutes, 2)
+        new = m.group(1) + hours + ' ' + minutes
+        text = text.replace(m.group(), new, 1)
 
     mask = (r'\b([Дд]о |[Пп]осле |[Оо]коло |[Сс] )'
             r'(\d{1,2})[:.](\d\d)\b')
     for m in finditer(mask, text):
         hours = cardinal(m.group(2), r_ca)
         minutes = cardinal(m.group(3), r_ca)
-        if minutes[-2:] == 'го':
-            minutes = minutes[:-2] + 'й'
         if m.group(3) == '00':
             minutes = '00'
-        elif m.group(3)[0] == '0':
-            minutes = '0_' + minutes
-        text = text.replace(m.group(), m.group(1) + hours + ' ' + minutes, 1)
+        else:
+            if m.group(3)[0] == '0':
+                minutes = '0_' + minutes
+            minutes = feminin(minutes, 1)
+        new = m.group(1) + hours + ' ' + minutes
+        text = text.replace(m.group(), new, 1)
 
     # =======================
     # Порядковые числительные

@@ -201,25 +201,49 @@ def substant(num, key, cas=0):
     return form
 
 
-def feminin(num):
+def feminin(num, cas=0):
     """
-    Форма женского рода количественного числительного в им. пад.
+    Форма женского рода количественного числительного
+    num - число, cas - падеж
     """
-    try:
-        if num[-2] != '1':
-            pre = num[:-1]
-            if int(pre) != 0:
-                pre = num[:-1] + '0'
-            if num[-1] == '1':
-                num = pre + '_одна'
-            elif num[-1] == '2':
-                num = pre + '_две'
-    except:
-        if num == '1':
-            num = 'одна'
-        elif num == '2':
-            num = 'две'
-    return num
+    ending = num[-2:]
+    number = num
+    if cas == 0:
+        try:
+            if num[-2] != '1':
+                pre = num[:-1]
+                if int(pre) != 0:
+                    pre = num[:-1] + '0'
+                if num[-1] == '1':
+                    number = pre + '_одна'
+                elif num[-1] == '2':
+                    number = pre + '_две'
+        except:
+            if num == '1':
+                number = 'одна'
+            elif num == '2':
+                number = 'две'
+    elif cas == 5:
+        try:
+            if num[-2] != '1':
+                pre = num[:-1]
+                if int(pre) != 0:
+                    pre = num[:-1] + '0'
+                if num[-1] == '1':
+                    number = pre + '_одну'
+                elif num[-1] == '2':
+                    number = pre + '_две'
+        except:
+            if num == '1':
+                number = 'одну'
+            elif num == '2':
+                number = 'две'
+    else:
+        if ending == 'го' or ending == 'му':
+            number = num[:-2] + 'й'
+        elif ending == 'им' or ending == 'ом':
+            number = num[:-2] + 'ой'
+    return number
 
 
 def daynight(num, nom):
