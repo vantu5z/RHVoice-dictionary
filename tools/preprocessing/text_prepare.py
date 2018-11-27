@@ -767,17 +767,6 @@ def text_prepare(text):
         new = m.group(1) + cardinal(m.group(2), v_ca) + m.group(3)
         text = text.replace(m.group(), new, 1)
 
-    mask = (r'([Сс]тои(т[ь]?|л[аио]?|вш[аеиймя]{2,3})) '
-            r'(\d+) ([а-яё]+)\b')
-    for m in finditer(mask, text):
-        number = cardinal(m.group(3), v_ca)
-        if number[-3:] == 'дин' and m.group(4) in ('копейку', 'гривну', 'драхму', 'марку'):
-            number = number[:-2] + 'ну'
-        elif number[-3:] == 'два' and m.group(4) in ('копейки', 'гривны', 'драхмы', 'марки'):
-            number = number[:-1] + 'е'
-        new = m.group(1) + ' ' + number + ' ' + m.group(4)
-        text = text.replace(m.group(), new, 1)
-
     # Средний род (именительный/винительный падежи)
     for m in finditer(r'\b(\d*[02-9]1|1) (([а-яё]+[ео]е |)([а-яё]+[ео]))\b', text):
         if words.have(m.group(4), [S_GENDER], False, [0, 3]):
