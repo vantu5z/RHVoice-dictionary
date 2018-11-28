@@ -347,8 +347,6 @@ def fraction(full, frac, cas=0):
         if condition(full):
             f_part = f_part[:-1] + 'й'
             fp = 'ой'
-        elif f_part == 'ноле':
-            fp = 'ых'
         else:
             fp = 'ых'
         d_part = cardinal(frac, p_ca)
