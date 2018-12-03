@@ -390,7 +390,7 @@ def text_prepare(text):
 #            new = ordinal(m.group(1), v_zh) + ' ' + m.group(2)
 #            text = text.replace(m.group(), new)
 
-    mask = (r'\b(?<!,)(\d*[02-9][05-9]|\d*1\d|[5-9]) ([а-яё]+)\b')
+    mask = (r'\b(?<!.)(?<!,)(?<!:)(\d*[02-9][05-9]|\d*1\d|[5-9]) ([а-яё]+)\b')
     for m in finditer(mask, text):
         number = ''
         attr = words.get_attr(m.group(2))
