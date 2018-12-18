@@ -459,6 +459,22 @@ def text_prepare(text):
         new = m.group(1) + m.group(2) + pre + number + m.group(9)
         text = text.replace(m.group(), new, 1)
 
+    # Родительный падеж второго числительного в конструкции
+    # "числительное + существительное + вместо/против + числительное"
+    mask = (r'\b((\d+ )([а-яё]{3,})( вместо | против ))(\d+,|)(\d+)\b')
+    for m in finditer(mask, text):
+        attr = words.get_attr(m.group(3))
+        if m.group(5):
+            number = decimal(m.group(5)[:-1], m.group(6), 1)
+        else:
+            number = cardinal(m.group(6), r_ca)
+            if condition(m.group(6)) and attr.have([Z_GENDER]):
+                number = number[:-2] + 'й'
+            elif number[-6:] == 'одного' and m.group(3) in ('сутки', 'суток',     'суткам', 'сутками','сутках'):
+                number = number[:-3] + 'их'
+        new = m.group(1) + number
+        text = text.replace(m.group(), new, 1)
+
     mask = (r'\b('
             r'[Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|[Дд]альше|'
             r'[Дд]ороже|[Дд]ешевле|[Оо]коло|[Сс]выше|[Сс]реди|[Дд]ля|[Дд]о|'
