@@ -496,16 +496,13 @@ def text_prepare(text):
                 attr = words.get_attr(m.group(12))
                 if condition(m.group(8)) and attr.have(Z_GENDER, False, [1]):
                     number = number[:-2] + 'й'
-                elif (m.group(9) and (attr.have(None, True, [1])
-                      or m.group(12) == 'суток')):
-                        number = cardinal(m.group(8), r_ca)
-                        if m.group(12) == 'суток' and number[-6:] == 'одного':
-                            number = number[:-3] + 'их'
+                elif m.group(12) == 'суток' and number[-6:] == 'одного':
+                    number = number[:-3] + 'их'
         new = m.group(1) + m.group(2) + pre + number + m.group(9)
         text = text.replace(m.group(), new, 1)
 
-    # Предлог "с" + родительный падеж множественного числа
-    mask = (r'\b([Сс] )((\d+)( [-и] | или )|)(\d+) ([а-яё]+)\b')
+    # Предлог "с" + родительный падеж
+    mask = (r'\b([Сс]о? )((\d+)( [-и] | или )|)(\d+) ([а-яё]+)\b')
     for m in finditer(mask, text):
         attr = words.get_attr(m.group(6))
         if attr.have(None, None, [1]):
