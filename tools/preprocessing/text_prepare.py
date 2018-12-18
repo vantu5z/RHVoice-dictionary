@@ -470,7 +470,7 @@ def text_prepare(text):
             number = cardinal(m.group(6), r_ca)
             if condition(m.group(6)) and attr.have([Z_GENDER]):
                 number = number[:-2] + 'й'
-            elif number[-6:] == 'одного' and m.group(3) in ('сутки', 'суток',     'суткам', 'сутками','сутках'):
+            elif number[-6:] == 'одного' and m.group(3) in ('сутки', 'суток', 'суткам', 'сутками','сутках'):
                 number = number[:-3] + 'их'
         new = m.group(1) + number
         text = text.replace(m.group(), new, 1)
