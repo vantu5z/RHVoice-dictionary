@@ -828,13 +828,13 @@ def text_prepare(text):
             text = text.replace(m.group(), pre + number + m.group(5), 1)
 
     # Предлоги дательного падежа
-    mask = (r'\b([Кк]|рав[нагеийлмоcуюыхья]{2,6})'
+    mask = (r'\b((\A|\n|\(| )[Кк]|рав[нагеийлмоcуюыхья]{2,6})'
             r'( (\d+)( [-и] | или )| )(\d+)\b')
     for m in finditer(mask, text):
         number = ' '
-        if m.group(2) != ' ':
-            number += cardinal(m.group(3), d_ca) + m.group(4)
-        new = m.group(1) + number + cardinal(m.group(5), d_ca)
+        if m.group(3) != ' ':
+            number += cardinal(m.group(4), d_ca) + m.group(5)
+        new = m.group(1) + number + cardinal(m.group(6), d_ca)
         text = text.replace(m.group(), new, 1)
 
     # Существует только во множественном числе
