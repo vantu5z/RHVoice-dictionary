@@ -117,7 +117,7 @@ def text_prepare(text):
             number = fraction(m.group(2)[:-1], m.group(3), 1)
         else:
             number = cardinal(m.group(3), r_ca)
-            if m.group(6) in zh_units:
+            if condition(m.group(3)) and m.group(6) in zh_units:
                 number = number[:-2] + 'й'
         new = m.group(1) + number + m.group(4) + m.group(6)
         text = text.replace(m.group(), new, 1)
