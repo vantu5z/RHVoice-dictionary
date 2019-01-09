@@ -235,13 +235,13 @@ def text_prepare(text):
     for m in finditer(r'\b(\d{1,2}) ?ч ?(\d{1,2}) ?мин\b', text):
         if condition(m.group(1)):
             hours = ' час '
-        elif m.group(1) in ('2', '3', '4', '22', '23', '24'):
+        elif m.group(1) in ('2', '3', '4', '02', '03', '04', '22', '23', '24'):
             hours = ' часа '
         else:
             hours = ' часов '
         if condition(m.group(2)):
             minutes = ' минута'
-        elif m.group(2) in ('2', '3', '4', '22', '23', '24'):
+        elif m.group(2) in ('2', '3', '4', '02', '03', '04', '22', '23', '24', '32', '33', '34', '42', '43', '44', '52', '53', '54'):
             minutes = ' минуты'
         else:
             minutes = ' минут'
