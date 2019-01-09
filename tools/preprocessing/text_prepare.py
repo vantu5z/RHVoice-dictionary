@@ -725,18 +725,20 @@ def text_prepare(text):
         text = text.replace(m.group(), new, 1)
 
     # Женский род (иминетельный/винительный падежи)
-    mask = (r'(\s|\A|\(| )(((\d+)( - | или | и ))|)(\d+)'
+    mask = (r'(\A|\(| )(((\d+)( - | или | и ))|)(\d+,|)(\d+)'
             r'(( [а-яё]+([ая]я|[иы][ех])|) ([а-яё]+))')
     for m in finditer(mask, text):
-        attr = words.get_attr(m.group(10))
+        attr = words.get_attr(m.group(11))
         a = attr.have([Z_GENDER], None, [1])
         b = attr.have([Z_GENDER], False, [0])
         if (a or b):
-            if m.group(2) == '':
-                pre = ''
+            new = m.group(1)
+            if m.group(2):
+                new += feminin(m.group(4)) + m.group(5)        
+            if m.group(6):
+                new += m.group(6) + m.group(7) + m.group(8)
             else:
-                pre = feminin(m.group(4)) + m.group(5)
-            new = m.group(1) + pre + feminin(m.group(6)) + m.group(7)
+                new += feminin(m.group(7)) + m.group(8)
             text = text.replace(m.group(), new, 1)
 
 #    for m in finditer(r'\b(\d*[02-9]1|1)(( [а-яё]+[ео]го | )([а-яё]+))\b', text):
