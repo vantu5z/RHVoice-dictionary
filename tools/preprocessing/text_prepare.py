@@ -328,7 +328,7 @@ def text_prepare(text):
         text = sub(sample[0], sample[1], text)
 
     # например: "во 2 окне -> во втором окне"
-    mask = (r'\b([Вв]о?|[Оо]б?|[Пп]ри) '
+    mask = (r'\b([Вв]о?|[Нн]а|[Оо]б?|[Пп]ри) '
             r'(\d*[02-9]|\d*1\d) ([а-яё]+)\b')
     for m in finditer(mask, text):
         attr = words.get_attr(m.group(3))
@@ -338,7 +338,7 @@ def text_prepare(text):
         elif attr.have([Z_GENDER], False, [2, 5]):
             number = ordinal(m.group(2), p_zh)
         if number:
-            new = m.group(1) + number + ' ' + m.group(3)
+            new = m.group(1) + ' ' + number + ' ' + m.group(3)
             text = text.replace(m.group(), new, 1)
 
     # например: "со 2 примером -> со вторым примером"
