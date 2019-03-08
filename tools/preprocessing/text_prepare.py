@@ -370,7 +370,7 @@ def text_prepare(text):
             text = text.replace(m.group(), number + ' ' + m.group(3), 1)
 
     # например: "перед 8-м -> перед восьмым"
-    mask = (r'\b([Нн]ад |[Пп]еред |[Пп]о сравнению с )(\d+)-(м|й)\b')
+    mask = (r'\b([Нн]ад |[Пп]еред |[Сс] )(\d+)-(м|й)\b')
     for m in finditer(mask, text):
         if m.group(3) == 'м':
             number = ordinal(m.group(2), t_mu)
