@@ -369,6 +369,15 @@ def text_prepare(text):
         if number:
             text = text.replace(m.group(), number + ' ' + m.group(3), 1)
 
+    # например: "перед 8-м -> перед восьмым"
+    mask = (r'\b([Нн]ад |[Пп]еред |[Пп]о сравнению с )(\d+)-(м|й)\b')
+    for m in finditer(mask, text):
+        if m.group(3) == 'м':
+            number = ordinal(m.group(2), t_mu)
+        elif m.group(3) == 'й':
+            number = ordinal(m.group(2), t_zh)
+        text = text.replace(m.group(), m.group(1) + number, 1)
+
     for m in finditer(r'(\d+)-е (([а-яё]+[ео]е ){,2}([а-яё]+[ео]))\b', text):
         if words.have(m.group(4), [S_GENDER], False, [0, 3]):
             new = ordinal(m.group(1), i_sr) + ' ' + m.group(2)
