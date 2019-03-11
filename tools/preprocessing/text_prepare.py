@@ -20,7 +20,7 @@ from .templates import (samples_1, samples_2, samples_3, samples_4,
                         adj_pad, mn_pad, mu_pad, sr_pad, zh_pad,
                         greekletters, letternames)
 from .functions import (condition, cardinal, ordinal, roman2arabic,
-                        substant, feminin, daynight, fraction)
+                        substant, feminin, daynight, decimal)
 from .words_forms import Words, M_GENDER, Z_GENDER, S_GENDER
 
 # Для определения атрибутов слов
@@ -104,7 +104,7 @@ def text_prepare(text):
     for m in finditer(mask, text):
         new = m.group(1)
         if m.group(3):
-            new += fraction(m.group(3)[:-1], m.group(4), 1)
+            new += decimal(m.group(3)[:-1], m.group(4), 1)
             new += ' ' + forms[m.group(5)][2]
         else:
             new += m.group(4)
@@ -114,7 +114,7 @@ def text_prepare(text):
     # пример: "от 1 до 4 км -> от одного до четырёх километров"
     for m in finditer(r'\b([Оо]т |[Сс]о? )(\d+,|)(\d+)( до (\d+,|)\d+_)' + units, text):
         if m.group(2):
-            number = fraction(m.group(2)[:-1], m.group(3), 1)
+            number = decimal(m.group(2)[:-1], m.group(3), 1)
         else:
             number = cardinal(m.group(3), r_ca)
             if condition(m.group(3)) and m.group(6) in zh_units:
@@ -134,7 +134,7 @@ def text_prepare(text):
     for m in finditer(mask, text):
         if m.group(3):
             if m.group(4):
-                prenum = fraction(m.group(4)[:-1], m.group(5), 1)
+                prenum = decimal(m.group(4)[:-1], m.group(5), 1)
             else:
                 prenum = cardinal(m.group(5), r_ca)
                 if condition(m.group(5)) and m.group(10) in zh_units:
@@ -143,7 +143,7 @@ def text_prepare(text):
         else:
             prenum = ''
         if m.group(8):
-            number = fraction(m.group(8)[:-1], m.group(9), 1) + ' ' + forms[m.group(10)][2]
+            number = decimal(m.group(8)[:-1], m.group(9), 1) + ' ' + forms[m.group(10)][2]
         else:
             number = cardinal(m.group(9), r_ca)
             if condition(m.group(9)) and m.group(10) in zh_units:
@@ -160,7 +160,7 @@ def text_prepare(text):
             r'(\d+,|)(\d+)_' + units)
     for m in finditer(mask, text):
         if m.group(4):
-            number = fraction(m.group(4)[:-1], m.group(5), 2) + ' ' + forms[m.group(6)][2]
+            number = decimal(m.group(4)[:-1], m.group(5), 2) + ' ' + forms[m.group(6)][2]
         else:
             number = m.group(5) + ' ' + substant(m.group(5), m.group(6), 2)
         text = text.replace(m.group(), m.group(1) + number, 1)
@@ -183,7 +183,7 @@ def text_prepare(text):
         else:
             new += m.group(4)
         if m.group(9):
-            new += fraction(m.group(9)[:-1], m.group(10), 3) + ' '
+            new += decimal(m.group(9)[:-1], m.group(10), 3) + ' '
             new += forms[m.group(11)][2]
         else:
             new += m.group(10) + ' ' + substant(m.group(10), m.group(11), 3)
@@ -199,13 +199,13 @@ def text_prepare(text):
             pre = ' '
         else:
             if m.group(4):
-                pre = fraction(m.group(4)[:-1], m.group(5), 4) + ' ' + forms[m.group(10)][2]
+                pre = decimal(m.group(4)[:-1], m.group(5), 4) + ' ' + forms[m.group(10)][2]
             else:
                 pre = m.group(5)
             pre = m.group(3) + pre + m.group(6)
         number = m.group(7)
         if m.group(8):
-            number += fraction(m.group(8)[:-1], m.group(9), 4) + ' ' + forms[m.group(10)][2]
+            number += decimal(m.group(8)[:-1], m.group(9), 4) + ' ' + forms[m.group(10)][2]
         else:
             number += m.group(9) + ' ' + substant(m.group(9), m.group(10), 4)
         text = text.replace(m.group(), m.group(1) + pre + number, 1)
@@ -445,7 +445,7 @@ def text_prepare(text):
     for m in finditer(mask, text):
         if m.group(3):
             if m.group(4):
-                pre = fraction(m.group(4)[:-1], m.group(5), 1)
+                pre = decimal(m.group(4)[:-1], m.group(5), 1)
             else:
                 pre = cardinal(m.group(5), r_ca)
                 if pre[-6:] == 'одного' and m.group(18) is not None:
@@ -457,7 +457,7 @@ def text_prepare(text):
         else:
             pre = ''
         if m.group(7):
-            number = fraction(m.group(7)[:-1], m.group(8), 1)
+            number = decimal(m.group(7)[:-1], m.group(8), 1)
         else:
             number = cardinal(m.group(8), r_ca)
         if number[-6:] == 'одного' and m.group(18) is not None:
@@ -501,7 +501,7 @@ def text_prepare(text):
     for m in finditer(mask, text):
         if m.group(3):
             if m.group(4):
-                pre = fraction(m.group(4)[:-1], m.group(5), 1)
+                pre = decimal(m.group(4)[:-1], m.group(5), 1)
             else:
                 pre = cardinal(m.group(5), r_ca)
             if condition(m.group(5)) and m.group(12) is not None:
@@ -514,7 +514,7 @@ def text_prepare(text):
         else:
             pre = ''
         if m.group(7):
-            number = fraction(m.group(7)[:-1], m.group(8), 1)
+            number = decimal(m.group(7)[:-1], m.group(8), 1)
         else:
             number = cardinal(m.group(8), r_ca)
             if m.group(12):
@@ -636,12 +636,12 @@ def text_prepare(text):
         pre = m.group(1)
         if m.group(4):
             if m.group(5):
-                pre += fraction(m.group(5)[:-1], m.group(6), 3)
+                pre += decimal(m.group(5)[:-1], m.group(6), 3)
             else:
                 pre += cardinal(m.group(6), t_ca)
             pre = pre + m.group(7) + m.group(8)
         if m.group(9):
-            number = fraction(m.group(9)[:-1], m.group(10), 3)
+            number = decimal(m.group(9)[:-1], m.group(10), 3)
         else:
             number = cardinal(m.group(10), t_ca)
         text = text.replace(m.group(), pre + number, 1)
@@ -810,7 +810,7 @@ def text_prepare(text):
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
 
     # Дательный падеж
-    mask = (r'(?<!-)\b((\d+)( [-и] | или )|)(\d+)'
+    mask = (r'(?<!-)(?<!,)\b((\d+)( [-и] | или )|)(\d+)'
             r'(( [а-яё]+([иы]м|[ео]му) | )([а-яё]+([аиыя]м|у|ю|е)))\b')
     for m in finditer(mask, text):
         if m.group(1) == '':
@@ -840,12 +840,16 @@ def text_prepare(text):
 
     # Предлоги дательного падежа
     mask = (r'\b((\A|\n|\(| )[Кк]|рав[нагеийлмоcуюыхья]{2,6})'
-            r'( (\d+)( [-и] | или )| )(\d+)\b')
+            r'( (\d+)( [-и] | или )| )(\d+,|)(\d+)\b')
     for m in finditer(mask, text):
         number = ' '
         if m.group(3) != ' ':
-            number += cardinal(m.group(4), d_ca) + m.group(5)
-        new = m.group(1) + number + cardinal(m.group(6), d_ca)
+            number += cardinal(m.group(4), d_ca)+ m.group(5)
+        if m.group(6):
+            number += decimal(m.group(6)[:-1], m.group(7), 2)
+        else:
+            number += cardinal(m.group(7), d_ca)
+        new = m.group(1) + number
         text = text.replace(m.group(), new, 1)
 
     # Существует только во множественном числе
@@ -864,7 +868,7 @@ def text_prepare(text):
 
     # Десятичные дроби в именительном падеже
     for m in finditer(r'\b(\d+),(\d+)(\b|\Z)', text):
-        new = fraction(m.group(1), m.group(2)) + m.group(3)
+        new = decimal(m.group(1), m.group(2)) + m.group(3)
         text = text.replace(m.group(), new, 1)
 
     # Например: "все небо" -> "всё небо"

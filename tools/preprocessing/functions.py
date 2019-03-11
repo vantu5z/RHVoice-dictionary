@@ -273,7 +273,7 @@ def daynight(num, nom):
     return number
 
 
-def fraction(full, frac, cas=0):
+def decimal(full, frac, cas=0):
     """
     Чтение десятичных дробей до миллионных включительно.
     (full - целая часть, frac - дробная часть, cas - падеж)
