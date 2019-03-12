@@ -839,16 +839,20 @@ def text_prepare(text):
             text = text.replace(m.group(), pre + number + m.group(5), 1)
 
     # Предлоги дательного падежа
-    mask = (r'\b((\A|\n|\(| )[Кк]|рав[нагеийлмоcуюыхья]{2,6})'
-            r'( (\d+)( [-и] | или )| )(\d+,|)(\d+)\b')
+    mask = (r'\b((\A|\n|\(| )[Кк] |рав[нагеийлмоcуюыхья]{2,6} )'
+            r'((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)\b')
     for m in finditer(mask, text):
-        number = ' '
-        if m.group(3) != ' ':
-            number += cardinal(m.group(4), d_ca)+ m.group(5)
-        if m.group(6):
-            number += decimal(m.group(6)[:-1], m.group(7), 2)
+        number = ''
+        if m.group(3):
+            if m.group(4):
+                number += decimal(m.group(4)[:-1], m.group(5), 2)
+            else:
+                number += cardinal(m.group(5), d_ca)
+            number += m.group(6)
+        if m.group(7):
+            number += decimal(m.group(7)[:-1], m.group(8), 2)
         else:
-            number += cardinal(m.group(7), d_ca)
+            number += cardinal(m.group(8), d_ca)
         new = m.group(1) + number
         text = text.replace(m.group(), new, 1)
 
