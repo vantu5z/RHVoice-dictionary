@@ -165,7 +165,7 @@ def text_prepare(text):
             number = m.group(5) + ' ' + substant(m.group(5), m.group(6), 2)
         text = text.replace(m.group(), m.group(1) + number, 1)
     # С предлогом "по" при указании количества
-    for m in finditer(r'\b([Пп]о (\d*1(000){0,3}))_' + units, text):
+    for m in finditer(r'\b([Пп]о (\d*[02-9]1|1(000){0,3}))_' + units, text):
         new = m.group(1) + ' ' + substant(m.group(2), m.group(4), 2)
         text = text.replace(m.group(), new, 1)
 
@@ -209,11 +209,6 @@ def text_prepare(text):
         else:
             number += m.group(9) + ' ' + substant(m.group(9), m.group(10), 4)
         text = text.replace(m.group(), m.group(1) + pre + number, 1)
-
-    # Предлог "по" при указании количества
-    for m in finditer(r'\b([Пп]о )(\d*[02-9]1|1)_' + units, text):
-        new = m.group(1) + m.group(2) + ' ' + substant(m.group(2), m.group(3), 2)
-        text = text.replace(m.group(), new, 1)
 
     # Именительный
     for m in finditer(r'\b(\d+,\d+)_' + units, text):
