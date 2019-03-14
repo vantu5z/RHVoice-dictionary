@@ -699,37 +699,6 @@ def text_prepare(text):
 
     # Винительный падеж
 
-    mask = (r'\b([Вв]|[Нн]а|[Зз]а|[Пп]ро|[Чч]ерез|состав[аеилотя]{2,4})'
-            r'( (\d+)( -| или)|) (\d+)'
-            r'(( [а-яё]+([ая]я|[ую]ю|[ео]е|[иы][йх]) | )([а-яё]+))\b')
-    for m in finditer(mask, text):
-        attr = words.get_attr(m.group(9))
-        if m.group(2):
-            pre = cardinal(m.group(3), v_ca)
-            if pre[-3:] == 'дин':
-                if attr.have([M_GENDER], False, [3]):
-                    pre = pre[:-2] + 'ного'
-                elif attr.have([Z_GENDER], False, [3]):
-                    pre = pre[:-2] + 'ну'
-                elif attr.have([S_GENDER], False, [0, 3]):
-                    pre = pre[:-2] + 'но'
-            pre += m.group(4) + ' '
-        else:
-            pre = ''
-        number = cardinal(m.group(5), v_ca)
-        if number[-3:] == 'дин':
-            if attr.have([M_GENDER], False, [3]):
-                number = number[:-2] + 'ного'
-            elif attr.have([Z_GENDER], False, [3]):
-                number = number[:-2] + 'ну'
-            elif attr.have([S_GENDER], False, [0, 3]):
-                number = number[:-2] + 'но'
-        if number[-3:] == 'два':
-            if attr.have([Z_GENDER], False, [1]):
-                number = number[:-1] + 'е'
-        new = m.group(1) + ' ' + pre + number + m.group(6)
-        text = text.replace(m.group(), new, 1)
-
     # Женский род (иминетельный/винительный падежи)
     mask = (r'(\A|\(| )(((\d+)( - | или | и ))|)(\d+,|)(\d+)'
             r'(( [а-яё]+([ая]я|[иы][ех])|) ([а-яё]+))')
@@ -758,7 +727,7 @@ def text_prepare(text):
             r'(( [а-яё]+[ео]го | )([а-яё]+))\b')
     for m in finditer(mask, text):
         attr = words.get_attr(m.group(7))
-        if attr.have([M_GENDER], False, [3]):
+        if attr.have([M_GENDER], False, [3]) and not attr.have([M_GENDER], False, [0]):
             number = cardinal(m.group(4), v_ca)[:-2] + 'ного'
             if m.group(2) == '':
                 pre = ''
@@ -773,6 +742,7 @@ def text_prepare(text):
                 pre += ' - '
             new = m.group(1) + pre + number + m.group(5)
             text = text.replace(m.group(), new, 1)
+
     # Вин. пад. жен. рода
     for m in finditer(r'\b(\d*[02-9]1|1)(( [а-яё]+[ую]ю | )([а-яё]+))', text):
         if words.have(m.group(4), [Z_GENDER], False, [3]):
@@ -805,6 +775,38 @@ def text_prepare(text):
             else:
                 number = m.group(1)[:-1] + 'одно'
             text = text.replace(m.group(), number + ' ' + m.group(2), 1)
+
+    mask = (r'\b([Вв]|[Нн]а|[Зз]а|[Пп]ро|[Чч]ерез|состав[аеилотя]{2,4})'
+            r'( (\d+)( -| или)|) (\d+)'
+            r'(( [а-яё]+([ая]я|[ую]ю|[ео]е|[иы][йх]) | )([а-яё]+))\b')
+    for m in finditer(mask, text):
+        attr = words.get_attr(m.group(9))
+        a = attr.have([M_GENDER], False, [3])
+        b = attr.have([M_GENDER], False, [0])
+        c = a and not b
+        if m.group(2):
+            pre = cardinal(m.group(3), v_ca)
+            if pre[-3:] == 'дин':
+                if c:
+                    pre = pre[:-2] + 'ного'
+                elif attr.have([Z_GENDER], False, [3]):
+                    pre = pre[:-2] + 'ну'
+                elif attr.have([S_GENDER], False, [0, 3]):
+                    pre = pre[:-2] + 'но'
+            pre += m.group(4) + ' '
+        else:
+            pre = ''
+        number = cardinal(m.group(5), v_ca)
+        if number[-3:] == 'дин':
+            attr = words.get_attr(m.group(9))
+            if c:
+                number = number[:-2] + 'ного'
+            elif attr.have([Z_GENDER], False, [3]):
+                number = number[:-2] + 'ну'
+            elif attr.have([S_GENDER], False, [0, 3]):
+                number = number[:-2] + 'но'
+        new = m.group(1) + ' ' + pre + number + m.group(6)
+        text = text.replace(m.group(), new, 1)
 
     # Дательный падеж
     mask = (r'(?<!-)(?<!,)\b((\d+)( [-и] | или )|)(\d+)'
