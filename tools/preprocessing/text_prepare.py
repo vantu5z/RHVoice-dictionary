@@ -698,13 +698,12 @@ def text_prepare(text):
         text = text.replace(m.group(), new, 1)
 
     # Винительный падеж
-    
+
     mask = (r'\b([Вв]|[Нн]а|[Зз]а|[Пп]ро|[Чч]ерез|состав[аеилотя]{2,4})'
             r'( (\d+)( -| или)|) (\d+)'
             r'(( [а-яё]+([ая]я|[ую]ю|[ео]е|[иы][йх]) | )([а-яё]+))\b')
     for m in finditer(mask, text):
         attr = words.get_attr(m.group(9))
-        print(m.group(9), attr.have([Z_GENDER], True, [3]))
         if m.group(2):
             pre = cardinal(m.group(3), v_ca)
             if pre[-3:] == 'дин':
