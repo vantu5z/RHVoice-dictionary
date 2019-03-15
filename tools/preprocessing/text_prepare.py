@@ -411,7 +411,7 @@ def text_prepare(text):
             text = text.replace(m.group(), eval(sample[1]), 1)
 
     # Прилагательные, в состав которых входят числительные (3-кратный и т.п.)
-    for m in finditer(r'\b((\d+) - |)(\d+)-([а-яё]{5,})\b', text):
+    for m in finditer(r'\b(?<!,)((\d+) - |)(\d+)-([а-яё]{5,})\b', text):
         if m.group(1) == '': pre = ''
         else:
             if m.group(2)[-3:] == '000':
@@ -688,13 +688,13 @@ def text_prepare(text):
             text = text.replace(m.group(), new, 1)
 
     # Предлоги предложного падежа
-    mask = (r'\b([Оо]б?|[Пп]ри)'
+    mask = (r'(\A|\(| )([Оо]б?|[Пп]ри)'
             r'( (\d+)( [-и] | или )| )(\d+)\b')
     for m in finditer(mask, text):
         number = ' '
-        if m.group(2) != ' ':
-            number += cardinal(m.group(3), p_ca) + m.group(4)
-        new = m.group(1) + number + cardinal(m.group(5), p_ca)
+        if m.group(3) != ' ':
+            number += cardinal(m.group(4), p_ca) + m.group(5)
+        new = m.group(1) + m.group(2) + number + cardinal(m.group(6), p_ca)
         text = text.replace(m.group(), new, 1)
 
     # Винительный падеж
