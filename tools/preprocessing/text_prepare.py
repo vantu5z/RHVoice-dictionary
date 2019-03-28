@@ -394,16 +394,16 @@ def text_prepare(text):
 #            new = ordinal(m.group(1), v_zh) + ' ' + m.group(2)
 #            text = text.replace(m.group(), new)
 
-    mask = (r'\b(?<!.)(?<!,)(?<!:)(\d*[02-9][05-9]|\d*1\d|[5-9]) ([а-яё]+)\b')
+    mask = (r'\b(\s|\A|\(| )(\d*[02-9][05-9]|\d*1\d|[5-9]) ([а-яё]+)\b')
     for m in finditer(mask, text):
         number = ''
-        attr = words.get_attr(m.group(2))
+        attr = words.get_attr(m.group(3))
         if  attr.have([M_GENDER, S_GENDER], False, [1]):
-            number = ordinal(m.group(1), r_mu)
+            number = ordinal(m.group(2), r_mu)
         if  attr.have([Z_GENDER], False, [1]):
-            number = ordinal(m.group(1), r_zh)
+            number = ordinal(m.group(2), r_zh)
         if number:
-            new = number + ' ' + m.group(2)
+            new = m.group(1) + number + ' ' + m.group(3)
             text = text.replace(m.group(), new, 1)
 
     for sample in samples_3:
