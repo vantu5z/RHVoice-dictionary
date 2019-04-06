@@ -384,9 +384,13 @@ def text_prepare(text):
             new = ordinal(m.group(1), r_mu) + ' ' + m.group(2)
             text = text.replace(m.group(), new, 1)
 
-    for m in finditer(r'\b(\d*11|\d*[02-9]) ([а-яё]+)\b', text):
+    for m in finditer(r'(?<!-)\b(\d*11|\d*[02-9]) ([а-яё]+)\b', text):
         if words.have(m.group(2), [Z_GENDER], False, [3]):
-            new = ordinal(m.group(1), r_mu)[:-3] + 'ую ' + m.group(2)
+            if m.group(1)[-1] == '3':
+                new = ordinal(m.group(1), r_mu)[:-3] + 'ю '
+            else:
+                new = ordinal(m.group(1), r_mu)[:-3] + 'ую '
+            new += m.group(2)
             text = text.replace(m.group(), new, 1)
 
 #    for m in finditer(r'(\d+)-ю ([а-яё]+)\b', text):
