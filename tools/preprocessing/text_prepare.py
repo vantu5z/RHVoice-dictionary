@@ -748,12 +748,13 @@ def text_prepare(text):
             text = text.replace(m.group(), new, 1)
 
     # Вин. пад. жен. рода
-    for m in finditer(r'\b(\d*[02-9]1|1)(( [а-яё]+[ую]ю | )([а-яё]+))', text):
+    mask = (r'(?<!-)\b(\d*[02-9]1|1)(( [а-яё]+[ую]ю | )([а-яё]+))')
+    for m in finditer(mask, text):
         if words.have(m.group(4), [Z_GENDER], False, [3]):
             new = cardinal(m.group(1), v_ca)[:-2] + 'ну' + m.group(2)
             text = text.replace(m.group(), new, 1)
 
-    mask = (r'\b(\d*[02-9][2-4]|[2-4])'
+    mask = (r'(?<!-)\b(\d*[02-9][2-4]|[2-4])'
             r'(( [а-яё]+[иы]х | )([а-яё]+))')
     for m in finditer(mask, text):
         if words.have(m.group(4), [M_GENDER], True, [3]):
@@ -769,7 +770,8 @@ def text_prepare(text):
         text = text.replace(m.group(), new, 1)
 
     # Средний род (именительный/винительный падежи)
-    for m in finditer(r'\b(\d*[02-9]1|1) (([а-яё]+[ео]е |)([а-яё]+[ео]))\b', text):
+    mask = (r'(?<!-)\b(\d*[02-9]1|1) (([а-яё]+[ео]е |)([а-яё]+[ео]))\b')
+    for m in finditer(mask, text):
         if words.have(m.group(4), [S_GENDER], False, [0, 3]):
             if len(m.group(1)) > 1:
                 if int(m.group(1)[:-1]) != 0:
