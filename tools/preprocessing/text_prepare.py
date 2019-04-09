@@ -550,8 +550,11 @@ def text_prepare(text):
         attr = words.get_attr(m.group(7))
         a = attr.have([M_GENDER, S_GENDER], False, [1])
         b = attr.have([M_GENDER], False, [3])
-        if a and not b:
+        c = attr.have([Z_GENDER], False, [1])
+        if (a and not b) or c:
             number = cardinal(m.group(4), r_ca)
+            if c:
+                number = number[:-2] + 'й'
             if m.group(2) == '':
                 pre = ''
             else:
