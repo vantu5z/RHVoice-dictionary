@@ -593,7 +593,7 @@ def text_prepare(text):
         new = m.group(1) + '_' + m.group(5) + new
         text = text.replace(m.group(), new, 1)
 
-    mask = (r'(?<!\d,)\b('
+    mask = (r'(?<!-)(?<!\d,)\b('
             r'(\d+)'
             r'( - | или | и (почти |приблизительно |примерно |плюс |минус |))|'
             r')'
