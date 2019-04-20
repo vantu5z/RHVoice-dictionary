@@ -1349,8 +1349,8 @@ samples_3 = (
    'ordinal(roman2arabic(m.group(1)), sr_pad[m.group(5)]) + m.group(2)'),
   (r'\b([IVX]+)( (век|квартал|класс|ранг|[Сс]ъезд|тип)(|а|е|у|ом))\b',
    'ordinal(roman2arabic(m.group(1)), mu_pad[m.group(4)]) + m.group(2)'),
-  (r'\b([Вв] |[Оо]б? )([IVX]+) ',
-   'm.group(1) + ordinal(roman2arabic(m.group(2)), p_mu) + " "'),
+#  (r'\b([Вв] |[Оо]б? )([IVX]+) ',
+#   'm.group(1) + ordinal(roman2arabic(m.group(2)), p_mu) + " "'),
   (r'(?<![-.])\b([IVXCDM]+)( [А-Я]?[а-яё]+([иы]([ейх]|ми?)|'
    r'[ая]я|[ео](му?|го|[ей])|[ую]ю))\b',
    'ordinal(roman2arabic(m.group(1)), adj_pad[m.group(3)]) + m.group(2)'),
