@@ -706,6 +706,15 @@ def text_prepare(text):
 
     # Винительный падеж
 
+    # Десятичные дроби
+    mask = (r'\b([А-Яа-яё]{3,})'
+            r'( (всего |ориентировочно |примерно |приблизительно |)в )'
+            r'(\d+),(\d+)\b')
+    for m in finditer(mask, text):
+        if m.group(1).lower() in pre_acc:
+            new = m.group(1) + m.group(2) + decimal(m.group(4), m.group(5), 5)
+            text = text.replace(m.group(), new, 1)
+
     # Женский род (иминетельный/винительный падежи)
     mask = (r'(\A|\(| )(((\d+)( - | или | и ))|)(\d+,|)(\d+)'
             r'(( [а-яё]+([ая]я|[иы][ех])|) ([а-яё]+))')
