@@ -219,11 +219,11 @@ def text_prepare(text):
         text = text.replace(m.group(), new, 1)
 
     mask = (r'('
-            r'тысяч[аимх]{,3}|'
-            r'(миллион|миллиард|триллион)(|ами|а[мх]?|ов)'
+            r'тысяч(|ами|а[мх]?|ей?|у)|'
+            r'(миллион|миллиард|триллион)(|ами|а[мх]?|о[вм]|[еу])'
             r')_' + units)
     for m in finditer(mask, text):
-        new = m.group(1) + ' ' + forms[m.group(4)][1]
+        new = m.group(1) + ' ' + forms[m.group(5)][1]
         text = text.replace(m.group(), new, 1)
 
     # Время в формате (h)h ч (m)m мин
