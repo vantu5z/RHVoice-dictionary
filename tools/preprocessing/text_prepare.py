@@ -331,7 +331,12 @@ def text_prepare(text):
         if attr.have([S_GENDER, M_GENDER], False, [5]):
             number = ordinal(m.group(2), p_mu)
         elif attr.have([Z_GENDER], False, [2, 5]):
-            number = ordinal(m.group(2), p_zh)
+            if len(m.group(2)) == 1 or m.group(2)[-2] != '1':
+                a = m.group(2)[-1] not in ('2', '3', '4')
+                b = m.group(1).lower() not in ('в', 'на')
+                c = attr.have([Z_GENDER], False, [1])
+                if a or b or not c:
+                    number = ordinal(m.group(2), p_zh)
         if number:
             new = m.group(1) + ' ' + number + ' ' + m.group(3)
             text = text.replace(m.group(), new, 1)
