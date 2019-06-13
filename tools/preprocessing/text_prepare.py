@@ -219,7 +219,7 @@ def text_prepare(text):
         text = text.replace(m.group(), new, 1)
 
     mask = (r'('
-            r'тысяч(|ами|а[мх]?|ей?|у)|'
+            r'тысяч(|ами|а[мх]?|ей?|и|у)|'
             r'(миллион|миллиард|триллион)(|ами|а[мх]?|о[вм]|[еу])'
             r')_' + units)
     for m in finditer(mask, text):
