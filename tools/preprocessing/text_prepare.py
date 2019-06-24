@@ -47,7 +47,7 @@ def text_prepare(text):
     mask = (r'\b('
             r'(состав[авеийлотшщьюя]{2,6}|превы[сш][авеийлотшщьюя]{2,5}) (бы |)'
             r')'
-            r'((\d+,|)(\d+) - |)(\d+,|)(\d+)_' + units)
+            r'((\d+,|)(\d+) - |)(\d+,|)(\d+)_ ' + units)
     for m in finditer(mask, text):
         new = m.group(1)
         if m.group(4):
@@ -73,7 +73,7 @@ def text_prepare(text):
     # например: "диаметром в 2 см -> диаметром в 2 сантиметра"
     mask = (r'\b([А-Яа-яё]{3,})'
             r'( (ориентировочно |примерно |приблизительно |)в )'
-            r'((\d+,|)(\d+) - |)(\d+,|)(\d+)_' + units)
+            r'((\d+,|)(\d+) - |)(\d+,|)(\d+)_ ' + units)
     for m in finditer(mask, text):
         if m.group(1).lower() in pre_acc:
             new = m.group(1) + m.group(2)
@@ -100,7 +100,7 @@ def text_prepare(text):
     # Родительный падеж
     # пример: "С 5 см до -> С пяти сантиметров до"
     mask = (r'\b([Сс]о? (почти |примерно |приблизительно |плюс |минус |))'
-            r'(\d+,|)(\d+)_' + units + ' до ')
+            r'(\d+,|)(\d+)_ ' + units + ' до ')
     for m in finditer(mask, text):
         new = m.group(1)
         if m.group(3):
@@ -112,7 +112,7 @@ def text_prepare(text):
         text = text.replace(m.group(), new + ' до ', 1)
 
     # пример: "от 1 до 4 км -> от одного до четырёх километров"
-    for m in finditer(r'\b([Оо]т |[Сс]о? )(\d+,|)(\d+)( до (\d+,|)\d+_)' + units, text):
+    for m in finditer(r'\b([Оо]т |[Сс]о? )(\d+,|)(\d+)( до (\d+,|)\d+_ )' + units, text):
         if m.group(2):
             number = decimal(m.group(2)[:-1], m.group(3), 1)
         else:
@@ -130,7 +130,7 @@ def text_prepare(text):
             r'[Пп]ротив|[Пп]орядка|[Пп]осле|[Нн]е превы[шаеситьло]{3,4}'
             r')'
             r'( плюс | минус | )((\d+,|)(\d+)( - | или | и )'
-            r'(плюс |минус |)|)(\d+,|)(\d+)_' + units)
+            r'(плюс |минус |)|)(\d+,|)(\d+)_ ' + units)
     for m in finditer(mask, text):
         if m.group(3):
             if m.group(4):
@@ -157,7 +157,7 @@ def text_prepare(text):
             r'([Кк]|рав[нагеийлмоcуюыхья]{2,6})'
             r'( всего | почти | примерно | приблизительно | плюс | минус | )'
             r')'
-            r'(\d+,|)(\d+)_' + units)
+            r'(\d+,|)(\d+)_ ' + units)
     for m in finditer(mask, text):
         if m.group(4):
             number = decimal(m.group(4)[:-1], m.group(5), 2) + ' ' + forms[m.group(6)][2]
@@ -165,7 +165,7 @@ def text_prepare(text):
             number = m.group(5) + ' ' + substant(m.group(5), m.group(6), 2)
         text = text.replace(m.group(), m.group(1) + number, 1)
     # С предлогом "по" при указании количества
-    for m in finditer(r'\b([Пп]о (\d*[02-9]1|1(000){0,3}))_' + units, text):
+    for m in finditer(r'\b([Пп]о (\d*[02-9]1|1(000){0,3}))_ ' + units, text):
         new = m.group(1) + ' ' + substant(m.group(2), m.group(4), 2)
         text = text.replace(m.group(), new, 1)
 
@@ -174,7 +174,7 @@ def text_prepare(text):
             r'(почти |приблизительно |примерно |плюс |минус |))'
             r'((\d+,|)(\d+)'
             r'( [-и] (почти |приблизительно |примерно |плюс |минус |))|)'
-            r'(\d+,|)(\d+)_' + units)
+            r'(\d+,|)(\d+)_ ' + units)
     for m in finditer(mask, text):
         new = m.group(1)
         a = m.group(4) and not m.group(5)
@@ -193,7 +193,7 @@ def text_prepare(text):
     mask = (r'\b([Вв]|[Оо]б?|[Пп]ри)'
             r'(( плюс | минус | )(\d+,|)(\d+)( [-и] | или )| )'
             r'(почти |примерно |приблизительно |плюс |минус |)'
-            r'(\d+,|)(\d+)_' + units)
+            r'(\d+,|)(\d+)_ ' + units)
     for m in finditer(mask, text):
         if m.group(2) == ' ':
             pre = ' '
@@ -211,17 +211,17 @@ def text_prepare(text):
         text = text.replace(m.group(), m.group(1) + pre + number, 1)
 
     # Именительный
-    for m in finditer(r'\b(\d+,\d+)_' + units, text):
+    for m in finditer(r'\b(\d+,\d+)_ ' + units, text):
         new = m.group(1) + ' ' + forms[m.group(2)][2]
         text = text.replace(m.group(), new, 1)
-    for m in finditer(r'\b(\d+)_' + units, text):
+    for m in finditer(r'\b(\d+)_ ' + units, text):
         new = m.group(1) + ' ' + substant(m.group(1), m.group(2))
         text = text.replace(m.group(), new, 1)
 
     mask = (r'('
             r'тысяч(|ами|а[мх]?|ей?|и|у)|'
             r'(миллион|миллиард|триллион)(|ами|а[мх]?|о[вм]|[еу])'
-            r')_' + units)
+            r')_ ' + units)
     for m in finditer(mask, text):
         new = m.group(1) + ' ' + forms[m.group(5)][1]
         text = text.replace(m.group(), new, 1)
@@ -256,7 +256,7 @@ def text_prepare(text):
             minutes = '00'
         else:
             if m.group(3)[0] == '0':
-                minutes = '0_' + minutes
+                minutes = '0_ ' + minutes
             minutes = feminin(minutes, 2)
         new = m.group(1) + hours + ' ' + minutes
         text = text.replace(m.group(), new, 1)
@@ -270,7 +270,7 @@ def text_prepare(text):
             minutes = '00'
         else:
             if m.group(3)[0] == '0':
-                minutes = '0_' + minutes
+                minutes = '0_ ' + minutes
             minutes = feminin(minutes, 1)
         new = m.group(1) + hours + ' ' + minutes
         text = text.replace(m.group(), new, 1)
@@ -592,10 +592,10 @@ def text_prepare(text):
             r'(( и \d+) (погибшими|ранеными|убитыми)|)\b')
     for m in finditer(mask, text):
         if m.group(6):
-            new = m.group(7) + '_' + m.group(8)
+            new = m.group(7) + '_ ' + m.group(8)
         else:
             new = ''
-        new = m.group(1) + '_' + m.group(5) + new
+        new = m.group(1) + '_ ' + m.group(5) + new
         text = text.replace(m.group(), new, 1)
 
     mask = (r'(?<!-)(?<!\d,)\b('

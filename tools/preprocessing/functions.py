@@ -95,7 +95,7 @@ def ordinal(num, casus):
                     else:
                         prenum = num[:-3]
                         if int(prenum) != 0:
-                            prenum += '000_'
+                            prenum += '000_ '
                     number = casus[0][0][int(num[-3])]
             else:
                 if len(num) == 2:
@@ -103,7 +103,7 @@ def ordinal(num, casus):
                 else:
                     prenum = num[:-2]
                     if int(prenum) != 0:
-                        prenum += '00_'
+                        prenum += '00_ '
                 number = casus[0][int(num[-2])]
         except:
             prenum = ''
@@ -120,13 +120,13 @@ def ordinal(num, casus):
                 else:
                     prenum = num[:-2]
                     if int(prenum) != 0:
-                        prenum += '00_'
+                        prenum += '00_ '
             else:
                 prenum = num[:-1]
                 if int(prenum) != 0:
-                    prenum += '0_'
+                    prenum += '0_ '
                 else:
-                    prenum += '_'
+                    prenum += '_ '
                 dec = 0
         number = casus[int(num[-1])][dec]
     return prenum + number
@@ -216,9 +216,9 @@ def feminin(num, cas=0):
                 if int(pre) != 0:
                     pre = num[:-1] + '0'
                 if num[-1] == '1':
-                    number = pre + '_одна'
+                    number = pre + '_ одна'
                 elif num[-1] == '2':
-                    number = pre + '_две'
+                    number = pre + '_ две'
         except:
             if num == '1':
                 number = 'одна'
@@ -231,9 +231,9 @@ def feminin(num, cas=0):
                 if int(pre) != 0:
                     pre = num[:-1] + '0'
                 if num[-1] == '1':
-                    number = pre + '_одну'
+                    number = pre + '_ одну'
                 elif num[-1] == '2':
-                    number = pre + '_две'
+                    number = pre + '_ две'
         except:
             if num == '1':
                 number = 'одну'
@@ -257,7 +257,7 @@ def daynight(num, nom):
         if number == '1':
             number = 'одни'
         elif len(num) > 1 and num[-2] != '1' and num[-1] == '1':
-            number = num[:-1] + '0_одни'
+            number = num[:-1] + '0_ одни'
     else:
         if num == '2':
             number = 'двое'
