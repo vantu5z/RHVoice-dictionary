@@ -342,7 +342,7 @@ def text_prepare(text):
             text = text.replace(m.group(), new, 1)
 
     # например: "из 3 окна -> из третьего окна"
-    mask = (r'\b([Сс]о?|[Ии]з|[Дд]о|[Кк]роме|[Оо]т) '
+    mask = (r'\b([Сс]о?|[Ии]з|[Дд]о|[Кк]роме|[Оо]т|[Пп]осле) '
             r'(\d*1\d|\d*[02-9]?[02-9]) ([а-яё]+)\b')
     for m in finditer(mask, text):
         number = ''
