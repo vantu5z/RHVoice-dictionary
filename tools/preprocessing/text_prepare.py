@@ -595,7 +595,8 @@ def text_prepare(text):
                 number = cardinal(m.group(3), r_ca) + m.group(4)
                 if attr.have(gender=Z_GENDER) and number[-2:] == 'го':
                     number = number[:-2] + 'й'
-            new = m.group(1) + number + cardinal(m.group(5), r_ca) + m.group(6)
+            new = (m.group(1) + number + cardinal(m.group(5), r_ca) +
+                   m.group(6))
             text = text.replace(m.group(), new, 1)
 
     # Творительный падеж
