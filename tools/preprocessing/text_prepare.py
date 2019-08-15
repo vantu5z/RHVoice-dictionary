@@ -1036,7 +1036,7 @@ def text_prepare(text):
 
     # Буквы греческого алфавита
     for j in greekletters:
-        text = text.replace(j, letternames[greekletters.index(j)//2], 1)
+        text = sub(j, letternames[greekletters.index(j)//2], text)
 
     # Окончателная обработка
     for sample in samples_4:
