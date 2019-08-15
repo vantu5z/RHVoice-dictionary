@@ -7,6 +7,11 @@ from re import sub
 from .templates import *
 
 
+def replace(text, new, length, start, end):
+    delta = len(text) - length
+    text = text[:start + delta] + new + text[end + delta:]
+    return text
+
 def condition(value):
     """
     Оканчивается ли число на "1", но не на "11"?
