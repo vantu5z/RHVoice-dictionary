@@ -463,6 +463,15 @@ def text_prepare(text):
             new = m.group(1) + number + ' ' + m.group(3)
             text = replace(text, new, length, m.start(), m.end())
 
+    length = len(text)
+    mask = (r'\b([Вв] )((\d+0) - |)(\d+0)-е\b')
+    for m in finditer(mask, text):
+        new = m.group(1)
+        if m.group(3):
+            new += ordinal(m.group(3), i_mn) + ' - '
+        new += ordinal(m.group(4), i_mn)
+        text = replace(text, new, length, m.start(), m.end())
+
     for sample in samples_3:
         length = len(text)
         for m in finditer(sample[0], text):
