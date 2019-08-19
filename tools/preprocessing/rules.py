@@ -650,7 +650,8 @@ class CountRule_9(RuleBase):
         number = ''
         attr = words.get_attr(m.group(3))
         if attr.have([M_GENDER, S_GENDER], False, [1]):
-            number = ordinal(m.group(2), r_mu)
+            if not attr.have(case=[0]):
+                number = ordinal(m.group(2), r_mu)
         if attr.have([Z_GENDER], False, [1]):
             number = ordinal(m.group(2), r_zh)
         if number:
