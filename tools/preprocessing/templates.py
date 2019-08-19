@@ -1349,7 +1349,7 @@ samples_3 = (
    r'Карл|Людовик)(|а|е|ем|й|ом|у|ю|я) ([IVX]+)\b',
    'm.group(1) + m.group(2) + " " + ordinal(roman2arabic(m.group(3)),'
    ' mu_pad[m.group(2)])'),
-  (r'(Анн|Екатерин)(а|е|ой|у|ы) ([IVX]+)',
+  (r'(Анн|Екатерин|Елизавет)(а|е|ой|у|ы) ([IVX]+)',
    'm.group(1) + m.group(2) + " " + ordinal(roman2arabic(m.group(3)), '
    'zh_pad[m.group(2)])'),
   (r'\b([IV]+) степени',
