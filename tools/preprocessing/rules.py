@@ -15,8 +15,7 @@ from .templates import (samples_1, samples_2, samples_3, samples_4,
                         v_ca, v_zh,
                         t_ca, t_mn, t_mu, t_sr, t_zh,
                         p_ca, p_mn, p_mu, p_sr, p_zh,
-                        adj_pad, mn_pad, mu_pad, sr_pad, zh_pad,
-                        greekletters, letternames)
+                        adj_pad, mn_pad, mu_pad, sr_pad, zh_pad)
 from .functions import (condition, cardinal, ordinal, roman2arabic, replace,
                         substant, feminin, daynight, decimal)
 from .words_forms import Words, M_GENDER, Z_GENDER, S_GENDER
