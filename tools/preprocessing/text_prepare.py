@@ -18,7 +18,7 @@ from .templates import (samples_1, samples_2, samples_3, samples_4,
                         t_ca, t_mn, t_mu, t_sr, t_zh,
                         p_ca, p_mn, p_mu, p_sr, p_zh,
                         adj_pad, mn_pad, mu_pad, sr_pad, zh_pad,
-                        greekletters, letternames)
+                        greekletters)
 from .functions import (condition, cardinal, ordinal, roman2arabic, replace,
                         substant, feminin, daynight, decimal)
 from .rules import rules_list, rules_list_2, rules_list_3
@@ -57,8 +57,9 @@ def text_prepare(text):
         text = rule.run(text)
 
     # буквы греческого алфавита
-    for j in greekletters:
-        text = sub(j, letternames[greekletters.index(j)//2], text)
+    for letter_name, letters in greekletters.items():
+        for letter in letters:
+            text = sub(letter, letter_name, text)
 
     # окончателная обработка
     for sample in samples_4:
