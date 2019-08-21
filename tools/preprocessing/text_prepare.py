@@ -336,11 +336,6 @@ def text_prepare(text):
         new = num_1 + m.group(2) + num_2 + m.group(4)
         text = replace(text, new, length, m.start(), m.end())
 
-    length = len(text)
-    for m in finditer(r'\b([Сс]о? )([IVX]+) по ', text):
-        new = m.group(1) + roman2arabic(m.group(2)) + '-го по '
-        text = replace(text, new, length, m.start(), m.end())
-
     # применение шаблонов
     for sample in samples_2:
         text = sub(sample[0], sample[1], text)
