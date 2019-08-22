@@ -5,8 +5,7 @@
 
 from re import finditer
 
-from .templates import (samples_1, samples_2, samples_3, samples_4,
-                        units, zh_units,
+from .templates import (units, zh_units,
                         forms,
                         pre_acc,
                         i_mu, i_sr, i_zh, i_mn,
