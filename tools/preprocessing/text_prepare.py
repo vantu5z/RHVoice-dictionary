@@ -3,7 +3,7 @@
 
 # Скрипт предварительной обработки текста для
 # синтезатора речи RHVoice Ольги Яковлевой
-# By Capricorn2001 & vantu5z
+# By capricorn2001 & vantu5z
 
 from re import sub, finditer
 

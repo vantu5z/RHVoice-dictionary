@@ -1356,7 +1356,7 @@ class Rule_2(RuleBase):
 # Подготовка списков правил.
 # ==========================
 
-rules_list = [UnitRule_1(),         # винительный
+rules_list = (UnitRule_1(),         # винительный
               UnitRule_2(),
               UnitRule_3(),         # родительный
               UnitRule_4(),
@@ -1374,9 +1374,9 @@ rules_list = [UnitRule_1(),         # винительный
               TimeRule_4(),
               RomanRule_1(),
               RomanRule_2(),
-             ]
+             )
 
-rules_list_2 = [CountRule_1(),
+rules_list_2 = (CountRule_1(),
                 CountRule_2(),
                 CountRule_3(),
                 CountRule_4(),
@@ -1386,9 +1386,9 @@ rules_list_2 = [CountRule_1(),
                 CountRule_8(),
                 CountRule_9(),
                 CountRule_34(),
-               ]
+               )
 
-rules_list_3 = [CountRule_10(),
+rules_list_3 = (CountRule_10(),
                 CountRule_11(),     # родительный
                 CountRule_12(),
                 CountRule_13(),
@@ -1414,4 +1414,4 @@ rules_list_3 = [CountRule_10(),
                 CountRule_33(),
                 Rule_1(),
                 Rule_2(),
-               ]
+               )
