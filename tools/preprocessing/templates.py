@@ -1350,8 +1350,10 @@ samples_3 = (
   (r'(Анн|Екатерин|Елизавет)(а|е|ой|у|ы) ([IVX]+)',
    'm.group(1) + m.group(2) + " " + ordinal(roman2arabic(m.group(3)), '
    'zh_pad[m.group(2)])'),
-  (r'\b([IV]+) степени',
-   'ordinal(roman2arabic(m.group(1)), r_zh) + " степени"'),
+  (r'\b([IV]+)( и [IV]+ степени)',
+   'ordinal(roman2arabic(m.group(1)), r_zh) + m.group(2)'),
+  (r'\b([IV]+)(?= степени)',
+   'ordinal(roman2arabic(m.group(1)), r_zh)'),
   (r'\b([Сс]о? )([IVX]+) по ',
    r'm.group(1) + roman2arabic(m.group(2)) + "-го по "'),
   (r'\b([IVX]+)( ((тысяче|сто)лети| поколени)(ем?|я|ю|и))\b',
