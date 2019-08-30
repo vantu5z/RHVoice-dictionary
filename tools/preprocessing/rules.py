@@ -441,7 +441,7 @@ class RomanRule_2(RuleBase):
     def __init__(self):
         self.mask = (
             r'\b([IVX]+)( [-и] )([IVX]+)'
-            r'( век(ами?|ах?|ов)| (тысяче|сто)лети(ями?|ях?|й))\b')
+            r'( век(ами?|ах?|ов)| (тысячелети|столети|поколени)(ями?|ях?|й))\b')
 
     def check(self, m):
         ending = m.group(4)[-1]
@@ -463,7 +463,7 @@ class RomanRule_2(RuleBase):
         else:
             num1 = ordinal(roman2arabic(m.group(1)), p_mu)
             num2 = ordinal(roman2arabic(m.group(3)), p_mu)
-        return num_1 + m.group(2) + num_2 + m.group(4)
+        return num1 + m.group(2) + num2 + m.group(4)
 
 
 class CountRule_1(RuleBase):
