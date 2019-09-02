@@ -370,7 +370,7 @@ class TimeRule_2(RuleBase):
         self.mask = (r'\b(([Вв]|[Нн]а) \d{1,2})[:.](\d\d)\b')
 
     def check(self, m):
-        return m.group(1) + ' ' + feminin(m.group(3), 5)
+        return m.group(1) + ' ' + feminin(m.group(3), 5) + '_'
 
 
 
