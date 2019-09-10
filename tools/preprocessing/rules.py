@@ -1048,13 +1048,20 @@ class CountRule_23(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b([А-Яа-яё]{3,})'
-            r'( (всего |ориентировочно |примерно |приблизительно |)в )'
-            r'(\d+),(\d+)\b')
+            r'\b(([А-Яа-яё]{3,}) '
+            r'(всего |ориентировочно |примерно |приблизительно |)в )'
+            r'((\d+,|)(\d+) - |)(\d+),(\d+)\b')
 
     def check(self, m):
-        if m.group(1).lower() in pre_acc:
-            new = m.group(1) + m.group(2) + decimal(m.group(4), m.group(5), 5)
+        if m.group(2).lower() in pre_acc:
+            new = m.group(1) 
+            if m.group(4):
+                if m.group(5):
+                    new += decimal(m.group(5)[:-1], m.group(6), 5)
+                else:
+                    new += m.group(6)
+                new += ' - '
+            new += decimal(m.group(7), m.group(8), 5)
             return new
         return None
 
