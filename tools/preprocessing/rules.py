@@ -853,8 +853,8 @@ class CountRule_16(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b((\d+)( [-и] | или )|)(\d*[02-9][234]|[234])'
-            r'(( [а-яё]+[иы]х | )([а-яё]+))\b')
+            r'(?<!-)(?<!\d,)(?<!.)\b((\d+)( [-и] | или )|)'
+            r'(\d*[02-9][234]|[234])(( [а-яё]+[иы]х | )([а-яё]+))\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(7))
@@ -897,7 +897,7 @@ class CountRule_18(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'(?<!-)(?<!\d,)\b('
+            r'(?<!-)(?<!\d,)(?<!.)\b('
             r'(\d+)'
             r'( - | или | и (почти |приблизительно |примерно |плюс |минус |))|'
             r')'
@@ -1104,7 +1104,9 @@ class CountRule_25(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'(?<!-)\b(\d*[02-9]1|1)(( [а-яё]+[ую]ю | )([а-яё]+))')
+        self.mask = (
+            r'(?<!-)(?<!,)(?<!.)\b(\d*[02-9]1|1)'
+            r'(( [а-яё]+[ую]ю | )([а-яё]+))')
 
     def check(self, m):
         if words.have(m.group(4), [Z_GENDER], False, [3]):
@@ -1133,7 +1135,8 @@ class CountRule_27(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'(?<!-)\b(\d*[02-9]1|1) (([а-яё]+[ео]е |)([а-яё]+[ео]))\b')
+            r'(?<!-)(?<!,)(?<!.)\b(\d*[02-9]1|1) '
+            r'(([а-яё]+[ео]е |)([а-яё]+[ео]))\b')
 
     def check(self, m):
         if words.have(m.group(4), [S_GENDER], False, [0, 3]):
@@ -1233,7 +1236,7 @@ class CountRule_30(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'(?<!-)(?<!,)\b((\d+)( [-и] | или )|)(\d+)'
+            r'(?<!-)(?<!,)(?<!.)\b((\d+)( [-и] | или )|)(\d+)'
             r'(( [а-яё]+([иы]м|[ео]му) | )([а-яё]+([аиыя]м|у|ю|е)))\b')
 
     def check(self, m):
