@@ -610,7 +610,7 @@ class CountRule_8(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'(?<!-)\b(\d*11|\d*[02-9]) ([а-яё]+)\b')
+        self.mask = (r'(?<![,.])\b(\d*11|\d*[02-9]) ([а-яё]+)\b')
 
     def check(self, m):
         if words.have(m.group(2), [Z_GENDER], False, [3]):
@@ -853,7 +853,7 @@ class CountRule_16(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'(?<!-)(?<!\d,)(?<!.)\b((\d+)( [-и] | или )|)'
+            r'(?<![,.])\b((\d+)( [-и] | или )|)'
             r'(\d*[02-9][234]|[234])(( [а-яё]+[иы]х | )([а-яё]+))\b')
 
     def check(self, m):
@@ -897,7 +897,7 @@ class CountRule_18(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'(?<!-)(?<!,)(?<!.)\b('
+            r'(?<![,.])\b('
             r'(\d+)'
             r'( - | или | и (почти |приблизительно |примерно |плюс |минус |))|'
             r')'
@@ -1105,7 +1105,7 @@ class CountRule_25(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'(?<!-)(?<!,)(?<!.)\b(\d*[02-9]1|1)'
+            r'(?<![,.])\b(\d*[02-9]1|1)'
             r'(( [а-яё]+[ую]ю | )([а-яё]+))')
 
     def check(self, m):
@@ -1135,7 +1135,7 @@ class CountRule_27(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'(?<!-)(?<!,)(?<!.)\b(\d*[02-9]1|1) '
+            r'(?<![,.])\b(\d*[02-9]1|1) '
             r'(([а-яё]+[ео]е |)([а-яё]+[ео]))\b')
 
     def check(self, m):
@@ -1236,7 +1236,7 @@ class CountRule_30(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'(?<!-)(?<!,)(?<!.)\b((\d+)( [-и] | или )|)(\d+)'
+            r'(?<![,.])\b((\d+)( [-и] | или )|)(\d+)'
             r'(( [а-яё]+([иы]м|[ео]му) | )([а-яё]+([аиыя]м|у|ю|е)))\b')
 
     def check(self, m):
