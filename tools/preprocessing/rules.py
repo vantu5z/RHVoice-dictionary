@@ -798,23 +798,26 @@ class CountRule_14(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b([Сс]о? )((\d+)( [-и] | или )|)(\d+) ([а-яё]+)\b')
+        self.mask = (r'\b([Сс]о?'
+            r'( всех | [а-яё]+[иы]х | примерно | приблизительно '
+            r'| почти | плюс | минус | ))'
+            r'((\d+)( [-и] | или )|)(\d+) ([а-яё]+)\b')
 
     def check(self, m):
-        attr = words.get_attr(m.group(6))
+        attr = words.get_attr(m.group(7))
         if attr.have(None, None, [1]):
-            if m.group(2):
-                prenum = cardinal(m.group(3), r_ca)
-                if condition(m.group(3)) and attr.have([Z_GENDER], None, [1]):
+            if m.group(3):
+                prenum = cardinal(m.group(4), r_ca)
+                if condition(m.group(4)) and attr.have([Z_GENDER], None, [1]):
                     prenum = prenum[:-2] + 'й'
-                prenum += m.group(4)
+                prenum += m.group(5)
             else:
                 prenum = ''
             prenum = m.group(1) + prenum
-            number = cardinal(m.group(5), r_ca)
+            number = cardinal(m.group(6), r_ca)
             if attr.have([Z_GENDER], False, [1]):
                 number = number[:-2] + 'й'
-            return prenum + number + ' ' + m.group(6)
+            return prenum + number + ' ' + m.group(7)
         return None
 
 
