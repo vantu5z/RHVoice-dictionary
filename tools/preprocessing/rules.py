@@ -547,9 +547,9 @@ class CountRule_4(RuleBase):
         number = ''
         attr = words.get_attr(m.group(3))
         if m.group(2) == 'м':
-            if attr.have([M_GENDER, S_GENDER], None, [4]):
+            if attr.have([M_GENDER, S_GENDER], False, [4]):
                 number = ordinal(m.group(1), t_mu)
-            elif attr.have([M_GENDER, S_GENDER], None, [5]):
+            elif attr.have([M_GENDER, S_GENDER], False, [5]):
                 number = ordinal(m.group(1), p_mu)
         elif m.group(2) == 'й':
             if attr.have([Z_GENDER], False, [2, 4, 5]):
