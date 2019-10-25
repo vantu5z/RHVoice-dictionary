@@ -1460,8 +1460,8 @@ samples_3 = (
    'm.group(1) + decimal(m.group(2), m.group(3), 3)'),
   (r'\b([Оо]б? |[Пп]ри )(\d+),(\d+)\b',
    'm.group(1) + decimal(m.group(2), m.group(3), 4)'),
-  (r'\b([Вв] )(\d+),(\d+) раза\b',
-   'm.group(1) + decimal(m.group(2), m.group(3), 5) + " раза"'),
+  (r'\b([Вв] )(\d+),(\d+)( (тысячи|миллиона|миллиарда|триллиона) раз| раза)\b',
+   'm.group(1) + decimal(m.group(2), m.group(3), 5) + m.group(4)'),
   (r'\b([Вв] )(\d+),(\d+) - (\d+),(\d+) раза\b',
    'm.group(1) + decimal(m.group(2), m.group(3), 5) + " - " + '
    'decimal(m.group(4), m.group(5), 5) + " раза"'),
