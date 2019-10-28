@@ -1387,6 +1387,7 @@ rules_list = (UnitRule_1(),         # винительный
               TimeRule_4(),
               RomanRule_1(),
               RomanRule_2(),
+              CountRule_23(),     # винительный
              )
 
 rules_list_2 = (CountRule_1(),
@@ -1414,7 +1415,6 @@ rules_list_3 = (CountRule_10(),
                 CountRule_20(),     # предложный
                 CountRule_21(),
                 CountRule_22(),
-                CountRule_23(),     # винительный
                 CountRule_24(),
                 CountRule_25(),
                 CountRule_26(),
