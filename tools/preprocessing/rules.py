@@ -3,7 +3,7 @@
 
 # В этом файле определены правила.
 
-from re import finditer
+from re import finditer, sub
 
 from .templates import (units, zh_units,
                         forms,
@@ -652,7 +652,7 @@ class CountRule_10(RuleBase):
     Пример: (3-кратный и т.п.)
     """
     def __init__(self):
-        self.mask = (r'\b(?<!,)((\d+) - |)(\d+)-([а-яё]{5,})\b')
+        self.mask = (r'(?<![,.])\b((\d+) - |)(\d+)-([а-яё]{5,})\b')
 
     def check(self, m):
         if m.group(1) == '':
