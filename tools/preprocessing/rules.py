@@ -1324,21 +1324,6 @@ class CountRule_33(RuleBase):
         return m.group(1) + cardinal(m.group(2), d_ca)
 
 
-class CountRule_34(RuleBase):
-    """
-    Описание: Количественные числительные.
-    Пример:
-    """
-    def __init__(self):
-        self.mask = (r'\b([Вв] )((\d+0) - |)(\d+0)-е\b')
-
-    def check(self, m):
-        new = m.group(1)
-        if m.group(3):
-            new += ordinal(m.group(3), i_mn) + ' - '
-        return new
-
-
 class Rule_1(RuleBase):
     """
     Описание: Десятичные дроби в именительном падеже.
@@ -1398,7 +1383,6 @@ rules_list_2 = (CountRule_1(),
                 CountRule_7(),
                 CountRule_8(),
                 CountRule_9(),
-                CountRule_34(),
                 CountRule_23(),     # винительный
                )
 
