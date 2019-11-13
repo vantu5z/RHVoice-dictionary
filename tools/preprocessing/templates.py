@@ -1376,10 +1376,9 @@ samples_3 = (
    r'm.group(1) + roman2arabic(m.group(2)) + "-го по "'),
   (r'\b([IVX]+)( (тысячелети|столети|поколени)(ем?|я|ю|и))\b',
    'ordinal(roman2arabic(m.group(1)), sr_pad[m.group(4)]) + m.group(2)'),
-  (r'\b([IVX]+)( (век|квартал|класс|пункт|ранг|[Сс]ъезд|тип)(|а|е|у|ом))\b',
+  (r'\b([IVX]+)( (век|квартал|класс|пункт|ранг|созыв|[Сс]ъезд|тип)'
+   r'(|а|е|у|ом))\b',
    'ordinal(roman2arabic(m.group(1)), mu_pad[m.group(4)]) + m.group(2)'),
-#  (r'\b([Вв] |[Оо]б? )([IVX]+) ',
-#   'm.group(1) + ordinal(roman2arabic(m.group(2)), p_mu) + " "'),
   (r'([A-Z][a-z]*[ -.]|[А-Я][а-я]*[ -.])([IVX]+)($|\n|[.,;:)]| [^a-z])',
    'm.group(1) + roman2arabic(m.group(2)) + m.group(3)'),
   (r'(?<![-.])\b([IVXCDM]+)( [А-Я]?[а-яё]+([иы]([ейх]|ми?)|'
