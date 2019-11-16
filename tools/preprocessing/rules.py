@@ -469,7 +469,7 @@ class RomanRule_2(RuleBase):
 
 class CountRule_1(RuleBase):
     """
-    Описание: Количественные числительные.
+    Описание: Порядковые числительные.
     Пример: "во 2 окне -> во втором окне"
     """
     def __init__(self):
@@ -496,7 +496,7 @@ class CountRule_1(RuleBase):
 
 class CountRule_2(RuleBase):
     """
-    Описание: Количественные числительные.
+    Описание: Порядковые числительные.
     Пример: "из 3 окна -> из третьего окна"
     """
     def __init__(self):
@@ -518,7 +518,7 @@ class CountRule_2(RuleBase):
 
 class CountRule_3(RuleBase):
     """
-    Описание: Количественные числительные.
+    Описание: Порядковые числительные.
     Пример: "со 2 примером -> со вторым примером"
     """
     def __init__(self):
@@ -538,11 +538,14 @@ class CountRule_3(RuleBase):
 
 class CountRule_4(RuleBase):
     """
-    Описание: Количественные числительные.
+    Описание: Порядковые числительные.
+              Именительный мужского рода.
+              Творительный/предложный падеж мужского/среднего рода.
+              Родительный/дательный/творительный/предложный падеж женского рода.
     Пример: "на 8-м этаже -> на восьмом этаже"
     """
     def __init__(self):
-        self.mask = (r'(\d+)-(м|й) ([а-яё]+)\b')
+        self.mask = (r'\b(\d+)-(м|й) ([а-яё]+)\b')
 
     def check(self, m):
         number = ''
@@ -553,32 +556,18 @@ class CountRule_4(RuleBase):
             elif attr.have([M_GENDER, S_GENDER], False, [5]):
                 number = ordinal(m.group(1), p_mu)
         elif m.group(2) == 'й':
-            if attr.have([Z_GENDER], False, [2, 4, 5]):
+            if attr.have([M_GENDER], False, [0]):
+                number = ordinal(m.group(1), i_mu)
+            elif attr.have([Z_GENDER], False, [1, 2, 4, 5]):
                 number = ordinal(m.group(1), t_zh)
         if number:
             return number + ' ' + m.group(3)
         return None
 
 
-class CountRule_5(RuleBase):
-    """
-    Описание: Количественные числительные.
-    Пример: "перед 8-м -> перед восьмым"
-    """
-    def __init__(self):
-        self.mask = (r'\b([Нн]ад |[Пп]еред |[Сс] )(\d+)-(м|й)\b')
-
-    def check(self, m):
-        if m.group(3) == 'м':
-            number = ordinal(m.group(2), t_mu)
-        elif m.group(3) == 'й':
-            number = ordinal(m.group(2), t_zh)
-        return m.group(1) + number
-
-
 class CountRule_6(RuleBase):
     """
-    Описание: Количественные числительные.
+    Описание: Порядковые числительные.
     Пример:
     """
     def __init__(self):
@@ -592,7 +581,7 @@ class CountRule_6(RuleBase):
 
 class CountRule_7(RuleBase):
     """
-    Описание: Количественные числительные.
+    Описание: Порядковые числительные.
     Пример:
     """
     def __init__(self):
@@ -607,7 +596,7 @@ class CountRule_7(RuleBase):
 
 class CountRule_8(RuleBase):
     """
-    Описание: Количественные числительные.
+    Описание: Порядковые числительные.
     Пример:
     """
     def __init__(self):
@@ -626,7 +615,7 @@ class CountRule_8(RuleBase):
 
 class CountRule_9(RuleBase):
     """
-    Описание: Количественные числительные.
+    Описание: Порядковые числительные.
     Пример:
     """
     def __init__(self):
@@ -948,7 +937,7 @@ class CountRule_19(RuleBase):
             r'((\d+,|)(\d+)'
             r'( [-и] | или )'
             r'(почти |приблизительно |примерно |плюс |минус |)|)'
-            r'(\d+,|)(\d+)\b')
+            r'(\d+,|)(\d+)\b(?!-)')
 
     def check(self, m):
         pre = m.group(1)
@@ -1379,16 +1368,14 @@ rules_list = (UnitRule_1(),         # винительный
 rules_list_2 = (CountRule_1(),
                 CountRule_2(),
                 CountRule_3(),
-                CountRule_4(),
-                CountRule_5(),
                 CountRule_6(),
                 CountRule_7(),
                 CountRule_8(),
                 CountRule_9(),
-                CountRule_23(),     # винительный
                )
 
-rules_list_3 = (CountRule_10(),
+rules_list_3 = (CountRule_4(),
+                CountRule_23(),     # винительный
                 CountRule_11(),     # родительный
                 CountRule_12(),
                 CountRule_13(),
@@ -1411,6 +1398,7 @@ rules_list_3 = (CountRule_10(),
                 CountRule_31(),
                 CountRule_32(),
                 CountRule_33(),
+                CountRule_10(),
                 Rule_1(),
                 Rule_2(),
                )
