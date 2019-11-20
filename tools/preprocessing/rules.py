@@ -565,6 +565,37 @@ class CountRule_4(RuleBase):
         return None
 
 
+class CountRule_5(RuleBase):
+    """
+    Описание: Порядковые числительные.
+              Соотвествует правилу CountRule_4 с прилагательным-определением.
+    Пример:
+    """
+    def __init__(self):
+        self.mask = (r'\b(\d+)-(м|й)( [а-я]+([еиоы][йм]) ([а-яё]+))\b')
+
+    def check(self, m):
+        number = ''
+        attr = words.get_attr(m.group(5))
+        if m.group(2) == 'м':
+            if attr.have([M_GENDER, S_GENDER], False, [4]):
+                if m.group(4) in ('им', 'ым'):
+                    number = ordinal(m.group(1), t_mu)
+            elif attr.have([M_GENDER, S_GENDER], False, [5]):
+                if m.group(4) in ('ем', 'ом'):
+                    number = ordinal(m.group(1), p_mu)
+        else:
+            if attr.have([M_GENDER], False, [0]):
+                if m.group(4) in ('ий', 'ой', 'ый'):
+                    number = ordinal(m.group(1), i_mu)
+            elif attr.have([Z_GENDER], False, [1, 2, 4, 5]):
+                if m.group(4) in ('ей', 'ой'):
+                    number = ordinal(m.group(1), t_zh)
+        if number:
+            return number + m.group(3)
+        return None
+
+
 class CountRule_6(RuleBase):
     """
     Описание: Порядковые числительные.
@@ -1375,6 +1406,7 @@ rules_list_2 = (CountRule_1(),
                )
 
 rules_list_3 = (CountRule_4(),
+                CountRule_5(),
                 CountRule_23(),     # винительный
                 CountRule_11(),     # родительный
                 CountRule_12(),
