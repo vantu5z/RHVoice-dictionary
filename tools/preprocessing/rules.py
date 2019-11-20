@@ -555,7 +555,7 @@ class CountRule_4(RuleBase):
                 number = ordinal(m.group(1), t_mu)
             elif attr.have([M_GENDER, S_GENDER], False, [5]):
                 number = ordinal(m.group(1), p_mu)
-        elif m.group(2) == 'й':
+        else:
             if attr.have([M_GENDER], False, [0]):
                 number = ordinal(m.group(1), i_mu)
             elif attr.have([Z_GENDER], False, [1, 2, 4, 5]):
