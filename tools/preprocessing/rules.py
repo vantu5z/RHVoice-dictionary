@@ -998,7 +998,7 @@ class CountRule_20(RuleBase):
             r'(\d+)( [-и] | или )| '
             r')'
             r'(почти |примерно |приблизительно |плюс |минус |)(\d+)'
-            r'( ([а-яё]+([иы]х|[ео][йм]) |)([а-яё]+([ая]х|е|и|у)))\b')
+            r'( ([а-яё]+([иы]х|[ео][йм]) |)([а-яё]{3,}))\b')
 
     def check(self, m):
         if m.group(2) == ' ':
@@ -1013,17 +1013,19 @@ class CountRule_20(RuleBase):
                 pre = pre[:-2] + 'их'
             pre += m.group(5)
         number = ''
-        if m.group(12) == 'ах' or m.group(12) == 'ях':
-            number = cardinal(m.group(7), p_ca)
+        attr = words.get_attr(m.group(11))
         if condition(m.group(7)):
-            attr = words.get_attr(m.group(11))
             if attr.have([M_GENDER, S_GENDER], False, [5]):
                 number = cardinal(m.group(7), p_ca)
             elif attr.have([Z_GENDER], False, [2, 5]):
                 number = cardinal(m.group(7), p_ca)[:-1] + 'й'
             elif m.group(11) == 'сутках':
                 number = cardinal(m.group(7), p_ca)[:-2] + 'их'
-        elif m.group(12) == 'ах' or m.group(12) == 'ях':
+        elif m.group(11)[-2:] in ('ах', 'ях'):
+            number = cardinal(m.group(7), p_ca)
+        elif (len(m.group(7)) > 3 and m.group(7)[-3:] == '000'
+            and (attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
+            or m.group(11) == 'суток')):
             number = cardinal(m.group(7), p_ca)
         if number:
             return m.group(1) + pre + m.group(6) + number + m.group(8)
