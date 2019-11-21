@@ -1025,7 +1025,7 @@ class CountRule_20(RuleBase):
             number = cardinal(m.group(7), p_ca)
         elif (len(m.group(7)) > 3 and m.group(7)[-3:] == '000'
             and (attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
-            or m.group(11) == 'суток')):
+            or m.group(11) in ('суток', 'лет'))):
             number = cardinal(m.group(7), p_ca)
         if number:
             return m.group(1) + pre + m.group(6) + number + m.group(8)
