@@ -572,11 +572,11 @@ class CountRule_5(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b(\d+)-(м|й)( [а-я]+([еиоы][йм]) ([а-яё]+))\b')
+        self.mask = (r'\b(\d+)-(м|й)( [а-я]+([еиоы][йм]) ([А-Я]?[а-яё]+))\b')
 
     def check(self, m):
         number = ''
-        attr = words.get_attr(m.group(5))
+        attr = words.get_attr(m.group(5).lower())
         if m.group(2) == 'м':
             if attr.have([M_GENDER, S_GENDER], False, [4]):
                 if m.group(4) in ('им', 'ым'):
@@ -602,10 +602,10 @@ class CountRule_6(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'(\d+)-е (([а-яё]+[ео]е ){,2}([а-яё]+[ео]))\b')
+        self.mask = (r'(\d+)-е (([а-яё]+[ео]е ){,2}([А-Я]?[а-яё]+[ео]))\b')
 
     def check(self, m):
-        if words.have(m.group(4), [S_GENDER], False, [0, 3]):
+        if words.have(m.group(4).lower(), [S_GENDER], False, [0, 3]):
             return ordinal(m.group(1), i_sr) + ' ' + m.group(2)
         return None
 
@@ -692,7 +692,6 @@ class CountRule_10(RuleBase):
         num = sub(r'(одной тысячи|одноготысяче)', 'тысяче', num)
         num = sub(r'\bодного', 'одно', num)
         return num + '-' + m.group(4)
-
 
 
 class CountRule_11(RuleBase):

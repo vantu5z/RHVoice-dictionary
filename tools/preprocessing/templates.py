@@ -1405,7 +1405,7 @@ samples_3 = (
    '" " + m.group(4)'),
   (r'(11|[02-9])( ((тысяче|сто)лети|поколени)(е|и|ем|ю))\b',
    'ordinal(m.group(1), sr_pad[m.group(5)]) + m.group(2)'),
-  (r'(\d+)-е(?! [а-яё]+[аиы])\b', 'ordinal(m.group(1), i_sr)'), # Тестовый
+  (r'(\d+)-е(?= [а-яё]+[ео]е)\b', 'ordinal(m.group(1), i_sr)'),
   (r'(\d+0)( - \d+0-м годам)', 'ordinal(m.group(1), d_mn) + m.group(2)'),
   (r'(\d+0)-м( годам| числам)\b', 'ordinal(m.group(1), t_mu) + m.group(2)'),
   (r'(\d+)-ы?х ?-', 'ordinal(m.group(1), r_mn) + " "'),
