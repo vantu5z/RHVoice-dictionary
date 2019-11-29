@@ -1382,19 +1382,11 @@ class CountRule_34(RuleBase):
             r'\b(([А-Яа-яё]{3,}) '
             r'(всего |ориентировочно |примерно |приблизительно |более чем |'
             r'не более чем |)в )'
-            r'(\d+) ([а-яё]+)\b')
+            r'(\d+)\b')
 
     def check(self, m):
         if m.group(2).lower() in pre_acc:
-            number = cardinal(m.group(4), v_ca)
-#            attr = words.get_attr(m.group(5))
-#            if attr.have([Z_GENDER], False, [3]):
-#                number = number[:-2] + 'ну'
-#            if attr.have([Z_GENDER], False, [1]) and number[-3:] == 'два':
-#                number = number[:-1] + 'е'
-#            elif attr.have([S_GENDER], False, [4]):
-#                number = number[:-2] + 'но'
-            return m.group(1) + number + ' ' + m.group(5) 
+            return m.group(1) + cardinal(m.group(4), v_ca)
         return None
 
 
