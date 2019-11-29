@@ -760,7 +760,6 @@ class CountRule_12(RuleBase):
         return m.group(1) + number
 
 
-
 class CountRule_13(RuleBase):
     """
     Описание: Количественные числительные.
@@ -1143,7 +1142,7 @@ class CountRule_25(RuleBase):
 class CountRule_26(RuleBase):
     """
     Описание: Количественные числительные.
-              Винительный падеж женского рода.
+              Винительный падеж.
     Пример:
     """
     def __init__(self):
@@ -1373,6 +1372,32 @@ class Rule_2(RuleBase):
         return None
 
 
+class CountRule_34(RuleBase):
+    """
+    Описание: Количественные числительные. Винительный падеж.
+    Пример:
+    """
+    def __init__(self):
+        self.mask = (
+            r'\b(([А-Яа-яё]{3,}) '
+            r'(всего |ориентировочно |примерно |приблизительно |более чем |'
+            r'не более чем |)в )'
+            r'(\d+) ([а-яё]+)\b')
+
+    def check(self, m):
+        if m.group(2).lower() in pre_acc:
+            attr = words.get_attr(m.group(5))
+            number = cardinal(m.group(4), v_ca)
+            if attr.have([Z_GENDER], False, [3]):
+                number = number[:-2] + 'ну'
+            if attr.have([Z_GENDER], False, [1]) and number[-3:] == 'два':
+                number = number[:-1] + 'е'
+            elif attr.have([S_GENDER], False, [4]):
+                number = number[:-2] + 'но'
+            return m.group(1) + number + ' ' + m.group(5) 
+        return None
+
+
 # ==========================
 # Подготовка списков правил.
 # ==========================
@@ -1404,11 +1429,12 @@ rules_list_2 = (CountRule_1(),
                 CountRule_7(),
                 CountRule_8(),
                 CountRule_9(),
+                CountRule_23(),     # винительный
+                CountRule_34(),     # винительный
                )
 
 rules_list_3 = (CountRule_4(),
                 CountRule_5(),
-                CountRule_23(),     # винительный
                 CountRule_11(),     # родительный
                 CountRule_12(),
                 CountRule_13(),
