@@ -1382,7 +1382,7 @@ class CountRule_34(RuleBase):
             r'\b(([А-Яа-яё]{3,}) '
             r'(всего |ориентировочно |примерно |приблизительно |более чем |'
             r'не более чем |)в )'
-            r'(\d+)\b')
+            r'(\d+000)\b')
 
     def check(self, m):
         if m.group(2).lower() in pre_acc:
