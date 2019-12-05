@@ -296,28 +296,19 @@ class UnitRule_9(RuleBase):
         return m.group(1) + pre + number
 
 
-class UnitRule_10(RuleBase):
-    """
-    Описание: Единицы измерения. Именительный падеж.
-    Пример:
-    """
-    def __init__(self):
-        self.mask = (r'\b(\d+,\d+)_ ' + units)
-
-    def check(self, m):
-        return m.group(1) + ' ' + forms[m.group(2)][2]
-
-
 class UnitRule_11(RuleBase):
     """
     Описание: Единицы измерения. Именительный падеж.
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b(\d+)_ ' + units)
+        self.mask = (r'\b(((\d+),|)(\d+))_ ' + units)
 
     def check(self, m):
-        return m.group(1) + ' ' + substant(m.group(1), m.group(2))
+        if m.group(2):
+            return m.group(1) + ' ' + forms[m.group(5)][2]
+        else:
+            return m.group(1) + ' ' + substant(m.group(4), m.group(5))
 
 
 class UnitRule_12(RuleBase):
@@ -1403,8 +1394,7 @@ rules_list = (UnitRule_1(),         # винительный
               UnitRule_7(),
               UnitRule_8(),         # творительный
               UnitRule_9(),         # предложный
-              UnitRule_10(),        # именительный
-              UnitRule_11(),
+              UnitRule_11(),        # именительный
               UnitRule_12(),
               TimeRule_1(),
               TimeRule_2(),
