@@ -1450,8 +1450,6 @@ samples_3 = (
    'ordinal(m.group(1), i_mu) + " " + m.group(2) + " " + '
    'ordinal(m.group(3), i_mu) + m.group(4)'),
   (r'\b(\d+)-й(?= годы)\b', 'ordinal(m.group(1), i_mu)'),
-  # Им. пад. муж. рода, если существительное
-  # не оканчивается на «е», «и», «ы» /исключение: «кофе»/
   (r'\b(\d+)-й( [а-я]+(?![еиы]))\b', 'ordinal(m.group(1), i_mu) + m.group(2)'),
   (r'(\d+)-е' + months, 'ordinal(m.group(1), i_sr) + " " + m.group(2)'),
   (r'([Мм]ежду )(\d+)' + months + '( и )(\d+)' + months,
