@@ -1449,8 +1449,7 @@ samples_3 = (
   (r'(\d+)-й (или|и|-) (\d+)-й( годы?)\b',
    'ordinal(m.group(1), i_mu) + " " + m.group(2) + " " + '
    'ordinal(m.group(3), i_mu) + m.group(4)'),
-  (r'\b(\d+)-й(?= годы)\b', 'ordinal(m.group(1), i_mu)'),
-  (r'\b(\d+)-й( [а-я]+(?![еиы]))\b', 'ordinal(m.group(1), i_mu) + m.group(2)'),
+  (r'\b(\d+)-й(?= годы)\b', 'ordinal(m.group(1), i_mu)'),,
   (r'(\d+)-е' + months, 'ordinal(m.group(1), i_sr) + " " + m.group(2)'),
   (r'([Мм]ежду )(\d+)' + months + '( и )(\d+)' + months,
    'm.group(1) + ordinal(m.group(2), t_mu) + " " + m.group(3) + '
