@@ -1227,7 +1227,7 @@ class CountRule_29(RuleBase):
     def __init__(self):
         self.mask = (
             r'(\A|\(| )(((\d+)( - | или | и ))|)(\d+,|)(\d+)'
-            r'(( [а-яё]+([ая]я|[иы][ех])|) ([а-яё]+))')
+            r'(( [а-яё]+([ая]я|[иы][ех])| с половиной|) ([а-яё]+))')
 
     def check(self, m):
         attr = words.get_attr(m.group(11))
