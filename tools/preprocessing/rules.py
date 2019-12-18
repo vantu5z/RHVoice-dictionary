@@ -372,7 +372,7 @@ class TimeRule_3(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b([Кк] )(\d{1,2}):(\d\d)\b')
+        self.mask = (r'\b([Кк] )(\d{1,2})[:.](\d\d)\b')
 
     def check(self, m):
         hours = cardinal(m.group(2), d_ca)
