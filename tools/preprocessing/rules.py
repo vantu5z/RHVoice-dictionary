@@ -527,6 +527,25 @@ class CountRule_3(RuleBase):
         return None
 
 
+class CountRule_35(RuleBase):
+    """
+    Описание: Порядковые числительные.
+    Пример: "во 2-й и 3-й комнатах -> во второй или третьей комнатах"
+    """
+    def __init__(self):
+        self.mask = (
+            r'\b([Вв]о?|[Нн]а|[Оо]б?|[Пп]ри) '
+            r'(\d+)-й( или | и )(\d+)-й( ([а-я]+([ео]й|[иы]х) |)([а-яё]+))\b')
+
+    def check(self, m):
+        attr = words.get_attr(m.group(8))
+        if attr.have([Z_GENDER], None, [5]):
+            new = m.group(1) + ' ' + ordinal(m.group(2), p_zh) + m.group(3)
+            new += ordinal(m.group(4), p_zh) + m.group(5)
+            return new
+        return None
+
+
 class CountRule_4(RuleBase):
     """
     Описание: Порядковые числительные.
@@ -1407,6 +1426,7 @@ rules_list = (UnitRule_1(),         # винительный
 rules_list_2 = (CountRule_1(),
                 CountRule_2(),
                 CountRule_3(),
+                CountRule_35(),
                 CountRule_6(),
                 CountRule_7(),
                 CountRule_8(),
