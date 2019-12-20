@@ -676,6 +676,31 @@ class CountRule_9(RuleBase):
         return None
 
 
+class CountRule_36(RuleBase):
+    """
+    Описание: Порядковые числительные.
+    Пример:
+    """
+    def __init__(self):
+        self.mask = (
+            r'\b(\s|\A|\(| )(\d*[02-9][02-9]|\d*1\d|[2-9]) ([а-яё]+)\b')
+
+    def check(self, m):
+        number = ''
+        print('>')
+        attr = words.get_attr(m.group(3))
+        if (attr.have([M_GENDER], False, [0])
+            and not attr.have([M_GENDER], True, [1])):
+            number = ordinal(m.group(2), i_mu)
+        if attr.have([S_GENDER], False, [0]):
+            number = ordinal(m.group(2), i_sr)
+        if attr.have([Z_GENDER], False, [0]):
+            number = ordinal(m.group(2), i_zh)
+        if number:
+            return m.group(1) + number + ' ' + m.group(3)
+        return None
+
+
 class CountRule_10(RuleBase):
     """
     Описание: Количественные числительные.
@@ -1232,8 +1257,12 @@ class CountRule_28(RuleBase):
             elif attr.have([S_GENDER], False, [0, 3]):
                 number = number[:-2] + 'но'
         elif number[-3:] == 'два':
-            if d:
+            if attr.have([Z_GENDER], False, [1]):
                 number = number[:-1] + 'е'
+            else:
+                return None
+        else:
+            return None
         return m.group(1) + ' ' + pre + number + m.group(6)
 
 
@@ -1431,6 +1460,7 @@ rules_list_2 = (CountRule_1(),
                 CountRule_7(),
                 CountRule_8(),
                 CountRule_9(),
+#                CountRule_36(),
                 CountRule_23(),     # винительный
                 CountRule_34(),     # винительный
                )
