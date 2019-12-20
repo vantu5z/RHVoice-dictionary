@@ -687,7 +687,6 @@ class CountRule_36(RuleBase):
 
     def check(self, m):
         number = ''
-        print('>')
         attr = words.get_attr(m.group(3))
         if (attr.have([M_GENDER], False, [0])
             and not attr.have([M_GENDER], True, [1])):
