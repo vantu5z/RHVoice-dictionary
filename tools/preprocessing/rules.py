@@ -676,30 +676,6 @@ class CountRule_9(RuleBase):
         return None
 
 
-class CountRule_36(RuleBase):
-    """
-    Описание: Порядковые числительные.
-    Пример:
-    """
-    def __init__(self):
-        self.mask = (
-            r'\b(\s|\A|\(| )(\d*[02-9][02-9]|\d*1\d|[2-9]) ([а-яё]+)\b')
-
-    def check(self, m):
-        number = ''
-        attr = words.get_attr(m.group(3))
-        if (attr.have([M_GENDER], False, [0])
-            and not attr.have([M_GENDER], True, [1])):
-            number = ordinal(m.group(2), i_mu)
-        if attr.have([S_GENDER], False, [0]):
-            number = ordinal(m.group(2), i_sr)
-        if attr.have([Z_GENDER], False, [0]):
-            number = ordinal(m.group(2), i_zh)
-        if number:
-            return m.group(1) + number + ' ' + m.group(3)
-        return None
-
-
 class CountRule_10(RuleBase):
     """
     Описание: Количественные числительные.
@@ -1220,11 +1196,11 @@ class CountRule_28(RuleBase):
         self.mask = (
             r'\b([Вв]|[Нн]а|[Зз]а|[Пп]ро|[Сс]пустя|[Чч]ерез'
             r'|состав[аеилотя]{2,4})'
-            r'( (\d+)( -| или)|) (\d+)'
+            r'( (\d+)( -| или)|) (\d+,|)(\d+)'
             r'(( [а-яё]+([ая]я|[ую]ю|[ео]е|[иы][йх]) | )([а-яё]+))\b')
 
     def check(self, m):
-        attr = words.get_attr(m.group(9))
+        attr = words.get_attr(m.group(10))
         a = attr.have([M_GENDER], False, [3])
         b = attr.have([M_GENDER], False, [0])
         c = a and not b
@@ -1246,23 +1222,28 @@ class CountRule_28(RuleBase):
             pre += m.group(4) + ' '
         else:
             pre = ''
-        number = cardinal(m.group(5), v_ca)
-        if number[-3:] == 'дин':
-            attr = words.get_attr(m.group(9))
-            if c:
-                number = number[:-2] + 'ного'
-            elif attr.have([Z_GENDER], False, [3]):
-                number = number[:-2] + 'ну'
-            elif attr.have([S_GENDER], False, [0, 3]):
-                number = number[:-2] + 'но'
-        elif number[-3:] == 'два':
-            if attr.have([Z_GENDER], False, [1]):
-                number = number[:-1] + 'е'
+
+        if m.group(5):
+            number = decimal(m.group(5)[:-1], m.group(6), 5)
+        else:
+
+            number = cardinal(m.group(6), v_ca)
+            if number[-3:] == 'дин':
+                attr = words.get_attr(m.group(10))
+                if c:
+                    number = number[:-2] + 'ного'
+                elif attr.have([Z_GENDER], False, [3]):
+                    number = number[:-2] + 'ну'
+                elif attr.have([S_GENDER], False, [0, 3]):
+                    number = number[:-2] + 'но'
+            elif number[-3:] == 'два':
+                if attr.have([Z_GENDER], False, [1]):
+                    number = number[:-1] + 'е'
+                else:
+                    return None
             else:
                 return None
-        else:
-            return None
-        return m.group(1) + ' ' + pre + number + m.group(6)
+        return m.group(1) + ' ' + pre + number + m.group(7)
 
 
 class CountRule_29(RuleBase):
@@ -1459,7 +1440,6 @@ rules_list_2 = (CountRule_1(),
                 CountRule_7(),
                 CountRule_8(),
                 CountRule_9(),
-#                CountRule_36(),
                 CountRule_23(),     # винительный
                 CountRule_34(),     # винительный
                )
