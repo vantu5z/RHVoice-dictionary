@@ -549,17 +549,35 @@ class CountRule_35(RuleBase):
 class CountRule_36(RuleBase):
     """
     Описание: Порядковые числительные.
-    Пример: "2-й или 3-й блок(и) -> второй или третий блок(и)"
+    Пример: "2-й и 3-й блок(и) -> второй и третий блок(и)"
     """
     def __init__(self):
         self.mask = (
-            r'(\d+)-й( или | и )(\d+)-й( ([а-я]+([иы]й|[иы]е) |)([а-яё]+))\b')
+            r'\b(\d+)-й( или | и )(\d+)-й( ([а-я]+([иы]й|[иы]е) |)([а-яё]+))\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(7))
         if attr.have([M_GENDER], None, [0]):
             new = ordinal(m.group(1), i_mu) + m.group(2)
-            new += ordinal(m.group(3), p_zh) + m.group(4)
+            new += ordinal(m.group(3), i_mu) + m.group(4)
+            return new
+        return None
+
+
+class CountRule_37(RuleBase):
+    """
+    Описание: Порядковые числительные.
+    Пример: "2-е и 3-е числа -> второе и третье числа"
+    """
+    def __init__(self):
+        self.mask = (
+            r'\b(\d+)-е( или | и )(\d+)-е( ([а-я]+([ео]е|[иы]е) |)([а-яё]+))\b')
+
+    def check(self, m):
+        attr = words.get_attr(m.group(7))
+        if attr.have([S_GENDER], None, None, [0]):
+            new = ordinal(m.group(1), i_sr) + m.group(2)
+            new += ordinal(m.group(3), i_sr) + m.group(4)
             return new
         return None
 
@@ -1455,6 +1473,7 @@ rules_list_2 = (CountRule_1(),
                 CountRule_3(),
                 CountRule_35(),
                 CountRule_36(),
+                CountRule_37(),
                 CountRule_6(),
                 CountRule_7(),
                 CountRule_8(),
