@@ -1454,7 +1454,7 @@ rules_list = (UnitRule_1(),         # винительный
               UnitRule_3(),         # родительный
               UnitRule_4(),
               UnitRule_5(),
-              UnitRule_6(),         # дательный
+              UnitRule_6(),         # именительный/винительный
               UnitRule_7(),
               UnitRule_8(),         # творительный
               UnitRule_9(),         # предложный
