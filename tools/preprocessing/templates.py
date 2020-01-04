@@ -1441,6 +1441,8 @@ samples_3 = (
   (r'(\d+)-м (год(у|ах)|век(е|ах)|(сто|тысяче)лети(и|ях))',
    'ordinal(m.group(1), p_mu) + " " + m.group(2)'),
   (r'(\d+)-м( [а-яА-Я]+[иы]м)\b', 'ordinal(m.group(1), t_mu) + m.group(2)'),
+  (r'\b(([ВвОо]|[Нн]а|[Пп]ри) [а-яё]+ )(\d+)-м\b',
+  'm.group(1) + ordinal(m.group(3), p_mu)'),
   (r'(\d+)-я\b', 'ordinal(m.group(1), i_zh)'),
   (r'(\d+)-ю\b', 'ordinal(m.group(1), v_zh)'),
   (r'(\d+)( годовщин([аейоуы]{1,2}))\b',
