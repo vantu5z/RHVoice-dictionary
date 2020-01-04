@@ -120,12 +120,13 @@ class Words():
 
         return attr_list
 
-    def have(self, word, gender=None, plural=None, case=None, all_case=False):
+    def have(self, word, gender=None, plural=None, case=None,
+             all_case=False, only_case=False):
         """
         Проверка на наличие атрибутов.
         """
         attr_list = self.get_attr(word)
-        return attr_list.have(gender, plural, case, all_case)
+        return attr_list.have(gender, plural, case, all_case, only_case)
 
 
 class WordsForms():
@@ -194,12 +195,13 @@ class AttrList(list):
         # инициализация себя как списка
         list.__init__(self)
 
-    def have(self, gender=None, plural=None, case=None, all_case=False):
+    def have(self, gender=None, plural=None, case=None,
+             all_case=False, only_case=False):
         """
         Проверка на наличие атрибутов.
         """
         for attr in self:
-            if attr.have(gender, plural, case, all_case):
+            if attr.have(gender, plural, case, all_case, only_case):
                 return True
         return False
 
@@ -225,9 +227,13 @@ class WordAttributes():
         if self.case is None:
             self.case = [0, 0, 0, 0, 0, 0]
 
-    def have(self, gender=None, plural=None, case=None, all_case=False):
+    def have(self, gender=None, plural=None, case=None,
+             all_case=False, only_case=False):
         """
         Проверка на наличие атрибутов.
+        Флаги:
+          all_case  - содержит все указанные падежи
+          only_case - содержит только указанные падежи
         """
         if self.fuzzy:
             return False
@@ -247,7 +253,22 @@ class WordAttributes():
                     present = True
                 else:
                     have_all = False
-            if all_case and have_all:
+
+            if only_case:
+                temp_case = self.case.copy()
+                for c in case:
+                    temp_case[c] = 0
+                for c in temp_case:
+                    if c == 1:
+                        return False
+                if all_case:
+                    if have_all:
+                        return True
+                    else:
+                        return False
+                return True
+
+            elif all_case and have_all:
                 return True
             elif not all_case and present:
                 return True
