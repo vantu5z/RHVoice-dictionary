@@ -582,6 +582,31 @@ class CountRule_37(RuleBase):
         return None
 
 
+class CountRule_38(RuleBase):
+    """
+    Описание: Порядковые числительные.
+    Пример: "2 дверь -> вторая дверь, 3 окно -> третье окно"
+            "18 день -> восемнадцатый день, но: 18 мегаватт"
+    """
+    def __init__(self):
+        self.mask = (
+            r'(?<![,.])\b(\d*[02-9][02-9]|\d*1\d|[2-9]) ([а-яё]+)\b')
+
+    def check(self, m):
+        number = ''
+        attr = words.get_attr(m.group(2))
+        if (attr.have([M_GENDER], False, [0])
+            and not attr.have([M_GENDER], True, [1])):
+            number = ordinal(m.group(1), i_mu)
+        if attr.have([S_GENDER], False, [0]):
+            number = ordinal(m.group(1), i_sr)
+        if attr.have([Z_GENDER], False, [0]) and not attr.have(case=[3]):
+            number = ordinal(m.group(1), i_zh)
+        if number:
+            return number + ' ' + m.group(2)
+        return None
+
+
 class CountRule_4(RuleBase):
     """
     Описание: Порядковые числительные.
@@ -648,7 +673,7 @@ class CountRule_6(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'(\d+)-е (([а-яё]+[ео]е ){,2}([А-Я]?[а-яё]+[ео]))\b')
+        self.mask = (r'\b(\d+)-е (([а-яё]+[ео]е ){,2}([А-Я]?[а-яё]+[ео]))\b')
 
     def check(self, m):
         if words.have(m.group(4).lower(), [S_GENDER], False, [0, 3]):
@@ -662,7 +687,7 @@ class CountRule_7(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b(\d*11|\d*[05-9]) ([а-яё]+)\b')
+        self.mask = (r'(?<![,.])\b(\d*11|\d*[05-9]) ([а-яё]+)\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(2))
@@ -680,7 +705,8 @@ class CountRule_8(RuleBase):
         self.mask = (r'(?<![,.])\b(\d*11|\d*[02-9]) ([а-яё]+)\b')
 
     def check(self, m):
-        if words.have(m.group(2), [Z_GENDER], False, [3]):
+        attr = words.get_attr(m.group(2))
+        if attr.have([Z_GENDER], False, [3]) and not attr.have(case=[0]):
             if m.group(1)[-1] == '3':
                 new = ordinal(m.group(1), r_mu)[:-3] + 'ю '
             else:
@@ -1474,6 +1500,7 @@ rules_list_2 = (CountRule_1(),
                 CountRule_35(),
                 CountRule_36(),
                 CountRule_37(),
+                CountRule_38(),
                 CountRule_6(),
                 CountRule_7(),
                 CountRule_8(),
