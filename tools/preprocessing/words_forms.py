@@ -66,7 +66,8 @@ class Words():
 
         # составляем список вариантов разбора
         for item in norm_form:
-            case = [0, 0, 0, 0, 0, 0]
+            case_ed = [0, 0, 0, 0, 0, 0]
+            case_mn = [0, 0, 0, 0, 0, 0]
             gender = None
             plural = None
 
@@ -84,8 +85,12 @@ class Words():
                             continue
 
                     # число
-                    if plural is None:
-                        plural = 'мн' in tag
+                    plural = 'мн' in tag
+
+                    if plural:
+                        case = case_mn
+                    else:
+                        case = case_ed
 
                     # совпадение падежей
                     if 'им' in tag: case[0] = 1
@@ -95,8 +100,10 @@ class Words():
                     if 'тв' in tag: case[4] = 1
                     if 'пр' in tag: case[5] = 1
 
-            if 1 in case and gender is not None and plural is not None:
-                attr_list.append(WordAttributes(gender, plural, case))
+            if 1 in case_ed and gender is not None:
+                attr_list.append(WordAttributes(gender, False, case_ed))
+            if 1 in case_mn and gender is not None:
+                attr_list.append(WordAttributes(gender, True, case_mn))
 
         return attr_list
 
@@ -114,9 +121,10 @@ class Words():
         # поиск слова по словарю
         attr_list = AttrList()
         for item in [self.muz, self.zen, self.sre]:
-            attr = item.get_attr(word)
-            if not attr.fuzzy:
-                attr_list.append(attr)
+            attrs = item.get_attr(word)
+            for attr in attrs:
+                if not attr.fuzzy:
+                    attr_list.append(attr)
 
         return attr_list
 
@@ -157,13 +165,15 @@ class WordsForms():
         """
         Определение атрибутов слова.
         """
+        attrs = []
         for plural in [False, True]:
             case = self.get_case(word, plural)
             if 1 in case:
-                return WordAttributes(self.gender, plural, case)
-
+                attrs.append(WordAttributes(self.gender, plural, case))
+        if attrs:
+            return attrs
         # если нет указанного слова в словаре
-        return WordAttributes(None)
+        return [WordAttributes(None)]
 
     def get_case(self, word, plural):
         """
