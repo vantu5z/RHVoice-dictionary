@@ -575,7 +575,7 @@ class CountRule_37(RuleBase):
 
     def check(self, m):
         attr = words.get_attr(m.group(7))
-        if attr.have([S_GENDER], None, [0], only_case=True):
+        if attr.have([S_GENDER], None, [0, 3], only_case=True):
             new = ordinal(m.group(1), i_sr) + m.group(2)
             new += ordinal(m.group(3), i_sr) + m.group(4)
             return new
