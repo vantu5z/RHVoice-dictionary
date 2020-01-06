@@ -596,7 +596,8 @@ class CountRule_38(RuleBase):
         number = ''
         attr = words.get_attr(m.group(2))
         if (attr.have([M_GENDER], False, [0])
-            and not attr.have([M_GENDER], True, [1])):
+            and not attr.have([M_GENDER], True, [1])
+            and not m.group(2) in ('грамм', 'килограмм', 'миллиграмм')):
             number = ordinal(m.group(1), i_mu)
         if attr.have([S_GENDER], False, [0]):
             number = ordinal(m.group(1), i_sr)
