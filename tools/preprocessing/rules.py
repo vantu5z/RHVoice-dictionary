@@ -30,7 +30,7 @@ class RuleBase():
     def __init__(self):
         self.mask = ''       # регулярное выражение для поиска (маска)
 
-    def run(self, text):
+    def run(self, text, debug=False):
         """
         Применение правила к тексту.
         """
@@ -39,6 +39,10 @@ class RuleBase():
             new = self.check(m)
             if new is not None:
                 text = replace(text, new, length, m.start(), m.end())
+                if debug:
+                    print('Сработало правило: %s' % self.__class__.__name__)
+                    print('     найдено: "%s"\n'
+                          '    заменено: "%s"\n' % (m, new))
         return text
 
     def check(self, m):

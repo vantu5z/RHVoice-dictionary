@@ -7,6 +7,12 @@
 # Для проверки не сломалось ли чего после внесения изменений в templates.py.
 
 from preprocessing.text_prepare import text_prepare
+import sys
+
+
+# нужно ли включать режим отладки
+debug = '-d' in sys.argv
+
 
 # набор фраз для проверки
 test_txt=[
@@ -93,16 +99,17 @@ test_txt=[
 count_err = 0    # счётчик непройдённых проверок
 
 for txt in test_txt:
-    text = text_prepare(txt[0])
+    text = text_prepare(txt[0], debug)
     if text != txt[1]:
-        print('ВНИМАНИЕ! неверное преобразование: "'+txt[0]+'" -> "'+text+'"'+'                 должно быть: "'+txt[1]+'"')
+        print('ВНИМАНИЕ! неверное преобразование: "%s" -> "%s"' % (txt[0], text))
+        print('                      должно быть: "%s"' % txt[1])
         count_err += 1
 
-print('\nПройдено проверок: ' + str(len(test_txt)-count_err) + ' из ' + str(len(test_txt)) + '\n')
+print('\nПройдено проверок: %d из %d\n' % (len(test_txt)-count_err, len(test_txt)))
 
 # дальше предлагается ввести текст вручную для проверки
 txt = input('Введите текст:\n')
 
-text = text_prepare(txt)
+text = text_prepare(txt, debug)
 
 print('Обработанный текст:\n'+text)
