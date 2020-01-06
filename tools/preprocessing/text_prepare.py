@@ -24,7 +24,7 @@ from .functions import (condition, cardinal, ordinal, roman2arabic, replace,
 from .rules import rules_list, rules_list_2, rules_list_3
 
 
-def text_prepare(text):
+def text_prepare(text, debug=False):
     """
     Основная функция обработки текста.
     """
@@ -35,7 +35,7 @@ def text_prepare(text):
 
     # применение правил
     for rule in rules_list:
-        text = rule.run(text)
+        text = rule.run(text, debug)
 
     # применение шаблонов
     for sample in samples_2:
@@ -43,7 +43,7 @@ def text_prepare(text):
 
     # применение правил
     for rule in rules_list_2:
-        text = rule.run(text)
+        text = rule.run(text, debug)
 
     # применение шаблонов
     for sample in samples_3:
@@ -54,7 +54,7 @@ def text_prepare(text):
 
     # применение правил
     for rule in rules_list_3:
-        text = rule.run(text)
+        text = rule.run(text, debug)
 
     # буквы греческого алфавита
     for letter_name, letters in greekletters.items():
