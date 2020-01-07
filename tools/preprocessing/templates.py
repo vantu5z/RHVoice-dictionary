@@ -1395,7 +1395,7 @@ samples_3 = (
    'ordinal(m.group(1), mn_pad[m.group(4)]) + m.group(2) + m.group(3) + '
    'm.group(4)'),
   (r'\b(\d+0)( (-|и|или) \d+0-е годы)', 'ordinal(m.group(1), i_mn) + m.group(2)'),
-  (r'\b(\d+0)-е( годы)', 'ordinal(m.group(1), i_mn) + " годы"'),
+  (r'\b(\d+0)-е(?= годы)', 'ordinal(m.group(1), i_mn)'),
   (r'\b([Кк] )(\d+0)-м\b', 'm.group(1) + ordinal(m.group(2), d_mn)'),
   (r'\b(\d+)( [-и] )(\d+) ((тысяче|сто)летия|поколения)\b',
    'ordinal(m.group(1), i_sr) + m.group(2) + ordinal(m.group(3), i_sr) + '
@@ -1407,6 +1407,7 @@ samples_3 = (
   (r'\b(\d+)-е(?= [А-Я]?[а-яё]+[ео]е)\b', 'ordinal(m.group(1), i_sr)'),
   (r'\b(\d+0)( - \d+0-м годам)', 'ordinal(m.group(1), d_mn) + m.group(2)'),
   (r'\b(\d+0)-м( годам| числам)\b', 'ordinal(m.group(1), t_mu) + m.group(2)'),
+  (r'\b([Вв] )(\d+0)-е\b', 'm.group(1) + ordinal(m.group(2), i_mn)'),
   (r'\b((19|20)\d\d)-й\b', 'ordinal(m.group(1), i_mu)'),
   (r'\b((19|20)\d0)-е\b', 'ordinal(m.group(1), i_mn)'),
   (r'\b([Вв]о? |[Нн]а |[Сс]квозь |[Чч]ерез )(\d+)-ю\b',
