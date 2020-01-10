@@ -338,7 +338,7 @@ class TimeRule_1(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b(\d{1,2}) ?ч ?(\d{1,2}) ?мин\b')
+        self.mask = (r'\b([012]?\d) ?ч ?([0-5]?\d) ?мин\b')
 
     def check(self, m):
         if condition(m.group(1)):
@@ -364,7 +364,7 @@ class TimeRule_2(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b(([Вв]|[Нн]а) \d{1,2})[:.](\d\d)\b')
+        self.mask = (r'\b(([Вв]|[Нн]а) [012]?\d)[:.]([0-5]\d)(?!\.\d)')
 
     def check(self, m):
         return m.group(1) + ' ' + feminin(m.group(3), 5) + '_'
@@ -377,7 +377,7 @@ class TimeRule_3(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b([Кк] )(\d{1,2})[:.](\d\d)\b')
+        self.mask = (r'\b([Кк] )([012]?\d)[:.]([0-5]\d)(?!\.\d)')
 
     def check(self, m):
         hours = cardinal(m.group(2), d_ca)
@@ -399,7 +399,7 @@ class TimeRule_4(RuleBase):
     def __init__(self):
         self.mask = (
             r'\b([Дд]о |[Пп]осле |[Оо]коло |[Сс] )'
-            r'(\d{1,2})[:.](\d\d)\b')
+            r'([012]?\d)[:.]([0-5]\d)(?!\.\d)')
 
     def check(self, m):
         hours = cardinal(m.group(2), r_ca)
@@ -1497,7 +1497,7 @@ rules_list = (UnitRule_1(),         # винительный
               TimeRule_1(),
               TimeRule_2(),
               TimeRule_3(),
-              TimeRule_4(),
+              TimeRule_4(),    
               RomanRule_1(),
               RomanRule_2(),
              )
