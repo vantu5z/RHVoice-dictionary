@@ -1497,7 +1497,7 @@ rules_list = (UnitRule_1(),         # винительный
               TimeRule_1(),
               TimeRule_2(),
               TimeRule_3(),
-              TimeRule_4(),    
+              TimeRule_4(),
               RomanRule_1(),
               RomanRule_2(),
              )
