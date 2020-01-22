@@ -732,7 +732,7 @@ class CountRule_9(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b(\s|\A|\n|\(| )(\d*[02-9][05-9]|\d*1\d|[5-9]) ([а-яё]+)\b')
+            r'(\A|\n|\(| )(\d*[02-9][05-9]|\d*1\d|[5-9]) ([а-яё]+)\b')
 
     def check(self, m):
         number = ''
@@ -1000,8 +1000,8 @@ class CountRule_18(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'(?<![,.])\b('
-            r'(\d+)'
+            r'\b('
+            r'(\d+,|)(\d+)'
             r'( - | или | и (почти |приблизительно |примерно |плюс |минус |))|'
             r')'
             r'(\d+) '
@@ -1009,29 +1009,32 @@ class CountRule_18(RuleBase):
 
     def check(self, m):
         if m.group(1):
-            pre = cardinal(m.group(2), t_ca)
-            if condition(m.group(2)):
-                a = words.have(m.group(6), [Z_GENDER], False, [4])
-                b = words.have(m.group(6)[:-2], [Z_GENDER], False, [0])
-                c = words.have(m.group(6)[:-3] + 'ь', [Z_GENDER], False, [0])
-                if a or b or c:
-                    pre = pre[:-2] + 'ой'
-            pre += m.group(3)
+            if m.group(2):
+                pre = decimal(m.group(2)[:-1], m.group(3), 3)
+            else:
+                pre = cardinal(m.group(3), t_ca)
+                if condition(m.group(3)):
+                    a = words.have(m.group(7), [Z_GENDER], False, [4])
+                    b = words.have(m.group(7)[:-2], [Z_GENDER], False, [0])
+                    c = words.have(m.group(7)[:-3] + 'ь', [Z_GENDER], False, [0])
+                    if a or b or c:
+                        pre = pre[:-2] + 'ой'
+            pre += m.group(4)
         else:
             pre = ''
         number = ''
-        if condition(m.group(5)):
-            attr = words.get_attr(m.group(6))
+        if condition(m.group(6)):
+            attr = words.get_attr(m.group(7))
             if attr.have([M_GENDER, S_GENDER], False, [4]):
-                number = cardinal(m.group(5), t_ca)
+                number = cardinal(m.group(6), t_ca)
             elif attr.have([Z_GENDER], False, [4]):
-                number = cardinal(m.group(5), t_ca)[:-2] + 'ой'
-            elif m.group(6) == 'сутками':
-                number = cardinal(m.group(5), t_ca) + 'и'
-        elif m.group(6)[-2:] == 'ми':
-            number = cardinal(m.group(5), t_ca)
+                number = cardinal(m.group(6), t_ca)[:-2] + 'ой'
+            elif m.group(7) == 'сутками':
+                number = cardinal(m.group(7), t_ca) + 'и'
+        elif m.group(7)[-2:] == 'ми':
+            number = cardinal(m.group(6), t_ca)
         if number:
-            return pre + number + ' ' + m.group(6)
+            return pre + number + ' ' + m.group(7)
         return None
 
 
@@ -1181,7 +1184,7 @@ class CountRule_24(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'(\s|\A|\n|\(| )((\d+) - |)(1|\d*[02-9]1)'
+            r'(\A|\n|\(| )((\d+) - |)(1|\d*[02-9]1)'
             r'(( [а-яё]+[ео]го | )([а-яё]+))\b')
 
     def check(self, m):
@@ -1389,7 +1392,7 @@ class CountRule_31(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b((\A|\n|\(| )[Кк] |рав[нагеийлмоcуюыхья]{2,6} )'
+            r'((\A|\n|\(| )[Кк] |рав[нагеийлмоcуюыхья]{2,6} )'
             r'((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)\b')
 
     def check(self, m):
