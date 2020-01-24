@@ -1330,10 +1330,10 @@ class CountRule_29(RuleBase):
     def __init__(self):
         self.mask = (
             r'(\A|\n|\(| )(((\d+)( - | или | и ))|)(\d+,|)(\d+)'
-            r'(( [а-яё]+([ая]я|[иы][ех])| с половиной|) ([а-яё]+))')
+            r'((( [а-яё]+([ая]я|[иы][ех]))+| с половиной|) ([а-яё]+))')
 
     def check(self, m):
-        attr = words.get_attr(m.group(11))
+        attr = words.get_attr(m.group(12))
         a = attr.have([Z_GENDER], False, [1])
         b = attr.have([Z_GENDER], False, [0]) and condition(m.group(7))
         if (a or b):
