@@ -53,6 +53,25 @@ class RuleBase():
         pass
 
 
+class UnitRule_0(RuleBase):
+    """
+    Описание: Количественные числительные.
+              Предлог «в» + числительное в винительном падеже + «раз[а]» .
+    Пример:
+    """
+    def __init__(self):
+        self.mask = (r'\b([Вв] ((\d+,|)(\d+) - |)'
+                     r'(\d+,|)(\d+))_ (тыс\.|млн|млрд|трлн)( раза?)\b')
+
+    def check(self, m):
+        new = m.group(1) +' '
+        if m.group(5):
+            new += forms[m.group(7)][2]
+        else:
+            new += substant(m.group(6), m.group(7), 5)
+        return new + m.group(8)
+
+
 class UnitRule_1(RuleBase):
     """
     Описание: Единицы измерения. Винительный падеж.
@@ -1224,19 +1243,6 @@ class CountRule_25(RuleBase):
         return None
 
 
-class CountRule_26(RuleBase):
-    """
-    Описание: Количественные числительные.
-              Винительный падеж.
-    Пример:
-    """
-    def __init__(self):
-        self.mask = (r'\b([Вв] )(\d+)( раз[а]?)\b')
-
-    def check(self, m):
-        return m.group(1) + cardinal(m.group(2), v_ca) + m.group(3)
-
-
 class CountRule_27(RuleBase):
     """
     Описание: Количественные числительные.
@@ -1488,7 +1494,8 @@ class CountRule_34(RuleBase):
 # Подготовка списков правил.
 # ==========================
 
-rules_list = (UnitRule_1(),         # винительный
+rules_list = (UnitRule_0(),
+              UnitRule_1(),         # винительный
               UnitRule_2(),
               UnitRule_3(),         # родительный
               UnitRule_4(),
@@ -1536,7 +1543,6 @@ rules_list_2 = (CountRule_4(),
                 CountRule_22(),
                 CountRule_24(),
                 CountRule_25(),
-                CountRule_26(),
                 CountRule_27(),     # именительный/винительный
                 CountRule_28(),
                 CountRule_29(),
