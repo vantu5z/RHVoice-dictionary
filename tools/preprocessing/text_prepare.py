@@ -7,7 +7,7 @@
 
 from re import sub, finditer
 
-from .templates import (samples_1, samples_2, samples_3, samples_4,
+from .templates import (samples_1, samples_2, samples_3,
                         units, zh_units,
                         forms,
                         pre_acc,
@@ -21,7 +21,7 @@ from .templates import (samples_1, samples_2, samples_3, samples_4,
                         greekletters)
 from .functions import (condition, cardinal, ordinal, roman2arabic, replace,
                         substant, feminin, daynight, decimal)
-from .rules import rules_list, rules_list_2, rules_list_3
+from .rules import rules_list, rules_list_2
 
 
 def text_prepare(text, debug=False):
@@ -29,7 +29,7 @@ def text_prepare(text, debug=False):
     Основная функция обработки текста.
     """
 
-    # предварительная обработка текста
+    # применение шаблонов
     for sample in samples_1:
         text = sub(sample[0], sample[1], text)
 
@@ -39,21 +39,13 @@ def text_prepare(text, debug=False):
 
     # применение шаблонов
     for sample in samples_2:
-        text = sub(sample[0], sample[1], text)
-
-    # применение правил
-    for rule in rules_list_2:
-        text = rule.run(text, debug)
-
-    # применение шаблонов
-    for sample in samples_3:
         length = len(text)
         for m in finditer(sample[0], text):
             new = eval(sample[1])
             text = replace(text, new, length, m.start(), m.end())
 
     # применение правил
-    for rule in rules_list_3:
+    for rule in rules_list_2:
         text = rule.run(text, debug)
 
     # буквы греческого алфавита
@@ -62,7 +54,7 @@ def text_prepare(text, debug=False):
             text = sub(letter, letter_name, text)
 
     # окончателная обработка
-    for sample in samples_4:
+    for sample in samples_3:
         text = sub(sample[0], sample[1], text)
 
     return text

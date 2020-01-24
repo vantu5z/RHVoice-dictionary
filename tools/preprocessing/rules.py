@@ -652,7 +652,8 @@ class CountRule_5(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b(\d+)-(м|й)( [а-яё-]+([еиоы][йм]) ([А-Я]?[а-яё]+))\b')
+        self.mask = (r'\b(\d+)-(м|й)'
+                     r'( [А-Я]?[а-яё-]+([еиоы][йм]) ([А-Я]?[а-яё]+))\b')
 
     def check(self, m):
         number = ''
@@ -1504,24 +1505,22 @@ rules_list = (UnitRule_1(),         # винительный
               TimeRule_4(),
               RomanRule_1(),
               RomanRule_2(),
-             )
+              CountRule_1(),
+              CountRule_2(),
+              CountRule_3(),
+              CountRule_35(),
+              CountRule_36(),
+              CountRule_37(),
+              CountRule_38(),
+              CountRule_6(),
+              CountRule_7(),
+              CountRule_8(),
+              CountRule_9(),
+              CountRule_23(),     # винительный
+              CountRule_34(),     # винительный
+              )
 
-rules_list_2 = (CountRule_1(),
-                CountRule_2(),
-                CountRule_3(),
-                CountRule_35(),
-                CountRule_36(),
-                CountRule_37(),
-                CountRule_38(),
-                CountRule_6(),
-                CountRule_7(),
-                CountRule_8(),
-                CountRule_9(),
-                CountRule_23(),     # винительный
-                CountRule_34(),     # винительный
-               )
-
-rules_list_3 = (CountRule_4(),
+rules_list_2 = (CountRule_4(),
                 CountRule_5(),
                 CountRule_11(),     # родительный
                 CountRule_12(),
