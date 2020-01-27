@@ -643,11 +643,11 @@ class CountRule_4(RuleBase):
     Пример: "на 8-м этаже -> на восьмом этаже"
     """
     def __init__(self):
-        self.mask = (r'\b(\d+)-(м|й) ([а-яё]+)\b')
+        self.mask = (r'\b(\d+)-(м|й) (([А-Я]?[а-яё]+(-[а-яё]+|)+([ео][йм]|[иы]м) ){,2}([а-яё]+))\b')
 
     def check(self, m):
         number = ''
-        attr = words.get_attr(m.group(3))
+        attr = words.get_attr(m.group(7))
         if m.group(2) == 'м':
             if attr.have([M_GENDER, S_GENDER], False, [4]):
                 number = ordinal(m.group(1), t_mu)
