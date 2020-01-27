@@ -18,6 +18,7 @@ dest_dir = "build/lib/%s/rhvoice_preprocessing" % site_pkg
 makedirs(dest_dir + '/preprocessing/dict')
 
 files = ['__init__.py',
+         'rhvoice_say.py',
          'preprocessing/functions.py',
          'preprocessing/rules.py',
          'preprocessing/templates.py',
