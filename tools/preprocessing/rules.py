@@ -653,7 +653,7 @@ class CountRule_4(RuleBase):
                 number = ordinal(m.group(1), t_mu)
             elif (attr.have([M_GENDER, S_GENDER], False, [5])
                   or m.group(7) in ('берегу', 'бою', 'году', 'лесу',
-                                    'полку', 'саду', 'углу', 'шкафу')):
+                                    'полку','пруду', 'саду', 'углу', 'шкафу')):
                 number = ordinal(m.group(1), p_mu)
         else:
             if attr.have([M_GENDER], False, [0]):
@@ -1483,12 +1483,20 @@ class CountRule_34(RuleBase):
             r'\b(([А-Яа-яё]{3,}) '
             r'(всего |ориентировочно |примерно |приблизительно |более чем |'
             r'не более чем |)в )'
-            r'(\d+000)\b')
+            r'((\d+)( - | или )|)(\d+000) ([а-яё]+)\b')
 
     def check(self, m):
         if m.group(2).lower() in pre_acc:
-            return m.group(1) + cardinal(m.group(4), v_ca)
-        return None
+            pre = m.group(1)
+            if m.group(4):
+                if words.have(m.group(8), [Z_GENDER], True, [1]):
+                    pre += feminin(m.group(5), 5)
+                else:
+                    pre += cardinal(m.group(5), v_ca)
+                pre += m.group(6)
+            return pre + cardinal(m.group(7), v_ca) + " " + m.group(8)
+        else:
+            return None
 
 
 # ==========================
