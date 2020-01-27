@@ -651,7 +651,9 @@ class CountRule_4(RuleBase):
         if m.group(2) == 'м':
             if attr.have([M_GENDER, S_GENDER], False, [4]):
                 number = ordinal(m.group(1), t_mu)
-            elif attr.have([M_GENDER, S_GENDER], False, [5]):
+            elif (attr.have([M_GENDER, S_GENDER], False, [5])
+                  or m.group(7) in ('берегу', 'бою', 'году', 'лесу',
+                                    'полку', 'саду', 'углу', 'шкафу')):
                 number = ordinal(m.group(1), p_mu)
         else:
             if attr.have([M_GENDER], False, [0]):
