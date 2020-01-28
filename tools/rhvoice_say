@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from rhvoice_preprocessing.rhvoice_say import rhvoice_say
+from rhvoice_tools import rhvoice_say
 
 
 if len(sys.argv) > 1:

@@ -13,7 +13,7 @@ try:
 except:
     pass
 
-dest_dir = "build/lib/%s/rhvoice_preprocessing" % site_pkg
+dest_dir = "build/lib/%s/rhvoice_tools" % site_pkg
 
 makedirs(dest_dir + '/preprocessing/dict')
 

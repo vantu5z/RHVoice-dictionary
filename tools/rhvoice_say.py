@@ -6,7 +6,7 @@ import subprocess
 import configparser
 from os.path import exists as path_exists
 from os.path import expanduser
-from rhvoice_preprocessing import text_prepare
+from rhvoice_tools import text_prepare
 
 
 def rhvoice_say(text):
