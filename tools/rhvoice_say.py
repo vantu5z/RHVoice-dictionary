@@ -9,12 +9,12 @@ from os.path import expanduser
 from rhvoice_preprocessing import text_prepare
 
 
-def rhvoice_say(args):
-    if len(args) > 1:
+def rhvoice_say(text):
+    if text:
         """
         Чтение текста RHVocie с предварительнгой обработкой текста.
         """
-        txt = text_prepare(args[1])        # предварительная подготовка текста
+        txt = text_prepare(text)        # предварительная подготовка текста
 
         # открываем файл конфигурации
         file_name = expanduser("~") + '/.config/rhvoice_say.conf'

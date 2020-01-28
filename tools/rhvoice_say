@@ -5,4 +5,8 @@ import sys
 from rhvoice_preprocessing.rhvoice_say import rhvoice_say
 
 
-rhvoice_say(sys.argv)
+if len(sys.argv) > 1:
+    text = sys.argv[1]
+    rhvoice_say(text)
+else:
+    print('Нет текста для чтения...')
