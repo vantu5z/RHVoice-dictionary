@@ -982,15 +982,14 @@ class CountRule_16(RuleBase):
 
     def check(self, m):
         attr = words.get_attr(m.group(7))
-        a = attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
-        b = attr.have([M_GENDER], True, [3])
-        if a and not b:
-            if m.group(1) == '':
-                number = ''
-            else:
-                number = cardinal(m.group(2), r_ca) + m.group(3)
+        if attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1]):
+            if m.group(1):
+                number = cardinal(m.group(2), r_ca)
                 if attr.have(gender=Z_GENDER) and number[-2:] == 'го':
                     number = number[:-2] + 'й'
+                number += m.group(3)
+            else:
+                number = ''
             return number + cardinal(m.group(4), r_ca) + m.group(5)
         return None
 
