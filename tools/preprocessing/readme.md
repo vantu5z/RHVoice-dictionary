@@ -12,13 +12,24 @@
 * греческие буквы;
 * и д.р.
 
-
-
 ## Использование
-Для использования необходимо импортировать функцию `text_prepare` и передать ей текст на обработку:
-
-    from preprocessing.text_prepare import text_prepare
+* Для подготовки текста необходимо импортировать функцию `text_prepare` и передать ей текст:
+```
+    from rhvoice_tools import text_prepare
     new_text = text_prepare(text)
+```
+* Для воспроизведения текста с предварительной обработкой:
+```
+    from rhvoice_tools import rhvoice_say
+    rhvoice_say(text)
+```    
+* Для воспроизвдения из терминала:
+```
+    rhvoice_say("текск для чтения")
+```
+
+## Настройка
+Параметры `rhvoice_say` расположены в `~/.config/rhvoice-say.conf`, файл создается при первом запуске `rhvoice-say`.
 
 ## Зависимости
 * Python 3;
