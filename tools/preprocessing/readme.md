@@ -12,6 +12,17 @@
 * греческие буквы;
 * и д.р.
 
+## Установка
+* Входит в AUR пакет для Arch пользователей [rhvoice-dictionary-git](https://aur.archlinux.org/packages/rhvoice-dictionary-git/).
+* Для ручной установки в Linux:
+```
+git clone https://github.com/vantu5z/RHVoice-dictionary.git
+cd RHVoice-dictionary/tools
+python build.py
+cp -R build/lib ~/.local
+sudo cp rhvoice_say /usr/local/bin
+```
+
 ## Использование
 * Для подготовки текста необходимо импортировать функцию `text_prepare` и передать ей текст:
 ```
