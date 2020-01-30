@@ -2,11 +2,21 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from rhvoice_tools import rhvoice_say
+from rhvoice_tools import rhvoice_say, say_clipboard
 
 
-if len(sys.argv) > 1:
+def show_help():
+    print("Использование: rhvoice_say 'текст для чтения'   -- чтение текста\n"
+          "               rhvoice_say -c                   -- чтение буфера обмена\n"
+          "               rhvoice_say -h                   -- данная справка")
+
+if '-h' in sys.argv:
+    show_help()
+elif '-c' in sys.argv:
+    say_clipboard()
+elif len(sys.argv) > 1:
     text = sys.argv[1]
     rhvoice_say(text)
 else:
     print('Нет текста для чтения...')
+    show_help()

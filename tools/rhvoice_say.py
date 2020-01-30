@@ -9,6 +9,21 @@ from os.path import expanduser
 from rhvoice_tools import text_prepare
 
 
+def say_clipboard():
+    """
+    Прочитать буфер обмена.
+    """
+    import tkinter as tk
+
+    root = tk.Tk()
+    # не показываем окно
+    root.withdraw()
+
+    # получаем текст из буфера обмена и читаем его
+    clipboard_text = root.clipboard_get()
+    rhvoice_say(clipboard_text)
+
+
 def rhvoice_say(text):
     if text:
         """
