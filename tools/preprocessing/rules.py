@@ -1244,49 +1244,7 @@ class CountRule_24(RuleBase):
 
 class CountRule_25(RuleBase):
     """
-    Описание: Количественные числительные.
-              Винительный падеж женского рода.
-    Пример:
-    """
-    def __init__(self):
-        self.mask = (
-            r'(?<![,.])\b(\d*[02-9]1|1)'
-            r'(( [а-яё]+[ую]ю | )([а-яё]+))')
-
-    def check(self, m):
-        if words.have(m.group(4), [Z_GENDER], False, [3]):
-            return cardinal(m.group(1), v_ca)[:-2] + 'ну' + m.group(2)
-        return None
-
-
-class CountRule_27(RuleBase):
-    """
-    Описание: Количественные числительные.
-              Средний род (именительный/винительный падежи).
-    Пример:
-    """
-    def __init__(self):
-        self.mask = (
-            r'(?<![,.])\b(\d*[02-9]1|1) '
-            r'(([а-яё]+[ео]е |)([а-яё]+[ео]))\b')
-
-    def check(self, m):
-        if words.have(m.group(4), [S_GENDER], False, [0, 3]):
-            if len(m.group(1)) > 1:
-                if int(m.group(1)[:-1]) != 0:
-                    number = m.group(1)[:-1] + '0_одно'
-                else:
-                    number = m.group(1)[:-1] + '_одно'
-            else:
-                number = m.group(1)[:-1] + 'одно'
-            return number + ' ' + m.group(2)
-        return None
-
-
-class CountRule_28(RuleBase):
-    """
-    Описание: Количественные числительные.
-              Средний род (именительный/винительный падежи).
+    Описание: Количественные числительные. Винительный падежи.
     Пример:
     """
     def __init__(self):
@@ -1323,16 +1281,16 @@ class CountRule_28(RuleBase):
         if m.group(5):
             number = decimal(m.group(5)[:-1], m.group(6), 5)
         else:
-
             number = cardinal(m.group(6), v_ca)
             if number[-3:] == 'дин':
-                attr = words.get_attr(m.group(10))
                 if c:
                     number = number[:-2] + 'ного'
                 elif attr.have([Z_GENDER], False, [3]):
                     number = number[:-2] + 'ну'
                 elif attr.have([S_GENDER], False, [0, 3]):
                     number = number[:-2] + 'но'
+                elif not b:
+                    return None
             elif number[-3:] == 'два':
                 if attr.have([Z_GENDER], False, [1]):
                     number = number[:-1] + 'е'
@@ -1341,6 +1299,47 @@ class CountRule_28(RuleBase):
             else:
                 return None
         return m.group(1) + ' ' + pre + number + m.group(7)
+
+
+class CountRule_27(RuleBase):
+    """
+    Описание: Количественные числительные.
+              Винительный падеж женского рода.
+    Пример:
+    """
+    def __init__(self):
+        self.mask = (
+            r'(?<![,.])\b(\d*[02-9]1|1)'
+            r'(( [а-яё]+[ую]ю | )([а-яё]+))')
+
+    def check(self, m):
+        if words.have(m.group(4), [Z_GENDER], False, [3]):
+            return cardinal(m.group(1), v_ca)[:-2] + 'ну' + m.group(2)
+        return None
+
+
+class CountRule_28(RuleBase):
+    """
+    Описание: Количественные числительные.
+              Средний род (именительный/винительный падежи).
+    Пример:
+    """
+    def __init__(self):
+        self.mask = (
+            r'(?<![,.])\b(\d*[02-9]1|1) '
+            r'(([а-яё]+[ео]е |)([а-яё]+[ео]))\b')
+
+    def check(self, m):
+        if words.have(m.group(4), [S_GENDER], False, [0, 3]):
+            if len(m.group(1)) > 1:
+                if int(m.group(1)[:-1]) != 0:
+                    number = m.group(1)[:-1] + '0_ одно'
+                else:
+                    number = m.group(1)[:-1] + '_ одно'
+            else:
+                number = m.group(1)[:-1] + 'одно'
+            return number + ' ' + m.group(2)
+        return None
 
 
 class CountRule_29(RuleBase):
@@ -1514,6 +1513,28 @@ class CountRule_34(RuleBase):
             return None
 
 
+class CountRule_26(RuleBase):
+    """
+    Описание: Количественные числительные. Предложный падеж.
+    Пример: "в 21 принадлежащей -> в двадцати одной принадлежащей"
+    """
+    def __init__(self):
+        self.mask = (r'\b([Вв] |[Нн]а |[Пп]ри |[Оо]б? )'
+            r'(\d+)( [а-яё]+([ео][йм]|[иы]х))\b')
+
+    def check(self, m):
+        number = ''
+        if ((condition(m.group(2)) and m.group(4) in ('ем', 'ом'))
+            or m.group(4) in ('их', 'ых')):
+            number = cardinal(m.group(2), p_ca)
+        elif condition(m.group(2)) and m.group(4) in ('ей', 'ой'):
+            number = cardinal(m.group(2), p_ca)[:-2] + 'й'
+        if number:
+            return m.group(1) + number + m.group(3)
+        else:
+            return None
+
+
 # ==========================
 # Подготовка списков правил.
 # ==========================
@@ -1564,6 +1585,7 @@ rules_list_2 = (CountRule_4(),
                 CountRule_18(),
                 CountRule_19(),
                 CountRule_20(),     # предложный
+                CountRule_26(),
                 CountRule_21(),
                 CountRule_22(),
                 CountRule_24(),
