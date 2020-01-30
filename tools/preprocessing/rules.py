@@ -295,29 +295,19 @@ class UnitRule_9(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b([Вв]|[Оо]б?|[Пп]ри)'
-            r'( (около |почти |приблизительно |примерно |плюс |минус |) '
-            r'(\d+,|)(\d+)( [-и] | или )| )'
+            r'\b(([Вв]|[Оо]б?|[Пп]ри) '
+            r'((около |почти |приблизительно |примерно |плюс |минус |)'
+            r'(\d+,|)(\d+) ([-и]|или) |)'
             r'(около |почти |приблизительно |примерно |плюс |минус |)'
-            r'(\d+,|)(\d+)_ ' + units)
+            r'(\d+,|)(\d+))_ ' + units
+            )
 
     def check(self, m):
-        if m.group(2) == ' ':
-            pre = ' '
+        if m.group(9):
+            pre = forms[m.group(11)][2]
         else:
-            if m.group(4):
-                pre = decimal(m.group(4)[:-1], m.group(5), 4)
-                pre += ' ' + forms[m.group(10)][2]
-            else:
-                pre = m.group(5)
-            pre = m.group(3) + pre + m.group(6)
-        number = m.group(7)
-        if m.group(8):
-            number += decimal(m.group(8)[:-1], m.group(9), 4)
-            number += ' ' + forms[m.group(10)][2]
-        else:
-            number += m.group(9) + ' ' + substant(m.group(9), m.group(10), 4)
-        return m.group(1) + pre + number
+            pre = substant(m.group(10), m.group(11), 4)
+        return m.group(1) + ' ' + pre
 
 
 class UnitRule_11(RuleBase):
@@ -573,6 +563,24 @@ class CountRule_35(RuleBase):
 class CountRule_36(RuleBase):
     """
     Описание: Порядковые числительные.
+    Пример: "2-й и 3-й комнат -> второй и третьей комнат"
+    """
+    def __init__(self):
+        self.mask = (
+            r'\b(\d+)-й( или | и )(\d+)-й( ([а-я]+([ео]й|[иы]х) |)([а-яё]+))\b')
+
+    def check(self, m):
+        attr = words.get_attr(m.group(7))
+        if attr.have([Z_GENDER], None, [1]):
+            new = ordinal(m.group(1), p_zh) + m.group(2)
+            new += ordinal(m.group(3), p_zh) + m.group(4)
+            return new
+        return None
+
+
+class CountRule_37(RuleBase):
+    """
+    Описание: Порядковые числительные.
     Пример: "2-й и 3-й блок(и) -> второй и третий блок(и)"
     """
     def __init__(self):
@@ -588,7 +596,7 @@ class CountRule_36(RuleBase):
         return None
 
 
-class CountRule_37(RuleBase):
+class CountRule_38(RuleBase):
     """
     Описание: Порядковые числительные.
     Пример: "2-е и 3-е числа -> второе и третье числа"
@@ -606,7 +614,7 @@ class CountRule_37(RuleBase):
         return None
 
 
-class CountRule_38(RuleBase):
+class CountRule_39(RuleBase):
     """
     Описание: Порядковые числительные.
     Пример: "2 груша -> вторая груша, 3 окно -> третье окно"
@@ -1096,41 +1104,48 @@ class CountRule_20(RuleBase):
         self.mask = (
             r'\b([Вв]|[Нн]а|[Оо]б?|[Пп]ри)'
             r'('
-            r'( приблизительно | плюс | минус | )'
-            r'(\d+)( [-и] | или )| '
+            r'( около | почти | примерно | приблизительно | плюс | минус | )'
+            r'(\d+,|)(\d+)( [-и] | или )| '
             r')'
-            r'(приблизительно |плюс |минус |)'
-            r'(\d+)( ([а-яё]+([иы]х|[ео][йм]) |)([а-яё]{3,}))\b')
+            r'(около |почти |примерно |приблизительно |плюс |минус |)'
+            r'(\d+,|)(\d+)( ([а-яё]+([иы]х|[ео][йм]) |)([а-яё]{3,}))\b')
 
     def check(self, m):
         if m.group(2) == ' ':
             pre = ' '
         else:
-            pre = m.group(3) + cardinal(m.group(4), p_ca)
-            a = words.have(m.group(11), None, False, [2, 5])
-            b = words.have(m.group(11)[:-1] + 'м', [Z_GENDER], True, [2])
-            if condition(m.group(4)) and (a or b):
-                pre = pre[:-1] + 'й'
-            elif m.group(11) == 'сутках':
-                pre = pre[:-2] + 'их'
-            pre += m.group(5)
+            pre = ' ' + m.group(3)
+            if m.group(4):
+                pre += decimal(m.group(4)[:-1], m.group(5), 4)
+            else:
+                pre = m.group(3) + cardinal(m.group(5), p_ca)
+                a = words.have(m.group(13), None, False, [2, 5])
+                b = words.have(m.group(13)[:-1] + 'м', [Z_GENDER], True, [2])
+                if condition(m.group(5)) and (a or b):
+                    pre = pre[:-1] + 'й'
+                elif m.group(13) == 'сутках':
+                    pre = pre[:-2] + 'их'
+            pre += m.group(6)
         number = ''
-        attr = words.get_attr(m.group(11))
-        if condition(m.group(7)):
-            if attr.have([M_GENDER, S_GENDER], False, [5]):
-                number = cardinal(m.group(7), p_ca)
-            elif attr.have([Z_GENDER], False, [2, 5]):
-                number = cardinal(m.group(7), p_ca)[:-1] + 'й'
-            elif m.group(11) == 'сутках':
-                number = cardinal(m.group(7), p_ca)[:-2] + 'их'
-        elif m.group(11)[-2:] in ('ах', 'ях'):
-            number = cardinal(m.group(7), p_ca)
-        elif (len(m.group(7)) > 3 and m.group(7)[-3:] == '000'
-            and (attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
-            or m.group(11) in ('суток', 'лет'))):
-            number = cardinal(m.group(7), p_ca)
+        if m.group(8):
+            number = decimal(m.group(8)[:-1], m.group(9), 4)
+        else:
+            attr = words.get_attr(m.group(13))
+            if condition(m.group(9)):
+                if attr.have([M_GENDER, S_GENDER], False, [5]):
+                    number = cardinal(m.group(9), p_ca)
+                elif attr.have([Z_GENDER], False, [2, 5]):
+                    number = cardinal(m.group(9), p_ca)[:-1] + 'й'
+                elif m.group(13) == 'сутках':
+                    number = cardinal(m.group(9), p_ca)[:-2] + 'их'
+            elif m.group(13)[-2:] in ('ах', 'ях'):
+                number = cardinal(m.group(9), p_ca)
+            elif (len(m.group(9)) > 3 and m.group(9)[-3:] == '000'
+                and (attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
+                or m.group(13) in ('суток', 'лет'))):
+                number = cardinal(m.group(9), p_ca)
         if number:
-            return m.group(1) + pre + m.group(6) + number + m.group(8)
+            return m.group(1) + pre + m.group(7) + number + m.group(10)
         return None
 
 
@@ -1527,6 +1542,7 @@ rules_list = (UnitRule_0(),
               CountRule_36(),
               CountRule_37(),
               CountRule_38(),
+              CountRule_39(),
               CountRule_6(),
               CountRule_7(),
               CountRule_8(),

@@ -1499,8 +1499,6 @@ samples_2 = (
   (r'\b([Вв] )(\d+),(\d+) - (\d+),(\d+) раза\b',
    'm.group(1) + decimal(m.group(2), m.group(3), 5) + " - " + '
    'decimal(m.group(4), m.group(5), 5) + " раза"'),
-  (r'\b([Вв] )(\d+),(\d+)\b',
-   'm.group(1) + decimal(m.group(2), m.group(3), 4)'),
   (r'\b(([Зз]а|[Нн]а|состав[аеилотя]{2,4}) (\d+,|)\d+ (-|или|и) )(\d+),(\d+)\b',
    'm.group(1) + decimal(m.group(5), m.group(6), 5)'),
   (r'\b([Зз]а |[Нн]а |состав[аеилотя]{2,4} )(\d+),(\d+)\b',
