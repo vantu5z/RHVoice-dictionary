@@ -19,10 +19,12 @@ def say_clipboard():
     # не показываем окно
     root.withdraw()
 
-    # получаем текст из буфера обмена и читаем его
-    clipboard_text = root.clipboard_get()
-    rhvoice_say(clipboard_text)
-
+    # пытаемся получить текст из буфера обмена и читаем его
+    try:
+        clipboard_text = root.clipboard_get()
+        rhvoice_say(clipboard_text)
+    except:
+        print('Буфер обмена пуст...')
 
 def rhvoice_say(text):
     if text:
