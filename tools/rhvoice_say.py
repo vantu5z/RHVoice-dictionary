@@ -15,6 +15,7 @@ def rhvoice_say(text):
         Чтение текста RHVocie с предварительнгой обработкой текста.
         """
         txt = text_prepare(text)        # предварительная подготовка текста
+        print(txt)
 
         # открываем файл конфигурации
         file_name = expanduser("~") + '/.config/rhvoice_say.conf'
@@ -45,14 +46,14 @@ def rhvoice_say(text):
 
         if use_SD:
             # -e, --pipe-mode (Pipe from stdin to stdout plus Speech Dispatcher)
-            # -w, --wait (Wait till the message is spoken or discarded)
+            # -w, --wait      (Wait till the message is spoken or discarded)
             # -y, --synthesis-voice (Set the synthesis voice)
-            # -r, --rate (Set the rate of the speech)
-            #            (between -100 and +100, default: 0)
-            # -i, --volume (Set the volume (intensity) of the speech)
-            #              (between -100 and +100, default: 0)
-            # -p, --pitch (Set the pitch of the speech)
-            #             (between -100 and +100, default: 0)
+            # -r, --rate      (Set the rate of the speech)
+            #                 (between -100 and +100, default: 0)
+            # -i, --volume    (Set the volume (intensity) of the speech)
+            #                 (between -100 and +100, default: 0)
+            # -p, --pitch     (Set the pitch of the speech)
+            #                 (between -100 and +100, default: 0)
             p = subprocess.Popen(['spd-say',
                                   "-e", "-w",
                                   "-y" + voice,
@@ -60,19 +61,21 @@ def rhvoice_say(text):
                                   "-r %d" % rate,
                                   "-p %d" % pitch
                                   ],
-                                 stdin=subprocess.PIPE)
+                                 stdin=subprocess.PIPE,
+                                 stdout=subprocess.DEVNULL)
         else:
-            # -p <spec>, --profile <spec> (voice profile)
-            # -r <percent>,  --rate <percent> (speech rate)
-            # -v <percent>,  --volume <percent> (speech volume)
-            # -t <percent>,  --pitch <percent> (speech pitch)
+            # -p <spec>,    --profile <spec>    (voice profile)
+            # -r <percent>, --rate    <percent> (speech rate)
+            # -v <percent>, --volume  <percent> (speech volume)
+            # -t <percent>, --pitch   <percent> (speech pitch)
             p = subprocess.Popen(['RHVoice-test',
                                   "-p " + voice,
                                   "-v %d" % (volume + 100),
                                   "-r %d" % (rate + 100),
                                   "-t %d" % (pitch + 100)
                                   ],
-                                 stdin=subprocess.PIPE)
+                                 stdin=subprocess.PIPE,
+                                 stdout=subprocess.DEVNULL)
         p.communicate(txt.encode('utf-8'))
     else:
         print('Нет текста для чтения...')
