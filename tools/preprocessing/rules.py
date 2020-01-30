@@ -631,6 +631,7 @@ class CountRule_39(RuleBase):
         if (attr.have([M_GENDER], False, [0])
             and not attr.have([M_GENDER], True, [1])
             and not m.group(2) in ('грамм', 'килограмм', 'миллиграмм',
+                                   'парсек', 'килопарсек', 'мегапарсек',
                                    'человек')):
             number = ordinal(m.group(1), i_mu)
         if attr.have([S_GENDER], False, [0]):
