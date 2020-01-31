@@ -1284,6 +1284,7 @@ class CountRule_25(RuleBase):
             number = decimal(m.group(6)[:-1], m.group(7), 5)
         else:
             number = cardinal(m.group(7), v_ca)
+            print(m.group(6))
             if number[-3:] == 'дин':
                 if c:
                     number = number[:-2] + 'ного'
@@ -1301,7 +1302,7 @@ class CountRule_25(RuleBase):
             elif (len(m.group(7)) > 3
                 and (attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
                 or m.group(11) in ('суток', 'лет'))):
-                number = cardinal(m.group(7), v_ca)
+                pass
             else:
                 return None
         return m.group(1) + ' ' + pre + number + m.group(8)
