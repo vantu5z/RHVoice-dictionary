@@ -1160,7 +1160,7 @@ class CountRule_21(RuleBase):
 
     def check(self, m):
         attr = words.get_attr(m.group(2))
-        a = attr.have(None, False, [5])
+        a = attr.have(None, True, [5], only_case=True)
         b = condition(m.group(1))
         c = attr.have([M_GENDER, S_GENDER], False, [5])
         if a or (b and c):
