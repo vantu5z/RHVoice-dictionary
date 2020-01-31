@@ -1115,7 +1115,7 @@ class CountRule_20(RuleBase):
         if m.group(2) == ' ':
             pre = ' '
         else:
-            pre = ' ' + m.group(3)
+            pre = m.group(3)
             if m.group(4):
                 pre += decimal(m.group(4)[:-1], m.group(5), 4)
             else:
@@ -1249,13 +1249,12 @@ class CountRule_25(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b([Вв]|[Нн]а|[Зз]а|[Пп]ро|[Сс]пустя|[Чч]ерез'
-            r'|состав[аеилотя]{2,4})'
-            r'( (\d+)( -| или)|) (\d+,|)(\d+)'
+            r'\b([Нн]а|[Зз]а|[Пп]ро|[Сс]пустя|[Чч]ерез|состав[аеилотя]{2,4})'
+            r'( (\d+,|)(\d+)( -| или)|) (\d+,|)(\d+)'
             r'(( [а-яё]+([ая]я|[ую]ю|[ео]е|[иы][йх]) | )([а-яё]+))\b')
 
     def check(self, m):
-        attr = words.get_attr(m.group(10))
+        attr = words.get_attr(m.group(11))
         a = attr.have([M_GENDER], False, [3])
         b = attr.have([M_GENDER], False, [0])
         c = a and not b
@@ -1263,25 +1262,28 @@ class CountRule_25(RuleBase):
         e = attr.have([Z_GENDER], True, [1])
         f = d or e
         if m.group(2):
-            pre = cardinal(m.group(3), v_ca)
-            if pre[-3:] == 'дин':
-                if c:
-                    pre = pre[:-2] + 'ного'
-                elif f:
-                    pre = pre[:-2] + 'ну'
-                elif attr.have([S_GENDER], False, [0, 3]):
-                    pre = pre[:-2] + 'но'
-            elif pre[-3:] == 'два':
-                if f:
-                    pre = pre[:-1] + 'е'
-            pre += m.group(4) + ' '
+            if m.group(3):
+                pre = decimal(m.group(3)[:-1], m.group(4), 5)
+            else:
+                pre = cardinal(m.group(4), v_ca)
+                if pre[-3:] == 'дин':
+                    if c:
+                        pre = pre[:-2] + 'ного'
+                    elif f:
+                        pre = pre[:-2] + 'ну'
+                    elif attr.have([S_GENDER], False, [0, 3]):
+                        pre = pre[:-2] + 'но'
+                elif pre[-3:] == 'два':
+                    if f:
+                        pre = pre[:-1] + 'е'
+            pre += m.group(5) + ' '
         else:
             pre = ''
 
-        if m.group(5):
-            number = decimal(m.group(5)[:-1], m.group(6), 5)
+        if m.group(6):
+            number = decimal(m.group(6)[:-1], m.group(7), 5)
         else:
-            number = cardinal(m.group(6), v_ca)
+            number = cardinal(m.group(7), v_ca)
             if number[-3:] == 'дин':
                 if c:
                     number = number[:-2] + 'ного'
@@ -1298,7 +1300,7 @@ class CountRule_25(RuleBase):
                     return None
             else:
                 return None
-        return m.group(1) + ' ' + pre + number + m.group(7)
+        return m.group(1) + ' ' + pre + number + m.group(8)
 
 
 class CountRule_27(RuleBase):
