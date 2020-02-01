@@ -373,5 +373,5 @@ def decimal(full, frac, cas=0):
             dp = 'ую'
         else:
             dp = 'ых'
-    return f_part + ' цел' + fp + ' ' + d_part + dec + dp
+    return f_part + '_ цел' + fp + '_ ' + d_part + dec + dp
 
