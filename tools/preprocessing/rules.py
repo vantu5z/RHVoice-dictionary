@@ -1530,7 +1530,6 @@ class CountRule_26(RuleBase):
 
     def check(self, m):
         number = ''
-
         if ((condition(m.group(2)) and m.group(4) in ('ем', 'ом'))
             or m.group(4) in ('их', 'ых')):
             number = cardinal(m.group(2), p_ca)
