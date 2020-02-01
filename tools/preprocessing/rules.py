@@ -79,7 +79,7 @@ class UnitRule_1(RuleBase):
     def __init__(self):
         self.mask = (
             r'\b('
-            r'([Зз]а|[Пп]ро|[Сс]пустя|[Чч]ерез|'
+            r'([Зз]а|[Нн]а|[Пп]ро|[Сс]пустя|[Чч]ерез|'
             r'состав[авеийлотшщьюя]{2,6}|превы[сш][авеийлотшщьюя]{2,5}) (бы |)'
             r')'
             r'((\d+,|)(\d+) - |)(\d+,|)(\d+)_ ' + units)
@@ -1530,6 +1530,9 @@ class CountRule_26(RuleBase):
 
     def check(self, m):
         number = ''
+
+        if m.group(3) != 'целых':
+            return None
         if ((condition(m.group(2)) and m.group(4) in ('ем', 'ом'))
             or m.group(4) in ('их', 'ых')):
             number = cardinal(m.group(2), p_ca)
