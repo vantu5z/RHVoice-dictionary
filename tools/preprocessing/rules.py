@@ -1526,19 +1526,13 @@ class CountRule_26(RuleBase):
     """
     def __init__(self):
         self.mask = (r'\b([Вв] |[Нн]а |[Пп]ри |[Оо]б? )'
-            r'(\d+)( [а-яё]+([ео][йм]|[иы]х))\b')
+            r'(\d*[02-9]1|1)( [а-яё]+[ео][йм])\b')
 
     def check(self, m):
-        number = ''
-        if ((condition(m.group(2)) and m.group(4) in ('ем', 'ом'))
-            or m.group(4) in ('их', 'ых')):
+        if m.group(3) in ('ем', 'ом'):
             number = cardinal(m.group(2), p_ca)
-        elif condition(m.group(2)) and m.group(4) in ('ей', 'ой'):
-            number = cardinal(m.group(2), p_ca)[:-2] + 'й'
-        if number:
-            return m.group(1) + number + m.group(3)
         else:
-            return None
+            number = cardinal(m.group(2), p_ca)[:-2] + 'й'
 
 
 # ==========================
