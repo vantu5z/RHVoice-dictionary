@@ -16,7 +16,9 @@ except:
 
 dest_dir = "build/lib/%s/rhvoice_tools" % site_pkg
 
+# создание каталогов в build
 makedirs(dest_dir + '/preprocessing/dict')
+makedirs(dest_dir + '/scripts')
 
 files = ['__init__.py',
          'rhvoice_say.py',
