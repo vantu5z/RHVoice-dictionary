@@ -3,7 +3,7 @@
 # Работа со временем.
 
 import string
-import datetime
+from datetime import datetime
 
 
 def get_time():
@@ -11,7 +11,7 @@ def get_time():
     Получение текущего времени.
     В формате: "HH часов YY минут"
     """
-    now_time = datetime.datetime.now()               # текущая дата со временем
+    now_time = datetime.now()             # текущая дата со временем
     cur_hour = now_time.hour
     cur_minute = now_time.minute
     last_min = cur_minute % 10            # последняя минута (например 38 -> 8)
@@ -35,6 +35,20 @@ def get_time():
         say_time = "%d %s %d %s" % (cur_hour, lc_hour, cur_minute, lc_minute)
 
     return say_time
+
+def get_weekday():
+    """
+    Получение текущего дня недели.
+    """
+    day_names = {0: 'понедельник',
+                 1: 'вторник',
+                 2: 'среда',
+                 3: 'четверг',
+                 4: 'пятница',
+                 5: 'суббота',
+                 6: 'воскресенье'}
+
+    return day_names.get(datetime.today().weekday())
 
 
 def inflect(n, form1, form2, form5):
