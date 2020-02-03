@@ -6,9 +6,10 @@ from os import makedirs
 from shutil import copyfile, rmtree
 
 
-site_pkg = "python%d.%d/site-packages" % (version_info.major, version_info.minor)
-
+site_pkg = "python%d.%d/site-packages" % (version_info.major,
+                                          version_info.minor)
 try:
+    # удаление какталога с предыдущей сборкой
     rmtree('build')
 except:
     pass
@@ -26,7 +27,10 @@ files = ['__init__.py',
          'preprocessing/words_forms.py',
          'preprocessing/dict/words_muz.py',
          'preprocessing/dict/words_sre.py',
-         'preprocessing/dict/words_zen.py'
+         'preprocessing/dict/words_zen.py',
+         'scripts/__init__.py',
+         'scripts/forismatic_quotes.py',
+         'scripts/time_utils.py'
         ]
 for file in files:
     copyfile(file, "%s/%s" % (dest_dir, file))
