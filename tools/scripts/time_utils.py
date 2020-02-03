@@ -36,6 +36,29 @@ def get_time():
 
     return say_time
 
+def get_date():
+    """
+    Сегодняшняя дата без года.
+    """
+    month_dic = {1:  "января",
+                 2:  "февраля",
+                 3:  "марта",
+                 4:  "апреля",
+                 5:  "мая",
+                 6:  "июня",
+                 7:  "июля",
+                 8:  "августа",
+                 9:  "сентября",
+                 10: "октября",
+                 11: "ноября",
+                 12: "декабря"
+            }
+    now_date = datetime.now()
+    day = now_date.day
+    month = now_date.month
+
+    return "%d-е %s" % (day, month_dic.get(month))
+
 def get_weekday():
     """
     Получение текущего дня недели.
