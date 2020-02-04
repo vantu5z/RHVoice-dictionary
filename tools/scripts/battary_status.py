@@ -8,8 +8,8 @@ def is_battery_low():
 
     if (not battery.power_plugged) and (battery.percent < 20):
         if  battery.percent > 10:
-            return ("Низкий заряд батареи - battery.percent %%. "
-                    "Подключите питание.")
+            return ("Низкий заряд батареи - %d %%. "
+                    "Подключите питание." % battery.percent)
         else:
-            return ("Критический заряд батареи - battery.percent %%. "
-                    "Срочно подключите питание.")
+            return ("Критический заряд батареи - %d %%. "
+                    "Срочно подключите питание." % battery.percent)
