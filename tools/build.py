@@ -31,7 +31,9 @@ files = ['__init__.py',
          'preprocessing/dict/words_sre.py',
          'preprocessing/dict/words_zen.py',
          'scripts/__init__.py',
+         'scripts/battary_status.py',
          'scripts/forismatic_quotes.py',
+         'scripts/greeting.py',
          'scripts/time_utils.py'
         ]
 for file in files:
