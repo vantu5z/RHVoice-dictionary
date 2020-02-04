@@ -13,31 +13,41 @@ def get_data(key, city):
     key - ключ от openweathermap.org
     city - город с уточнением страны
     """
-    owm = pyowm.OWM(API_key=key, language='ru')
-    observation = owm.weather_at_place(city)
-    w = observation.get_weather()
+    get_err = False
+    try:
+        owm = pyowm.OWM(API_key=key, language='ru')
+        observation = owm.weather_at_place(city)
+        w = observation.get_weather()
+    except:
+        get_err = "Сведения о погоде получить не удалось."
 
-    weather = ("%s. "
-               "Сегодня %s, %s. "
-               "Время %s. "
-               "Температура за окном %d ℃. "
-               "Ветер %s, %d м в секунду. "
-               "Атмосферное давление %d мм рт. ст. "
-               "Относительная влажность воздуха %d %%. "
-               "%s."
-               % (get_greeting(),
-                  get_weekday(),
-                  get_date(),
-                  get_time(),
-                  w.get_temperature('celsius').get('temp'),
-                  get_wind_direction(w.get_wind().get('deg')),
-                  w.get_wind().get('speed'),
-                  w.get_pressure().get('press')*0.75006375541921,
-                  w.get_humidity(),
-                  w.get_detailed_status()
-                 )
-              )
-    return weather
+    data = ("%s. "
+            "Сегодня %s, %s. "
+            "Время %s. "
+            % (get_greeting(),
+               get_weekday(),
+               get_date(),
+               get_time())
+           )
+
+    if not get_err:
+        data += ("Температура за окном %d ℃. "
+                "Ветер %s, %d м в секунду. "
+                "Атмосферное давление %d мм рт. ст. "
+                "Относительная влажность воздуха %d %%. "
+                "%s."
+                % (w.get_temperature('celsius').get('temp'),
+                   get_wind_direction(w.get_wind().get('deg')),
+                   w.get_wind().get('speed'),
+                   w.get_pressure().get('press')*0.75006375541921,
+                   w.get_humidity(),
+                   w.get_detailed_status()
+                  )
+               )
+    else:
+        data += get_err
+
+    return data
 
 def get_wind_direction(deg):
     """
