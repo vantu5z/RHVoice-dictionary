@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pyowm
-from rhvoice_tools.scripts import get_time, get_date, get_weekday
+from rhvoice_tools.scripts import get_time, get_date, get_weekday, get_greeting
 from rhvoice_tools import rhvoice_say
 from datetime import datetime
 
@@ -17,14 +17,16 @@ def get_data(key, city):
     observation = owm.weather_at_place(city)
     w = observation.get_weather()
 
-    weather = ("Сегодня %s, %s. "
+    weather = ("%s. "
+               "Сегодня %s, %s. "
                "Время %s. "
                "Температура за окном %d ℃. "
                "Ветер %s, %d м в секунду. "
                "Атмосферное давление %d мм рт. ст. "
                "Относительная влажность воздуха %d %%. "
                "%s."
-               % (get_weekday(),
+               % (get_greeting(),
+                  get_weekday(),
                   get_date(),
                   get_time(),
                   w.get_temperature('celsius').get('temp'),
