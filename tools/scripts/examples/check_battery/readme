@@ -1,5 +1,5 @@
 Использование systemd для запуска по расписанию
-=======================================================
+===============================================
 Установка:
  - Скопировать "check_battery.py" в каталог со скриптами, например "~/python_scripts/"
  - Скопировать "battery_state.service" и "battery_state.timer" в "~/.config/systemd/user/"
@@ -18,6 +18,10 @@
   systemctl --user status battery_state.service
   systemctl --user list-timer
   journalctl --user -u battery_state
+
+Отключение:
+  systemctl --user stop battery_state.timer
+  systemctl --user disable battery_state.timer
 
 
 Использование cron для запуска по расписанию
