@@ -17,6 +17,7 @@
   systemctl --user status battery_state.timer
   systemctl --user status battery_state.service
   systemctl --user list-timer
+  journalctl --user -u battery_state
 
 
 Использование cron для запуска по расписанию
