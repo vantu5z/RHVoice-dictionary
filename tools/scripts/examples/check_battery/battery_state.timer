@@ -1,0 +1,9 @@
+[Unit]
+Description=Проверка заряда батареи каждые 10 минут.
+
+[Timer]
+OnBootSec=30
+OnUnitActiveSec=10min
+
+[Install]
+WantedBy=timers.target

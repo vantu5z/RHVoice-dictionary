@@ -1,0 +1,9 @@
+[Unit]
+Description=Проверка зарада батареи.
+
+[Service]
+WorkingDirectory=полный путь до каталога со скриптом
+ExecStart=python check_battery.py
+
+[Install]
+WantedBy=default.target

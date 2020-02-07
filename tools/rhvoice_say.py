@@ -73,6 +73,7 @@ def rhvoice_say(text):
             #                 (between -100 and +100, default: 0)
             p = subprocess.Popen(['spd-say',
                                   "-e", "-w",
+                                  "-o rhvoice",
                                   "-y" + voice,
                                   "-i %d" % volume,
                                   "-r %d" % rate,
