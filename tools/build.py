@@ -22,6 +22,7 @@ makedirs(dest_dir + '/scripts')
 
 files = ['__init__.py',
          'rhvoice_say.py',
+         'rhvoice_conf_gui.py',
          'preprocessing/functions.py',
          'preprocessing/rules.py',
          'preprocessing/templates.py',
