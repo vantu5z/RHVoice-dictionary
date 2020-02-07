@@ -37,6 +37,7 @@ class MainWindow(Gtk.Window):
 
         page_label = Gtk.Label(label='Настройки rhvoice_say')
         page_label.set_hexpand(True)
+        page_label.set_margin_bottom(10)
         row = 0
         conf_page_say.attach(page_label, 0, row, 3, 1)
         
@@ -85,13 +86,13 @@ class MainWindow(Gtk.Window):
         apply_btn = Gtk.Button(label='Применить')
         apply_btn.connect('clicked', self.apply_say_conf)
         apply_btn.set_halign(Gtk.Align.END)
-        apply_btn.set_margin_top(10)
+        apply_btn.set_margin_top(20)
         conf_page_say.attach(apply_btn, 2, row, 1, 1)
 
         test_btn = Gtk.Button(label='Тест')
         test_btn.connect('clicked', self.run_test)
         test_btn.set_halign(Gtk.Align.START)
-        test_btn.set_margin_top(10)
+        test_btn.set_margin_top(20)
         conf_page_say.attach(test_btn, 0, row, 1, 1)
 
         self.notebook.append_page(conf_page_say,
