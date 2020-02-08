@@ -1112,6 +1112,8 @@ class CountRule_20(RuleBase):
             r'(\d+,|)(\d+)( ([а-яё]+([иы]х|[ео][йм]) |)([а-яё]{3,}))\b')
 
     def check(self, m):
+        if m.group(13) == 'раз':
+            return None
         if m.group(2) == ' ':
             pre = ' '
         else:
