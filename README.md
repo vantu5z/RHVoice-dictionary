@@ -19,8 +19,10 @@ RHVoice-dictionary
 
 ## Дополнительные инструменты
 
+Более подробное описание инструментов "[/tools](https://github.com/vantu5z/RHVoice-dictionary/tree/master/tools)"
+
 * ### Предварительная обработка текста
-Ведётся разработка предварительной обработки текста на Питоне "[/tools/preprocessing](https://github.com/vantu5z/RHVoice-dictionary/tree/master/tools/preprocessing)".
+    * Ведётся разработка предварительной обработки текста на Питоне "[/tools/preprocessing](https://github.com/vantu5z/RHVoice-dictionary/tree/master/tools/preprocessing)".
 
 * ### Скрипты на Питоне
     * Вспомогательые скрипты.
