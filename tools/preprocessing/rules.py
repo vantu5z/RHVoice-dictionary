@@ -567,13 +567,13 @@ class CountRule_36(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b(\d+)-й( или | и )(\d+)-й( ([а-я]+([ео]й|[иы]х) |)([а-яё]+))\b')
+            r'\b(\d+)-й( или | и )(\d+)-й( ([А-Я]?[а-я]+([ео]й|[иы]х) |)([а-яё]+))\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(7))
         if attr.have([Z_GENDER], None, [1]):
-            new = ordinal(m.group(1), p_zh) + m.group(2)
-            new += ordinal(m.group(3), p_zh) + m.group(4)
+            new = ordinal(m.group(1), r_zh) + m.group(2)
+            new += ordinal(m.group(3), r_zh) + m.group(4)
             return new
         return None
 
