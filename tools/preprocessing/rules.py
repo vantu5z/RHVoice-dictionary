@@ -814,9 +814,9 @@ class CountRule_11(RuleBase):
         self.mask = (
             r'\b([Оо]т|[Сс]о?)'
             r'( почти | примерно | приблизительно | плюс | минус | )'
-            r'((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)'
+            r'((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)( [а-яё]+ | )'
             r'('
-            r' до( почти | примерно | приблизительно | плюс | минус | )'
+            r'до( почти | примерно | приблизительно | плюс | минус | )'
             r'((\d+,|)\d+( [-и] | или )|)(\d+,|)\d+'
             r'( ([а-яё]+([иы]х|[ео]й|[ео]го) |и более |и менее |)([а-яё]+)|)'
             r')\b')
@@ -827,10 +827,10 @@ class CountRule_11(RuleBase):
                 pre = decimal(m.group(4)[:-1], m.group(5), 1)
             else:
                 pre = cardinal(m.group(5), r_ca)
-                if pre[-6:] == 'одного' and m.group(18) is not None:
-                    if words.have(m.group(18), [Z_GENDER], None, [1]):
+                if pre[-6:] == 'одного' and m.group(19) is not None:
+                    if words.have(m.group(19), [Z_GENDER], None, [1]):
                         pre = pre[:-2] + 'й'
-                    elif m.group(18) == 'суток':
+                    elif m.group(19) == 'суток':
                         pre = pre[:-3] + 'их'
             pre += m.group(6)
         else:
@@ -839,12 +839,12 @@ class CountRule_11(RuleBase):
             number = decimal(m.group(7)[:-1], m.group(8), 1)
         else:
             number = cardinal(m.group(8), r_ca)
-        if number[-6:] == 'одного' and m.group(18) is not None:
-            if words.have(m.group(18), [Z_GENDER], None, [1]):
+        if number[-6:] == 'одного' and m.group(19) is not None:
+            if words.have(m.group(19), [Z_GENDER], None, [1]):
                 number = number[:-2] + 'й'
-            elif m.group(18) == 'суток':
+            elif m.group(19) == 'суток':
                 number = number[:-3] + 'их'
-        return m.group(1) + m.group(2) + pre + number + m.group(9)
+        return m.group(1) + m.group(2) + pre + number + m.group(9) + m.group(10)
 
 
 class CountRule_12(RuleBase):
