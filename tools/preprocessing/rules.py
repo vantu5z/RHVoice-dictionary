@@ -1103,70 +1103,41 @@ class CountRule_20(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b([Вв]|[Нн]а|[Оо]б?|[Пп]ри)'
-            r'('
-            r'( около | почти | примерно | приблизительно | плюс | минус | )'
-            r'(\d+,|)(\d+)( [-и] | или )| '
-            r')'
+            r'\b((\d+)( [-и] | или )|)'
             r'(около |почти |примерно |приблизительно |плюс |минус |)'
-            r'(\d+,|)(\d+)( ([а-яё]+([иы]х|[ео][йм]) |)([а-яё]{3,}))\b')
+            r'(\d+)( ([а-яё]+([иы]х|[ео][йм]) |)([а-яё]{3,}))\b')
 
     def check(self, m):
-        if m.group(13) == 'раз':
+        if m.group(9) == 'раз':
             return None
-        if m.group(2) == ' ':
-            pre = ' '
+        if m.group(1):
+            pre = cardinal(m.group(2), p_ca)
+            a = words.have(m.group(9), None, False, [2, 5])
+            b = words.have(m.group(9)[:-1] + 'м', [Z_GENDER], True, [2])
+            if condition(m.group(2)) and (a or b):
+                pre = pre[:-1] + 'й'
+            elif m.group(9) == 'сутках':
+                pre = pre[:-2] + 'их'
+            pre += m.group(3)
         else:
-            pre = m.group(3)
-            if m.group(4):
-                pre += decimal(m.group(4)[:-1], m.group(5), 4)
-            else:
-                pre = m.group(3) + cardinal(m.group(5), p_ca)
-                a = words.have(m.group(13), None, False, [2, 5])
-                b = words.have(m.group(13)[:-1] + 'м', [Z_GENDER], True, [2])
-                if condition(m.group(5)) and (a or b):
-                    pre = pre[:-1] + 'й'
-                elif m.group(13) == 'сутках':
-                    pre = pre[:-2] + 'их'
-            pre += m.group(6)
+            pre = ''
         number = ''
-        if m.group(8):
-            number = decimal(m.group(8)[:-1], m.group(9), 4)
-        else:
-            attr = words.get_attr(m.group(13))
-            if condition(m.group(9)):
-                if attr.have([M_GENDER, S_GENDER], False, [5]):
-                    number = cardinal(m.group(9), p_ca)
-                elif attr.have([Z_GENDER], False, [2, 5]):
-                    number = cardinal(m.group(9), p_ca)[:-1] + 'й'
-                elif m.group(13) == 'сутках':
-                    number = cardinal(m.group(9), p_ca)[:-2] + 'их'
-            elif m.group(13)[-2:] in ('ах', 'ях'):
-                number = cardinal(m.group(9), p_ca)
-            elif (len(m.group(9)) > 3 and m.group(9)[-3:] == '000'
-                and (attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
-                or m.group(13) in ('суток', 'лет'))):
-                number = cardinal(m.group(9), p_ca)
+        attr = words.get_attr(m.group(9))
+        if condition(m.group(5)):
+            if attr.have([M_GENDER, S_GENDER], False, [5]):
+                number = cardinal(m.group(5), p_ca)
+            elif attr.have([Z_GENDER], False, [2, 5]):
+                number = cardinal(m.group(5), p_ca)[:-1] + 'й'
+            elif m.group(9) == 'сутках':
+                number = cardinal(m.group(5), p_ca)[:-2] + 'их'
+        elif m.group(9)[-2:] in ('ах', 'ях'):
+            number = cardinal(m.group(5), p_ca)
+        elif (len(m.group(5)) > 3 and m.group(5)[-3:] == '000'
+            and (attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
+            or m.group(9) in ('суток', 'лет'))):
+            number = cardinal(m.group(5), p_ca)
         if number:
-            return m.group(1) + pre + m.group(7) + number + m.group(10)
-        return None
-
-
-class CountRule_21(RuleBase):
-    """
-    Описание: Количественные числительные. Предложный падеж.
-    Пример:
-    """
-    def __init__(self):
-        self.mask = (r'\b(\d+) ([а-яё]+)\b')
-
-    def check(self, m):
-        attr = words.get_attr(m.group(2))
-        a = attr.have(None, True, [5], only_case=True)
-        b = condition(m.group(1))
-        c = attr.have([M_GENDER, S_GENDER], False, [5])
-        if a or (b and c):
-            return cardinal(m.group(1), p_ca) + ' ' + m.group(2)
+            return pre + m.group(4) + number + m.group(6)
         return None
 
 
@@ -1588,7 +1559,6 @@ rules_list_2 = (CountRule_4(),
                 CountRule_19(),
                 CountRule_20(),     # предложный
                 CountRule_26(),
-                CountRule_21(),
                 CountRule_22(),
                 CountRule_24(),
                 CountRule_25(),
