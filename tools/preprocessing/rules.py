@@ -1108,8 +1108,6 @@ class CountRule_20(RuleBase):
             r'(\d+)( ([а-яё]+([иы]х|[ео][йм]) |)([а-яё]{3,}))\b')
 
     def check(self, m):
-        if m.group(9) == 'раз':
-            return None
         if m.group(1):
             pre = cardinal(m.group(2), p_ca)
             a = words.have(m.group(9), None, False, [2, 5])
@@ -1132,13 +1130,11 @@ class CountRule_20(RuleBase):
                 number = cardinal(m.group(5), p_ca)[:-2] + 'их'
         elif m.group(9)[-2:] in ('ах', 'ях'):
             number = cardinal(m.group(5), p_ca)
-        elif (len(m.group(5)) > 3 and m.group(5)[-3:] == '000'
-            and (attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
-            or m.group(9) in ('суток', 'лет'))):
             number = cardinal(m.group(5), p_ca)
         if number:
             return pre + m.group(4) + number + m.group(6)
-        return None
+        else:
+            return None
 
 
 class CountRule_22(RuleBase):
