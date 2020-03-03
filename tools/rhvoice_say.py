@@ -26,12 +26,12 @@ def say_clipboard():
     except:
         print('Буфер обмена пуст...')
 
-def rhvoice_say(text):
+def rhvoice_say(text, debug=False):
     if text:
         """
         Чтение текста RHVocie с предварительнгой обработкой текста.
         """
-        txt = text_prepare(text)        # предварительная подготовка текста
+        txt = text_prepare(text, debug=debug)        # предварительная подготовка текста
         print(txt)
 
         # открываем файл конфигурации
