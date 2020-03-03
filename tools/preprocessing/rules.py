@@ -637,9 +637,7 @@ class CountRule_39(RuleBase):
             number = ordinal(m.group(1), i_mu)
         if attr.have([S_GENDER], False, [0]):
             number = ordinal(m.group(1), i_sr)
-        if (attr.have([Z_GENDER], False, [0])
-                and not attr.have(case=[3])
-                and not m.group(2) in ('марта', )):
+        if attr.have([Z_GENDER], False, [0]) and not attr.have(case=[3]):
             number = ordinal(m.group(1), i_zh)
         if number:
             return number + ' ' + m.group(2)
