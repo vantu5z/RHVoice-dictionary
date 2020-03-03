@@ -473,7 +473,7 @@ class RomanRule_2(RuleBase):
         return num1 + m.group(2) + num2 + m.group(4)
 
 
-class CountRule_1(RuleBase):
+class OrdinalRule_1(RuleBase):
     """
     Описание: Порядковые числительные.
     Пример: "во 2 окне -> во втором окне"
@@ -500,7 +500,7 @@ class CountRule_1(RuleBase):
         return None
 
 
-class CountRule_2(RuleBase):
+class OrdinalRule_2(RuleBase):
     """
     Описание: Порядковые числительные.
     Пример: "из 3 окна -> из третьего окна"
@@ -522,7 +522,7 @@ class CountRule_2(RuleBase):
         return None
 
 
-class CountRule_3(RuleBase):
+class OrdinalRule_3(RuleBase):
     """
     Описание: Порядковые числительные.
     Пример: "со 2 примером -> со вторым примером"
@@ -542,7 +542,7 @@ class CountRule_3(RuleBase):
         return None
 
 
-class CountRule_35(RuleBase):
+class OrdinalRule_35(RuleBase):
     """
     Описание: Порядковые числительные.
     Пример: "во 2-й или 3-й комнатах -> во второй или третьей комнатах"
@@ -561,7 +561,7 @@ class CountRule_35(RuleBase):
         return None
 
 
-class CountRule_36(RuleBase):
+class OrdinalRule_36(RuleBase):
     """
     Описание: Порядковые числительные.
     Пример: "2-й и 3-й комнат -> второй и третьей комнат"
@@ -579,7 +579,7 @@ class CountRule_36(RuleBase):
         return None
 
 
-class CountRule_37(RuleBase):
+class OrdinalRule_37(RuleBase):
     """
     Описание: Порядковые числительные.
     Пример: "2-й и 3-й блок(и) -> второй и третий блок(и)"
@@ -597,7 +597,7 @@ class CountRule_37(RuleBase):
         return None
 
 
-class CountRule_38(RuleBase):
+class OrdinalRule_38(RuleBase):
     """
     Описание: Порядковые числительные.
     Пример: "2-е и 3-е числа -> второе и третье числа"
@@ -615,7 +615,7 @@ class CountRule_38(RuleBase):
         return None
 
 
-class CountRule_39(RuleBase):
+class OrdinalRule_39(RuleBase):
     """
     Описание: Порядковые числительные.
     Пример: "2 груша -> вторая груша, 3 окно -> третье окно"
@@ -644,7 +644,7 @@ class CountRule_39(RuleBase):
         return None
 
 
-class CountRule_4(RuleBase):
+class OrdinalRule_4(RuleBase):
     """
     Описание: Порядковые числительные.
               Именительный мужского рода.
@@ -675,10 +675,10 @@ class CountRule_4(RuleBase):
         return None
 
 
-class CountRule_5(RuleBase):
+class OrdinalRule_5(RuleBase):
     """
     Описание: Порядковые числительные.
-              Соотвествует правилу CountRule_4 с прилагательным-определением.
+              Соотвествует правилу OrdinalRule_4 с прилагательным-определением.
     Пример:
     """
     def __init__(self):
@@ -707,7 +707,7 @@ class CountRule_5(RuleBase):
         return None
 
 
-class CountRule_6(RuleBase):
+class OrdinalRule_6(RuleBase):
     """
     Описание: Порядковые числительные.
     Пример:
@@ -721,7 +721,7 @@ class CountRule_6(RuleBase):
         return None
 
 
-class CountRule_7(RuleBase):
+class OrdinalRule_7(RuleBase):
     """
     Описание: Порядковые числительные.
     Пример:
@@ -736,7 +736,7 @@ class CountRule_7(RuleBase):
         return None
 
 
-class CountRule_8(RuleBase):
+class OrdinalRule_8(RuleBase):
     """
     Описание: Порядковые числительные.
     Пример:
@@ -756,7 +756,7 @@ class CountRule_8(RuleBase):
         return None
 
 
-class CountRule_9(RuleBase):
+class OrdinalRule_9(RuleBase):
     """
     Описание: Порядковые числительные.
     Пример:
@@ -778,7 +778,7 @@ class CountRule_9(RuleBase):
         return None
 
 
-class CountRule_10(RuleBase):
+class CardinalRule_10(RuleBase):
     """
     Описание: Количественные числительные.
               Прилагательные, в состав которых входят числительные.
@@ -806,7 +806,7 @@ class CountRule_10(RuleBase):
         return num + '-' + m.group(4)
 
 
-class CountRule_11(RuleBase):
+class CardinalRule_11(RuleBase):
     """
     Описание: Количественные числительные. Родительный падеж.
     Пример:
@@ -848,7 +848,7 @@ class CountRule_11(RuleBase):
         return m.group(1) + m.group(2) + pre + number + m.group(9) + m.group(10)
 
 
-class CountRule_12(RuleBase):
+class CardinalRule_12(RuleBase):
     """
     Описание: Количественные числительные.
               Родительный падеж второго числительного в конструкции.
@@ -872,7 +872,7 @@ class CountRule_12(RuleBase):
         return m.group(1) + number
 
 
-class CountRule_13(RuleBase):
+class CardinalRule_13(RuleBase):
     """
     Описание: Количественные числительные.
     Пример:
@@ -924,7 +924,7 @@ class CountRule_13(RuleBase):
         return new
 
 
-class CountRule_14(RuleBase):
+class CardinalRule_14(RuleBase):
     """
     Описание: Количественные числительные. Предлог "с" + родительный падеж.
     Пример:
@@ -953,7 +953,7 @@ class CountRule_14(RuleBase):
         return None
 
 
-class CountRule_15(RuleBase):
+class CardinalRule_15(RuleBase):
     """
     Описание: Количественные числительные.
     Пример:
@@ -981,7 +981,7 @@ class CountRule_15(RuleBase):
         return None
 
 
-class CountRule_16(RuleBase):
+class CardinalRule_16(RuleBase):
     """
     Описание: Количественные числительные.
     Пример:
@@ -1005,7 +1005,7 @@ class CountRule_16(RuleBase):
         return None
 
 
-class CountRule_17(RuleBase):
+class CardinalRule_17(RuleBase):
     """
     Описание: Количественные числительные. Творительный падеж. Исключение.
     Пример:
@@ -1024,7 +1024,7 @@ class CountRule_17(RuleBase):
         return m.group(1) + '_ ' + m.group(5) + new
 
 
-class CountRule_18(RuleBase):
+class CardinalRule_18(RuleBase):
     """
     Описание: Количественные числительные. Творительный падеж.
     Пример:
@@ -1069,7 +1069,7 @@ class CountRule_18(RuleBase):
         return None
 
 
-class CountRule_19(RuleBase):
+class CardinalRule_19(RuleBase):
     """
     Описание: Количественные числительные. Предлоги творительного падежа.
     Пример:
@@ -1098,7 +1098,7 @@ class CountRule_19(RuleBase):
         return pre + number
 
 
-class CountRule_20(RuleBase):
+class CardinalRule_20(RuleBase):
     """
     Описание: Количественные числительные. Предложный падеж.
     Пример:
@@ -1139,7 +1139,7 @@ class CountRule_20(RuleBase):
             return None
 
 
-class CountRule_22(RuleBase):
+class CardinalRule_22(RuleBase):
     """
     Описание: Количественные числительные. Предлоги предложного падежа.
     Пример:
@@ -1156,7 +1156,7 @@ class CountRule_22(RuleBase):
         return m.group(1) + m.group(2) + number + cardinal(m.group(6), p_ca)
 
 
-class CountRule_23(RuleBase):
+class CardinalRule_23(RuleBase):
     """
     Описание: Количественные числительные. Винительный падеж. Десятичные дроби.
     Пример:
@@ -1182,7 +1182,7 @@ class CountRule_23(RuleBase):
         return None
 
 
-class CountRule_24(RuleBase):
+class CardinalRule_24(RuleBase):
     """
     Описание: Количественные числительные.
               Винительный падеж мужского рода числительных,
@@ -1213,7 +1213,7 @@ class CountRule_24(RuleBase):
         return None
 
 
-class CountRule_25(RuleBase):
+class CardinalRule_25(RuleBase):
     """
     Описание: Количественные числительные. Винительный падежи.
     Пример:
@@ -1278,7 +1278,7 @@ class CountRule_25(RuleBase):
         return m.group(1) + ' ' + pre + number + m.group(8)
 
 
-class CountRule_27(RuleBase):
+class CardinalRule_27(RuleBase):
     """
     Описание: Количественные числительные.
               Винительный падеж женского рода.
@@ -1295,7 +1295,7 @@ class CountRule_27(RuleBase):
         return None
 
 
-class CountRule_28(RuleBase):
+class CardinalRule_28(RuleBase):
     """
     Описание: Количественные числительные.
               Средний род (именительный/винительный падежи).
@@ -1319,7 +1319,7 @@ class CountRule_28(RuleBase):
         return None
 
 
-class CountRule_29(RuleBase):
+class CardinalRule_29(RuleBase):
     """
     Описание: Количественные числительные.
               Женский род (именительный/винительный падежи).
@@ -1346,7 +1346,7 @@ class CountRule_29(RuleBase):
         return None
 
 
-class CountRule_30(RuleBase):
+class CardinalRule_30(RuleBase):
     """
     Описание: Количественные числительные. Дательный падеж.
     Пример:
@@ -1384,7 +1384,7 @@ class CountRule_30(RuleBase):
         return None
 
 
-class CountRule_31(RuleBase):
+class CardinalRule_31(RuleBase):
     """
     Описание: Количественные числительные. Предлоги дательного падежа.
     Пример:
@@ -1409,7 +1409,7 @@ class CountRule_31(RuleBase):
         return m.group(1) + number
 
 
-class CountRule_32(RuleBase):
+class CardinalRule_32(RuleBase):
     """
     Описание: Количественные числительные.
               Существует только во множественном числе.
@@ -1425,7 +1425,7 @@ class CountRule_32(RuleBase):
         return pre + daynight(m.group(4), m.group(5)) + ' ' + m.group(5)
 
 
-class CountRule_33(RuleBase):
+class CardinalRule_33(RuleBase):
     """
     Описание: Количественные числительные.
               Предлог "по" при указании количества.
@@ -1464,7 +1464,7 @@ class Rule_2(RuleBase):
         return None
 
 
-class CountRule_34(RuleBase):
+class CardinalRule_34(RuleBase):
     """
     Описание: Количественные числительные. Винительный падеж.
     Пример:
@@ -1490,7 +1490,7 @@ class CountRule_34(RuleBase):
             return None
 
 
-class CountRule_26(RuleBase):
+class CardinalRule_26(RuleBase):
     """
     Описание: Количественные числительные. Предложный падеж.
     Пример: "в 21 принадлежащей -> в двадцати одной принадлежащей"
@@ -1528,46 +1528,46 @@ rules_list = (UnitRule_0(),
               TimeRule_4(),
               RomanRule_1(),
               RomanRule_2(),
-              CountRule_1(),
-              CountRule_2(),
-              CountRule_3(),
-              CountRule_35(),
-              CountRule_36(),
-              CountRule_37(),
-              CountRule_38(),
-              CountRule_39(),
-              CountRule_6(),
-              CountRule_7(),
-              CountRule_8(),
-              CountRule_9(),
-              CountRule_23(),     # винительный
-              CountRule_34(),     # винительный
+              OrdinalRule_1(),
+              OrdinalRule_2(),
+              OrdinalRule_3(),
+              OrdinalRule_35(),
+              OrdinalRule_36(),
+              OrdinalRule_37(),
+              OrdinalRule_38(),
+              OrdinalRule_39(),
+              OrdinalRule_6(),
+              OrdinalRule_7(),
+              OrdinalRule_8(),
+              OrdinalRule_9(),
+              CardinalRule_23(),     # винительный
+              CardinalRule_34(),     # винительный
               )
 
-rules_list_2 = (CountRule_4(),
-                CountRule_5(),
-                CountRule_11(),     # родительный
-                CountRule_12(),
-                CountRule_13(),
-                CountRule_14(),
-                CountRule_15(),
-                CountRule_16(),
-                CountRule_17(),     # творительный
-                CountRule_18(),
-                CountRule_19(),
-                CountRule_20(),     # предложный
-                CountRule_26(),
-                CountRule_22(),
-                CountRule_24(),
-                CountRule_25(),
-                CountRule_27(),     # именительный/винительный
-                CountRule_28(),
-                CountRule_29(),
-                CountRule_30(),     # дательный
-                CountRule_31(),
-                CountRule_32(),
-                CountRule_33(),
-                CountRule_10(),
+rules_list_2 = (OrdinalRule_4(),
+                OrdinalRule_5(),
+                CardinalRule_11(),     # родительный
+                CardinalRule_12(),
+                CardinalRule_13(),
+                CardinalRule_14(),
+                CardinalRule_15(),
+                CardinalRule_16(),
+                CardinalRule_17(),     # творительный
+                CardinalRule_18(),
+                CardinalRule_19(),
+                CardinalRule_20(),     # предложный
+                CardinalRule_26(),
+                CardinalRule_22(),
+                CardinalRule_24(),
+                CardinalRule_25(),
+                CardinalRule_27(),     # именительный/винительный
+                CardinalRule_28(),
+                CardinalRule_29(),
+                CardinalRule_30(),     # дательный
+                CardinalRule_31(),
+                CardinalRule_32(),
+                CardinalRule_33(),
+                CardinalRule_10(),
                 Rule_1(),
                 Rule_2(),
                )
