@@ -6,14 +6,18 @@ from rhvoice_tools import rhvoice_say, say_clipboard
 
 
 def show_help():
-    print("Использование: rhvoice_say 'текст для чтения'   -- чтение текста\n"
-          "               rhvoice_say -c                   -- чтение буфера обмена\n"
-          "               rhvoice_say -h                   -- данная справка")
+    print("Использование: rhvoice_say 'текст для чтения'     -- чтение текста\n"
+          "               rhvoice_say -c                     -- чтение буфера обмена\n"
+          "               rhvoice_say -d 'текст для чтения'  -- режим отладки\n"
+          "               rhvoice_say -h                     -- данная справка")
 
 if '-h' in sys.argv:
     show_help()
 elif '-c' in sys.argv:
     say_clipboard()
+elif '-d' in sys.argv and len(sys.argv) > 2:
+    text = sys.argv[2]
+    rhvoice_say(text, debug=True)
 elif len(sys.argv) > 1:
     text = sys.argv[1]
     rhvoice_say(text)
