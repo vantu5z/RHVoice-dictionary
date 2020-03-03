@@ -1506,6 +1506,24 @@ class CardinalRule_26(RuleBase):
             number = cardinal(m.group(2), p_ca)[:-2] + 'й'
 
 
+class CardinalRule_21(RuleBase):
+    """
+    Описание: Количественные числительные. Предложный падеж.
+    Пример: "в 2 из 3 случаев -> в двух из ..."
+    """
+    def __init__(self):
+        self.mask = (r'\b([Вв] )(\d+)( из \d+ ([а-яё]+))\b')
+
+    def check(self, m):
+        number = cardinal(m.group(2), p_ca)
+        a = condition(m.group(2))
+        b = words.have(m.group(4), [Z_GENDER], None, [1])
+        if a and b:
+            number = number[:-1] + 'й'
+        new = m.group(1) + number + m.group(3)
+        return new
+
+
 # ==========================
 # Подготовка списков правил.
 # ==========================
@@ -1542,6 +1560,7 @@ rules_list = (UnitRule_0(),
               OrdinalRule_9(),
               CardinalRule_23(),     # винительный
               CardinalRule_34(),     # винительный
+              CardinalRule_21(),     # винительный
               )
 
 rules_list_2 = (OrdinalRule_4(),
