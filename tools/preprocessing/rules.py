@@ -1560,7 +1560,7 @@ rules_list = (UnitRule_0(),
               OrdinalRule_9(),
               CardinalRule_23(),     # винительный
               CardinalRule_34(),     # винительный
-              CardinalRule_21(),     # винительный
+              CardinalRule_21(),     # предложный /перед родительным/
               )
 
 rules_list_2 = (OrdinalRule_4(),
