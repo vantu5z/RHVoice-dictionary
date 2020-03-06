@@ -1391,21 +1391,21 @@ class CardinalRule_31(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'((\A|\n|\(| )[Кк] |рав[нагеийлмоcуюыхья]{2,6} )'
+            r'\b([Кк] |рав[нагеийлмоcуюыхья]{2,6} )'
             r'((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)\b')
 
     def check(self, m):
         number = ''
-        if m.group(3):
-            if m.group(4):
-                number += decimal(m.group(4)[:-1], m.group(5), 2)
+        if m.group(2):
+            if m.group(3):
+                number += decimal(m.group(3)[:-1], m.group(4), 2)
             else:
-                number += cardinal(m.group(5), d_ca)
-            number += m.group(6)
-        if m.group(7):
-            number += decimal(m.group(7)[:-1], m.group(8), 2)
+                number += cardinal(m.group(4), d_ca)
+            number += m.group(5)
+        if m.group(6):
+            number += decimal(m.group(6)[:-1], m.group(7), 2)
         else:
-            number += cardinal(m.group(8), d_ca)
+            number += cardinal(m.group(7), d_ca)
         return m.group(1) + number
 
 
