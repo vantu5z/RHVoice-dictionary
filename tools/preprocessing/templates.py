@@ -1391,6 +1391,8 @@ samples_2 = (
   (r'(Анн|Екатерин|Елизавет)(а|е|ой|у|ы) ([IVX]+)',
    'm.group(1) + m.group(2) + " " + ordinal(roman2arabic(m.group(3)), '
    'zh_pad[m.group(2)])'),
+  (r'\b([Гг]лав(а|е|ой|у|ы) )([IVXCL]+)\b',
+   'm.group(1) + ordinal(roman2arabic(m.group(3)), zh_pad[m.group(2)])'),
   (r'\b([IV]+)( и [IV]+ степени)',
    'ordinal(roman2arabic(m.group(1)), r_zh) + m.group(2)'),
   (r'\b([IV]+)(?= степени)',
