@@ -7,7 +7,7 @@
 
 from re import sub, finditer
 
-from .templates import (samples_1, samples_2, samples_3,
+from .templates import (samples_1, samples_2, samples_3, samples_4,
                         units, zh_units,
                         forms,
                         pre_acc,
@@ -39,6 +39,10 @@ def text_prepare(text, debug=False):
 
     # применение шаблонов
     for sample in samples_2:
+        text = sub(sample[0], sample[1], text)
+
+    # применение шаблонов
+    for sample in samples_3:
         length = len(text)
         for m in finditer(sample[0], text):
             new = eval(sample[1])
@@ -54,7 +58,7 @@ def text_prepare(text, debug=False):
             text = sub(letter, letter_name, text)
 
     # окончателная обработка
-    for sample in samples_3:
+    for sample in samples_4:
         text = sub(sample[0], sample[1], text)
 
     return text
