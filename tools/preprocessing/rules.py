@@ -1526,6 +1526,25 @@ class CardinalRule_21(RuleBase):
         return new
 
 
+class OrdinalRule_40(RuleBase):
+    """
+    Описание: Порядковые числительные. Датеьный падеж.
+    Пример: "к 3 числу -> к третьему числу"
+    """
+    def __init__(self):
+        self.mask = (r'\b([Кк]о? )(\d*[02-9][2-9]|1\d|[2-9])'
+            r'( [а-я]+[ео](му|й) | )([а-яё]+)\b')
+
+    def check(self, m):
+        attr = words.get_attr(m.group(5))
+        if attr.have(None, False, [2]):
+            new = ordinal(m.group(2), d_mu)
+            if attr.have([Z_GENDER], False, [2]):
+                new = new[:-2] + 'й'
+            return m.group(1) + new +m.group(3) + m.group(5)
+        return None
+
+
 # ==========================
 # Подготовка списков правил.
 # ==========================
@@ -1560,6 +1579,7 @@ rules_list = (UnitRule_0(),
               OrdinalRule_7(),
               OrdinalRule_8(),
               OrdinalRule_9(),
+              OrdinalRule_40(),      # дательный
               CardinalRule_23(),     # винительный
               CardinalRule_34(),     # винительный
               CardinalRule_21(),     # предложный /перед родительным/
