@@ -568,7 +568,8 @@ class OrdinalRule_36(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b(\d+)-й( или | и )(\d+)-й( ([А-Я]?[а-я]+([ео]й|[иы]х) |)([а-яё]+))\b')
+            r'\b(\d+)-й( или | и )(\d+)-й'
+            r'( ([А-Я]?[а-я]+([ео]й|[иы]х) |)([а-яё]+))\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(7))
