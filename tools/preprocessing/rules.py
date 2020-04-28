@@ -1148,14 +1148,14 @@ class CardinalRule_22(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'(\A|\n|\(| )([Оо]б?|[Пп]ри)'
-            r'( (\d+)( [-и] | или )| )(\d+)\b')
+            r'\b(([Оо]б?|[Пп]ри)( минус| плюс|))'
+            r'( (\d+)( ([-и]|или)( минус| плюс|) )| )(\d+)\b')
 
     def check(self, m):
         number = ' '
-        if m.group(3) != ' ':
-            number += cardinal(m.group(4), p_ca) + m.group(5)
-        return m.group(1) + m.group(2) + number + cardinal(m.group(6), p_ca)
+        if m.group(4) != ' ':
+            number += cardinal(m.group(5), p_ca) + m.group(6)
+        return m.group(1) + number + cardinal(m.group(9), p_ca)
 
 
 class CardinalRule_23(RuleBase):
