@@ -1440,6 +1440,24 @@ class CardinalRule_33(RuleBase):
         return m.group(1) + cardinal(m.group(2), d_ca)
 
 
+class CardinalRule_35(RuleBase):
+    """
+    Описание: Количественные числительные.
+              Предлог "по" при указании количества с десятичной дробью.
+    Пример:
+    """
+    def __init__(self):
+        self.mask = (r'\b([Пп]о )(\d+),(\d+)\b')
+
+    def check(self, m):
+        if condition(m.group(2)) or condition(m.group(3)):
+            new = m.group(1) + decimal(m.group(2), m.group(3), 2)
+            new = sub('ым', 'ых', new)
+            return new
+        else:
+            return None
+
+
 class Rule_1(RuleBase):
     """
     Описание: Десятичные дроби в именительном падеже.
@@ -1608,6 +1626,7 @@ rules_list_2 = (OrdinalRule_4(),
                 CardinalRule_31(),
                 CardinalRule_32(),
                 CardinalRule_33(),
+                CardinalRule_35(),
                 CardinalRule_10(),
                 Rule_1(),
                 Rule_2(),
