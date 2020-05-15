@@ -115,34 +115,19 @@ class UnitRule_2(RuleBase):
     def __init__(self):
         self.mask = (
             r'\b([А-Яа-яё]{3,})'
-            r'( (всего |ориентировочно |примерно |приблизительно |более чем |'
+            r'((всего |ориентировочно |примерно |приблизительно |более чем |'
             r'не более чем |стрельбы |заказчику |заказчикам |покупателю |'
-            r'покупателям )в )'
-            r'((\d+,|)(\d+) - |)(\d+,|)(\d+)_ ' + units)
+            r'покупателям |) в '
+            r'((\d+,|)(\d+) - |)(\d+,|)(\d+))_ ' + units)
 
     def check(self, m):
         if m.group(1).lower() not in pre_acc:
             return None
-
-        new = m.group(1) + m.group(2)
-        if m.group(4):
-            if m.group(5):
-                new += decimal(m.group(5)[:-1], m.group(6), 5)
-            else:
-                if m.group(9) in zh_units:
-                    new += feminin(m.group(6), 5)
-                else:
-                    new += m.group(6)
-            new += ' - '
-        if m.group(7):
-            new += decimal(m.group(7)[:-1], m.group(8), 5) + ' '
-            new += forms[m.group(9)][2]
+        new = m.group(1) + m.group(2) + ' '
+        if m.group(6):
+            new += substant(m.group(8), m.group(9), 1)
         else:
-            if m.group(9) in zh_units:
-                new += feminin(m.group(8), 5)
-            else:
-                new += m.group(8)
-            new += ' ' + substant(m.group(8), m.group(9), 5)
+            new += substant(m.group(8), m.group(9), 5)
         return new
 
 
