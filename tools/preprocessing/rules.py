@@ -1545,8 +1545,26 @@ class OrdinalRule_40(RuleBase):
             new = ordinal(m.group(2), d_mu)
             if attr.have([Z_GENDER], False, [2]):
                 new = new[:-2] + 'й'
-            return m.group(1) + new +m.group(3) + m.group(5)
+            return m.group(1) + new + m.group(3) + m.group(5)
         return None
+
+
+class OrdinalRule_41(RuleBase):
+    """
+    Описание: Порядковые числительные. Именитльный падеж мужского рода
+              совпадает сродительным/дательным/творительным/предложным
+              падежом женского рода.
+    Пример: "2-й [день/неделе] -> второй Но: 3-й -> третий или третьей"
+    """
+    def __init__(self):
+        self.mask = (r'\b(\d+)-й\b')
+
+    def check(self, m):
+        new = ordinal(m.group(1), i_mu)
+        if new == ordinal(m.group(1), r_zh):
+            return new
+        else:
+            return None
 
 
 # ==========================
@@ -1583,6 +1601,7 @@ rules_list = (UnitRule_0(),
               OrdinalRule_8(),
               OrdinalRule_9(),
               OrdinalRule_40(),      # дательный
+              OrdinalRule_41(),
               CardinalRule_23(),     # винительный
               CardinalRule_34(),     # винительный
               CardinalRule_21(),     # предложный /перед родительным/
