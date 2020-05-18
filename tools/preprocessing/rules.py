@@ -78,32 +78,16 @@ class UnitRule_1(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b('
-            r'([Зз]а|[Нн]а|[Пп]ро|[Сс]пустя|[Чч]ерез|'
+            r'\b(([Зз]а|[Нн]а|[Пп]ро|[Сс]пустя|[Чч]ерез|'
             r'состав[авеийлотшщьюя]{2,6}|превы[сш][авеийлотшщьюя]{2,5}) (бы |)'
-            r')'
-            r'((\d+,|)(\d+) - |)(\d+,|)(\d+)_ ' + units)
+            r'((\d+,|)(\d+) - |)(\d+,|)(\d+))_ ' + units)
 
     def check(self, m):
-        new = m.group(1)
-        if m.group(4):
-            if m.group(5):
-                new += decimal(m.group(5)[:-1], m.group(6), 5)
-            else:
-                if m.group(9) in zh_units:
-                    new += feminin(m.group(6), 5)
-                else:
-                    new += m.group(6)
-            new += ' - '
+        new = m.group(1) + ' '
         if m.group(7):
-            new += decimal(m.group(7)[:-1], m.group(8), 5) + ' '
             new += forms[m.group(9)][2]
         else:
-            if m.group(9) in zh_units:
-                new += feminin(m.group(8), 5)
-            else:
-                new += m.group(8)
-            new += ' ' + substant(m.group(8), m.group(9), 5)
+            new += substant(m.group(8), m.group(9), 5)
         return new
 
 
@@ -1250,19 +1234,19 @@ class CardinalRule_25(RuleBase):
                     number = number[:-2] + 'ну'
                 elif attr.have([S_GENDER], False, [0, 3]):
                     number = number[:-2] + 'но'
-                elif not b:
-                    return None
+#                elif not b:
+#                    return None
             elif number[-3:] == 'два':
                 if attr.have([Z_GENDER], False, [1]):
                     number = number[:-1] + 'е'
-                else:
-                    return None
+#                else:
+#                    return None
             elif (len(m.group(7)) > 3
                 and (attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
                 or m.group(11) in ('суток', 'лет'))):
                 pass
-            else:
-                return None
+#            else:
+#                return None
         return m.group(1) + ' ' + pre + number + m.group(8)
 
 
@@ -1604,6 +1588,7 @@ rules_list = (UnitRule_0(),
               OrdinalRule_41(),
               CardinalRule_23(),     # винительный
               CardinalRule_34(),     # винительный
+              CardinalRule_25(),     # винительный
               CardinalRule_21(),     # предложный /перед родительным/
               )
 
@@ -1623,7 +1608,6 @@ rules_list_2 = (OrdinalRule_4(),
                 CardinalRule_26(),
                 CardinalRule_22(),
                 CardinalRule_24(),
-                CardinalRule_25(),
                 CardinalRule_27(),     # именительный/винительный
                 CardinalRule_28(),
                 CardinalRule_29(),
