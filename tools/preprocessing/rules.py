@@ -1206,20 +1206,23 @@ class CardinalRule_25(RuleBase):
         f = d or e
         g = attr.have([S_GENDER], False, [0, 1])
         h = attr.have([S_GENDER], True, [1])
+        j = c or attr.have([M_GENDER], True, [3])
         if m.group(2):
             if m.group(3):
                 pre = decimal(m.group(3)[:-1], m.group(4), 5)
             else:
                 pre = cardinal(m.group(4), v_ca)
                 if pre[-3:] == 'дин':
-                    if c:
+                    if j:
                         pre = pre[:-2] + 'ного'
                     elif f:
                         pre = pre[:-2] + 'ну'
                     elif g or h:
                         pre = pre[:-2] + 'но'
                 elif pre[-3:] == 'два':
-                    if f:
+                    if j:
+                        pre = pre[:-1] + 'ух'
+                    elif f:
                         pre = pre[:-1] + 'е'
             pre += m.group(5) + ' '
         else:
