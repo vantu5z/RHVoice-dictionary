@@ -1204,6 +1204,8 @@ class CardinalRule_25(RuleBase):
         d = attr.have([Z_GENDER], False, [1, 3])
         e = attr.have([Z_GENDER], True, [1])
         f = d or e
+        g = attr.have([S_GENDER], False, [0, 1])
+        h = attr.have([S_GENDER], True, [1])
         if m.group(2):
             if m.group(3):
                 pre = decimal(m.group(3)[:-1], m.group(4), 5)
@@ -1214,7 +1216,7 @@ class CardinalRule_25(RuleBase):
                         pre = pre[:-2] + 'ного'
                     elif f:
                         pre = pre[:-2] + 'ну'
-                    elif attr.have([S_GENDER], False, [0, 3]):
+                    elif g or h:
                         pre = pre[:-2] + 'но'
                 elif pre[-3:] == 'два':
                     if f:
@@ -1234,19 +1236,13 @@ class CardinalRule_25(RuleBase):
                     number = number[:-2] + 'ну'
                 elif attr.have([S_GENDER], False, [0, 3]):
                     number = number[:-2] + 'но'
-#                elif not b:
-#                    return None
             elif number[-3:] == 'два':
                 if attr.have([Z_GENDER], False, [1]):
                     number = number[:-1] + 'е'
-#                else:
-#                    return None
             elif (len(m.group(7)) > 3
                 and (attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
                 or m.group(11) in ('суток', 'лет'))):
                 pass
-#            else:
-#                return None
         return m.group(1) + ' ' + pre + number + m.group(8)
 
 
