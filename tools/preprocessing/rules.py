@@ -811,7 +811,7 @@ class CardinalRule_11(RuleBase):
             number = decimal(m.group(7)[:-1], m.group(8), 1)
         else:
             number = cardinal(m.group(8), r_ca)
-        if number[-6:] == 'одного' and m.group(19) is not None:
+        if number[-6:] == 'одного' and m.group(20) is not None:
             if words.have(m.group(20), [Z_GENDER], None, [1]):
                 number = number[:-2] + 'й'
             elif m.group(20) == 'суток':
