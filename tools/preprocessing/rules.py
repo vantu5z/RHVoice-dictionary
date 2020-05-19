@@ -786,7 +786,7 @@ class CardinalRule_11(RuleBase):
         self.mask = (
             r'\b([Оо]т|[Сс]о?)'
             r'( почти | примерно | приблизительно | плюс | минус | )'
-            r'((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)( [а-яё]+ | )'
+            r'((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)( ([а-яё]+ |)[а-яё]+ | )'
             r'('
             r'до( почти | примерно | приблизительно | плюс | минус | )'
             r'((\d+,|)\d+( [-и] | или )|)(\d+,|)\d+'
@@ -799,10 +799,10 @@ class CardinalRule_11(RuleBase):
                 pre = decimal(m.group(4)[:-1], m.group(5), 1)
             else:
                 pre = cardinal(m.group(5), r_ca)
-                if pre[-6:] == 'одного' and m.group(19) is not None:
-                    if words.have(m.group(19), [Z_GENDER], None, [1]):
+                if pre[-6:] == 'одного' and m.group(20) is not None:
+                    if words.have(m.group(20), [Z_GENDER], None, [1]):
                         pre = pre[:-2] + 'й'
-                    elif m.group(19) == 'суток':
+                    elif m.group(20) == 'суток':
                         pre = pre[:-3] + 'их'
             pre += m.group(6)
         else:
@@ -812,11 +812,11 @@ class CardinalRule_11(RuleBase):
         else:
             number = cardinal(m.group(8), r_ca)
         if number[-6:] == 'одного' and m.group(19) is not None:
-            if words.have(m.group(19), [Z_GENDER], None, [1]):
+            if words.have(m.group(20), [Z_GENDER], None, [1]):
                 number = number[:-2] + 'й'
-            elif m.group(19) == 'суток':
+            elif m.group(20) == 'суток':
                 number = number[:-3] + 'их'
-        return m.group(1) + m.group(2) + pre + number + m.group(9) + m.group(10)
+        return m.group(1) + m.group(2) + pre + number + m.group(9) + m.group(11)
 
 
 class CardinalRule_12(RuleBase):
