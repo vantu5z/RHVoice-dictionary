@@ -1399,6 +1399,10 @@ samples_3 = (
    'ordinal(roman2arabic(m.group(1)), r_zh) + m.group(2)'),
   (r'\b([IV]+)(?= степени)',
    'ordinal(roman2arabic(m.group(1)), r_zh)'),
+  (r'\b(?<= по )([IVX]+)(?= века)\b',
+   r'ordinal(roman2arabic(m.group(1)), i_mu)'),
+  (r'\b(?<= по )([IVX]+)( (сто|тысяче)летия)\b',
+   r'ordinal(roman2arabic(m.group(1)), i_sr) + m.group(2)'),
   (r'\b([Сс]о? )([IVX]+) по ',
    r'm.group(1) + roman2arabic(m.group(2)) + "-го по "'),
   (r'\b([Вв]о? |[Оо] )([IVX]+)'
