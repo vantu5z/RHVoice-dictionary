@@ -122,18 +122,26 @@ class UnitRule_3(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b([Сс]о? (почти |примерно |приблизительно |плюс |минус |))'
-            r'(\d+,|)(\d+)_ ' + units + ' до ')
+            r'\b(([Оо]т|[Сс]) (почти |примерно |приблизительно |плюс |минус |))'
+            r'(\d+,|)(\d+)_ ([%°\℃ВКМ£₽\$\.²³_БВГМагдеклмнпрстцш\']+)'
+            r'( (в час |в секунду |)до)\b')
 
     def check(self, m):
-        new = m.group(1)
-        if m.group(3):
-            new += decimal(m.group(3)[:-1], m.group(4), 1)
-            new += ' ' + forms[m.group(5)][2]
+        if m.group(6) in ('%', '°', "'", '℃', 'В', 'К', 'М', '£', '₽', '$',
+                          'кГц', 'МГц', 'ГГц', 'Гц', 'кпк', 'Мпк', 'Гпк', 'пк',
+                          'кг', 'мг', '_г', 'мкм', 'км', 'см', 'мм', 'м',
+                          'км²', 'см²', 'мм²', 'м²', 'км³', 'см³', 'мм³', 'м³',
+                          'кт', 'Мт', 'т', 'кВт', 'МВт', 'ГВт', 'Вт', 'га', 'л',
+                          'дБ', 'сек', 'л.с.', 'а.е.', 'шт.', 'ед.', 'тыс.',
+                          'млн', 'млрд', 'трлн', 'атм'):
+            if m.group(4):
+                number = decimal(m.group(4)[:-1], m.group(5), 1)
+                number += ' ' + forms[m.group(6)][2]
+            else:
+                number = m.group(5) + ' ' + substant(m.group(5), m.group(6), 1)
+            return m.group(1) + number + m.group(7)
         else:
-            new += m.group(4)
-            new += ' ' + substant(m.group(4), m.group(5), 1)
-        return new + ' до '
+            return None
 
 
 class UnitRule_4(RuleBase):
@@ -142,8 +150,7 @@ class UnitRule_4(RuleBase):
     Пример: "от 1 до 4 км -> от одного до четырёх километров"
     """
     def __init__(self):
-        self.mask = (
-            r'\b([Оо]т |[Сс] )(\d+,|)(\d+)( до (\d+,|)\d+_ )' + units)
+        self.mask = (r'\b([Оо]т |[Сс] )(\d+,|)(\d+)( до (\d+,|)\d+_ )' + units)
 
     def check(self, m):
         if m.group(2):
