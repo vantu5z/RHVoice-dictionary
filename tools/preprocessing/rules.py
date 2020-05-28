@@ -118,13 +118,14 @@ class UnitRule_2(RuleBase):
 class UnitRule_3(RuleBase):
     """
     Описание: Единицы измерения. Родительный падеж.
-    Пример: "С 5 см до -> С пяти сантиметров до"
+    Пример: "С 10 кВт до 12 -> С десяти киловатт до двенадцати"
     """
     def __init__(self):
         self.mask = (
             r'\b(([Оо]т|[Сс]) (почти |примерно |приблизительно |плюс |минус |))'
             r'(\d+,|)(\d+)_ ([%°\℃ВКМ£₽\$\.²³_БВГМагдеклмнпрстцш\']+)'
-            r'( (в час |в секунду |)до)\b')
+            r'( (в час |в секунду |[а-яё]{3,} |)до '
+            r'(почти |примерно |приблизительно |плюс |минус |)(\d+,|))(\d+)\b')
 
     def check(self, m):
         if m.group(6) in ('%', '°', "'", '℃', 'В', 'К', 'М', '£', '₽', '$',
@@ -135,11 +136,18 @@ class UnitRule_3(RuleBase):
                           'дБ', 'сек', 'л.с.', 'а.е.', 'шт.', 'ед.', 'тыс.',
                           'млн', 'млрд', 'трлн', 'атм'):
             if m.group(4):
-                number = decimal(m.group(4)[:-1], m.group(5), 1)
-                number += ' ' + forms[m.group(6)][2]
+                number1 = decimal(m.group(4)[:-1], m.group(5), 1)
+                number1 += ' ' + forms[m.group(6)][2]
             else:
-                number = m.group(5) + ' ' + substant(m.group(5), m.group(6), 1)
-            return m.group(1) + number + m.group(7)
+                number1 = m.group(5) + ' ' + substant(m.group(5), m.group(6), 1)
+
+            if (not m.group(10) and m.group(6) in zh_units
+                and condition(m.group(11))):
+                number2 = cardinal(m.group(11), r_ca)[:-2] + 'й'
+            else:
+                number2 = m.group(11)
+
+            return m.group(1) + number1 + m.group(7) + number2
         else:
             return None
 
@@ -911,10 +919,11 @@ class CardinalRule_14(RuleBase):
         self.mask = (r'\b([Сс]о?'
             r'( всех | [а-яё]+[иы]х | примерно | приблизительно '
             r'| почти | плюс | минус | ))'
-            r'((\d+)( [-и] | или )|)(\d+) ([а-яё]+)\b')
+            r'((\d+)( [-и] | или )|)(\d+)'
+            r'(( [а-яё]+([иы]х|[ео]й|[ео]го)|) ([а-яё]+))\b')
 
     def check(self, m):
-        attr = words.get_attr(m.group(7))
+        attr = words.get_attr(m.group(10))
         if attr.have(None, None, [1]):
             if m.group(3):
                 prenum = cardinal(m.group(4), r_ca)
@@ -927,7 +936,7 @@ class CardinalRule_14(RuleBase):
             number = cardinal(m.group(6), r_ca)
             if attr.have([Z_GENDER], False, [1]):
                 number = number[:-2] + 'й'
-            return prenum + number + ' ' + m.group(7)
+            return prenum + number + m.group(7)
         return None
 
 
