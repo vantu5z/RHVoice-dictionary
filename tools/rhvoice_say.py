@@ -31,9 +31,6 @@ def rhvoice_say(text, debug=False):
         """
         Чтение текста RHVocie с предварительнгой обработкой текста.
         """
-        txt = text_prepare(text, debug=debug)        # предварительная подготовка текста
-        print(txt)
-
         # открываем файл конфигурации
         file_name = expanduser("~") + '/.config/rhvoice_say.conf'
         config = configparser.ConfigParser(allow_no_value=True)
@@ -41,16 +38,19 @@ def rhvoice_say(text, debug=False):
         config.optionxform = str
         if not path_exists(file_name):
             # если файл отсутствует, создаем новый со стандартными настройками
-            config['Settings'] = {"; Использовать Speech Dispatcher для чтения ('True' или 'False')": None,
-                                  'use_speech_dispatcher': False,
-                                  '; Громкость в процентах (от -100 до 100)': None,
-                                  'volume': 0,
-                                  '; Скорость в процентах (от -100 до 100)': None,
-                                  'rate': 0,
-                                  '; Высота в процентах (от -100 до 100)': None,
-                                  'pitch': 0,
-                                  '; Голос для чтения': None,
-                                  'voice': 'Aleksandr+Alan'}
+            config['Settings'] = {
+                "; Использовать Speech Dispatcher для чтения ('True' или 'False')": None,
+                'use_speech_dispatcher': False,
+                '; Громкость в процентах (от -100 до 100)': None,
+                'volume': 0,
+                '; Скорость в процентах (от -100 до 100)': None,
+                'rate': 0,
+                '; Высота в процентах (от -100 до 100)': None,
+                'pitch': 0,
+                '; Голос для чтения': None,
+                'voice': 'Aleksandr+Alan',
+                '; Использовать символ для указания ударения (False или символ)': None,
+                'use_stress_marker': False}
             with open(file_name, 'w') as configfile:
                 config.write(configfile)
         config.read(file_name)
@@ -60,6 +60,9 @@ def rhvoice_say(text, debug=False):
         volume = settings.getint('volume')
         rate = settings.getint('rate')
         pitch = settings.getint('pitch')
+        stress_marker = settings.get('use_stress_marker')
+        if (stress_marker is None) or (stress_marker == 'False'):
+            stress_marker = False
 
         if use_SD:
             # -e, --pipe-mode (Pipe from stdin to stdout plus Speech Dispatcher)
@@ -94,6 +97,8 @@ def rhvoice_say(text, debug=False):
                                   ],
                                  stdin=subprocess.PIPE,
                                  stdout=subprocess.DEVNULL)
+        # предварительная подготовка текста
+        txt = text_prepare(text, stress_marker=stress_marker, debug=debug)
         p.communicate(txt.encode('utf-8'))
     else:
         print('Нет текста для чтения...')
