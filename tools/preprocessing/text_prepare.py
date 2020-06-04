@@ -8,6 +8,7 @@
 from re import sub, finditer
 
 from .templates import (samples_1, samples_2, samples_3, samples_4,
+                        stress_marker_samples,
                         units, zh_units,
                         forms,
                         pre_acc,
@@ -24,7 +25,7 @@ from .functions import (condition, cardinal, ordinal, roman2arabic, replace,
 from .rules import rules_list, rules_list_2
 
 
-def text_prepare(text, debug=False):
+def text_prepare(text, stress_marker=False, debug=False):
     """
     Основная функция обработки текста.
     """
@@ -60,5 +61,10 @@ def text_prepare(text, debug=False):
     # окончателная обработка
     for sample in samples_4:
         text = sub(sample[0], sample[1], text)
+
+    # шаблоны с указанием символа ударения
+    if stress_marker:
+        for sample in stress_marker_samples(stress_marker):
+            text = sub(sample[0], sample[1], text)
 
     return text

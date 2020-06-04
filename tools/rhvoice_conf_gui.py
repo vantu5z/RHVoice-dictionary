@@ -83,6 +83,24 @@ class MainWindow(Gtk.Window):
         conf_page_say.attach(self.combo_voice, 1, row, 2, 1)
 
         row += 1
+        item_label = Gtk.Label(label='Символ ударения:')
+        item_label.set_halign(Gtk.Align.START)
+        conf_page_say.attach(item_label, 0, row, 1, 1)
+        self.use_stress_sw = Gtk.Switch()
+        self.use_stress_sw.set_halign(Gtk.Align.END)
+        conf_page_say.attach(self.use_stress_sw, 1, row, 1, 1)
+        self.entry_stress = Gtk.Entry(xalign=0.5)
+        self.entry_stress.set_max_length(1)
+        conf_page_say.attach(self.entry_stress, 2, row, 1, 1)
+        self.use_stress_sw.set_tooltip_text(
+            'Включите для дополнительной обработки с использованием символа '
+            'ударения.\n'
+            '(cимвол должен совпадать с указанным в настройках rhvoice)')
+        self.entry_stress.set_tooltip_text(
+            'Cимвол должен совпадать с указанным в настройках rhvoice')
+        self.use_stress_sw.connect('state-set', self.stress_changed)
+
+        row += 1
         apply_btn = Gtk.Button(label='Применить')
         apply_btn.connect('clicked', self.apply_say_conf)
         apply_btn.set_halign(Gtk.Align.END)
@@ -116,6 +134,21 @@ class MainWindow(Gtk.Window):
             self.combo_voice.append(str(i), voice)
             if voice == self.config.voice:
                 self.combo_voice.set_active(i)
+        self.stress_marker = self.config.stress_marker
+        if self.stress_marker == False:
+            self.use_stress_sw.set_active(False)
+            self.entry_stress.set_text('')
+            self.entry_stress.set_sensitive(False)
+        else:
+            self.use_stress_sw.set_active(True)
+            self.entry_stress.set_text(self.stress_marker)
+            self.entry_stress.set_sensitive(True)
+
+    def stress_changed(self, widget, state):
+        """
+        Обработка переключателя "Символ ударения"
+        """
+        self.entry_stress.set_sensitive(state)
 
     def apply_say_conf(self, widget=None):
         """
@@ -126,9 +159,17 @@ class MainWindow(Gtk.Window):
         self.config.rate = self.rate_scale.get_value()
         self.config.pitch = self.pitch_scale.get_value()
         self.config.voice = self.combo_voice.get_active_text()
+        if self.use_stress_sw.get_active() and self.entry_stress.get_text():
+            self.config.stress_marker = self.entry_stress.get_text()
+        else:
+            self.config.stress_marker = False
         self.config.write_conf()
+        self.read_say_conf()
 
     def run_test(self, widget=None):
+        """
+        Воспроизведение тестового сообщения.
+        """
         rhvoice_say('Проверка настройки синтезатора rhvoice')
 
     def exit_app(self, widget, event):
@@ -159,6 +200,7 @@ class Config():
         self.volume = 0
         self.rate = 0
         self.pitch = 0
+        self.stress_marker = False
 
         self.read_conf()
 
@@ -180,6 +222,10 @@ class Config():
         self.rate = settings.getint('rate')
         self.pitch = settings.getint('pitch')
 
+        self.stress_marker = settings.get('use_stress_marker')
+        if (self.stress_marker is None) or (self.stress_marker == 'False'):
+            self.stress_marker = False
+
     def write_conf(self):
         """
         Запись в файл настроек.
@@ -194,7 +240,9 @@ class Config():
             '; Высота в процентах (от -100 до 100)': None,
             'pitch': int(self.pitch),
             '; Голос для чтения': None,
-            'voice': self.voice}
+            'voice': self.voice,
+            '; Использовать символ для указания ударения (False или символ)': None,
+            'use_stress_marker': self.stress_marker}
         with open(self.file_name, 'w') as configfile:
             self.config.write(configfile)
 
