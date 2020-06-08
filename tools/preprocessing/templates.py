@@ -805,7 +805,8 @@ mn_pad = {'е': i_mn, 'м': d_mn, 'х': r_mn, 'ми': t_mn}
 mu_pad = {'': i_mu, 'а': r_mu, 'у': d_mu, 'ом': t_mu, 'е': p_mu, 'й': i_mu,
           'я': r_mu, 'ю': d_mu, 'ем': t_mu, 'и': p_mu}
 sr_pad = {'е': i_sr, 'у': d_sr, 'ю': d_sr, 'я': r_sr, 'ем': t_sr, 'и': p_sr}
-zh_pad = {'а': i_zh, 'ы': r_zh, 'е': d_zh, 'ой': t_zh, 'у': v_zh}
+zh_pad = {'а': i_zh, 'ы': r_zh, 'е': d_zh, 'ой': t_zh, 'у': v_zh,
+          'я': i_zh, 'и': r_zh, 'ей': t_zh, 'ю': v_zh}
 adj_pad = {'ий': i_mu, 'его': r_mu, 'ему': d_mu, 'им': t_mu, 'ем': p_mu,
            'ый': i_mu, 'ого': r_mu, 'ому': d_mu, 'ым': t_mu, 'ом': p_mu,
            'ее': i_sr, 'ое': i_sr, 'ая': i_zh, 'яя': i_zh, 'ей': r_zh,
