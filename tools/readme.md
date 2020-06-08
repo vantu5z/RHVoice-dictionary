@@ -31,7 +31,7 @@ sudo cp rhvoice_config ~/.local/bin
 ```
 * Для воспроизвдения из терминала:
 ```
-    rhvoice_say "текск для чтения"
+    rhvoice_say "текст для чтения"
     rhvoice_say -c
 ```
 * Примеры использования скриптов "[/scripts/examples](https://github.com/vantu5z/RHVoice-dictionary/tree/master/tools/scripts/examples)"

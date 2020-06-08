@@ -1287,7 +1287,7 @@ class CardinalRule_27(RuleBase):
     def __init__(self):
         self.mask = (
             r'(?<![,.])\b(\d*[02-9]1|1)'
-            r'(( [а-яё]+[ую]ю | )([а-яё]+))')
+            r'(( [а-яё]+[ую]ю | с половиной | с лишним | )([а-яё]+))')
 
     def check(self, m):
         if words.have(m.group(4), [Z_GENDER], False, [3]):
@@ -1328,7 +1328,8 @@ class CardinalRule_29(RuleBase):
     def __init__(self):
         self.mask = (
             r'(\A|\n|\(| )(((\d+)( - | или | и ))|)(\d+,|)(\d+)'
-            r'((( [а-яё]+([ая]я|[иы][ех]))+| с половиной|) ([а-яё]+))')
+            r'((( [а-яё]+([ая]я|[иы][ех]))+'
+            r'| с половиной| с лишним|) ([а-яё]+))')
 
     def check(self, m):
         attr = words.get_attr(m.group(12))
