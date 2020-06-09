@@ -100,7 +100,7 @@ test_txt=[
 count_err = 0    # счётчик непройдённых проверок
 
 for txt in test_txt:
-    text = text_prepare(txt[0], debug)
+    text = text_prepare(txt[0], debug=debug)
     if text != txt[1]:
         print('ВНИМАНИЕ! неверное преобразование: "%s" -> "%s"' % (txt[0], text))
         print('                      должно быть: "%s"' % txt[1])
