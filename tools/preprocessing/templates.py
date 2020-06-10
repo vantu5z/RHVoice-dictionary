@@ -1445,6 +1445,8 @@ samples_3 = (
    'm.group(1) + ordinal(m.group(3), mu_pad[m.group(2)])'),
   (r'\b([Сс]тать(я|е|и|ю|ей) )(\d+)\b',
    'm.group(1) + ordinal(m.group(3), zh_pad[m.group(2)])'),
+  (r'\b([Чч]аст(и|ю|ь) )(\d+)(?= статьи)\b',
+   'm.group(1) + ordinal(m.group(3), zh_pad[m.group(2)])'),
   (r'\b(\d+0)( (-|и|или) \d+0-е годы)',
    'ordinal(m.group(1), i_mn) + m.group(2)'),
   (r'\b(\d+0)-е(?= годы)', 'ordinal(m.group(1), i_mn)'),
