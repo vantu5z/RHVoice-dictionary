@@ -111,6 +111,6 @@ print('\nПройдено проверок: %d из %d\n' % (len(test_txt)-count
 # дальше предлагается ввести текст вручную для проверки
 txt = input('Введите текст:\n')
 
-text = text_prepare(txt, debug)
+text = text_prepare(txt, debug=debug)
 
 print('Обработанный текст:\n'+text)
