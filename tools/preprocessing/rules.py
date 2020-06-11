@@ -1615,10 +1615,11 @@ rules_list = (UnitRule_0(),
               OrdinalRule_9(),
               OrdinalRule_40(),      # дательный
               OrdinalRule_41(),
+              CardinalRule_20(),     # предложный /перед винительным/
+              CardinalRule_21(),     # предложный /перед родительным/
               CardinalRule_23(),     # винительный
               CardinalRule_34(),     # винительный
               CardinalRule_25(),     # винительный
-              CardinalRule_21(),     # предложный /перед родительным/
               )
 
 rules_list_2 = (OrdinalRule_4(),
@@ -1633,7 +1634,6 @@ rules_list_2 = (OrdinalRule_4(),
                 CardinalRule_17(),     # творительный
                 CardinalRule_18(),
                 CardinalRule_19(),
-                CardinalRule_20(),     # предложный
                 CardinalRule_26(),
                 CardinalRule_22(),
                 CardinalRule_24(),
