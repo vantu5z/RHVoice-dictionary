@@ -18,8 +18,8 @@ git clone https://github.com/vantu5z/RHVoice-dictionary.git
 cd RHVoice-dictionary/tools
 python build.py
 cp -R build/lib ~/.local
-sudo cp rhvoice_say ~/.local/bin
-sudo cp rhvoice_config ~/.local/bin
+cp rhvoice_say ~/.local/bin
+cp rhvoice_config ~/.local/bin
 ```
 
 ## Использование
