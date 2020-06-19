@@ -365,7 +365,6 @@ class TimeRule_2(RuleBase):
         return m.group(1) + ' ' + feminin(m.group(3), 5) + '_'
 
 
-
 class TimeRule_3(RuleBase):
     """
     Описание: Время в формате (ч)ч:мм/(ч)ч.мм
@@ -432,8 +431,8 @@ class RomanRule_2(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b([IVX]+)( [-и] )([IVX]+)'
-            r'( век(ами?|ах?|ов)| (тысячелети|столети|поколени)(ями?|ях?|й))\b')
+            r'\b([IVX]+)( [-и] )([IVX]+)( век(ами?|ах?|ов|е)'
+            r'| (тысячелети|столети|поколени)(ями?|ях?|и|й))\b')
 
     def check(self, m):
         ending = m.group(4)[-1]
