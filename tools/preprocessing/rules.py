@@ -1515,13 +1515,13 @@ class CardinalRule_26(RuleBase):
     """
     def __init__(self):
         self.mask = (r'\b([Вв] |[Нн]а |[Пп]ри |[Оо]б? )'
-            r'(\d*[02-9]1|1)( [а-яё]+[ео][йм])\b')
+            r'(\d*[02-9]1|1)( [а-яё]+[ео](й|м)(|ся))\b')
 
     def check(self, m):
-        if m.group(3) in ('ем', 'ом'):
-            number = cardinal(m.group(2), p_ca)
-        else:
-            number = cardinal(m.group(2), p_ca)[:-2] + 'й'
+        new = m.group(1) + cardinal(m.group(2), p_ca)
+        if m.group(4) == 'й':
+            new = new[:-1] + 'й'
+        return new + m.group(3)
 
 
 class CardinalRule_21(RuleBase):
@@ -1577,6 +1577,22 @@ class OrdinalRule_41(RuleBase):
             return new
         else:
             return None
+
+
+class CardinalRule_36(RuleBase):
+    """
+    Описание: Количественные числительные. Дательный падеж.
+    Пример: "к 21 возвышающемуся -> к двадцати однму возвышающемуся"
+    """
+    def __init__(self):
+        self.mask = (r'\b([Кк] |[Пп]о )'
+            r'(\d*[02-9]1|1)( [а-яё]+[ео](й|му)(|ся))\b')
+
+    def check(self, m):
+        new = m.group(1) + cardinal(m.group(2), d_ca)
+        if m.group(4) == 'й':
+            new = cardinal(m.group(2), p_ca)[:-1] + 'й'
+        return new + m.group(3)
 
 
 # ==========================
@@ -1640,6 +1656,7 @@ rules_list_2 = (OrdinalRule_4(),
                 CardinalRule_28(),
                 CardinalRule_29(),
                 CardinalRule_30(),     # дательный
+                CardinalRule_36(),
                 CardinalRule_31(),
                 CardinalRule_32(),
                 CardinalRule_33(),
