@@ -1092,36 +1092,36 @@ class CardinalRule_20(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b((\d+)( [-и] | или )|)'
+            r'\b([Оо] |[Вв] |[Нн]а |[Пп]ри )((\d+)( [-и] | или )|)'
             r'(около |почти |примерно |приблизительно |плюс |минус |)'
             r'(\d+)( ([а-яё]+([иы]х|[ео][йм]) |)([а-яё]{3,}))\b')
 
     def check(self, m):
-        if m.group(1):
-            pre = cardinal(m.group(2), p_ca)
-            a = words.have(m.group(9), None, False, [2, 5])
-            b = words.have(m.group(9)[:-1] + 'м', [Z_GENDER], True, [2])
-            if condition(m.group(2)) and (a or b):
+        if m.group(2):
+            pre = cardinal(m.group(3), p_ca)
+            a = words.have(m.group(10), None, False, [2, 5])
+            b = words.have(m.group(10)[:-1] + 'м', [Z_GENDER], True, [2])
+            if condition(m.group(3)) and (a or b):
                 pre = pre[:-1] + 'й'
-            elif m.group(9) == 'сутках':
+            elif m.group(10) == 'сутках':
                 pre = pre[:-2] + 'их'
-            pre += m.group(3)
+            pre += m.group(4)
         else:
             pre = ''
         number = ''
-        attr = words.get_attr(m.group(9))
-        if condition(m.group(5)):
+        attr = words.get_attr(m.group(10))
+        if condition(m.group(6)):
             if attr.have([M_GENDER, S_GENDER], False, [5]):
-                number = cardinal(m.group(5), p_ca)
+                number = cardinal(m.group(6), p_ca)
             elif attr.have([Z_GENDER], False, [2, 5]):
-                number = cardinal(m.group(5), p_ca)[:-1] + 'й'
-            elif m.group(9) == 'сутках':
-                number = cardinal(m.group(5), p_ca)[:-2] + 'их'
-        elif m.group(9)[-2:] in ('ах', 'ях'):
-            number = cardinal(m.group(5), p_ca)
-            number = cardinal(m.group(5), p_ca)
+                number = cardinal(m.group(6), p_ca)[:-1] + 'й'
+            elif m.group(10) == 'сутках':
+                number = cardinal(m.group(6), p_ca)[:-2] + 'их'
+        elif m.group(10)[-2:] in ('ах', 'ях'):
+            number = cardinal(m.group(6), p_ca)
+            number = cardinal(m.group(6), p_ca)
         if number:
-            return pre + m.group(4) + number + m.group(6)
+            return m.group(1) + pre + m.group(5) + number + m.group(7)
         else:
             return None
 
@@ -1582,7 +1582,7 @@ class OrdinalRule_41(RuleBase):
 class CardinalRule_36(RuleBase):
     """
     Описание: Количественные числительные. Дательный падеж.
-    Пример: "к 21 возвышающемуся -> к двадцати одному возвышающемуся"
+    Пример: "к 21 возвышающемуся -> к двадцати однму возвышающемуся"
     """
     def __init__(self):
         self.mask = (r'\b([Кк] |[Пп]о )'
