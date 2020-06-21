@@ -102,6 +102,8 @@ count_err = 0    # счётчик непройдённых проверок
 
 for txt in test_txt:
     text = text_prepare(txt[0], debug=debug)
+    if text[-1] == '.':     # Добавление точкч в конце строки
+        text = text[:-1]    # не влияет на результат проверки
     if text != txt[1]:
         print('ВНИМАНИЕ! неверное преобразование: "%s" -> "%s"' % (txt[0], text))
         print('                      должно быть: "%s"' % txt[1])

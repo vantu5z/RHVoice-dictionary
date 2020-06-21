@@ -716,7 +716,7 @@ class OrdinalRule_7(RuleBase):
 
     def check(self, m):
         attr = words.get_attr(m.group(2))
-        if attr.have([M_GENDER], False, [3]) and not attr.have(case=[0]):
+        if attr.have([M_GENDER, S_GENDER], False, [1]):
             return ordinal(m.group(1), r_mu) + ' ' + m.group(2)
         return None
 
