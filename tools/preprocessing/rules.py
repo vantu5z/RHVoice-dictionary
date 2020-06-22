@@ -108,8 +108,8 @@ class UnitRule_2(RuleBase):
         if m.group(1).lower() not in pre_acc:
             return None
         new = m.group(1) + m.group(2) + ' '
-        if m.group(6):
-            new += substant(m.group(8), m.group(9), 1)
+        if m.group(7):
+            new += forms[m.group(9)][2]
         else:
             new += substant(m.group(8), m.group(9), 5)
         return new

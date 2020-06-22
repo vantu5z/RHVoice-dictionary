@@ -367,11 +367,13 @@ def decimal(full, frac, cas=0):
             f_part = f_part[:-1] + 'у'
             fp = 'ую'
         else:
+            f_part = cardinal(full, v_ca)
             fp = 'ых'
         if d_part[-1] == 'а':
             d_part = d_part[:-1] + 'у'
             dp = 'ую'
         else:
+            d_part = cardinal(frac, v_ca)
             dp = 'ых'
     return f_part + ' цел' + fp + ' ' + d_part + dec + dp
 
