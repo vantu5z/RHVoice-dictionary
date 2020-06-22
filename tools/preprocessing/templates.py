@@ -1598,10 +1598,6 @@ samples_4 = (
   (r'\bStern\b', 'Штэрн'),
   (r'\bDie Welt\b', 'Ди Вэльт'),
   (r'\bBild\b', 'Бильд'),
-  (r'\bDeutsche Welle\b', 'Дойче В+эле'),
-  (r'\bDer Spiegel\b', 'Дэр Шп+игель'),
-  (r'\bFrankfurter Allgemeine\b', 'Фр+анкфуртэр +Альгемайне'),
-  (r'\bHandelsblatt\b', 'Х+андэльсблат'),
   (r'\bSüddeutsche Zeitung\b', 'Зюд-дойче Цайтунг'),
 
   # Необязательное удаление маркера (используются при обработке)
@@ -1645,6 +1641,11 @@ def stress_marker_samples(marker):
         ('ы́', marker + 'ы'),
         ('ю́', marker + 'ю'),
         ('я́', marker + 'я'),
+        (r'\bDeutsche Welle\b', 'Дойче В%sэле' % marker),
+        (r'\bDer Spiegel\b', 'Дэр Шп%sигель' % marker),
+        (r'\bFrankfurter Allgemeine\b',
+         'Фр%sанкфуртэр %sАльгемайне' % (marker, marker)),
+        (r'\bHandelsblatt\b', 'Х%sандэльсблат' % marker),
         )
 
 # словарь греческого алфавита
