@@ -125,7 +125,8 @@ class UnitRule_3(RuleBase):
             r'\b(([Оо]т|[Сс]) (почти |примерно |приблизительно |плюс |минус |))'
             r'(\d+,|)(\d+)_ ([%°\℃ВКМ£₽\$\.²³_БВГМагдеклмнпрстцш\']+)'
             r'( (в час |в секунду |[а-яё]{3,} |)до '
-            r'(почти |примерно |приблизительно |плюс |минус |)(\d+,|))(\d+)\b')
+            r'(почти |примерно |приблизительно |плюс |минус |)(\d+,|))(\d+)'
+            r'(_|)\b')
 
     def check(self, m):
         if m.group(6) in ('%', '°', "'", '℃', 'В', 'К', 'М', '£', '₽', '$',
@@ -147,7 +148,7 @@ class UnitRule_3(RuleBase):
             else:
                 number2 = m.group(11)
 
-            return m.group(1) + number1 + m.group(7) + number2
+            return m.group(1) + number1 + m.group(7) + number2 + m.group(12)
         else:
             return None
 
