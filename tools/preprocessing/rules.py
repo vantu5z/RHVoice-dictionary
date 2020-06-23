@@ -60,7 +60,7 @@ class UnitRule_0(RuleBase):
     """
     def __init__(self):
         self.mask = (r'\b([Вв] ((\d+,|)(\d+) - |)'
-                     r'(\d+,|)(\d+))_ (тыс\.|млн|млрд|трлн)( раз)\b')
+                     r'(\d+,|)(\d+)) (тыс\.|млн|млрд|трлн)( раз)\b')
 
     def check(self, m):
         new = m.group(1) +' '
@@ -80,7 +80,7 @@ class UnitRule_1(RuleBase):
         self.mask = (
             r'\b(([Зз]а|[Нн]а|[Пп]ро|[Сс]пустя|[Чч]ерез|'
             r'состав[авеийлотшщьюя]{2,6}|превы[сш][авеийлотшщьюя]{2,5}) (бы |)'
-            r'((\d+,|)(\d+) - |)(\d+,|)(\d+))_ ' + units)
+            r'((\d+,|)(\d+) - |)(\d+,|)(\d+)) ' + units)
 
     def check(self, m):
         new = m.group(1) + ' '
@@ -102,7 +102,7 @@ class UnitRule_2(RuleBase):
             r'( (всего |ориентировочно |примерно |приблизительно |более чем |'
             r'не более чем |стрельбы |заказчику |заказчикам |покупателю |'
             r'покупателям |)в '
-            r'((\d+,|)(\d+) - |)(\d+,|)(\d+))_ ' + units)
+            r'((\d+,|)(\d+) - |)(\d+,|)(\d+)) ' + units)
 
     def check(self, m):
         if m.group(1).lower() not in pre_acc:
@@ -123,10 +123,9 @@ class UnitRule_3(RuleBase):
     def __init__(self):
         self.mask = (
             r'\b(([Оо]т|[Сс]) (почти |примерно |приблизительно |плюс |минус |))'
-            r'(\d+,|)(\d+)_ ([%°\℃ВКМ£₽\$\.²³_БВГМагдеклмнпрстцш\']+)'
+            r'(\d+,|)(\d+) ([%°\℃ВКМ£₽\$\.²³_БВГМагдеклмнпрстцш\']+)'
             r'( (в час |в секунду |[а-яё]{3,} |)до '
-            r'(почти |примерно |приблизительно |плюс |минус |)(\d+,|))(\d+)'
-            r'(_|)\b')
+            r'(почти |примерно |приблизительно |плюс |минус |)(\d+,|))(\d+)\b')
 
     def check(self, m):
         if m.group(6) in ('%', '°', "'", '℃', 'В', 'К', 'М', '£', '₽', '$',
@@ -148,7 +147,7 @@ class UnitRule_3(RuleBase):
             else:
                 number2 = m.group(11)
 
-            return m.group(1) + number1 + m.group(7) + number2 + m.group(12)
+            return m.group(1) + number1 + m.group(7) + number2
         else:
             return None
 
@@ -159,7 +158,7 @@ class UnitRule_4(RuleBase):
     Пример: "от 1 до 4 км -> от одного до четырёх километров"
     """
     def __init__(self):
-        self.mask = (r'\b([Оо]т |[Сс] )(\d+,|)(\d+)( до (\d+,|)\d+_ )' + units)
+        self.mask = (r'\b([Оо]т |[Сс] )(\d+,|)(\d+)( до (\d+,|)\d+ )' + units)
 
     def check(self, m):
         if m.group(2):
@@ -187,7 +186,7 @@ class UnitRule_5(RuleBase):
             r'[Нн]е превы[сш][аи][авеийолтшщюья]{1,4}'
             r')'
             r'( плюс | минус | )((\d+,|)(\d+)( - | или | и )'
-            r'(плюс |минус |)|)(\d+,|)(\d+)_ ' + units)
+            r'(плюс |минус |)|)(\d+,|)(\d+) ' + units)
 
     def check(self, m):
         if m.group(3):
@@ -222,7 +221,7 @@ class UnitRule_6(RuleBase):
             r'([Кк]|равн[аоы]|равен|равняться|равнял[аио]сь|равнялся|равняется)'
             r'( всего | почти | примерно | приблизительно | плюс | минус | )'
             r')'
-            r'(\d+,|)(\d+)_ ' + units)
+            r'(\d+,|)(\d+) ' + units)
 
     def check(self, m):
         if m.group(4):
@@ -241,7 +240,7 @@ class UnitRule_7(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b([Пп]о (\d*[02-9]1|1(000){0,3}))_ ' + units)
+        self.mask = (r'\b([Пп]о (\d*[02-9]1|1(000){0,3})) ' + units)
 
     def check(self, m):
         return m.group(1) + ' ' + substant(m.group(2), m.group(4), 2)
@@ -258,7 +257,7 @@ class UnitRule_8(RuleBase):
             r'(почти |приблизительно |примерно |плюс |минус |))'
             r'((\d+,|)(\d+)'
             r'( [-и] (почти |приблизительно |примерно |плюс |минус |))|)'
-            r'(\d+,|)(\d+)_ ' + units)
+            r'(\d+,|)(\d+) ' + units)
 
     def check(self, m):
         new = m.group(1)
@@ -286,7 +285,7 @@ class UnitRule_9(RuleBase):
             r'((около |почти |приблизительно |примерно |плюс |минус |)'
             r'(\d+,|)(\d+) ([-и]|или) |)'
             r'(около |почти |приблизительно |примерно |плюс |минус |)'
-            r'(\d+,|)(\d+))_ ' + units
+            r'(\d+,|)(\d+)) ' + units
             )
 
     def check(self, m):
@@ -303,7 +302,7 @@ class UnitRule_11(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b(((\d+),|)(\d+))_ ' + units)
+        self.mask = (r'\b(((\d+),|)(\d+)) ' + units)
 
     def check(self, m):
         if m.group(2):
@@ -322,7 +321,7 @@ class UnitRule_12(RuleBase):
             r'('
             r'-й степени|тысяч(|ами|а[мх]?|ей?|и|у)|'
             r'(миллион|миллиард|триллион)(|ами|а[мх]?|о[вм]|[еу])'
-            r')_ ' + units)
+            r') ' + units)
 
     def check(self, m):
         return m.group(1) + ' ' + forms[m.group(5)][1]
