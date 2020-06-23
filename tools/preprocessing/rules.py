@@ -1183,7 +1183,8 @@ class CardinalRule_24(RuleBase):
 
     def check(self, m):
         attr = words.get_attr(m.group(7))
-        if attr.have([M_GENDER], False, [3]) and not attr.have([M_GENDER], False, [0]):
+        if (attr.have([M_GENDER], False, [3])
+            and not attr.have([M_GENDER], False, [0])):
             number = cardinal(m.group(4), v_ca)[:-2] + 'ного'
             if m.group(2) == '':
                 pre = ''
