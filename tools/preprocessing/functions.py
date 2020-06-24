@@ -285,8 +285,8 @@ def decimal(full, frac, cas=0):
     (full - целая часть, frac - дробная часть, cas - падеж)
     """
     try:
-        dec = ' ' + ('десят', 'сот', 'тысячн', 'десятитысячн',
-                     'стотысячн', 'миллионн')[len(frac) - 1]
+        dec = '_ ' + ('десят', 'сот', 'тысячн', 'десятитысячн',
+                      'стотысячн', 'миллионн')[len(frac) - 1]
     except:
         dec = ' запятая'
         for t in range(len(frac)):
@@ -367,13 +367,11 @@ def decimal(full, frac, cas=0):
             f_part = f_part[:-1] + 'у'
             fp = 'ую'
         else:
-            f_part = cardinal(full, v_ca)
             fp = 'ых'
         if d_part[-1] == 'а':
             d_part = d_part[:-1] + 'у'
             dp = 'ую'
         else:
-            d_part = cardinal(frac, v_ca)
             dp = 'ых'
-    return f_part + ' цел' + fp + ' ' + d_part + dec + dp
+    return f_part + '_ цел' + fp + ' ' + d_part + dec + dp
 
