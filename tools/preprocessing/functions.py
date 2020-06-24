@@ -293,16 +293,17 @@ def decimal(full, frac, cas=0):
             dec += ', ' + frac[t]
         return full + dec
     f_part = feminin(full)
-    if f_part[-1] == 'а':
-        fp = 'ая'
-    else:
-        fp = 'ых'
     d_part = feminin(frac)
-    if d_part[-1] == 'а':
-        dp = 'ая'
-    else:
-        dp = 'ых'
-    if cas == 1:
+    if cas == 0:
+        if f_part[-1] == 'а':
+            fp = 'ая'
+        else:
+            fp = 'ых'
+        if d_part[-1] == 'а':
+            dp = 'ая'
+        else:
+            dp = 'ых'
+    elif cas == 1:
         f_part = cardinal(full, r_ca)
         if condition(full):
             f_part = f_part[:-2] + 'й'
@@ -315,7 +316,7 @@ def decimal(full, frac, cas=0):
             dp = 'ой'
         else:
             dp = 'ых'
-    if cas == 2:
+    elif cas == 2:
         f_part = cardinal(full, d_ca)
         if condition(full):
             f_part = f_part[:-2] + 'й'
@@ -332,7 +333,7 @@ def decimal(full, frac, cas=0):
             dp = 'ых'
         else:
             dp = 'ым'
-    if cas == 3:
+    elif cas == 3:
         f_part = cardinal(full, t_ca)
         if condition(full):
             f_part = f_part[:-2] + 'ой'
@@ -349,7 +350,7 @@ def decimal(full, frac, cas=0):
             dp = 'ых'
         else:
             dp = 'ыми'
-    if cas == 4:
+    elif cas == 4:
         f_part = cardinal(full, p_ca)
         if condition(full):
             f_part = f_part[:-1] + 'й'
@@ -362,7 +363,7 @@ def decimal(full, frac, cas=0):
             dp = 'ой'
         else:
             dp = 'ых'
-    if cas == 5:
+    else:
         if f_part[-1] == 'а':
             f_part = f_part[:-1] + 'у'
             fp = 'ую'
