@@ -1092,36 +1092,39 @@ class CardinalRule_20(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b([Вв] |[Нн]а |[Оо]б? |[Пп]ри )((\d+)( [-и] | или )|)'
+            r'\b([Вв] |[Нн]а |[Оо]б? |[Пп]ри )((\d+,|)(\d+)( [-и] | или )|)'
             r'(около |почти |примерно |приблизительно |плюс |минус |)'
             r'(\d+)( ([а-яё]+([иы]х|[ео][йм]) |)([а-яё]{3,}))\b')
 
     def check(self, m):
         if m.group(2):
-            pre = cardinal(m.group(3), p_ca)
-            a = words.have(m.group(10), None, False, [2, 5])
-            b = words.have(m.group(10)[:-1] + 'м', [Z_GENDER], True, [2])
-            if condition(m.group(3)) and (a or b):
-                pre = pre[:-1] + 'й'
-            elif m.group(10) == 'сутках':
-                pre = pre[:-2] + 'их'
-            pre += m.group(4)
+            if m.group(3):
+                pre = decimal(m.group(3)[:-1], m.group(4), 4)
+            else:
+                pre = cardinal(m.group(4), p_ca)
+                a = words.have(m.group(11), None, False, [2, 5])
+                b = words.have(m.group(11)[:-1] + 'м', [Z_GENDER], True, [2])
+                if condition(m.group(4)) and (a or b):
+                    pre = pre[:-1] + 'й'
+                elif m.group(11) == 'сутках':
+                    pre = pre[:-2] + 'их'
+            pre += m.group(5)
         else:
             pre = ''
         number = ''
-        attr = words.get_attr(m.group(10))
-        if condition(m.group(6)):
+        attr = words.get_attr(m.group(11))
+        if condition(m.group(7)):
             if attr.have([M_GENDER, S_GENDER], False, [5]):
-                number = cardinal(m.group(6), p_ca)
+                number = cardinal(m.group(7), p_ca)
             elif attr.have([Z_GENDER], False, [2, 5]):
-                number = cardinal(m.group(6), p_ca)[:-1] + 'й'
-            elif m.group(10) == 'сутках':
-                number = cardinal(m.group(6), p_ca)[:-2] + 'их'
-        elif m.group(10)[-2:] in ('ах', 'ях'):
-            number = cardinal(m.group(6), p_ca)
-            number = cardinal(m.group(6), p_ca)
+                number = cardinal(m.group(7), p_ca)[:-1] + 'й'
+            elif m.group(11) == 'сутках':
+                number = cardinal(m.group(7), p_ca)[:-2] + 'их'
+        elif m.group(11)[-2:] in ('ах', 'ях'):
+            number = cardinal(m.group(7), p_ca)
+            number = cardinal(m.group(7), p_ca)
         if number:
-            return m.group(1) + pre + m.group(5) + number + m.group(7)
+            return m.group(1) + pre + m.group(6) + number + m.group(8)
         else:
             return None
 
@@ -1596,6 +1599,33 @@ class CardinalRule_36(RuleBase):
         return new + m.group(3)
 
 
+class CardinalRule_37(RuleBase):
+    """
+    Описание: Десятичные дроби. Предложный падеж.
+    Пример: "в 10,7 километра(х) -> в десяти целых семи десятых километра(х)"
+    """
+    def __init__(self):
+        self.mask = (r'\b([Вв] |[Пп]ри |[Оо]б? )((\d+,|)(\d+)( [-и] | или )|)'
+                     r'(\d+),(\d+)( ([а-я]+[оы](го|й|х) |)([а-я]+))\b')
+
+    def check(self, m):
+        attr = words.get_attr(m.group(11))
+        new = m.group(1)
+        if m.group(2):
+            if m.group(3):
+                pre = decimal(m.group(3)[:-1], m.group(4), 4)
+            else:
+                pre = cardinal(m.group(4), p_ca)
+                if condition(m.group(4)) and attr.have([Z_GENDER], None, [1, 5]):
+                    pre = pre[:-1] + 'й'
+            new += pre + m.group(5)
+        if (attr.have(None, False, [1]) or attr.have(None, True, [5])):
+            new += decimal(m.group(6), m.group(7), 4) + m.group(8)
+            return new
+        else:
+            return None
+
+
 # ==========================
 # Подготовка списков правил.
 # ==========================
@@ -1653,6 +1683,7 @@ rules_list_2 = (OrdinalRule_4(),
                 CardinalRule_26(),
                 CardinalRule_22(),
                 CardinalRule_24(),
+                CardinalRule_37(),
                 CardinalRule_27(),     # именительный/винительный
                 CardinalRule_28(),
                 CardinalRule_29(),
