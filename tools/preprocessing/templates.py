@@ -1597,6 +1597,7 @@ samples_4 = (
   # Немецкие названия
   (r'\bDeutsche Bank\b', 'Дойче Банк'),
   (r'\bDie Zeit\b', 'Ди Цайт'),
+  (r'\bFrankfurter Allgemeine Zeitung\b', 'Франкфуртэр Альгемайне Цайтунг'),
   (r'\bStern\b', 'Штэрн'),
   (r'\bDie Welt\b', 'Ди Вэльт'),
   (r'\bBild\b', 'Бильд'),
