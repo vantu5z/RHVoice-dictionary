@@ -1093,7 +1093,8 @@ class CardinalRule_20(RuleBase):
     def __init__(self):
         self.mask = (
             r'\b([Вв] |[Нн]а |[Оо]б? |[Пп]ри )((\d+,|)(\d+)( [-и] | или )|)'
-            r'(около |почти |примерно |приблизительно |плюс |минус |)'
+            r'(около |почти |примерно |приблизительно |плюс |минус |'
+            r'более чем |менее чем)'
             r'(\d+)( ([а-яё]+([иы]х|[ео][йм]) |)([а-яё]{3,}))\b')
 
     def check(self, m):
@@ -1136,8 +1137,8 @@ class CardinalRule_22(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b(([Оо]б?|[Пп]ри)( минус| плюс|))'
-            r'( (\d+)( ([-и]|или)( минус| плюс|) )| )(\d+)\b')
+            r'\b(([Оо]б?|[Пп]ри)( минус| плюс| более чем| менее чем|))'
+            r'( (\d+)( ([-и]|или)( минус| плюс|) )| )(\d+)\b(?!,)')
 
     def check(self, m):
         number = ' '
@@ -1605,22 +1606,23 @@ class CardinalRule_37(RuleBase):
     Пример: "в 10,7 километра(х) -> в десяти целых семи десятых километра(х)"
     """
     def __init__(self):
-        self.mask = (r'\b([Вв] |[Пп]ри |[Оо]б? )((\d+,|)(\d+)( [-и] | или )|)'
-                     r'(\d+),(\d+)( ([а-я]+[оы](го|й|х) |)([а-я]+))\b')
+        self.mask = (r'\b(([Вв]|[Пп]ри|[Оо]б?) (более чем |менее чем |))'
+                     r'((\d+,|)(\d+)( [-и] | или )|)(\d+),(\d+)'
+                     r'( ([а-я]+[оы](го|й|х) |)([а-я]+))\b')
 
     def check(self, m):
-        attr = words.get_attr(m.group(11))
+        attr = words.get_attr(m.group(13))
         new = m.group(1)
-        if m.group(2):
-            if m.group(3):
-                pre = decimal(m.group(3)[:-1], m.group(4), 4)
+        if m.group(4):
+            if m.group(5):
+                pre = decimal(m.group(5)[:-1], m.group(6), 4)
             else:
-                pre = cardinal(m.group(4), p_ca)
-                if condition(m.group(4)) and attr.have([Z_GENDER], None, [1, 5]):
+                pre = cardinal(m.group(6), p_ca)
+                if condition(m.group(6)) and attr.have([Z_GENDER], None, [1, 5]):
                     pre = pre[:-1] + 'й'
-            new += pre + m.group(5)
+            new += pre + m.group(7)
         if (attr.have(None, False, [1]) or attr.have(None, True, [5])):
-            new += decimal(m.group(6), m.group(7), 4) + m.group(8)
+            new += decimal(m.group(8), m.group(9), 4) + m.group(10)
             return new
         else:
             return None
