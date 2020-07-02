@@ -118,43 +118,6 @@ class UnitRule_2(RuleBase):
 class UnitRule_3(RuleBase):
     """
     Описание: Единицы измерения. Родительный падеж.
-    Пример: "С 10 кВт до 12 -> С десяти киловатт до двенадцати"
-    """
-    def __init__(self):
-        self.mask = (
-            r'\b(([Оо]т|[Сс]) (почти |примерно |приблизительно |плюс |минус |))'
-            r'(\d+,|)(\d+) ([%°\℃ВКМ£₽\$\.²³_БВГМагдеклмнпрстцш\']+)'
-            r'( (в час |в секунду |[а-яё]{3,} |)до '
-            r'(почти |примерно |приблизительно |плюс |минус |)(\d+,|))(\d+)\b')
-
-    def check(self, m):
-        if m.group(6) in ('%', '°', "'", '℃', 'В', 'К', 'М', '£', '₽', '$',
-                          'кГц', 'МГц', 'ГГц', 'Гц', 'кпк', 'Мпк', 'Гпк', 'пк',
-                          'кг', 'мг', '_г', 'мкм', 'км', 'см', 'мм', 'м',
-                          'км²', 'см²', 'мм²', 'м²', 'км³', 'см³', 'мм³', 'м³',
-                          'кт', 'Мт', 'т', 'кВт', 'МВт', 'ГВт', 'Вт', 'га', 'л',
-                          'дБ', 'сек', 'л.с.', 'а.е.', 'шт.', 'ед.', 'тыс.',
-                          'млн', 'млрд', 'трлн', 'атм'):
-            if m.group(4):
-                number1 = decimal(m.group(4)[:-1], m.group(5), 1)
-                number1 += ' ' + forms[m.group(6)][2]
-            else:
-                number1 = m.group(5) + ' ' + substant(m.group(5), m.group(6), 1)
-
-            if (not m.group(10) and m.group(6) in zh_units
-                and condition(m.group(11))):
-                number2 = cardinal(m.group(11), r_ca)[:-2] + 'й'
-            else:
-                number2 = m.group(11)
-
-            return m.group(1) + number1 + m.group(7) + number2
-        else:
-            return None
-
-
-class UnitRule_4(RuleBase):
-    """
-    Описание: Единицы измерения. Родительный падеж.
     Пример: "от 1 до 4 км -> от одного до четырёх километров"
     """
     def __init__(self):
@@ -170,7 +133,7 @@ class UnitRule_4(RuleBase):
         return m.group(1) + number + m.group(4) + m.group(6)
 
 
-class UnitRule_5(RuleBase):
+class UnitRule_4(RuleBase):
     """
     Описание: Единицы измерения. Родительный падеж.
     Пример:
@@ -185,7 +148,8 @@ class UnitRule_5(RuleBase):
             r'[Пп]ротив|[Пп]орядка|[Пп]осле|'
             r'[Нн]е превы[сш][аи][авеийолтшщюья]{1,4}'
             r')'
-            r'( плюс | минус | )((\d+,|)(\d+)( - | или | и )'
+            r'( плюс | минус | более чем | менее чем | )'
+            r'((\d+,|)(\d+)( - | или | и )'
             r'(плюс |минус |)|)(\d+,|)(\d+) ' + units)
 
     def check(self, m):
@@ -208,6 +172,62 @@ class UnitRule_5(RuleBase):
                 number = number[:-2] + 'й'
             number += ' ' + substant(m.group(9), m.group(10), 1)
         return m.group(1) + m.group(2) + prenum  + number
+
+
+class UnitRule_5(RuleBase):
+    """
+    Описание: Единицы измерения. Родительный падеж.
+    Пример: "С 10 кВт до 12 -> С десяти киловатт до двенадцати"
+    """
+    def __init__(self):
+        self.mask = (
+            r'\b(([Оо]т|[Сс]) '
+            r'(почти |примерно |приблизительно |плюс |минус |'
+            r'более чем |менее чем|))'
+            r'((\d+,|)(\d+) - |)(\d+,|)(\d+) '
+            r'([%°\℃ВКМ£₽\$\.²³_БВГМагдеклмнпрстцш\']+)'
+            r'( (в час |в секунду |[а-яё]{3,} |)до '
+            r'(почти |примерно |приблизительно |плюс |минус |'
+            r'более чем |менее чем|))((\d+,|)(\d+)|)\b')
+
+    def check(self, m):
+        if m.group(9) in ('%', '°', "'", '℃', 'В', 'К', 'М', '£', '₽', '$',
+                          'кГц', 'МГц', 'ГГц', 'Гц', 'кпк', 'Мпк', 'Гпк', 'пк',
+                          'кг', 'мг', '_г', 'мкм', 'км', 'см', 'мм', 'м',
+                          'км²', 'см²', 'мм²', 'м²', 'км³', 'см³', 'мм³', 'м³',
+                          'кт', 'Мт', 'т', 'кВт', 'МВт', 'ГВт', 'Вт', 'га', 'л',
+                          'дБ', 'сек', 'л.с.', 'а.е.', 'шт.', 'ед.', 'тыс.',
+                          'млн', 'млрд', 'трлн', 'атм'):
+            number1 = ''
+            if m.group(4):
+                if m.group(5):
+                    number1 = decimal(m.group(5)[:-1], m.group(6), 1)
+                else:
+                    number1 = cardinal(m.group(6), r_ca)
+                    if m.group(9) in zh_units and condition(m.group(6)):
+                        number1 = number1[:-2] + 'й'
+                number1 += ' - '
+            else:
+                number1 = ''
+            if m.group(7):
+                number1 += decimal(m.group(7)[:-1], m.group(8), 1)
+                number1 += ' ' + forms[m.group(9)][2]
+            else:
+                number1 += cardinal(m.group(8), r_ca)
+                if m.group(9) in zh_units and condition(m.group(8)):
+                    number1 = number1[:-2] + 'й'
+                number1 += ' ' + substant(m.group(8), m.group(9), 1)
+            if m.group(13):
+                if (not m.group(14) and m.group(9) in zh_units
+                    and condition(m.group(15))):
+                    number2 = cardinal(m.group(15), r_ca)[:-2] + 'й'
+                else:
+                    number2 = m.group(13)
+            else:
+                number2 = ''
+            return m.group(1) + number1 + m.group(10) + number2
+        else:
+            return None
 
 
 class UnitRule_6(RuleBase):
@@ -1094,7 +1114,7 @@ class CardinalRule_20(RuleBase):
         self.mask = (
             r'\b([Вв] |[Нн]а |[Оо]б? |[Пп]ри )((\d+,|)(\d+)( [-и] | или )|)'
             r'(около |почти |примерно |приблизительно |плюс |минус |'
-            r'более чем |менее чем)'
+            r'более чем |менее чем |)'
             r'(\d+)( ([а-яё]+([иы]х|[ео][йм]) |)([а-яё]{3,}))\b')
 
     def check(self, m):
@@ -1634,10 +1654,10 @@ class CardinalRule_37(RuleBase):
 
 rules_list = (UnitRule_0(),
               UnitRule_2(),
-              UnitRule_3(),         # родительный
-              UnitRule_4(),
+              UnitRule_3(),
+              UnitRule_4(),         # родительный
+              UnitRule_5(),         # родительный (следует после UnitRule_4)
               UnitRule_8(),         # творительный
-              UnitRule_5(),
               UnitRule_1(),         # винительный
               UnitRule_6(),         # именительный/винительный
               UnitRule_7(),
