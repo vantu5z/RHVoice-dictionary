@@ -188,7 +188,7 @@ class UnitRule_5(RuleBase):
             r'([%°\℃ВКМ£₽\$\.²³_БВГМагдеклмнпрстцш\']+)'
             r'( (в час |в секунду |[а-яё]{3,} |)до '
             r'(почти |примерно |приблизительно |плюс |минус |'
-            r'более чем |менее чем|))((\d+,|)(\d+)|)\b')
+            r'более чем |менее чем|))(((\d+,|)(\d+) - |)(\d+,|)(\d+)|)\b')
 
     def check(self, m):
         if m.group(9) in ('%', '°', "'", '℃', 'В', 'К', 'М', '£', '₽', '$',
@@ -218,11 +218,21 @@ class UnitRule_5(RuleBase):
                     number1 = number1[:-2] + 'й'
                 number1 += ' ' + substant(m.group(8), m.group(9), 1)
             if m.group(13):
-                if (not m.group(14) and m.group(9) in zh_units
-                    and condition(m.group(15))):
-                    number2 = cardinal(m.group(15), r_ca)[:-2] + 'й'
+                if m.group(14):
+                    if (not m.group(15) and m.group(9) in zh_units
+                        and condition(m.group(16))):
+                        number2 = cardinal(m.group(16), r_ca)[:-2] + 'й'
+                        number2 += ' - '
+                    else:
+                        number2 = m.group(14)
                 else:
-                    number2 = m.group(13)
+                    number2 = ''
+                if m.group(17):
+                    number2 += decimal(m.group(17)[:-1], m.group(18), 1)
+                else:
+                    number2 += cardinal(m.group(18), r_ca)
+                    if m.group(9) in zh_units and condition(m.group(18)):
+                        number2 = number2[:-2] + 'й'
             else:
                 number2 = ''
             return m.group(1) + number1 + m.group(10) + number2
@@ -1654,7 +1664,7 @@ class CardinalRule_37(RuleBase):
 
 rules_list = (UnitRule_0(),
               UnitRule_2(),
-              UnitRule_3(),
+              UnitRule_3(),         # родительный (следует перед UnitRule_4)
               UnitRule_4(),         # родительный
               UnitRule_5(),         # родительный (следует после UnitRule_4)
               UnitRule_8(),         # творительный
