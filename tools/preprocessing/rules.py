@@ -688,6 +688,7 @@ class OrdinalRule_4(RuleBase):
                 number = ordinal(m.group(1), t_zh)
         if number:
             return number + ' ' + m.group(3)
+        return None
 
 
 class OrdinalRule_5(RuleBase):
