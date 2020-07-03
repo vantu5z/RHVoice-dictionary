@@ -668,7 +668,8 @@ class OrdinalRule_4(RuleBase):
     Пример: "на 8-м этаже -> на восьмом этаже"
     """
     def __init__(self):
-        self.mask = (r'\b(\d+)-(м|й) (([А-Я]?[а-яё]+(-[а-яё]+|)+([ео][йм]|[иы]м) ){,2}([а-яё]+))\b')
+        self.mask = (r'\b(\d+)-(м|й) (([А-Я]?[а-яё]+(-[а-яё]+|)+'
+                     r'и!([ео][йм]|[иы]м) ){,2}([а-яё]+))\b')
 
     def check(self, m):
         number = ''
@@ -677,8 +678,8 @@ class OrdinalRule_4(RuleBase):
             if attr.have([M_GENDER, S_GENDER], False, [4]):
                 number = ordinal(m.group(1), t_mu)
             elif (attr.have([M_GENDER, S_GENDER], False, [5])
-                  or m.group(7) in ('берегу', 'бою', 'году', 'лесу',
-                                    'полку','пруду', 'саду', 'углу', 'шкафу')):
+                  or m.group(7) in ('берегу', 'бою', 'году', 'лесу', 'полку',
+                                    'пруду', 'саду', 'углу', 'шкафу')):
                 number = ordinal(m.group(1), p_mu)
         else:
             if attr.have([M_GENDER], False, [0]):
@@ -687,7 +688,6 @@ class OrdinalRule_4(RuleBase):
                 number = ordinal(m.group(1), t_zh)
         if number:
             return number + ' ' + m.group(3)
-        return None
 
 
 class OrdinalRule_5(RuleBase):
