@@ -668,12 +668,12 @@ class OrdinalRule_4(RuleBase):
     Пример: "на 8-м этаже -> на восьмом этаже"
     """
     def __init__(self):
-        self.mask = (r'\b(\d+)-(м|й) (([А-Я]?[а-яё]+(-[а-яё]+|)+'
-                     r'и!([ео][йм]|[иы]м) ){,2}([а-яё]+))\b')
+        self.mask = (r'\b(\d+)-(м|й) (([А-Я]?[а-яё]+(-[а-яё]+|)+[^и]'
+                     r'([ео][йм]|[иы]м) ){,2}([А-Я]?[а-яё]+))\b')
 
     def check(self, m):
         number = ''
-        attr = words.get_attr(m.group(7))
+        attr = words.get_attr(m.group(7).lower())
         if m.group(2) == 'м':
             if attr.have([M_GENDER, S_GENDER], False, [4]):
                 number = ordinal(m.group(1), t_mu)
@@ -688,38 +688,6 @@ class OrdinalRule_4(RuleBase):
                 number = ordinal(m.group(1), t_zh)
         if number:
             return number + ' ' + m.group(3)
-        return None
-
-
-class OrdinalRule_5(RuleBase):
-    """
-    Описание: Порядковые числительные.
-              Соотвествует правилу OrdinalRule_4 с прилагательным-определением.
-    Пример:
-    """
-    def __init__(self):
-        self.mask = (r'\b(\d+)-(м|й)'
-                     r'( [А-Я]?[а-яё-]+([еиоы][йм]) ([А-Я]?[а-яё]+))\b')
-
-    def check(self, m):
-        number = ''
-        attr = words.get_attr(m.group(5).lower())
-        if m.group(2) == 'м':
-            if attr.have([M_GENDER, S_GENDER], False, [4]):
-                if m.group(4) in ('им', 'ым'):
-                    number = ordinal(m.group(1), t_mu)
-            elif attr.have([M_GENDER, S_GENDER], False, [5]):
-                if m.group(4) in ('ем', 'ом'):
-                    number = ordinal(m.group(1), p_mu)
-        else:
-            if attr.have([M_GENDER], False, [0]):
-                if m.group(4) in ('ий', 'ой', 'ый'):
-                    number = ordinal(m.group(1), i_mu)
-            elif attr.have([Z_GENDER], False, [1, 2, 4, 5]):
-                if m.group(4) in ('ей', 'ой'):
-                    number = ordinal(m.group(1), t_zh)
-        if number:
-            return number + m.group(3)
         return None
 
 
@@ -1702,7 +1670,6 @@ rules_list = (UnitRule_0(),
               )
 
 rules_list_2 = (OrdinalRule_4(),
-                OrdinalRule_5(),
                 OrdinalRule_39(),
                 CardinalRule_11(),     # родительный
                 CardinalRule_12(),
