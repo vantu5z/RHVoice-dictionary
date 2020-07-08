@@ -1459,8 +1459,6 @@ samples_3 = (
 #  (r'\b(\d+)( годом| годами)\b',
 #   'ordinal(m.group(1), t_mu) + m.group(2)'),
   (r'\b(\d*[02-9]?[2678])-й\b', 'ordinal(m.group(1), i_mu)'),
-  (r'\b(\d+)' + months, 'ordinal(m.group(1), r_mu) + " " + m.group(2)'),
-  (r'\b(\d*[02-9]?[2678])-й\b', 'ordinal(m.group(1), i_mu)'),
   (r'\b([1-4])' # В названиях фронтов РККА (1941-1945)
    r'( (Белорусск|Дальневосточн|Прибалтийск|Украинск)([иы][йм]|ого|ому?))\b',
    'ordinal(m.group(1), adj_pad[m.group(4)]) + m.group(2)'),
