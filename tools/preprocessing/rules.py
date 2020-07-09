@@ -763,6 +763,29 @@ class OrdinalRule_9(RuleBase):
         return None
 
 
+class OrdinalRule_5(RuleBase):
+    """
+    Описание: Порядковые числительные. Дательный падеж.
+    Пример: "23 дню -> двадцать третьему дню"
+    """
+    def __init__(self):
+        self.mask = (
+            r'(\A|\n|\(| )(\d*[02-9][02-9]|\d*1\d|[2-9]) ([а-яё]+)\b')
+
+    def check(self, m):
+        number = ''
+        attr = words.get_attr(m.group(3))
+        if attr.have([M_GENDER, S_GENDER], False, [2]):
+            if not attr.have(case=[0]):
+                number = ordinal(m.group(2), d_mu)
+        if attr.have([Z_GENDER], False, [2]):
+            number = ordinal(m.group(2), d_zh)
+        if number:
+            return m.group(1) + number + ' ' + m.group(3)
+        else:
+            return None
+
+
 class CardinalRule_10(RuleBase):
     """
     Описание: Количественные числительные.
@@ -1643,6 +1666,7 @@ rules_list = (UnitRule_0(),
               OrdinalRule_7(),
               OrdinalRule_8(),
               OrdinalRule_9(),
+              OrdinalRule_5(),       # дательный
               OrdinalRule_40(),      # дательный
               CardinalRule_20(),     # предложный /перед винительным/
               CardinalRule_21(),     # предложный /перед родительным/
