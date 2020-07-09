@@ -760,7 +760,8 @@ class OrdinalRule_9(RuleBase):
             number = ordinal(m.group(2), r_zh)
         if number:
             return m.group(1) + number + ' ' + m.group(3)
-        return None
+        else:
+            return None
 
 
 class OrdinalRule_5(RuleBase):
@@ -776,8 +777,7 @@ class OrdinalRule_5(RuleBase):
         number = ''
         attr = words.get_attr(m.group(3))
         if attr.have([M_GENDER, S_GENDER], False, [2]):
-            if not attr.have(case=[0]):
-                number = ordinal(m.group(2), d_mu)
+            number = ordinal(m.group(2), d_mu)
         if attr.have([Z_GENDER], False, [2]):
             number = ordinal(m.group(2), d_zh)
         if number:
