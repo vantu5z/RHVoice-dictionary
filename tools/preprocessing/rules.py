@@ -778,7 +778,8 @@ class OrdinalRule_5(RuleBase):
         attr = words.get_attr(m.group(3))
         if attr.have([M_GENDER, S_GENDER], False, [2]):
             number = ordinal(m.group(2), d_mu)
-        if attr.have([Z_GENDER], False, [2]):
+        if (attr.have([Z_GENDER], False, [2])
+            and not attr.have([Z_GENDER], False, [1, 5], all_case=True)):
             number = ordinal(m.group(2), d_zh)
         if number:
             return m.group(1) + number + ' ' + m.group(3)
@@ -1484,6 +1485,30 @@ class CardinalRule_35(RuleBase):
             return None
 
 
+class CardinalRule_38(RuleBase):
+    """
+    Описание: Количественные числительные. Винительный падеж.
+    Пример: "в 1,1 раза -> в одну целую одну десятую раза"
+    """
+    def __init__(self):
+        self.mask = (r'\b([Вв] )((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)'
+                     r'( (тысячи|миллиона|миллиарда|триллиона) раз| раза?)\b')
+
+    def check(self, m):
+        new = m.group(1)
+        if m.group(2):
+            if m.group(3):
+                new += decimal(m.group(3)[:-1], m.group(4), 5)
+            else:
+                new += m.group(4)
+            new += m.group(5)
+        if m.group(6):
+            new += decimal(m.group(6)[:-1], m.group(7), 5)
+        else:
+            new += m.group(7)
+        return new + m.group(8)
+
+
 class Rule_1(RuleBase):
     """
     Описание: Десятичные дроби в именительном падеже.
@@ -1673,6 +1698,7 @@ rules_list = (UnitRule_0(),
               CardinalRule_23(),     # винительный
               CardinalRule_34(),     # винительный
               CardinalRule_25(),     # винительный
+              CardinalRule_38(),     # винительный
               )
 
 rules_list_2 = (OrdinalRule_4(),
