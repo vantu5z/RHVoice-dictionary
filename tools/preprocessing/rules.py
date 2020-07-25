@@ -1046,7 +1046,7 @@ class CardinalRule_18(RuleBase):
             r'(\d+,|)(\d+)'
             r'( - | или | и (почти |приблизительно |примерно |плюс |минус |))|'
             r')'
-            r'(\d+) '
+            r'(\d+,|)(\d+) '
             r'([а-яё]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b')
 
     def check(self, m):
@@ -1056,27 +1056,32 @@ class CardinalRule_18(RuleBase):
             else:
                 pre = cardinal(m.group(3), t_ca)
                 if condition(m.group(3)):
-                    a = words.have(m.group(7), [Z_GENDER], False, [4])
-                    b = words.have(m.group(7)[:-2], [Z_GENDER], False, [0])
-                    c = words.have(m.group(7)[:-3] + 'ь', [Z_GENDER], False, [0])
+                    a = words.have(m.group(8), [Z_GENDER], False, [4])
+                    b = words.have(m.group(8)[:-2], [Z_GENDER], False, [0])
+                    c = words.have(m.group(8)[:-3] + 'ь', [Z_GENDER], False, [0])
                     if a or b or c:
                         pre = pre[:-2] + 'ой'
+                    elif m.group(8) == 'сутками':
+                        pre = cardinal(m.group(3), t_ca) + 'и'
             pre += m.group(4)
         else:
             pre = ''
         number = ''
-        if condition(m.group(6)):
-            attr = words.get_attr(m.group(7))
-            if attr.have([M_GENDER, S_GENDER], False, [4]):
-                number = cardinal(m.group(6), t_ca)
-            elif attr.have([Z_GENDER], False, [4]):
-                number = cardinal(m.group(6), t_ca)[:-2] + 'ой'
-            elif m.group(7) == 'сутками':
-                number = cardinal(m.group(7), t_ca) + 'и'
-        elif m.group(7)[-2:] == 'ми':
-            number = cardinal(m.group(6), t_ca)
+        if m.group(6):
+            number = decimal(m.group(6)[:-1], m.group(7), 3)
+        else:
+            if condition(m.group(7)):
+                attr = words.get_attr(m.group(8))
+                if attr.have([M_GENDER, S_GENDER], False, [4]):
+                    number = cardinal(m.group(7), t_ca)
+                elif attr.have([Z_GENDER], False, [4]):
+                    number = cardinal(m.group(7), t_ca)[:-2] + 'ой'
+                elif m.group(8) == 'сутками':
+                    number = cardinal(m.group(7), t_ca) + 'и'
+            elif m.group(8)[-2:] == 'ми':
+                number = cardinal(m.group(7), t_ca)
         if number:
-            return pre + number + ' ' + m.group(7)
+            return pre + number + ' ' + m.group(8)
         return None
 
 
