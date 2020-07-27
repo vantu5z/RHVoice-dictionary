@@ -1553,11 +1553,14 @@ samples_3 = (
    'm.group(1) + ordinal(m.group(2), t_mu) + " и " + '
    'ordinal(m.group(3), t_mu) + " " + m.group(4)'),
   (r'\b(\d+)-[еи] сутки', 'ordinal(m.group(1), i_mn) + " сутки"'),
-  (r'\b([Пп]ункт(|а|е|у|ом) )(\d+)\b',
+  (r'\b([Пп]ункт(|а|е|у|ом) )(\d+)\b(?!-й|-м|, ?\d)',
    'm.group(1) + ordinal(m.group(3), mu_pad[m.group(2)])'),
-  (r'\b([Сс]тать(я|е|и|ю|ей) )(\d+)\b(?!, \d)(-й|)',
+  (r'\b([Пп]ункт )(\d+)-й\b', 'm.group(1) + ordinal(m.group(2), i_mu)'),
+  (r'\b([Пп]ункт(е|ом) )(\d+)-м\b',
+   'm.group(1) + ordinal(m.group(3), mu_pad[m.group(2)])'),
+  (r'\b([Сс]тать(я|е|и|ю|ей) )(\d+)\b(?!, ?\d)(-й|)',
    'm.group(1) + ordinal(m.group(3), zh_pad[m.group(2)])'),
-  (r'\b([Гг]лав(а|е|ы|у|ой) )(\d+)\b(?!, \d)(-й|)',
+  (r'\b([Гг]лав(а|е|ы|у|ой) )(\d+)\b(?!, ?\d)(-й|)',
    'm.group(1) + ordinal(m.group(3), zh_pad[m.group(2)])'),
   # Неправильные наращения, но... полезные
   (r'\b(\d+)-[ео]й\b', 'ordinal(m.group(1), r_zh)'),
