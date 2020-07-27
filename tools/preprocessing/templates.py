@@ -1475,12 +1475,6 @@ samples_3 = (
   (r'(\d+)( зимни[еимх]{1,2}| летни[еимх]{1,2}|)( Олимпийски)(е|ми|м\b|х)\b',
    'ordinal(m.group(1), mn_pad[m.group(4)]) + m.group(2) + m.group(3) + '
    'm.group(4)'),
-  (r'\b([Пп]ункт(|а|е|у|ом) )(\d+)\b',
-   'm.group(1) + ordinal(m.group(3), mu_pad[m.group(2)])'),
-  (r'\b([Сс]тать(я|е|и|ю|ей) )(\d+)\b',
-   'm.group(1) + ordinal(m.group(3), zh_pad[m.group(2)])'),
-  (r'\b([Гг]лав(а|е|ы|у|ой) )(\d+)\b',
-   'm.group(1) + ordinal(m.group(3), zh_pad[m.group(2)])'),
   (r'\b(\d+0)( (-|и|или) \d+0-е годы)',
    'ordinal(m.group(1), i_mn) + m.group(2)'),
   (r'\b(\d+0)-е(?= годы)', 'ordinal(m.group(1), i_mn)'),
@@ -1559,6 +1553,12 @@ samples_3 = (
    'm.group(1) + ordinal(m.group(2), t_mu) + " и " + '
    'ordinal(m.group(3), t_mu) + " " + m.group(4)'),
   (r'\b(\d+)-[еи] сутки', 'ordinal(m.group(1), i_mn) + " сутки"'),
+  (r'\b([Пп]ункт(|а|е|у|ом) )(\d+)\b',
+   'm.group(1) + ordinal(m.group(3), mu_pad[m.group(2)])'),
+  (r'\b([Сс]тать(я|е|и|ю|ей) )(\d+)\b(?!, \d)(-й|)',
+   'm.group(1) + ordinal(m.group(3), zh_pad[m.group(2)])'),
+  (r'\b([Гг]лав(а|е|ы|у|ой) )(\d+)\b(?!, \d)(-й|)',
+   'm.group(1) + ordinal(m.group(3), zh_pad[m.group(2)])'),
   # Неправильные наращения, но... полезные
   (r'\b(\d+)-[ео]й\b', 'ordinal(m.group(1), r_zh)'),
   (r'\b(\d+)-[ео]м\b', 'ordinal(m.group(1), p_mu)'),
