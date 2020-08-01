@@ -1003,8 +1003,9 @@ class CardinalRule_16(RuleBase):
 
     def check(self, m):
         attr = words.get_attr(m.group(7))
-        a = m.group(7) == 'лет'
-        if attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1]) or a:
+        a = attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
+        b = m.group(7) == 'лет'
+        if a or b:
             if m.group(1):
                 number = cardinal(m.group(2), r_ca)
                 if attr.have(gender=Z_GENDER) and number[-2:] == 'го':
