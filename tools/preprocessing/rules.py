@@ -53,6 +53,25 @@ class RuleBase():
         pass
 
 
+class QuasiRoman(RuleBase):
+    """
+    Описание: Часто вместо латиницы встречается кириллица.
+    Пример:
+    """
+    def __init__(self):
+        self.mask = (r'\b((([ІХ]+)( [-и] | или )|)([ІХ]+))'
+                     r'( (в?в\.|век[аеу]?|веках|веками?|'
+                     r'(сто|тысяче)лети(ем?|й|ю|ях?|ями?))|)\b')
+
+    def check(self, m):
+        new = m.group(1)
+        if m.group(2) or m.group(6) or ('ХХ' or 'І' in m.group(1)):
+            new = sub('І', 'I', new)
+            new = sub('Х', 'X', new)
+            return new + m.group(6)
+        return None
+
+
 class UnitRule_0(RuleBase):
     """
     Описание: Количественные числительные. Винительный падеж.
@@ -1671,7 +1690,8 @@ class CardinalRule_37(RuleBase):
 # Подготовка списков правил.
 # ==========================
 
-rules_list = (UnitRule_0(),
+rules_list = (QuasiRoman(),
+              UnitRule_0(),
               UnitRule_2(),
               UnitRule_3(),         # родительный (следует перед UnitRule_4)
               UnitRule_4(),         # родительный
