@@ -1212,7 +1212,7 @@ class CardinalRule_23(RuleBase):
 #            r'не более чем |)в )'
             r'((\d+,|)(\d+) - |)(\d+),(\d+)\b')
 
-    def check(self, m):        
+    def check(self, m):
         preacc = sub('ё', 'е', m.group(2).lower())
         if preacc in pre_acc:
             new = m.group(1) 
@@ -1577,7 +1577,7 @@ class CardinalRule_34(RuleBase):
             r'не более чем |)в )'
             r'((\d+)( - | или )|)(\d+000) ([а-яё]+)\b')
 
-    def check(self, m):        
+    def check(self, m):
         preacc = sub('ё', 'е', m.group(2).lower())
         if preacc in pre_acc:
             pre = m.group(1)
