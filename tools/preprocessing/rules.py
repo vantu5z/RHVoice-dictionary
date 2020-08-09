@@ -117,14 +117,15 @@ class UnitRule_2(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b([А-Яа-яё]{3,})'
+            r'\b([А-Яа-яЁё]{3,})'
             r'( (всего |ориентировочно |примерно |приблизительно |более чем |'
             r'не более чем |стрельбы |заказчику |заказчикам |покупателю |'
             r'покупателям |)в '
             r'((\d+,|)(\d+) - |)(\d+,|)(\d+)) ' + units)
 
     def check(self, m):
-        if m.group(1).lower() not in pre_acc:
+        preacc = sub('ё', 'е', m.group(1).lower())
+        if preacc not in pre_acc:
             return None
         new = m.group(1) + m.group(2) + ' '
         if m.group(7):
@@ -1205,14 +1206,15 @@ class CardinalRule_23(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b(([А-Яа-яё]{3,}) '
+            r'\b(([А-Яа-яЁё]{3,}) '
             r'([а-яё]+ |более чем |не более чем |)в )'
 #            r'(всего |ориентировочно |примерно |приблизительно |более чем |'
 #            r'не более чем |)в )'
             r'((\d+,|)(\d+) - |)(\d+),(\d+)\b')
 
-    def check(self, m):
-        if m.group(2).lower() in pre_acc:
+    def check(self, m):        
+        preacc = sub('ё', 'е', m.group(2).lower())
+        if preacc in pre_acc:
             new = m.group(1) 
             if m.group(4):
                 if m.group(5):
@@ -1570,13 +1572,14 @@ class CardinalRule_34(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b(([А-Яа-яё]{3,}) '
+            r'\b(([А-Яа-яЁё]{3,}) '
             r'(всего |ориентировочно |примерно |приблизительно |более чем |'
             r'не более чем |)в )'
             r'((\d+)( - | или )|)(\d+000) ([а-яё]+)\b')
 
-    def check(self, m):
-        if m.group(2).lower() in pre_acc:
+    def check(self, m):        
+        preacc = sub('ё', 'е', m.group(2).lower())
+        if preacc in pre_acc:
             pre = m.group(1)
             if m.group(4):
                 if words.have(m.group(8), [Z_GENDER], True, [1]):
