@@ -1692,8 +1692,7 @@ class CardinalRule_37(RuleBase):
 # Подготовка списков правил.
 # ==========================
 
-rules_list = (QuasiRoman(),
-              UnitRule_0(),
+rules_list = (UnitRule_0(),
               UnitRule_2(),
               UnitRule_3(),         # родительный (следует перед UnitRule_4)
               UnitRule_4(),         # родительный
@@ -1709,6 +1708,7 @@ rules_list = (QuasiRoman(),
               TimeRule_2(),
               TimeRule_3(),
               TimeRule_4(),
+              QuasiRoman(),
               RomanRule_1(),
               RomanRule_2(),
               OrdinalRule_1(),
