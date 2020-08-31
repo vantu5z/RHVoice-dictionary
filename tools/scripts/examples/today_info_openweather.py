@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pyowm
+from pyowm.owm import OWM
+from pyowm.utils.config import get_default_config
 from rhvoice_tools.scripts import get_time, get_date, get_weekday, get_greeting
 from rhvoice_tools import rhvoice_say
 from datetime import datetime
@@ -15,9 +16,11 @@ def get_data(key, city):
     """
     get_err = False
     try:
-        owm = pyowm.OWM(API_key=key, language='ru')
-        observation = owm.weather_at_place(city)
-        w = observation.get_weather()
+        config_dict = get_default_config()
+        config_dict['language'] = 'ru'
+        owm = OWM(api_key=key, config=config_dict)
+        mgr = owm.weather_manager()
+        w = mgr.weather_at_place(city).weather
     except:
         get_err = "Сведения о погоде получить не удалось."
 
@@ -36,12 +39,12 @@ def get_data(key, city):
                 "Атмосферное давление %d мм рт. ст. "
                 "Относительная влажность воздуха %d %%. "
                 "%s."
-                % (w.get_temperature('celsius').get('temp'),
-                   get_wind_direction(w.get_wind().get('deg')),
-                   w.get_wind().get('speed'),
-                   w.get_pressure().get('press')*0.75006375541921,
-                   w.get_humidity(),
-                   w.get_detailed_status()
+                % (w.temperature('celsius').get('temp'),
+                   get_wind_direction(w.wind().get('deg')),
+                   w.wind().get('speed'),
+                   w.pressure.get('press')*0.75006375541921,
+                   w.humidity,
+                   w.detailed_status
                   )
                )
     else:
