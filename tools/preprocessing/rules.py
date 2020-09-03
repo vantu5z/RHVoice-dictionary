@@ -138,19 +138,18 @@ class UnitRule_2(RuleBase):
 class UnitRule_3(RuleBase):
     """
     Описание: Единицы измерения. Родительный падеж.
-    Пример: "от 1 до 4 км -> от одного до четырёх километров"
+    Пример: "от 1 до 4 км -> от 1 до 4 километров"
     """
     def __init__(self):
-        self.mask = (r'\b([Оо]т |[Сс] )(\d+,|)(\d+)( до (\d+,|)\d+ )' + units)
+        self.mask = (r'\b([Оо]т |[Сс] )(((\d+,|)\d+ - |)(\d+,|)\d+ '
+                     r'до ((\d+,|)\d+ - |)(\d+,|)(\d+) )' + units)
 
     def check(self, m):
-        if m.group(2):
-            number = decimal(m.group(2)[:-1], m.group(3), 1)
+        if m.group(8):
+            new = forms[m.group(10)][2]
         else:
-            number = cardinal(m.group(3), r_ca)
-            if condition(m.group(3)) and m.group(6) in zh_units:
-                number = number[:-2] + 'й'
-        return m.group(1) + number + m.group(4) + m.group(6)
+            new = substant(m.group(9), m.group(10), 1)
+        return m.group(1) + m.group(2) + new
 
 
 class UnitRule_4(RuleBase):
