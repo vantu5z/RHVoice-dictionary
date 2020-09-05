@@ -1723,16 +1723,16 @@ rules_list = (UnitRule_0(),
               OrdinalRule_9(),
               OrdinalRule_5(),       # дательный
               OrdinalRule_40(),      # дательный
-              CardinalRule_20(),     # предложный /перед винительным/
-              CardinalRule_21(),     # предложный /перед родительным/
-              CardinalRule_23(),     # винительный
-              CardinalRule_34(),     # винительный
-              CardinalRule_25(),     # винительный
-              CardinalRule_38(),     # винительный
               )
 
 rules_list_2 = (OrdinalRule_4(),
                 OrdinalRule_39(),
+                CardinalRule_20(),     # предложный /перед винительным/
+                CardinalRule_21(),     # предложный /перед родительным/
+                CardinalRule_23(),     # винительный
+                CardinalRule_34(),     # винительный
+                CardinalRule_25(),     # винительный
+                CardinalRule_38(),     # винительный
                 CardinalRule_11(),     # родительный
                 CardinalRule_12(),
                 CardinalRule_13(),
