@@ -1069,7 +1069,7 @@ class CardinalRule_18(RuleBase):
             r'( - | или | и (почти |приблизительно |примерно |плюс |минус |))|'
             r')'
             r'(\d+,|)(\d+) '
-            r'([а-яё]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b')
+            r'(([а-яё]+-|)[а-яё]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b')
 
     def check(self, m):
         if m.group(1):
@@ -1740,7 +1740,7 @@ rules_list_2 = (OrdinalRule_4(),
                 CardinalRule_15(),
                 CardinalRule_16(),
                 CardinalRule_17(),     # творительный
-                CardinalRule_18(),
+                CardinalRule_18(),     # творительный
                 CardinalRule_19(),
                 CardinalRule_26(),
                 CardinalRule_22(),
