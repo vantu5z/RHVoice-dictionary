@@ -130,6 +130,7 @@ class MainWindow(Gtk.Window):
         self.rate_scale.set_value(self.config.rate)
         self.pitch_scale.set_value(self.config.pitch)
         # заполняем комбобокс и устанавливаем текущий синтезатор в нём
+        self.combo_voice.remove_all()
         for i, voice in enumerate(self.config.voices):
             self.combo_voice.append(str(i), voice)
             if voice == self.config.voice:
@@ -191,8 +192,8 @@ class Config():
         # с учетом регистра
         self.config.optionxform = str
 
-        self.voices = ['Aleksandr', 'Aleksandr+Alan', 'Anna', 'Elena',
-                       'Elena+Clb', 'Irina']
+        self.voices = ['Aleksandr', 'Aleksandr+Alan', 'Artemiy', 'Anna',
+                       'Elena', 'Elena+Clb', 'Irina']
         
         # установка настроек по-умолчанию
         self.use_SD = False
