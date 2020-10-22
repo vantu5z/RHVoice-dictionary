@@ -275,6 +275,7 @@ class MainWindow(Gtk.Window):
             self.global_config.write_conf(
                 quality=self.combo_quality.get_active_text(),
                 stress_marker=self.gl_entry_stress.get_text())
+            self.update_data()
 
     def apply_say_conf(self):
         """
@@ -491,7 +492,8 @@ class RHVoiceConfig:
             f.close
 
         # запись изменений в файл из-под root
-        os.system("pkexec echo %s > %s" % (quote(content), self.conf_file))
+        os.system("echo %s > /tmp/rhvoice_conf_tmp" % quote(content))
+        os.system("pkexec cp /tmp/rhvoice_conf_tmp %s" % self.conf_file)
 
     def update(self):
         """
