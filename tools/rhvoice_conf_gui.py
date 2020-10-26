@@ -38,7 +38,7 @@ class MainWindow(Gtk.Window):
 
         index = self.notebook.append_page(self.build_rhvoice_say_page(),
                                           Gtk.Label(label='rhvoice_say'))
-        if len(self.global_config.options):
+        if len(self.global_config.options.dict):
             self.gl_opts_grid = self.build_rhvoice_conf_page()
             self.notebook.append_page(self.gl_opts_grid,
                                       Gtk.Label(label='RHVoice.conf'))
@@ -157,59 +157,46 @@ class MainWindow(Gtk.Window):
         row = 0
         conf_page.attach(page_label, 0, row, 3, 1)
 
-        row += 1
-        section_lbl = Gtk.Label(label='Изменяемые параметры:')
-        section_lbl.set_halign(Gtk.Align.START)
-        conf_page.attach(section_lbl, 0, row, 3, 1)
-
-        quality = self.global_config.get_option('quality')
-        if quality is not None:
+        for option_name, option in self.global_config.options.dict.items():
+            if not option.enabled:
+                # пропускаем неактивные (закомментированные) параметры
+                continue
+            # название параметра
             row += 1
-            item_label = Gtk.Label(label='Качество синтеза:')
+            if option.description:
+                lbl = option.description
+            else:
+                lbl = option.name
+            item_label = Gtk.Label(label=lbl)
             item_label.set_halign(Gtk.Align.START)
-            item_label.set_margin_start(10)
             conf_page.attach(item_label, 0, row, 1, 1)
 
-            self.combo_quality = Gtk.ComboBoxText()
-            for i, value in enumerate(('min', 'standard', 'max')):
-                self.combo_quality.append(str(i), value)
-                if value == quality:
-                    self.combo_quality.set_active(i)
-            conf_page.attach(self.combo_quality, 1, row, 1, 1)
-
-        stress_marker = self.global_config.get_option('stress_marker')
-        if stress_marker is not None:
-            row += 1
-            item_label = Gtk.Label(label='Символ ударения:')
-            item_label.set_halign(Gtk.Align.START)
-            item_label.set_margin_start(10)
-            conf_page.attach(item_label, 0, row, 1, 1)
-            #self.use_stress_sw = Gtk.Switch()
-            #self.use_stress_sw.set_halign(Gtk.Align.END)
-            #conf_page.attach(self.use_stress_sw, 1, row, 1, 1)
-            self.gl_entry_stress = Gtk.Entry(xalign=0.5)
-            self.gl_entry_stress.set_max_length(1)
-            self.gl_entry_stress.set_text(stress_marker)
-            conf_page.attach(self.gl_entry_stress, 1, row, 1, 1)
-
-        row += 1
-        section_lbl = Gtk.Label(label='Остальные установленные параметры:')
-        section_lbl.set_halign(Gtk.Align.START)
-        section_lbl.set_margin_top(10)
-        conf_page.attach(section_lbl, 0, row, 3, 1)
-
-        for option, value in self.global_config.options.items():
-            if option in ('stress_marker', 'quality'):
-                continue    # пропускаем изменяемые
-            row += 1
-            item_label = Gtk.Label(label=option)
-            item_label.set_halign(Gtk.Align.START)
-            item_label.set_margin_start(10)
-            conf_page.attach(item_label, 0, row, 1, 1)
-
-            item_label = Gtk.Label(label=value)
-            item_label.set_halign(Gtk.Align.CENTER)
-            conf_page.attach(item_label, 1, row, 1, 1)
+            # значение параметра
+            if option.kind in ('text', 'char'):
+                entry = Gtk.Entry(xalign=0.5)
+                if option.kind == 'char':
+                    entry.set_max_length(1)
+                entry.set_text(option.value)
+                entry.connect('changed', self.entry_changed, option)
+                conf_page.attach(entry, 1, row, 1, 1)
+            elif option.kind == 'list':
+                combo = Gtk.ComboBoxText()
+                for i, value in enumerate(('min', 'standard', 'max')):
+                    combo.append(str(i), value)
+                    if value == option.value:
+                        combo.set_active(i)
+                combo.connect('changed', self.combo_changed, option)
+                conf_page.attach(combo, 1, row, 1, 1)
+            elif option.kind == 'bool':
+                switch = Gtk.Switch()
+                switch.set_halign(Gtk.Align.END)
+                switch.set_active(option.value)
+                switch.connect('state-set', self.switch_changed, option)
+                conf_page.attach(switch, 1, row, 1, 1)
+            else:
+                item_label = Gtk.Label(label=option.value)
+                item_label.set_halign(Gtk.Align.CENTER)
+                conf_page.attach(item_label, 1, row, 1, 1)
 
         row += 1
         open_editor = Gtk.Button(label='Открыть в редакторе', margin=10)
@@ -259,6 +246,24 @@ class MainWindow(Gtk.Window):
             self.entry_stress.set_text(self.stress_marker)
             self.entry_stress.set_sensitive(True)
 
+    def entry_changed(self, entry, option):
+        """
+        Изменение параметра пользователем.
+        """
+        option.value = entry.get_text()
+
+    def combo_changed(self, combo, option):
+        """
+        Изменение параметра пользователем.
+        """
+        option.value = combo.get_active_text()
+
+    def switch_changed(self, switch, state, option):
+        """
+        Изменение параметра пользователем.
+        """
+        option.value = switch.get_active()
+
     def stress_changed(self, widget, state):
         """
         Обработка переключателя "Символ ударения"
@@ -272,9 +277,7 @@ class MainWindow(Gtk.Window):
         if self.notebook.get_current_page() == 0:
             self.apply_say_conf()
         else:
-            self.global_config.write_conf(
-                quality=self.combo_quality.get_active_text(),
-                stress_marker=self.gl_entry_stress.get_text())
+            self.global_config.write_conf()
             self.update_data()
 
     def apply_say_conf(self):
@@ -383,7 +386,7 @@ class RHVoiceConfig:
         Инициализация.
         """
         self.conf_file = None
-        self.options = {}
+        self.options = RHVoiceOptions()
 
         self.find_file()
         self.parse_conf()
@@ -422,17 +425,30 @@ class RHVoiceConfig:
             line = " ".join(line.split())
 
             option = line.split('=')
-            self.options[option[0]] = option[1]
+            if len(option) == 2:
+                option_rec = self.options.dict.get(option[0])
+                if option_rec is not None:
+                    # изменение стандартного параметра
+                    if option_rec.kind == 'bool':
+                        option_rec.value = self.srt_to_bool(option[1])
+                    else:
+                        option_rec.value = option[1]
+                    option_rec.enabled=True
+                else:
+                    # добавление пользовательского параметра
+                    self.options.dict[option[0]] = ConfigOption(
+                        name = option[0], value = option[1], enabled=True)
 
         if f is not None:
             f.close
 
-    def get_option(self, option):
-        """
-        Чтение параметра по имени.
-        Если параметр не задан или отсутсвует возвращает "None".
-        """
-        return self.options.get(option)
+    def srt_to_bool(self, value):
+        return value in ('true', 'yes', 'on', '1')
+
+    def bool_to_str(self, value):
+        if value:
+            return 'true'
+        return 'false'
 
     def open_editor(self, widget=None):
         """
@@ -452,7 +468,7 @@ class RHVoiceConfig:
                     os.system("pkexec env %s %s %s"
                               % (env, quote(app_bin), self.conf_file))
 
-    def write_conf(self, quality, stress_marker):
+    def write_conf(self):
         """
         Запись изменений в файл.
         """
@@ -466,27 +482,33 @@ class RHVoiceConfig:
             return
 
         content = ''
-
+        last_line = ''  # для удаления несокльких пустых строк подряд
         for line in f:
             # удаление пробелов в начале и конце строки
             line = line.strip()
             # обработка комментариев и пустых строк
             if line.startswith(';') or len(line) == 0:
-                content += line + '\n'
+                if line != last_line:
+                    content += line + '\n'
+                last_line = line
                 continue
             # удаление лишних пробелов
             line = " ".join(line.split())
 
             option = line.split('=')
             if len(option) == 2:
-                if option[0] == 'quality':
-                    content += 'quality=' + quality + '\n'
-                elif option[0] == 'stress_marker':
-                    content += 'stress_marker=' + stress_marker + '\n'
+                opt_rec = self.options.get(option[0])
+                if opt_rec is not None:
+                    if opt_rec.kind == 'bool':
+                        content += (opt_rec.name + '=' +
+                                    self.bool_to_str(opt_rec.value) + '\n')
+                    else:
+                        content += opt_rec.name + '=' + opt_rec.value + '\n'
                 else:
                     content += line + '\n'
             else:
                 content += line + '\n'
+            last_line = line
 
         if f is not None:
             f.close
@@ -502,6 +524,92 @@ class RHVoiceConfig:
         self.options.clear()
         self.parse_conf()
 
+
+class ConfigOption():
+    """
+    Прототип параметра.
+    """
+    def __init__(self, name, value,
+                 default=None, description='', tooltip='', kind='any',
+                 limits = (None, None), values_list=[], enabled=False):
+        self.name = name                # название параметра в конфиге
+        self.value = value              # значение
+        self.description = description  # короткое описание
+        self.tooltip = tooltip          # объяснение
+        # тип параметра: 'float', 'text', 'list', 'char', 'bool' ,'any'
+        self.kind = kind
+        self.default = default          # значение по умолчанию
+        self.limits = limits            # ограничения (min, max)
+        self.values_list = values_list  # список доступных значений
+        self.enabled = enabled          # активность параметра
+
+
+class RHVoiceOptions():
+    """
+    Параметры в RHVoice.conf.
+    """
+    def __init__(self):
+        self.dict = {}
+        self.clear()
+
+    def clear(self):
+        """
+        Очистка и установка параметров по умолчанию.
+        """
+        self.dict.clear()
+
+        self.dict['quality'] = ConfigOption(
+            name='quality',
+            value='standard',
+            description='Качество речи',
+            tooltip = 'Доступные значения:\n'
+                      'min (максимальное быстродействие),\n'
+                      'standard (стандартное качество),\n'
+                      'max (максимальное возможное качество, но с задержками '
+                      'при синтезе длинных предложений).',
+            kind = 'list',
+            values_list = ('min', 'standard', 'max'),
+            default = 'standard')
+
+        self.dict['stress_marker'] = ConfigOption(
+            name='stress_marker',
+            value='',
+            description='Символ ударения',
+            tooltip = 'Символ, который в тексте будет указывать, что на '
+                      'непосредственно следующую за ним гласную падает '
+                      'ударение (только русский текст).',
+            kind = 'char')
+
+        self.dict['languages.Russian.use_pseudo_english'] = ConfigOption(
+            name='languages.Russian.use_pseudo_english',
+            value=False,
+            description='Псевдо-английский для русских голосов',
+            tooltip = 'Включить поддержку псевдо-английского для русских '
+                      'голосов.',
+            kind = 'bool',
+            default = False)
+
+        self.dict['voice_profiles'] = ConfigOption(
+            name='voice_profiles',
+            value='Aleksandr+Alan,Elena+CLB',
+            description='Список голосовых профилей',
+            tooltip = 'Первым в профиле указывается основной голос '
+                      '(он будет читать числа и другой текст, для которого '
+                      'не удаётся автоматически определить язык). '
+                      'Далее следуют дополнительные голоса. '
+                      'Если в профиле заданы два голоса, чьи языки имеют '
+                      'общие буквы, то второй будет использоваться только в '
+                      'том случае, когда программа экранного доступа '
+                      'специально запросит использование данного языка.',
+            kind = 'text',
+            default = 'Aleksandr+Alan,Elena+CLB')
+
+    def get(self, option):
+        """
+        Чтение параметра по имени.
+        Если параметр не задан или отсутсвует возвращает "None".
+        """
+        return self.dict.get(option)
 
 def main():
     """
