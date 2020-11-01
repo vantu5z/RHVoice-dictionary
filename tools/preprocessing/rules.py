@@ -409,7 +409,7 @@ class TimeRule_2(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b(([Вв]|[Нн]а) [012]?\d)[:.]([0-5]\d)(?!\.\d)')
+        self.mask = (r'\b(([Вв]|[Нн]а) [012]?\d)[:.]([0-5]\d)\b(?!\.\d)')
 
     def check(self, m):
         return m.group(1) + ' ' + feminin(m.group(3), 5) + '_'
@@ -421,7 +421,7 @@ class TimeRule_3(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b([Кк] )([012]?\d)[:.]([0-5]\d)(?!\.\d)')
+        self.mask = (r'\b([Кк] )([012]?\d)[:.]([0-5]\d)\b(?!\.\d)')
 
     def check(self, m):
         hours = cardinal(m.group(2), d_ca)
@@ -443,7 +443,7 @@ class TimeRule_4(RuleBase):
     def __init__(self):
         self.mask = (
             r'\b([Дд]о |[Пп]осле |[Оо]коло |[Сс] )'
-            r'([012]?\d)[:.]([0-5]\d)(?!\.\d)')
+            r'([012]?\d)[:.]([0-5]\d)\b(?!\.\d)')
 
     def check(self, m):
         hours = cardinal(m.group(2), r_ca)
