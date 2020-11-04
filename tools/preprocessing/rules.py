@@ -515,10 +515,10 @@ class OrdinalRule_1(RuleBase):
     def __init__(self):
         self.mask = (
             r'\b([Вв]о?|[Нн]а|[Оо]б?|[Пп]ри) '
-            r'(\d*[02-9]|\d*1\d) ([а-яё]+)\b')
+            r'(\d*[02-9]|\d*1\d)(( [а-яё]+([ео]м|[ео]й)|) ([а-яё]+))\b')
 
     def check(self, m):
-        attr = words.get_attr(m.group(3))
+        attr = words.get_attr(m.group(6))
         number = ''
         if attr.have([S_GENDER, M_GENDER], False, [5]):
             number = ordinal(m.group(2), p_mu)
@@ -530,7 +530,7 @@ class OrdinalRule_1(RuleBase):
                 if a or b or not c:
                     number = ordinal(m.group(2), p_zh)
         if number:
-            return m.group(1) + ' ' + number + ' ' + m.group(3)
+            return m.group(1) + ' ' + number + m.group(3)
         return None
 
 
