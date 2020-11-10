@@ -430,7 +430,7 @@ class RHVoiceConfig:
                 if option_rec is not None:
                     # изменение стандартного параметра
                     if option_rec.kind == 'bool':
-                        option_rec.value = self.srt_to_bool(option[1])
+                        option_rec.value = self.str_to_bool(option[1])
                     else:
                         option_rec.value = option[1]
                     option_rec.enabled=True
@@ -442,7 +442,7 @@ class RHVoiceConfig:
         if f is not None:
             f.close
 
-    def srt_to_bool(self, value):
+    def str_to_bool(self, value):
         return value in ('true', 'yes', 'on', '1')
 
     def bool_to_str(self, value):
