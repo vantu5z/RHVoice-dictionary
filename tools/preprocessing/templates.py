@@ -1565,6 +1565,8 @@ samples_3 = (
    'ordinal(m.group(1), i_mu) + " " + m.group(2) + " " + '
    'ordinal(m.group(3), i_mu) + m.group(4)'),
   (r'\b(\d+)-й(?= годы)\b', 'ordinal(m.group(1), i_mu)'),
+  (r'\b(\d+)-е( - \d+-е)' + months,
+   'ordinal(m.group(1), i_sr) + m.group(2) + m.group(3)'),
   (r'\b(\d+)-е' + months, 'ordinal(m.group(1), i_sr) + " " + m.group(2)'),
   (r'\b([Мм]ежду )(\d+)' + months + '( и )(\d+)' + months,
    'm.group(1) + ordinal(m.group(2), t_mu) + " " + m.group(3) + '
