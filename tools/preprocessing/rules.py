@@ -732,7 +732,7 @@ class OrdinalRule_7(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'(?<![,.])\b(\d*11|\d*[05-9]) ([а-яё]+)\b')
+        self.mask = (r'(?<![,.])\b(\d*11|\d*[05-9]) ([а-яё]{2,})\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(2))
@@ -747,7 +747,7 @@ class OrdinalRule_8(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'(?<![,.])\b(\d*11|\d*[02-9]) ([а-яё]+)\b')
+        self.mask = (r'(?<![,.])\b(\d*11|\d*[02-9]) ([а-яё]{2,})\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(2))
@@ -768,7 +768,7 @@ class OrdinalRule_9(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'(\A|\n|\(| )(\d*[02-9][05-9]|\d*1\d|[5-9]) ([а-яё]+)\b')
+            r'(\A|\n|\(| )(\d*[02-9][05-9]|\d*1\d|[5-9]) ([а-яё]{2,})\b')
 
     def check(self, m):
         number = ''
@@ -791,7 +791,7 @@ class OrdinalRule_5(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'(\A|\n|\(| )(\d*[02-9][02-9]|\d*1\d|[2-9]) ([а-яё]+)\b')
+            r'(\A|\n|\(| )(\d*[02-9][02-9]|\d*1\d|[2-9]) ([а-яё]{2,})\b')
 
     def check(self, m):
         number = ''
