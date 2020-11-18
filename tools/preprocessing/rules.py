@@ -515,7 +515,7 @@ class OrdinalRule_1(RuleBase):
     def __init__(self):
         self.mask = (
             r'\b([Вв]о?|[Нн]а|[Оо]б?|[Пп]ри) '
-            r'(\d*[02-9]|\d*1\d)(( [а-яё]+[ео][йм]|) ([а-яё]+))\b')
+            r'(\d*[02-9]|\d*1\d)(( [а-яё]+[ео][йм]|) ([а-яё]{2,}))\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(5))
