@@ -141,7 +141,7 @@ class UnitRule_3(RuleBase):
     Пример: "от 1 до 4 км -> от 1 до 4 километров"
     """
     def __init__(self):
-        self.mask = (r'\b([Оо]т |[Сс] )(((\d+,|)\d+ - |)(\d+,|)\d+ '
+        self.mask = (r'\b([Оо]т |[Сс]о? )(((\d+,|)\d+ - |)(\d+,|)\d+ '
                      r'до ((\d+,|)\d+ - |)(\d+,|)(\d+) )' + units)
 
     def check(self, m):
