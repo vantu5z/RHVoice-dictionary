@@ -672,7 +672,8 @@ class OrdinalRule_39(RuleBase):
             number = ordinal(m.group(1), i_mu)
         if attr.have([S_GENDER], False, [0]):
             number = ordinal(m.group(1), i_sr)
-        if attr.have([Z_GENDER], False, [0]) and not attr.have(case=[3]):
+        if (attr.have([Z_GENDER], False, [0]) and not attr.have(case=[3])
+            and m.group(2) != 'полка'):
             number = ordinal(m.group(1), i_zh)
         if number:
             return number + ' ' + m.group(2)
@@ -1746,7 +1747,6 @@ rules_list_2 = (OrdinalRule_4(),
                 CardinalRule_12(),
                 CardinalRule_13(),
                 CardinalRule_14(),
-                CardinalRule_15(),
                 CardinalRule_16(),
                 CardinalRule_17(),     # творительный
                 CardinalRule_18(),     # творительный
@@ -1758,6 +1758,7 @@ rules_list_2 = (OrdinalRule_4(),
                 CardinalRule_27(),     # именительный/винительный
                 CardinalRule_28(),
                 CardinalRule_29(),
+                CardinalRule_15(),
                 CardinalRule_30(),     # дательный
                 CardinalRule_36(),
                 CardinalRule_31(),
