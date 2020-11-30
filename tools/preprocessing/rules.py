@@ -1697,6 +1697,23 @@ class CardinalRule_37(RuleBase):
             return None
 
 
+class CardinalRule_40(RuleBase):
+    """
+    Описание: Количественные числительные с неправильным наращением "-ми".
+              Родительный падеж множественного числа.
+    Пример: "7-ми спелых/яблок -> семи спелых/яблок"
+    """
+    def __init__(self):
+        self.mask = (r'\b(\d*[02-9]?[78]+)(-ми) ([а-яё]{2,})\b')
+
+    def check(self, m):
+        if (words.have(m.group(3), [M_GENDER, Z_GENDER, S_GENDER], True, [1])
+            or (len(m.group(3)) >= 4 and m.group(3)[-2:] in ('их', 'ых'))):
+            return cardinal(m.group(1), r_ca) + ' ' + m.group(3)
+        else:
+            return None
+
+
 # ==========================
 # Подготовка списков правил.
 # ==========================
@@ -1720,6 +1737,7 @@ rules_list = (UnitRule_0(),
               QuasiRoman(),
               RomanRule_1(),
               RomanRule_2(),
+              CardinalRule_40(),
               OrdinalRule_1(),
               OrdinalRule_2(),
               OrdinalRule_3(),
