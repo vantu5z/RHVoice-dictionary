@@ -1751,18 +1751,21 @@ class CardinalRule_41(RuleBase):
             else:
                 new = cardinal(m.group(5), t_ca)
         elif m.group(2) == 'его':
-            if not m.group(4):
+            if not m.group(4) and condition(m.group(5)):
                 new = cardinal(m.group(5), r_ca)
             else:
                 return None
         elif m.group(2) == 'ем':
-            if not m.group(4):
-                new = cardinal(m.group(5), t_ca)
+            if not m.group(4) and condition(m.group(5)):
+                new = cardinal(m.group(5), p_ca)
             else:
                 return None
         elif m.group(2) == 'ей':
             if m.group(4):
-                new = decimal(m.group(4)[:-1], m.group(5), 1)
+                if condition(m.group(4)[:-1]):
+                    new = decimal(m.group(4)[:-1], m.group(5), 4)
+                else:
+                    return None
             else:
                 new = feminin(cardinal(m.group(5), r_ca), 1)
         elif m.group(2) == 'ую':
