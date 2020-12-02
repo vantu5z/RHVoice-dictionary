@@ -7,7 +7,7 @@ from re import finditer, sub
 
 from .templates import (units, zh_units,
                         forms,
-                        pre_acc,
+                        pre_acc, pre_units,
                         i_mu, i_sr, i_zh, i_mn,
                         r_ca, r_mn, r_mu, r_sr, r_zh,
                         d_ca, d_mn, d_mu, d_sr, d_zh,
@@ -97,17 +97,23 @@ class UnitRule_1(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b(([Зз]а|[Нн]а|[Пп]ро|[Сс]пустя|[Чч]ерез|'
+            r'\b(([Вв]|[Зз]а|[Нн]а|[Пп]ро|[Сс]пустя|[Чч]ерез|'
             r'состав[авеийлотшщьюя]{2,6}|превы[сш][авеийлотшщьюя]{2,5}) (бы |)'
             r'((\d+,|)(\d+) - |)(\d+,|)(\d+)) ' + units)
 
     def check(self, m):
-        new = m.group(1) + ' '
-        if m.group(7):
-            new += forms[m.group(9)][2]
+
+        if m.group(9) not in pre_units:
+
+            new = m.group(1) + ' '
+            if m.group(7):
+                new += forms[m.group(9)][2]
+            else:
+                new += substant(m.group(8), m.group(9), 5)
+            return new
+
         else:
-            new += substant(m.group(8), m.group(9), 5)
-        return new
+            return None
 
 
 class UnitRule_2(RuleBase):
@@ -119,13 +125,12 @@ class UnitRule_2(RuleBase):
         self.mask = (
             r'\b([А-Яа-яё]{3,})'
             r'( (всего |ориентировочно |примерно |приблизительно |более чем |'
-            r'не более чем |стрельбы |заказчику |заказчикам |покупателю |'
-            r'покупателям |)в '
+            r'не более чем |стрельбы |)в '
             r'((\d+,|)(\d+) - |)(\d+,|)(\d+)) ' + units)
 
     def check(self, m):
         preacc = sub('ё', 'е', m.group(1).lower())
-        if preacc not in pre_acc:
+        if preacc not in pre_acc or m.group(9) not in pre_units:
             return None
         new = m.group(1) + m.group(2) + ' '
         if m.group(7):
@@ -1782,12 +1787,12 @@ class CardinalRule_41(RuleBase):
 # ==========================
 
 rules_list = (UnitRule_0(),
+              UnitRule_1(),         # винительный
               UnitRule_2(),
               UnitRule_3(),         # родительный (следует перед UnitRule_4)
               UnitRule_4(),         # родительный
               UnitRule_5(),         # родительный (следует после UnitRule_4)
               UnitRule_8(),         # творительный
-              UnitRule_1(),         # винительный
               UnitRule_6(),         # именительный/винительный
               UnitRule_7(),
               UnitRule_9(),         # предложный
