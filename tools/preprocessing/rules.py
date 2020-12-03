@@ -97,20 +97,17 @@ class UnitRule_1(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b(([Вв]|[Зз]а|[Нн]а|[Пп]ро|[Сс]пустя|[Чч]ерез|'
+            r'\b(([Зз]а|[Нн]а|[Пп]ро|[Сс]пустя|[Чч]ерез|'
             r'состав[авеийлотшщьюя]{2,6}|превы[сш][авеийлотшщьюя]{2,5}) (бы |)'
             r'((\d+,|)(\d+) - |)(\d+,|)(\d+)) ' + units)
 
     def check(self, m):
-        if m.group(9) not in pre_units:
-            new = m.group(1) + ' '
-            if m.group(7):
-                new += forms[m.group(9)][2]
-            else:
-                new += substant(m.group(8), m.group(9), 5)
-            return new
+        new = m.group(1) + ' '
+        if m.group(7):
+            new += forms[m.group(9)][2]
         else:
-            return None
+            new += substant(m.group(8), m.group(9), 5)
+        return new
 
 
 class UnitRule_2(RuleBase):
@@ -127,7 +124,7 @@ class UnitRule_2(RuleBase):
 
     def check(self, m):
         preacc = sub('ё', 'е', m.group(1).lower())
-        if preacc in pre_acc or m.group(9) in pre_units:
+        if preacc in pre_acc and m.group(9) in pre_units:
             new = m.group(1) + m.group(2) + ' '
             if m.group(7):
                 new += forms[m.group(9)][2]
@@ -136,6 +133,28 @@ class UnitRule_2(RuleBase):
             return new
         else:
             return None
+
+
+class UnitRule_13(RuleBase):
+    """
+    Описание: Единицы измерения. Винительный падеж.
+    Пример:
+    """
+    def __init__(self):
+        self.mask = (
+            r'\b(([Вв] )((\d+,|)\d+ - |)(\d+,|)(\d+) )' + units)
+
+    def check(self, m):
+        new = m.group(1)
+        if m.group(5):
+            new += forms[m.group(7)][2]
+        else:
+            if m.group(7) in pre_units:
+                new += substant(m.group(6), m.group(7), 4)
+            else:
+                new += substant(m.group(6), m.group(7), 5)
+        return new
+
 
 class UnitRule_3(RuleBase):
     """
@@ -336,7 +355,7 @@ class UnitRule_9(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b(([Вв]|[Оо]б?|[Пп]ри) '
+            r'\b(([Оо]б?|[Пп]ри) '
             r'((около |почти |приблизительно |примерно |плюс |минус |)'
             r'(\d+,|)(\d+) ([-и]|или) |)'
             r'(около |почти |приблизительно |примерно |плюс |минус |)'
@@ -1085,8 +1104,7 @@ class CardinalRule_18(RuleBase):
             r'(\d+,|)(\d+)'
             r'( - | или | и (почти |приблизительно |примерно |плюс |минус |))|'
             r')'
-            r'(\d+,|)(\d+) '
-            r'(([а-яё]+-|)[а-яё]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b')
+            r'(\d+) ([а-яё]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b')
 
     def check(self, m):
         if m.group(1):
@@ -1095,9 +1113,9 @@ class CardinalRule_18(RuleBase):
             else:
                 pre = cardinal(m.group(3), t_ca)
                 if condition(m.group(3)):
-                    a = words.have(m.group(8), [Z_GENDER], False, [4])
-                    b = words.have(m.group(8)[:-2], [Z_GENDER], False, [0])
-                    c = words.have(m.group(8)[:-3] + 'ь', [Z_GENDER], False, [0])
+                    a = words.have(m.group(7), [Z_GENDER], False, [4])
+                    b = words.have(m.group(7)[:-2], [Z_GENDER], False, [0])
+                    c = words.have(m.group(7)[:-3] + 'ь', [Z_GENDER], False, [0])
                     if a or b or c:
                         pre = pre[:-2] + 'ой'
                     elif m.group(8) == 'сутками':
@@ -1106,21 +1124,18 @@ class CardinalRule_18(RuleBase):
         else:
             pre = ''
         number = ''
-        if m.group(6):
-            number = decimal(m.group(6)[:-1], m.group(7), 3)
-        else:
-            if condition(m.group(7)):
-                attr = words.get_attr(m.group(8))
-                if attr.have([M_GENDER, S_GENDER], False, [4]):
-                    number = cardinal(m.group(7), t_ca)
-                elif attr.have([Z_GENDER], False, [4]):
-                    number = cardinal(m.group(7), t_ca)[:-2] + 'ой'
-                elif m.group(8) == 'сутками':
-                    number = cardinal(m.group(7), t_ca) + 'и'
-            elif m.group(8)[-2:] == 'ми':
-                number = cardinal(m.group(7), t_ca)
+        if condition(m.group(6)):
+            attr = words.get_attr(m.group(7))
+            if attr.have([M_GENDER, S_GENDER], False, [4]):
+                number = cardinal(m.group(6), t_ca)
+            elif attr.have([Z_GENDER], False, [4]):
+                number = cardinal(m.group(6), t_ca)[:-2] + 'ой'
+            elif m.group(7) == 'сутками':
+                number = cardinal(m.group(6), t_ca) + 'и'
+        elif m.group(7)[-2:] == 'ми':
+            number = cardinal(m.group(6), t_ca)
         if number:
-            return pre + number + ' ' + m.group(8)
+            return pre + number + ' ' + m.group(7)
         return None
 
 
@@ -1683,26 +1698,55 @@ class CardinalRule_37(RuleBase):
     Пример: "в 10,7 километра(х) -> в десяти целых семи десятых километра(х)"
     """
     def __init__(self):
-        self.mask = (r'\b(([Вв]|[Пп]ри|[Оо]б?) (более чем |менее чем |))'
+        self.mask = (r'\b([Вв] (более чем |менее чем |))'
+                     r'((\d+,|)(\d+)( [-и] | или )|)(\d+),(\d+)'
+                     r'( (астрономическ(ой|их) |)((|кило|санти|милли)метрах?|'
+                     r'(|кило|мега|гига)парсеках?|единицы?|мил[иь]))\b')
+
+    def check(self, m):
+        attr = words.get_attr(m.group(12))
+        new = m.group(1)
+        if m.group(3):
+            if m.group(4):
+                pre = decimal(m.group(4)[:-1], m.group(5), 4)
+            else:
+                pre = cardinal(m.group(5), p_ca)
+                if condition(m.group(5)) and attr.have([Z_GENDER], None, [1, 5]):
+                    pre = pre[:-1] + 'й'
+            new += pre + m.group(6)
+        if (attr.have(None, False, [1]) or attr.have(None, True, [5])):
+            new += decimal(m.group(7), m.group(8), 4) + m.group(9)
+            return new
+        else:
+            return None
+
+
+class CardinalRule_42(RuleBase):
+    """
+    Описание: Десятичные дроби. Винительный падеж.
+    Пример: "в 10,1 процента -> в десять целых одну десятую процента"
+    """
+    def __init__(self):
+        self.mask = (r'\b([Вв] (более чем |менее чем |))'
                      r'((\d+,|)(\d+)( [-и] | или )|)(\d+),(\d+)'
                      r'( ([а-я]+[оы](го|й|х) |)([а-я]+))\b')
 
     def check(self, m):
-        attr = words.get_attr(m.group(13))
+        attr = words.get_attr(m.group(12))
         new = m.group(1)
-        if m.group(4):
-            if m.group(5):
-                pre = decimal(m.group(5)[:-1], m.group(6), 4)
+        if m.group(3):
+            if m.group(4):
+                pre = decimal(m.group(4)[:-1], m.group(5), 5)
             else:
-                pre = cardinal(m.group(6), p_ca)
-                if condition(m.group(6)) and attr.have([Z_GENDER], None, [1, 5]):
-                    pre = pre[:-1] + 'й'
-            new += pre + m.group(7)
-        if (attr.have(None, False, [1]) or attr.have(None, True, [5])):
-            new += decimal(m.group(8), m.group(9), 4) + m.group(10)
-            return new
-        else:
-            return None
+                pre = cardinal(m.group(5), v_ca)
+                if attr.have([Z_GENDER], None, [1, 5]):
+                    if pre[-2:] == 'ин':
+                        pre = pre[:-2] + 'ну'
+                    elif pre[-2:] == 'ва':
+                        pre = pre[:-1] + 'е'
+            new += pre + m.group(6)
+        new += decimal(m.group(7), m.group(8), 5) + m.group(9)
+        return new
 
 
 class CardinalRule_40(RuleBase):
@@ -1786,6 +1830,7 @@ class CardinalRule_41(RuleBase):
 rules_list = (UnitRule_0(),
               UnitRule_1(),         # винительный
               UnitRule_2(),
+              UnitRule_13(),        # винительный (следует после UnitRule_2)
               UnitRule_3(),         # родительный (следует перед UnitRule_4)
               UnitRule_4(),         # родительный
               UnitRule_5(),         # родительный (следует после UnitRule_4)
@@ -1838,6 +1883,7 @@ rules_list_2 = (OrdinalRule_4(),
                 CardinalRule_22(),
                 CardinalRule_24(),
                 CardinalRule_37(),
+                CardinalRule_42(),
                 CardinalRule_27(),     # именительный/винительный
                 CardinalRule_28(),
                 CardinalRule_29(),
