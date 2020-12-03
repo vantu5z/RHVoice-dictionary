@@ -72,24 +72,6 @@ class QuasiRoman(RuleBase):
         return None
 
 
-class UnitRule_0(RuleBase):
-    """
-    Описание: Количественные числительные. Винительный падеж.
-    Пример: "в 2 тыс. раз -> в 2 тысячи раз"
-    """
-    def __init__(self):
-        self.mask = (r'\b([Вв] ((\d+,|)(\d+) - |)'
-                     r'(\d+,|)(\d+)) (тыс\.|млн|млрд|трлн)( раз)\b')
-
-    def check(self, m):
-        new = m.group(1) +' '
-        if m.group(5):
-            new += forms[m.group(7)][2]
-        else:
-            new += substant(m.group(6), m.group(7), 5)
-        return new + m.group(8)
-
-
 class UnitRule_1(RuleBase):
     """
     Описание: Единицы измерения. Винительный падеж.
@@ -1546,30 +1528,6 @@ class CardinalRule_35(RuleBase):
             return None
 
 
-class CardinalRule_38(RuleBase):
-    """
-    Описание: Количественные числительные. Винительный падеж.
-    Пример: "в 1,1 раза -> в одну целую одну десятую раза"
-    """
-    def __init__(self):
-        self.mask = (r'\b([Вв] )((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)'
-                     r'( (тысячи|миллиона|миллиарда|триллиона) раз| раза?)\b')
-
-    def check(self, m):
-        new = m.group(1)
-        if m.group(2):
-            if m.group(3):
-                new += decimal(m.group(3)[:-1], m.group(4), 5)
-            else:
-                new += m.group(4)
-            new += m.group(5)
-        if m.group(6):
-            new += decimal(m.group(6)[:-1], m.group(7), 5)
-        else:
-            new += m.group(7)
-        return new + m.group(8)
-
-
 class Rule_1(RuleBase):
     """
     Описание: Десятичные дроби в именительном падеже.
@@ -1827,8 +1785,7 @@ class CardinalRule_41(RuleBase):
 # Подготовка списков правил.
 # ==========================
 
-rules_list = (UnitRule_0(),
-              UnitRule_1(),         # винительный
+rules_list = (UnitRule_1(),         # винительный
               UnitRule_2(),
               UnitRule_13(),        # винительный (следует после UnitRule_2)
               UnitRule_3(),         # родительный (следует перед UnitRule_4)
@@ -1870,7 +1827,6 @@ rules_list_2 = (OrdinalRule_4(),
                 CardinalRule_23(),     # винительный
                 CardinalRule_34(),     # винительный
                 CardinalRule_25(),     # винительный
-                CardinalRule_38(),     # винительный
                 CardinalRule_11(),     # родительный
                 CardinalRule_12(),
                 CardinalRule_13(),
