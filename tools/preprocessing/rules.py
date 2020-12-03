@@ -102,16 +102,13 @@ class UnitRule_1(RuleBase):
             r'((\d+,|)(\d+) - |)(\d+,|)(\d+)) ' + units)
 
     def check(self, m):
-
         if m.group(9) not in pre_units:
-
             new = m.group(1) + ' '
             if m.group(7):
                 new += forms[m.group(9)][2]
             else:
                 new += substant(m.group(8), m.group(9), 5)
             return new
-
         else:
             return None
 
@@ -130,15 +127,15 @@ class UnitRule_2(RuleBase):
 
     def check(self, m):
         preacc = sub('ё', 'е', m.group(1).lower())
-        if preacc not in pre_acc or m.group(9) not in pre_units:
-            return None
-        new = m.group(1) + m.group(2) + ' '
-        if m.group(7):
-            new += forms[m.group(9)][2]
+        if preacc in pre_acc or m.group(9) in pre_units:
+            new = m.group(1) + m.group(2) + ' '
+            if m.group(7):
+                new += forms[m.group(9)][2]
+            else:
+                new += substant(m.group(8), m.group(9), 5)
+            return new
         else:
-            new += substant(m.group(8), m.group(9), 5)
-        return new
-
+            return None
 
 class UnitRule_3(RuleBase):
     """
