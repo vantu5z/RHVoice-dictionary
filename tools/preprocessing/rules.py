@@ -1309,9 +1309,9 @@ class CardinalRule_25(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b([Нн]а|[Зз]а|[Пп]ро|[Сс]пустя|[Чч]ерез|состав[аеилотя]{2,4})'
+            r'\b([Вв]|[Нн]а|[Зз]а|[Пп]ро|[Сс]пустя|[Чч]ерез|состав[аеилотя]{2,4})'
             r'( (\d+,|)(\d+)( -| или)|) (\d+,|)(\d+)'
-            r'(( [а-яё]+([ая]я|[ую]ю|[ео]е|[иы][йх]) | )([а-яё]+))\b')
+            r'(( [а-яё]+([ая]я|[ую]ю|[еио]е|[иы][йх]) | )([а-яё]+))\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(11))
@@ -1584,33 +1584,6 @@ class Rule_2(RuleBase):
         return None
 
 
-class CardinalRule_34(RuleBase):
-    """
-    Описание: Количественные числительные. Винительный падеж.
-    Пример:
-    """
-    def __init__(self):
-        self.mask = (
-            r'\b(([А-Яа-яЁё]{3,}) '
-            r'(всего |ориентировочно |примерно |приблизительно |почти |'
-            r'более чем |не более чем |)в )'
-            r'((\d+)( - | или )|)(\d+) ([а-яё]+)\b')
-
-    def check(self, m):
-        preacc = sub('ё', 'е', m.group(2).lower())
-        if preacc in pre_acc:
-            pre = m.group(1)
-            if m.group(4):
-                if words.have(m.group(8), [Z_GENDER], True, [1]):
-                    pre += feminin(m.group(5), 5)
-                else:
-                    pre += cardinal(m.group(5), v_ca)
-                pre += m.group(6)
-            return pre + cardinal(m.group(7), v_ca) + " " + m.group(8)
-        else:
-            return None
-
-
 class CardinalRule_26(RuleBase):
     """
     Описание: Количественные числительные. Предложный падеж.
@@ -1818,8 +1791,8 @@ class CardinalRule_41(RuleBase):
 
 rules_list = (UnitRule_1(),         # винительный
               UnitRule_2(),
-              UnitRule_13(),
-              UnitRule_14(),        # винительный (следует после UnitRule_2)
+              UnitRule_13(),        # дательный (следует перед UnitRule_14)
+              UnitRule_14(),        # вин./дат. (следует после UnitRule_2)
               UnitRule_3(),         # родительный (следует перед UnitRule_4)
               UnitRule_4(),         # родительный
               UnitRule_5(),         # родительный (следует после UnitRule_4)
@@ -1857,7 +1830,6 @@ rules_list_2 = (OrdinalRule_4(),
                 CardinalRule_20(),     # предложный /перед винительным/
                 CardinalRule_21(),     # предложный /перед родительным/
                 CardinalRule_23(),     # винительный
-                CardinalRule_34(),     # винительный
                 CardinalRule_25(),     # винительный
                 CardinalRule_11(),     # родительный
                 CardinalRule_12(),
