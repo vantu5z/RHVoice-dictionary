@@ -116,25 +116,55 @@ class UnitRule_2(RuleBase):
         else:
             return None
 
-
 class UnitRule_13(RuleBase):
     """
-    Описание: Единицы измерения. Винительный падеж.
+    Описание: Сокращенные обозначения колич. числительных. Дательный падеж.
+    Пример: "в 1 тыс. км -> в 1 тысяче км"
+    """
+    def __init__(self):
+        self.mask = (
+            r'\b([Вв] )((\d+,|)(\d+)( [-и] | или )|)'
+            r'(\d+,|)(\d+) (тыс\.|млн|млрд|трлн) ' + units)
+
+    def check(self, m):
+        if m.group(9) in pre_units:
+            new = m.group(1)
+            if m.group(2):
+                if m.group(3):
+                    new += decimal(m.group(3)[:-1], m.group(4), 4)
+                else:
+                    if m.group(8) == 'тыс.':
+                        new += feminin(cardinal(m.group(4), p_ca), 4)
+                    else:
+                        new += cardinal(m.group(4), p_ca)
+                new += m.group(5)
+            if m.group(6):
+                new += decimal(m.group(6)[:-1], m.group(7), 4) + ' '
+                new += forms[m.group(8)][2]
+            else:
+                new += m.group(7) + ' ' + substant(m.group(7), m.group(8), 4)
+            return new + ' ' + m.group(9)
+        else:
+            return None
+
+class UnitRule_14(RuleBase):
+    """
+    Описание: Единицы измерения. Дательный/винительный падеж.
     Пример:
     """
     def __init__(self):
         self.mask = (
-            r'\b(([Вв] )((\d+,|)\d+ - |)(\d+,|)(\d+) )' + units)
+            r'\b([Вв] ((\d+,|)\d+ - |)(\d+,|)(\d+) )' + units)
 
     def check(self, m):
         new = m.group(1)
-        if m.group(5):
-            new += forms[m.group(7)][2]
+        if m.group(4):
+            new += forms[m.group(6)][2]
         else:
-            if m.group(7) in pre_units:
-                new += substant(m.group(6), m.group(7), 4)
+            if m.group(6) in pre_units:
+                new += substant(m.group(5), m.group(6), 4)
             else:
-                new += substant(m.group(6), m.group(7), 5)
+                new += substant(m.group(5), m.group(6), 5)
         return new
 
 
@@ -1658,11 +1688,12 @@ class CardinalRule_37(RuleBase):
     def __init__(self):
         self.mask = (r'\b([Вв] (более чем |менее чем |))'
                      r'((\d+,|)(\d+)( [-и] | или )|)(\d+),(\d+)'
-                     r'( (астрономическ(ой|их) |)((|кило|санти|милли)метрах?|'
-                     r'(|кило|мега|гига)парсеках?|единицы?|мил[иь]))\b')
+                     r'( (астрономической |астрономических |морской |морских |)'
+                     r'((|кило|санти|милли)метрах?|(|кило|мега|гига)парсеках?|'
+                     r'единицы|единицах|мили|милях))\b')
 
     def check(self, m):
-        attr = words.get_attr(m.group(12))
+        attr = words.get_attr(m.group(11))
         new = m.group(1)
         if m.group(3):
             if m.group(4):
@@ -1787,7 +1818,8 @@ class CardinalRule_41(RuleBase):
 
 rules_list = (UnitRule_1(),         # винительный
               UnitRule_2(),
-              UnitRule_13(),        # винительный (следует после UnitRule_2)
+              UnitRule_13(),
+              UnitRule_14(),        # винительный (следует после UnitRule_2)
               UnitRule_3(),         # родительный (следует перед UnitRule_4)
               UnitRule_4(),         # родительный
               UnitRule_5(),         # родительный (следует после UnitRule_4)
