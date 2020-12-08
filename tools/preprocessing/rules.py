@@ -1827,10 +1827,10 @@ rules_list = (UnitRule_1(),         # винительный
               OrdinalRule_9(),
               OrdinalRule_5(),       # дательный
               OrdinalRule_40(),      # дательный
+              OrdinalRule_4(),
               )
 
-rules_list_2 = (OrdinalRule_4(),
-                OrdinalRule_39(),
+rules_list_2 = (OrdinalRule_39(),
                 CardinalRule_20(),     # предложный /перед винительным/
                 CardinalRule_21(),     # предложный /перед родительным/
                 CardinalRule_23(),     # винительный
