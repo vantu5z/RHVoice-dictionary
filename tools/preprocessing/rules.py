@@ -1144,6 +1144,10 @@ class CardinalRule_18(RuleBase):
                 number = cardinal(m.group(6), t_ca)[:-2] + 'ой'
             elif m.group(7) == 'сутками':
                 number = cardinal(m.group(6), t_ca) + 'и'
+            elif m.group(7)[-2:] == 'ми' and m.group(1):
+                number = cardinal(m.group(6), t_ca)
+                if attr.have([Z_GENDER], True, [4]):
+                    number = cardinal(m.group(6), t_ca)[:-2] + 'ой'
         elif m.group(7)[-2:] == 'ми':
             number = cardinal(m.group(6), t_ca)
         if number:
