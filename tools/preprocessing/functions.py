@@ -89,6 +89,11 @@ def ordinal(num, casus):
     Корректно для чисел менее 1 000 000.
     (num - число, casus - падеж)
     """
+
+    for char in num:
+        if char not in '0123456789':
+            return num
+
     if num[-1] == '0':
         try:
             if num[-2] == '0':
@@ -144,6 +149,32 @@ def roman2arabic(value):
     Преобразование римских цифр в арабские.
     Код заимствован (с изменениями) у Jeff Wheeler.
     """
+
+    number = value.count('I')
+    if (number > 3 or (number == 3 and 'III' not in value)
+        or (number == 2 and 'II' not in value)):
+        return value
+    for char in 'VLD':
+        if value.count(char) > 1:
+            return value
+    for char in 'XCM':
+        number = value.count(char)
+        if number > 4:
+            return value
+        elif number == 4:
+            for sub in ('XXXX', 'CCCC', 'MMMM'):
+                if sub in value:
+                    return value
+            for sub in ('XX', 'CC', 'MM'):
+                if value.count(sub) == 2:
+                    return value
+    for sub in ('IL', 'IC', 'ID', 'IM', 'VX', 'VL', 'VC', 'VD', 'VM', 'XD',
+                'LC', 'LD', 'LM', 'DM','IIV', 'IIX', 'XXL', 'XXC', 'XXM', 'CCM',
+                'IXX', 'IXL', 'IXC', 'IXM', 'XLX', 'XCX', 'XCL', 'XCC', 'XCD',
+                'XCM', 'CDC', 'CDM', 'CMC', 'CMD', 'CMM'):
+        if sub in value:
+            return value
+
     total = 0
     prevValue = 0
     value = value[::-1]
