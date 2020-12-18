@@ -1641,6 +1641,24 @@ class OrdinalRule_40(RuleBase):
         return None
 
 
+class OrdinalRule_41(RuleBase):
+    """
+    Описание: Порядковые числительные. Родительный падеж. Женский род.
+    Пример: "3-й и 4-й бригад -> третьей и четвёртой бригад"
+    """
+    def __init__(self):
+        self.mask = (r'\b(\d+)-й и (\d+)-й'
+            r'( (([а-я]+-|)[а-я]+[иы]х |)([а-яё]+))\b')
+
+    def check(self, m):
+        attr = words.get_attr(m.group(6))
+        if attr.have([Z_GENDER], True, [1]):
+            new = ordinal(m.group(1), r_zh) + ' и ' + ordinal(m.group(2), r_zh)
+            return new + m.group(3)
+        else:
+            return None
+
+
 class CardinalRule_36(RuleBase):
     """
     Описание: Количественные числительные. Дательный падеж.
@@ -1827,6 +1845,7 @@ rules_list = (UnitRule_1(),         # винительный
               OrdinalRule_9(),
               OrdinalRule_5(),       # дательный
               OrdinalRule_40(),      # дательный
+              OrdinalRule_41(),
               OrdinalRule_4(),
               )
 
