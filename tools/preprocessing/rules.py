@@ -1538,7 +1538,7 @@ class CardinalRule_33(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b([Пп]о )(\d*1(000){1,3})\b')
+        self.mask = (r'\b([Пп]о )(\d*[02-9]1(\d\d\d)*|1(\d\d\d)*)\b')
 
     def check(self, m):
         return m.group(1) + cardinal(m.group(2), d_ca)
@@ -1648,13 +1648,13 @@ class OrdinalRule_41(RuleBase):
     """
     def __init__(self):
         self.mask = (r'\b(\d+)-й и (\d+)-й'
-            r'( (([а-я]+-|)[а-я]+[иы]х |)([а-яё]+))\b')
+            r'( ([а-я]+-|)[а-я]+[иы]х | )([а-яё]+)\b')
 
     def check(self, m):
-        attr = words.get_attr(m.group(6))
+        attr = words.get_attr(m.group(5))
         if attr.have([Z_GENDER], True, [1]):
             new = ordinal(m.group(1), r_zh) + ' и ' + ordinal(m.group(2), r_zh)
-            return new + m.group(3)
+            return new + m.group(3) + m.group(5)
         else:
             return None
 
