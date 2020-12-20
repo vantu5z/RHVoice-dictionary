@@ -1831,7 +1831,6 @@ rules_list = (UnitRule_1(),         # винительный
               OrdinalRule_9(),
               OrdinalRule_5(),       # дательный
               OrdinalRule_40(),      # дательный
-#              OrdinalRule_41(),
               OrdinalRule_4(),
               )
 
