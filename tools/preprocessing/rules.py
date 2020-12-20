@@ -633,21 +633,25 @@ class OrdinalRule_35(RuleBase):
 
 class OrdinalRule_36(RuleBase):
     """
-    Описание: Порядковые числительные.
-    Пример: "2-й и 3-й комнат -> второй и третьей комнат"
+    Описание: Порядковые числительные. Женский род.
+              Родительный/дательный/творительный/предложный падеж.
+    Пример: "(3-й, )4-й и 5-й бригад -> (третьей, )четвёртой и пятой бригад"
     """
     def __init__(self):
-        self.mask = (
-            r'\b(\d+)-й( или | и )(\d+)-й'
-            r'( ([А-Я]?[а-я]+([ео]й|[иы]х) |)([а-яё]+))\b')
+        self.mask = (r'\b((\d+)-й, |)(\d+)-й и (\d+)-й'
+            r'( ([а-я]+-|)[а-я]+[иы](х|ми?) | )([а-яё]+)\b')
 
     def check(self, m):
-        attr = words.get_attr(m.group(7))
-        if attr.have([Z_GENDER], None, [1]):
-            new = ordinal(m.group(1), r_zh) + m.group(2)
-            new += ordinal(m.group(3), r_zh) + m.group(4)
-            return new
-        return None
+        attr = words.get_attr(m.group(8))
+        if attr.have([Z_GENDER], True, [1, 2, 4, 5]):
+            if m.group(1):
+                new = ordinal(m.group(2), r_zh) + ', '
+            else:
+                new = ''
+            new += ordinal(m.group(3), r_zh) + ' и ' + ordinal(m.group(4), r_zh)
+            return new + m.group(5) + m.group(8)
+        else:
+            return None
 
 
 class OrdinalRule_37(RuleBase):
@@ -1641,24 +1645,6 @@ class OrdinalRule_40(RuleBase):
         return None
 
 
-class OrdinalRule_41(RuleBase):
-    """
-    Описание: Порядковые числительные. Родительный падеж. Женский род.
-    Пример: "3-й и 4-й бригад -> третьей и четвёртой бригад"
-    """
-    def __init__(self):
-        self.mask = (r'\b(\d+)-й и (\d+)-й'
-            r'( ([а-я]+-|)[а-я]+[иы]х | )([а-яё]+)\b')
-
-    def check(self, m):
-        attr = words.get_attr(m.group(5))
-        if attr.have([Z_GENDER], True, [1]):
-            new = ordinal(m.group(1), r_zh) + ' и ' + ordinal(m.group(2), r_zh)
-            return new + m.group(3) + m.group(5)
-        else:
-            return None
-
-
 class CardinalRule_36(RuleBase):
     """
     Описание: Количественные числительные. Дательный падеж.
@@ -1845,7 +1831,7 @@ rules_list = (UnitRule_1(),         # винительный
               OrdinalRule_9(),
               OrdinalRule_5(),       # дательный
               OrdinalRule_40(),      # дательный
-              OrdinalRule_41(),
+#              OrdinalRule_41(),
               OrdinalRule_4(),
               )
 
