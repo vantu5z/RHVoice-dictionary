@@ -64,7 +64,7 @@ class QuasiRoman(RuleBase):
                      r'(сто|тысяче)лети(ем?|й|ю|ях?|ями?))|)\b')
 
     def check(self, m):
-        if 'Х' or 'І' in m.group(1):
+        if 'Х' in m.group(1) or 'І' in m.group(1):
             new = m.group(1)
             new = sub('І', 'I', new)
             new = sub('Х', 'X', new)
