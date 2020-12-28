@@ -1520,22 +1520,6 @@ class CardinalRule_31(RuleBase):
         return m.group(1) + number
 
 
-class CardinalRule_32(RuleBase):
-    """
-    Описание: Количественные числительные.
-              Существует только во множественном числе.
-    Пример:
-    """
-    def __init__(self):
-        self.mask = (r'\b((\d+) - |)((\d+) (сутки|суток))')
-
-    def check(self, m):
-        pre = ''
-        if m.group(1):
-            pre = daynight(m.group(2), m.group(5)) + '-'
-        return pre + daynight(m.group(4), m.group(5)) + ' ' + m.group(5)
-
-
 class CardinalRule_33(RuleBase):
     """
     Описание: Количественные числительные.
@@ -1860,7 +1844,6 @@ rules_list_2 = (OrdinalRule_39(),
                 CardinalRule_30(),     # дательный
                 CardinalRule_36(),
                 CardinalRule_31(),
-                CardinalRule_32(),
                 CardinalRule_33(),
                 CardinalRule_35(),
                 CardinalRule_10(),
