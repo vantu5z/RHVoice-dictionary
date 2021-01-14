@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# Сведения о погоде на сегодняшний день по данным с OpenWeatherMap.org.
+
 from pyowm.owm import OWM
 from pyowm.utils.config import get_default_config
 from rhvoice_tools.scripts import get_time, get_date, get_weekday, get_greeting
 from rhvoice_tools import rhvoice_say
-from datetime import datetime
 
 
 def get_data(key, city):
