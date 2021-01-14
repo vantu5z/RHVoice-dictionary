@@ -328,9 +328,12 @@ class Config():
         # с учетом регистра
         self.config.optionxform = str
 
-        self.voices = ['Aleksandr', 'Aleksandr+Alan', 'Anna', 'Arina',
-                       'Artemiy', 'Elena', 'Elena+Clb', 'Irina', 'Pavel',
-                       'Victoria']
+        self.voices = self.get_voices()
+        if self.voices is None:
+            self.voices = ['Aleksandr', 'Aleksandr+Alan', 'Anna', 'Arina',
+                           'Artemiy', 'Elena', 'Elena+Clb', 'Irina', 'Pavel',
+                           'Victoria']
+        self.voices.sort()
         
         # установка настроек по-умолчанию
         self.use_SD = False
@@ -341,6 +344,36 @@ class Config():
         self.stress_marker = False
 
         self.read_conf()
+
+    def get_voices(self):
+        """
+        Поиск доступных русских голосов.
+        """
+        voices_dir = '/usr/share/RHVoice/voices'
+        if not path_exists(voices_dir):
+            return None
+        all_voices = os.listdir(voices_dir)
+
+        voices_list = []
+
+        voice_config = configparser.ConfigParser()
+        for voice in all_voices:
+            voice_info = os.path.join(voices_dir, voice, 'voice.info')
+            if not path_exists(voice_info):
+                continue
+            with open(voice_info, 'r') as f:
+                config_string = '[root]\n' + f.read()
+            voice_config.read_string(config_string)
+
+            # поиск только русских голосов
+            if voice_config['root'].get('language') == 'Russian':
+                voice_name = voice_config['root'].get('name')
+                voices_list.append(voice_name)
+
+        if voices_list:
+            return voices_list
+        else:
+            return None
 
     def read_conf(self):
         """
