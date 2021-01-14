@@ -328,8 +328,9 @@ class Config():
         # с учетом регистра
         self.config.optionxform = str
 
-        self.voices = ['Aleksandr', 'Aleksandr+Alan', 'Artemiy', 'Anna',
-                       'Elena', 'Elena+Clb', 'Irina']
+        self.voices = ['Aleksandr', 'Aleksandr+Alan', 'Anna', 'Arina',
+                       'Artemiy', 'Elena', 'Elena+Clb', 'Irina', 'Pavel',
+                       'Victoria']
         
         # установка настроек по-умолчанию
         self.use_SD = False
