@@ -29,6 +29,7 @@ class MainWindow(Gtk.Window):
         self.global_config = RHVoiceConfig()
 
         self.notebook = Gtk.Notebook()
+        self.notebook.set_vexpand(True)
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.box.add(self.notebook)
         self.add(self.box)
@@ -204,6 +205,8 @@ class MainWindow(Gtk.Window):
 
         row += 1
         open_editor = Gtk.Button(label='Открыть в редакторе', margin=10)
+        open_editor.set_tooltip_text('Для изменения файла настроек '
+                                     'требуются права root.')
         open_editor.set_halign(Gtk.Align.CENTER)
         open_editor.connect("clicked", self.open_editor)
         conf_page.attach(open_editor, 0, row, 3, 1)
