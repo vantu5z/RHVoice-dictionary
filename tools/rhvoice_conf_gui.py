@@ -177,6 +177,7 @@ class MainWindow(Gtk.Window):
                 if option.kind == 'char':
                     entry.set_max_length(1)
                 entry.set_text(option.value)
+                entry.set_tooltip_text(option.tooltip)
                 entry.connect('changed', self.entry_changed, option)
                 conf_page.attach(entry, 1, row, 1, 1)
             elif option.kind == 'list':
@@ -185,16 +186,19 @@ class MainWindow(Gtk.Window):
                     combo.append(str(i), value)
                     if value == option.value:
                         combo.set_active(i)
+                combo.set_tooltip_text(option.tooltip)
                 combo.connect('changed', self.combo_changed, option)
                 conf_page.attach(combo, 1, row, 1, 1)
             elif option.kind == 'bool':
                 switch = Gtk.Switch()
                 switch.set_halign(Gtk.Align.END)
                 switch.set_active(option.value)
+                switch.set_tooltip_text(option.tooltip)
                 switch.connect('state-set', self.switch_changed, option)
                 conf_page.attach(switch, 1, row, 1, 1)
             else:
                 item_label = Gtk.Label(label=option.value)
+                item_label.set_tooltip_text(option.tooltip)
                 item_label.set_halign(Gtk.Align.CENTER)
                 conf_page.attach(item_label, 1, row, 1, 1)
 
