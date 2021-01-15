@@ -17,15 +17,15 @@ dest_dir = "build/%s/rhvoice_tools" % getsitepackages()[0]
 # создание каталогов в build
 dirs = ['preprocessing/dict',
         'scripts',
-        'rhvoice-say',
-        'rhvoice-config'
+        'rhvoice_say',
+        'rhvoice_config'
        ]
 for item in dirs:
     makedirs(dest_dir + "/" + item)
 
 files = ['__init__.py',
-         'rhvoice-say/rhvoice_say.py',
-         'rhvoice-config/rhvoice_conf_gui.py',
+         'rhvoice_say/rhvoice_say.py',
+         'rhvoice_config/rhvoice_conf_gui.py',
          'preprocessing/functions.py',
          'preprocessing/rules.py',
          'preprocessing/templates.py',
@@ -44,8 +44,8 @@ for file in files:
     copy(file, "%s/%s" % (dest_dir, file))
 
 # копирование файлов в bin
-files = ['rhvoice-say/rhvoice_say',
-         'rhvoice-config/rhvoice_config',
+files = ['rhvoice_say/rhvoice_say',
+         'rhvoice_config/rhvoice_config',
         ]
 makedirs("build/usr/bin/")
 for file in files:
