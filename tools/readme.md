@@ -17,9 +17,8 @@
 git clone https://github.com/vantu5z/RHVoice-dictionary.git
 cd RHVoice-dictionary/tools
 python build.py
-cp -R build/lib ~/.local
-cp rhvoice_say ~/.local/bin
-cp rhvoice_config ~/.local/bin
+cp -R build/usr/lib ~/.local
+cp -R build/usr/bin ~/.local
 ```
 
 ## Использование
@@ -33,6 +32,7 @@ cp rhvoice_config ~/.local/bin
 ```
     rhvoice_say "текст для чтения"
     rhvoice_say -c
+    echo "текст для чтения" | rhvoice_say
 ```
 * Примеры использования скриптов "[/scripts/examples](https://github.com/vantu5z/RHVoice-dictionary/tree/master/tools/scripts/examples)"
 
