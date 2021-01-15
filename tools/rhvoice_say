@@ -11,7 +11,13 @@ def show_help():
           "               rhvoice_say -d 'текст для чтения'  -- режим отладки\n"
           "               rhvoice_say -h                     -- данная справка")
 
-data = sys.stdin.read()
+def get_pipe():
+    if not sys.stdin.isatty():
+        return sys.stdin.read()
+    else:
+        return ''
+
+data = get_pipe()
     
 if '-h' in sys.argv:
     show_help()
