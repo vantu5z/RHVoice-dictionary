@@ -2,6 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from rhvoice_tools.rhvoice_conf_gui import main
+from rhvoice_tools import rhvoice_config
 
-main()
+rhvoice_config()

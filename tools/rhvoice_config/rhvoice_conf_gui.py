@@ -29,6 +29,7 @@ class MainWindow(Gtk.Window):
         self.global_config = RHVoiceConfig()
 
         self.notebook = Gtk.Notebook()
+        self.notebook.set_vexpand(True)
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.box.add(self.notebook)
         self.add(self.box)
@@ -177,6 +178,7 @@ class MainWindow(Gtk.Window):
                 if option.kind == 'char':
                     entry.set_max_length(1)
                 entry.set_text(option.value)
+                entry.set_tooltip_text(option.tooltip)
                 entry.connect('changed', self.entry_changed, option)
                 conf_page.attach(entry, 1, row, 1, 1)
             elif option.kind == 'list':
@@ -185,21 +187,26 @@ class MainWindow(Gtk.Window):
                     combo.append(str(i), value)
                     if value == option.value:
                         combo.set_active(i)
+                combo.set_tooltip_text(option.tooltip)
                 combo.connect('changed', self.combo_changed, option)
                 conf_page.attach(combo, 1, row, 1, 1)
             elif option.kind == 'bool':
                 switch = Gtk.Switch()
                 switch.set_halign(Gtk.Align.END)
                 switch.set_active(option.value)
+                switch.set_tooltip_text(option.tooltip)
                 switch.connect('state-set', self.switch_changed, option)
                 conf_page.attach(switch, 1, row, 1, 1)
             else:
                 item_label = Gtk.Label(label=option.value)
+                item_label.set_tooltip_text(option.tooltip)
                 item_label.set_halign(Gtk.Align.CENTER)
                 conf_page.attach(item_label, 1, row, 1, 1)
 
         row += 1
         open_editor = Gtk.Button(label='Открыть в редакторе', margin=10)
+        open_editor.set_tooltip_text('Для изменения файла настроек '
+                                     'требуются права root.')
         open_editor.set_halign(Gtk.Align.CENTER)
         open_editor.connect("clicked", self.open_editor)
         conf_page.attach(open_editor, 0, row, 3, 1)
@@ -321,8 +328,12 @@ class Config():
         # с учетом регистра
         self.config.optionxform = str
 
-        self.voices = ['Aleksandr', 'Aleksandr+Alan', 'Artemiy', 'Anna',
-                       'Elena', 'Elena+Clb', 'Irina']
+        self.voices = self.get_voices()
+        if self.voices is None:
+            self.voices = ['Aleksandr', 'Aleksandr+Alan', 'Anna', 'Arina',
+                           'Artemiy', 'Elena', 'Elena+Clb', 'Irina', 'Pavel',
+                           'Victoria']
+        self.voices.sort()
         
         # установка настроек по-умолчанию
         self.use_SD = False
@@ -333,6 +344,36 @@ class Config():
         self.stress_marker = False
 
         self.read_conf()
+
+    def get_voices(self):
+        """
+        Поиск доступных русских голосов.
+        """
+        voices_dir = '/usr/share/RHVoice/voices'
+        if not path_exists(voices_dir):
+            return None
+        all_voices = os.listdir(voices_dir)
+
+        voices_list = []
+
+        voice_config = configparser.ConfigParser()
+        for voice in all_voices:
+            voice_info = os.path.join(voices_dir, voice, 'voice.info')
+            if not path_exists(voice_info):
+                continue
+            with open(voice_info, 'r') as f:
+                config_string = '[root]\n' + f.read()
+            voice_config.read_string(config_string)
+
+            # поиск только русских голосов
+            if voice_config['root'].get('language') == 'Russian':
+                voice_name = voice_config['root'].get('name')
+                voices_list.append(voice_name)
+
+        if voices_list:
+            return voices_list
+        else:
+            return None
 
     def read_conf(self):
         """

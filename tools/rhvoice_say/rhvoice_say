@@ -11,6 +11,14 @@ def show_help():
           "               rhvoice_say -d 'текст для чтения'  -- режим отладки\n"
           "               rhvoice_say -h                     -- данная справка")
 
+def get_pipe():
+    if not sys.stdin.isatty():
+        return sys.stdin.read()
+    else:
+        return ''
+
+data = get_pipe()
+    
 if '-h' in sys.argv:
     show_help()
 elif '-c' in sys.argv:
@@ -21,6 +29,8 @@ elif '-d' in sys.argv and len(sys.argv) > 2:
 elif len(sys.argv) > 1:
     text = sys.argv[1]
     rhvoice_say(text)
+elif len(data):
+    rhvoice_say(data)
 else:
     print('Нет текста для чтения...')
     show_help()
