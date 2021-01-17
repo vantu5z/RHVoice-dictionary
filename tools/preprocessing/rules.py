@@ -885,8 +885,7 @@ class CardinalRule_11(RuleBase):
     def __init__(self):
         self.mask = (
             r'\b([Оо]т|[Сс]о?)'
-            r'( [а-яё]+([иы]х|[ео]й|[ео]го) '
-            r'| почти | примерно | приблизительно | плюс | минус | )'
+            r'( почти | примерно | приблизительно | плюс | минус | )'
             r'((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)( ([а-яё]+ |)[а-яё]+ | )'
             r'('
             r'до( [а-яё]+([иы]х|[ео]й|[ео]го) '
@@ -896,29 +895,29 @@ class CardinalRule_11(RuleBase):
             r')\b')
 
     def check(self, m):
-        if m.group(4):
-            if m.group(5):
-                pre = decimal(m.group(5)[:-1], m.group(6), 1)
+        if m.group(3):
+            if m.group(4):
+                pre = decimal(m.group(4)[:-1], m.group(5), 1)
             else:
-                pre = cardinal(m.group(6), r_ca)
-                if pre[-6:] == 'одного' and m.group(22) is not None:
-                    if words.have(m.group(22), [Z_GENDER], None, [1]):
+                pre = cardinal(m.group(5), r_ca)
+                if pre[-6:] == 'одного' and m.group(21) is not None:
+                    if words.have(m.group(21), [Z_GENDER], None, [1]):
                         pre = pre[:-2] + 'й'
-                    elif m.group(22) == 'суток':
+                    elif m.group(21) == 'суток':
                         pre = pre[:-3] + 'их'
-            pre += m.group(7)
+            pre += m.group(6)
         else:
             pre = ''
-        if m.group(8):
-            number = decimal(m.group(8)[:-1], m.group(9), 1)
+        if m.group(7):
+            number = decimal(m.group(7)[:-1], m.group(8), 1)
         else:
-            number = cardinal(m.group(9), r_ca)
-        if number[-6:] == 'одного' and m.group(22) is not None:
-            if words.have(m.group(22), [Z_GENDER], None, [1]):
+            number = cardinal(m.group(8), r_ca)
+        if number[-6:] == 'одного' and m.group(21) is not None:
+            if words.have(m.group(21), [Z_GENDER], None, [1]):
                 number = number[:-2] + 'й'
-            elif m.group(22) == 'суток':
+            elif m.group(21) == 'суток':
                 number = number[:-3] + 'их'
-        return m.group(1) + m.group(2) + pre + number + m.group(10) + m.group(12)
+        return m.group(1) + m.group(2) + pre + number + m.group(9) + m.group(11)
 
 
 class CardinalRule_12(RuleBase):
