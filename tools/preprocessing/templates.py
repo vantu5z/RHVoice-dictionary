@@ -1528,6 +1528,9 @@ samples_3 = (
   (r'\b([А-Я]?[а-яё]+[иы]е )(\d+0)-е\b',
    'm.group(1) + ordinal(m.group(2), i_mn)'),
   (r'\b([Кк] )(\d+0)-м\b', 'm.group(1) + ordinal(m.group(2), d_mn)'),
+  (r'\b([Мм]ежду )(\d+) и (\d+) ((тысяче|сто)лети|поколени(ем|ями))',
+   'm.group(1) + ordinal(m.group(2), t_mu) + " и " + '
+   'ordinal(m.group(3), t_mu) + " " + m.group(4)'),
   (r'\b(\d+)( [-и] )(\d+) ((тысяче|сто)летия|поколения)\b',
    'ordinal(m.group(1), i_sr) + m.group(2) + ordinal(m.group(3), i_sr) + '
    '" " + m.group(4)'),
