@@ -304,7 +304,7 @@ class UnitRule_6(RuleBase):
     def __init__(self):
         self.mask = (
             r'\b(([Кк]|равна|равн[оы][ей]?|равен'
-            r'|равняться|равнял[аио]сь|равнялся|равняется)'
+            r'|равняться|равнял[аио]сь|равнялся|равняется|эквивалент[аеноы]{2})'
             r'( всего | почти | примерно | приблизительно | плюс | минус | )'
             r')'
             r'(\d+,|)(\d+) ' + units)
@@ -1503,21 +1503,22 @@ class CardinalRule_31(RuleBase):
         self.mask = (
             r'\b([Кк] |рав[нагеийлмоcуюыхья]{2,6} |'
             r'равносил[агеимноуыхья]{2,5} |эквивалент[аеноы]{2} )'
+            r'(всего |почти |примерно |приблизительно |плюс |минус |)'
             r'((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)\b')
 
     def check(self, m):
         number = ''
-        if m.group(2):
-            if m.group(3):
-                number += decimal(m.group(3)[:-1], m.group(4), 2)
+        if m.group(3):
+            if m.group(4):
+                number += decimal(m.group(4)[:-1], m.group(5), 2)
             else:
-                number += cardinal(m.group(4), d_ca)
-            number += m.group(5)
-        if m.group(6):
-            number += decimal(m.group(6)[:-1], m.group(7), 2)
+                number += cardinal(m.group(5), d_ca)
+            number += m.group(6)
+        if m.group(7):
+            number += decimal(m.group(7)[:-1], m.group(8), 2)
         else:
-            number += cardinal(m.group(7), d_ca)
-        return m.group(1) + number
+            number += cardinal(m.group(8), d_ca)
+        return m.group(1) + m.group(2) + number
 
 
 class CardinalRule_33(RuleBase):
@@ -1817,10 +1818,10 @@ rules_list = (UnitRule_1(),         # винительный
               OrdinalRule_5(),       # дательный
               OrdinalRule_40(),      # дательный
               OrdinalRule_4(),
-              CardinalRule_20(),     # предложный /перед винительным/
               )
 
 rules_list_2 = (OrdinalRule_39(),
+                CardinalRule_20(),     # предложный /перед винительным/
                 CardinalRule_21(),     # предложный /перед родительным/
                 CardinalRule_23(),     # винительный
                 CardinalRule_25(),     # винительный
