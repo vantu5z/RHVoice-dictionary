@@ -1334,7 +1334,7 @@ class CardinalRule_25(RuleBase):
         f = d or e
         g = attr.have([S_GENDER], False, [0, 1])
         h = attr.have([S_GENDER], True, [1])
-        j = c or attr.have([M_GENDER], True, [1])
+        j = c or attr.have([M_GENDER], True, [1, 3], all_case=True)
         if m.group(2):
             if m.group(3):
                 pre = decimal(m.group(3)[:-1], m.group(4), 5)
@@ -1373,7 +1373,7 @@ class CardinalRule_25(RuleBase):
                 elif attr.have([S_GENDER], False, [0, 3]):
                     number = number[:-2] + 'но'
             elif number[-3:] == 'два':
-                if attr.have([Z_GENDER], True, [1]):
+                if attr.have([M_GENDER, Z_GENDER], True, [1]):
                     number = number[:-1] + 'ух'
                 elif attr.have([Z_GENDER], False, [1]):
                     number = number[:-1] + 'е'
