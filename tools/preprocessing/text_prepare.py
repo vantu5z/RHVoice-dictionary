@@ -7,7 +7,7 @@
 
 from re import sub, finditer
 
-from .templates import (samples_1, samples_2, samples_3, samples_4,
+from .templates import (samples_1, samples_2, samples_3,
                         stress_marker_samples,
                         units, zh_units,
                         forms,
@@ -40,10 +40,6 @@ def text_prepare(text, stress_marker=False, debug=False):
 
     # применение шаблонов
     for sample in samples_2:
-        text = sub(sample[0], sample[1], text)
-
-    # применение шаблонов
-    for sample in samples_3:
         length = len(text)
         for m in finditer(sample[0], text):
             new = eval(sample[1])
@@ -59,7 +55,7 @@ def text_prepare(text, stress_marker=False, debug=False):
             text = sub(letter, letter_name, text)
 
     # окончателная обработка
-    for sample in samples_4:
+    for sample in samples_3:
         text = sub(sample[0], sample[1], text)
 
     # шаблоны с указанием символа ударения
