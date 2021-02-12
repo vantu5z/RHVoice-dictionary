@@ -1657,27 +1657,30 @@ class CardinalRule_37(RuleBase):
     """
     def __init__(self):
         self.mask = (r'\b([Вв] (более чем |менее чем |))'
-                     r'((\d+,|)(\d+)( [-и] | или )|)(\d+),(\d+)'
-                     r'( (астрономической |астрономических |морской |морских |)'
+                     r'((\d+,|)(\d+)( [-и] | или )|)(\d+),(\d+) '
                      r'((|кило|санти|милли)метрах?|(|кило|мега|гига)парсеках?|'
-                     r'единицы|единицах|мили|милях))\b')
+                     r'процентах?|процентов|'
+                     r'астрономической единицы|астрономических единиц|'
+                     r'(морской |морских |)мили|(морских |)(миль|милях)|'
+                     r'светового года|световых лет)\b')
 
     def check(self, m):
-        attr = words.get_attr(m.group(11))
         new = m.group(1)
         if m.group(3):
             if m.group(4):
                 pre = decimal(m.group(4)[:-1], m.group(5), 4)
             else:
                 pre = cardinal(m.group(5), p_ca)
-                if condition(m.group(5)) and attr.have([Z_GENDER], None, [1, 5]):
+                if condition(m.group(5)) and m.group(9) in (
+                                            'мили', 'миль', 'милях',
+                                            'морской мили', 'морских мили', 
+                                            'морских милях', 'морских миль',
+                                            'астрономической единицы',
+                                            'астрономических единиц'):
                     pre = pre[:-1] + 'й'
             new += pre + m.group(6)
-        if (attr.have(None, False, [1]) or attr.have(None, True, [5])):
-            new += decimal(m.group(7), m.group(8), 4) + m.group(9)
-            return new
-        else:
-            return None
+        new += decimal(m.group(7), m.group(8), 4) + ' ' + m.group(9)
+        return new
 
 
 class CardinalRule_42(RuleBase):
@@ -1827,6 +1830,7 @@ rules_list_2 = (OrdinalRule_39(),
                 CardinalRule_20(),     # предложный /перед винительным/
                 CardinalRule_21(),     # предложный /перед родительным/
                 CardinalRule_23(),     # винительный
+                CardinalRule_37(),     # предложный /после 23 и перед 25/
                 CardinalRule_25(),     # винительный
                 CardinalRule_11(),     # родительный
                 CardinalRule_12(),
@@ -1839,7 +1843,6 @@ rules_list_2 = (OrdinalRule_39(),
                 CardinalRule_26(),
                 CardinalRule_22(),
                 CardinalRule_24(),
-                CardinalRule_37(),
                 CardinalRule_42(),
                 CardinalRule_27(),     # именительный/винительный
                 CardinalRule_28(),
