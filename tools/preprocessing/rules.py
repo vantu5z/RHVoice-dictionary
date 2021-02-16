@@ -1569,6 +1569,19 @@ class Rule_1(RuleBase):
 
 class Rule_2(RuleBase):
     """
+    Описание: Выбираем один возможный вариант: именительный падеж порядкового
+              числительного мужского рода.
+    Пример:
+    """
+    def __init__(self):
+        self.mask = (r'\b(\d+)-й\b')
+
+    def check(self, m):
+        return ordinal(m.group(1), i_mu)
+
+
+class Rule_3(RuleBase):
+    """
     Описание: Буква Ё.
     Пример: "все небо" -> "всё небо"
     """
@@ -1824,37 +1837,36 @@ rules_list = (UnitRule_1(),         # винительный
               OrdinalRule_5(),       # дательный
               OrdinalRule_40(),      # дательный
               OrdinalRule_4(),
-              )
-
-rules_list_2 = (OrdinalRule_39(),
-                CardinalRule_20(),     # предложный /перед винительным/
-                CardinalRule_21(),     # предложный /перед родительным/
-                CardinalRule_23(),     # винительный
-                CardinalRule_37(),     # предложный /после 23 и перед 25/
-                CardinalRule_25(),     # винительный
-                CardinalRule_11(),     # родительный
-                CardinalRule_12(),
-                CardinalRule_13(),
-                CardinalRule_14(),
-                CardinalRule_16(),
-                CardinalRule_17(),     # творительный
-                CardinalRule_18(),     # творительный
-                CardinalRule_19(),
-                CardinalRule_26(),
-                CardinalRule_22(),
-                CardinalRule_24(),
-                CardinalRule_42(),
-                CardinalRule_27(),     # именительный/винительный
-                CardinalRule_28(),
-                CardinalRule_29(),
-                CardinalRule_15(),
-                CardinalRule_30(),     # дательный
-                CardinalRule_36(),
-                CardinalRule_31(),
-                CardinalRule_33(),
-                CardinalRule_35(),
-                CardinalRule_10(),
-                CardinalRule_41(),
-                Rule_1(),
-                Rule_2(),
-               )
+              OrdinalRule_39(),
+              CardinalRule_20(),     # предложный /перед винительным/
+              CardinalRule_21(),     # предложный /перед родительным/
+              CardinalRule_23(),     # винительный
+              CardinalRule_37(),     # предложный /после 23 и перед 25/
+              CardinalRule_25(),     # винительный
+              CardinalRule_11(),     # родительный
+              CardinalRule_12(),
+              CardinalRule_13(),
+              CardinalRule_14(),
+              CardinalRule_16(),
+              CardinalRule_17(),     # творительный
+              CardinalRule_18(),     # творительный
+              CardinalRule_19(),
+              CardinalRule_26(),
+              CardinalRule_22(),
+              CardinalRule_24(),
+              CardinalRule_42(),
+              CardinalRule_27(),     # именительный/винительный
+              CardinalRule_28(),
+              CardinalRule_29(),
+              CardinalRule_15(),
+              CardinalRule_30(),     # дательный
+              CardinalRule_36(),
+              CardinalRule_31(),
+              CardinalRule_33(),
+              CardinalRule_35(),
+              CardinalRule_10(),
+              CardinalRule_41(),
+              Rule_1(),
+              Rule_2(),
+              Rule_3(),
+             )

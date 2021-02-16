@@ -22,7 +22,7 @@ from .templates import (samples_1, samples_2, samples_3,
                         greekletters)
 from .functions import (condition, cardinal, ordinal, roman2arabic, replace,
                         substant, feminin, daynight, decimal)
-from .rules import rules_list, rules_list_2
+from .rules import rules_list
 
 
 def text_prepare(text, stress_marker=False, debug=False):
@@ -34,10 +34,6 @@ def text_prepare(text, stress_marker=False, debug=False):
     for sample in samples_1:
         text = sub(sample[0], sample[1], text)
 
-    # применение правил
-    for rule in rules_list:
-        text = rule.run(text, debug)
-
     # применение шаблонов
     for sample in samples_2:
         length = len(text)
@@ -46,7 +42,7 @@ def text_prepare(text, stress_marker=False, debug=False):
             text = replace(text, new, length, m.start(), m.end())
 
     # применение правил
-    for rule in rules_list_2:
+    for rule in rules_list:
         text = rule.run(text, debug)
 
     # буквы греческого алфавита
