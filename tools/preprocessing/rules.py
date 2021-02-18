@@ -1507,7 +1507,7 @@ class CardinalRule_31(RuleBase):
             r'\b([Кк] |рав[нагеийлмоcуюыхья]{2,6} |'
             r'равносил[агеимноуыхья]{2,5} |эквивалент[аеноы]{2} )'
             r'(всего |почти |примерно |приблизительно |плюс |минус |)'
-            r'((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)\b')
+            r'((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)\b(?!-)')
 
     def check(self, m):
         number = ''
@@ -1861,10 +1861,10 @@ rules_list = (UnitRule_1(),         # винительный
               CardinalRule_15(),
               CardinalRule_30(),     # дательный
               CardinalRule_36(),
+              CardinalRule_10(),
               CardinalRule_31(),
               CardinalRule_33(),
               CardinalRule_35(),
-              CardinalRule_10(),
               CardinalRule_41(),
               Rule_1(),
               Rule_2(),
