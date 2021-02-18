@@ -1036,7 +1036,7 @@ class CardinalRule_14(RuleBase):
 
 class CardinalRule_15(RuleBase):
     """
-    Описание: Количественные числительные.
+    Описание: Количественные числительные. Родительный падеж.
     Пример:
     """
     def __init__(self):
@@ -1846,11 +1846,11 @@ rules_list = (UnitRule_1(),         # винительный
               CardinalRule_11(),     # родительный
               CardinalRule_12(),
               CardinalRule_13(),
-              CardinalRule_14(),
-              CardinalRule_16(),
               CardinalRule_17(),     # творительный
               CardinalRule_18(),     # творительный
-              CardinalRule_19(),
+              CardinalRule_19(),     # творительный / перед 14
+              CardinalRule_14(),     # родительный
+              CardinalRule_16(),     # родительный
               CardinalRule_26(),
               CardinalRule_22(),
               CardinalRule_24(),
