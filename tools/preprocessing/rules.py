@@ -1490,7 +1490,8 @@ class CardinalRule_30(RuleBase):
                 number = cardinal(m.group(4), d_ca)[:-2] + 'й'
             elif m.group(8) == 'суткам':
                 number = cardinal(m.group(4), d_ca)[:-3] + 'им'
-        elif m.group(9) == 'ам' or m.group(10) == 'ям':
+#        elif m.group(10) == 'ам' or m.group(10) == 'ям':
+        elif words.have(m.group(9), [M_GENDER, S_GENDER, Z_GENDER], True, [2]):
             number = cardinal(m.group(4), d_ca)
         if number:
             return pre + number +m.group(5)
