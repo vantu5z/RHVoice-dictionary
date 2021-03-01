@@ -768,25 +768,10 @@ class OrdinalRule_6(RuleBase):
         return None
 
 
-class OrdinalRule_7(RuleBase):
-    """
-    Описание: Порядковые числительные.
-    Пример:
-    """
-    def __init__(self):
-        self.mask = (r'(?<![,.])\b(\d*11|\d*[05-9]) ([а-яё]{2,})\b')
-
-    def check(self, m):
-        attr = words.get_attr(m.group(2))
-        if attr.have([M_GENDER, S_GENDER], False, [1]):
-            return ordinal(m.group(1), r_mu) + ' ' + m.group(2)
-        return None
-
-
 class OrdinalRule_8(RuleBase):
     """
-    Описание: Порядковые числительные.
-    Пример:
+    Описание: Порядковые числительные. Винительный падеж. Женский род.
+    Пример: "102 школу -> сто вторую школу"
     """
     def __init__(self):
         self.mask = (r'(?<![,.])\b(\d*11|\d*[02-9]) ([а-яё]{2,})\b')
@@ -805,16 +790,16 @@ class OrdinalRule_8(RuleBase):
 
 class OrdinalRule_9(RuleBase):
     """
-    Описание: Порядковые числительные.
-    Пример:
+    Описание: Порядковые числительные. Родительный падеж.
+    Пример: "5 этажа -> пятого этажа, 6 школы -> шестой школы"
     """
     def __init__(self):
         self.mask = (
-            r'(\A|\n|\(| )(\d*[02-9][05-9]|\d*1\d|[5-9]) ([а-яё]{2,})\b')
+            r'(\A|\n|\(| )(\d*[02-9][05-9]|\d*1\d|[5-9]) ([А-Я]?[а-яё]{2,})\b')
 
     def check(self, m):
         number = ''
-        attr = words.get_attr(m.group(3))
+        attr = words.get_attr(m.group(3).lower())
         if attr.have([M_GENDER, S_GENDER], False, [1]):
             if not attr.have(case=[0]):
                 number = ordinal(m.group(2), r_mu)
@@ -1832,9 +1817,8 @@ rules_list = (UnitRule_1(),         # винительный
               OrdinalRule_37(),
               OrdinalRule_38(),
               OrdinalRule_6(),
-              OrdinalRule_7(),
-              OrdinalRule_8(),
-              OrdinalRule_9(),
+              OrdinalRule_8(),       # винительный женского рода
+              OrdinalRule_9(),       # родительный
               OrdinalRule_5(),       # дательный
               OrdinalRule_40(),      # дательный
               OrdinalRule_4(),
