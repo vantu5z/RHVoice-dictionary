@@ -522,20 +522,23 @@ class RomanRule_2(RuleBase):
             r'| (тысячелети|столети|поколени)(ями?|ях?|и|й))\b')
 
     def check(self, m):
-        ending = m.group(4)[-1]
+        if m.group(5):
+            ending = m.group(5)
+        else:
+            ending = m.group(7)
         if ending == 'а':
             num1 = ordinal(roman2arabic(m.group(1)), i_mu)
             num2 = ordinal(roman2arabic(m.group(3)), i_mu)
         elif ending == 'я':
             num1 = ordinal(roman2arabic(m.group(1)), i_sr)
             num2 = ordinal(roman2arabic(m.group(3)), i_sr)
-        elif ending == 'в' or ending == 'й':
+        elif ending == 'ов' or ending == 'й':
             num1 = ordinal(roman2arabic(m.group(1)), r_mu)
             num2 = ordinal(roman2arabic(m.group(3)), r_mu)
-        elif ending == 'м':
+        elif ending == 'ам' or ending == 'ям':
             num1 = ordinal(roman2arabic(m.group(1)), d_mu)
             num2 = ordinal(roman2arabic(m.group(3)), d_mu)
-        elif ending == 'и':
+        elif ending == 'ами' or ending == 'ями':
             num1 = ordinal(roman2arabic(m.group(1)), t_mu)
             num2 = ordinal(roman2arabic(m.group(3)), t_mu)
         else:
@@ -1204,7 +1207,7 @@ class CardinalRule_20(RuleBase):
             pre = ''
         number = ''
         attr = words.get_attr(m.group(11))        
-        if m.group(6) and attr.have(None, False, [5]):
+        if m.group(6) and attr.have(None, True, [5]):
             number = decimal(m.group(6)[:-1], m.group(7), 4)
         else:
             if condition(m.group(7)):
@@ -1543,31 +1546,6 @@ class CardinalRule_35(RuleBase):
 
 class Rule_1(RuleBase):
     """
-    Описание: Десятичные дроби в именительном падеже.
-    Пример:
-    """
-    def __init__(self):
-        self.mask = (r'\b(\d+),(\d+)(\b|\Z)')
-
-    def check(self, m):
-        return decimal(m.group(1), m.group(2)) + m.group(3)
-
-
-class Rule_2(RuleBase):
-    """
-    Описание: Выбираем один возможный вариант: именительный падеж порядкового
-              числительного мужского рода.
-    Пример:
-    """
-    def __init__(self):
-        self.mask = (r'\b(\d+)-й\b')
-
-    def check(self, m):
-        return ordinal(m.group(1), i_mu)
-
-
-class Rule_3(RuleBase):
-    """
     Описание: Буква Ё.
     Пример: "все небо" -> "всё небо"
     """
@@ -1852,6 +1830,4 @@ rules_list = (UnitRule_1(),         # винительный
               CardinalRule_35(),
               CardinalRule_41(),
               Rule_1(),
-              Rule_2(),
-              Rule_3(),
              )

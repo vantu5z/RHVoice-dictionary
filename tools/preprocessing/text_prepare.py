@@ -34,16 +34,16 @@ def text_prepare(text, stress_marker=False, debug=False):
     for sample in samples_1:
         text = sub(sample[0], sample[1], text)
 
+    # применение правил
+    for rule in rules_list:
+        text = rule.run(text, debug)
+
     # применение шаблонов
     for sample in samples_2:
         length = len(text)
         for m in finditer(sample[0], text):
             new = eval(sample[1])
             text = replace(text, new, length, m.start(), m.end())
-
-    # применение правил
-    for rule in rules_list:
-        text = rule.run(text, debug)
 
     # буквы греческого алфавита
     for letter_name, letters in greekletters.items():

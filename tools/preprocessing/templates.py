@@ -1487,9 +1487,9 @@ samples_2 = (
    r'ordinal(roman2arabic(m.group(1)), i_sr) + m.group(2)'),
   (r'\b([Сс]о? )([IVX]+) по ',
    r'm.group(1) + roman2arabic(m.group(2)) + "-го по "'),
-  (r'\b([Вв]о? |[Оо] )([IVX]+)'
-   r'(( [-и] | или )[IVX]+ (тысячелети|столети|поколени)(и|ях))\b',
-   'm.group(1) + ordinal(roman2arabic(m.group(2)), p_sr) + m.group(3)'),
+  (r'\b([IVX]+) или ([IVX]+)( (тысячелети|столети|поколени)и)\b',
+   'ordinal(roman2arabic(m.group(1)), p_sr) + " или " + '
+   'ordinal(roman2arabic(m.group(2)), p_sr) + m.group(3)'),
   (r'\b([IVX]+)( (тысячелети|столети|поколени)(ем?|я|ю|и))\b',
    'ordinal(roman2arabic(m.group(1)), sr_pad[m.group(4)]) + m.group(2)'),
   (r'\b([IVX]+)( (век|квартал|класс|пункт|ранг|созыв|[Сс]ъезд|тип)'
@@ -1627,6 +1627,7 @@ samples_2 = (
    'm.group(1) + ordinal(m.group(3), zh_pad[m.group(2)])'),
   (r'\b([Гг]лав(а|е|ы|у|ой) )(\d+)\b(?!, ?\d)(-й|)',
    'm.group(1) + ordinal(m.group(3), zh_pad[m.group(2)])'),
+  (r'\b(\d+)-й\b', 'ordinal(m.group(1), i_mu)'),
   # Неправильные наращения, но... полезные
   (r'\b(\d+)-[ео]й\b', 'ordinal(m.group(1), r_zh)'),
   (r'\b(\d+)-[ео]м\b', 'ordinal(m.group(1), p_mu)'),
@@ -1649,6 +1650,7 @@ samples_2 = (
    'm.group(1) + decimal(m.group(5), m.group(6), 5)'),
   (r'\b([Зз]а |[Нн]а |состав[аеилотя]{2,4} )(\d+),(\d+)\b',
    'm.group(1) + decimal(m.group(2), m.group(3), 5)'),
+  (r'\b(\d+),(\d+)(\b|\Z)', 'decimal(m.group(1), m.group(2)) + m.group(3)'),
   # Наращения при количественных числительных недопустимы, но распространены
   (r'\b(\d*[1235-8]0|\d*1\d|(\d*[02-9]|)[569])-[т]?и\b',
    'cardinal(m.group(1), r_ca)'),
