@@ -86,7 +86,7 @@ def cardinal(num, casus):
 def ordinal(num, casus):
     """
     Склонение порядковых числительных.
-    Корректно для чисел менее 1 000 000.
+    Корректно для чисел менее 1 000 000 000.
     (num - число, casus - падеж)
     """
 
@@ -99,7 +99,10 @@ def ordinal(num, casus):
             if num[-2] == '0':
                 if num[-3] == '0':
                     prenum = ''
-                    number = cardinal(num[:-3], r_ca) + casus[0][0][0][1]
+                    number = cardinal(num[:-3], r_ca)
+                    if number == 'одного':
+                        number = ''
+                    number += casus[0][0][0][1]
                 else:
                     if len(num) == 3:
                         prenum = ''
@@ -140,6 +143,7 @@ def ordinal(num, casus):
                     prenum += '_ '
                 dec = 0
         number = casus[int(num[-1])][dec]
+    number = sub(r'одной тысячитысяч| тысячтысяч', 'миллион', number)
     return prenum + number
 
 
