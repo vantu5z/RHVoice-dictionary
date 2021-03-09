@@ -119,7 +119,7 @@ class UnitRule_2(RuleBase):
 
 class UnitRule_13(RuleBase):
     """
-    Описание: Сокращенные обозначения колич. числительных. Дательный падеж.
+    Описание: Сокращенные обозначения колич. числительных. Предложный падеж.
     Пример: "в 1 тыс. км -> в 1 тысяче км"
     """
     def __init__(self):
@@ -167,6 +167,36 @@ class UnitRule_14(RuleBase):
             else:
                 new += substant(m.group(5), m.group(6), 5)
         return new
+
+
+class UnitRule_10(RuleBase):
+    """
+    Описание: Сокращенные обозначения колич. числительных. Предложный падеж.
+    Пример: "в 1 тыс. километров -> в 1 тысяче километров"
+    """
+    def __init__(self):
+        self.mask = (
+            r'\b([Вв] )((\d+,|)(\d+)( [-и] | или )|)'
+            r'(\d+,|)(\d+) (тыс\.|млн|млрд|трлн) '
+            r'(километров|(морских |)миль|парсек(ов|)|световых лет)\b')
+
+    def check(self, m):
+        new = m.group(1)
+        if m.group(2):
+            if m.group(3):
+                new += decimal(m.group(3)[:-1], m.group(4), 4)
+            else:
+                if m.group(8) == 'тыс.':
+                    new += feminin(cardinal(m.group(4), p_ca), 4)
+                else:
+                    new += cardinal(m.group(4), p_ca)
+            new += m.group(5)
+        if m.group(6):
+            new += decimal(m.group(6)[:-1], m.group(7), 4) + ' '
+            new += forms[m.group(8)][2]
+        else:
+            new += m.group(7) + ' ' + substant(m.group(7), m.group(8), 4)
+        return new + ' ' + m.group(9)
 
 
 class UnitRule_3(RuleBase):
@@ -1767,8 +1797,9 @@ class CardinalRule_41(RuleBase):
 # ==========================
 
 rules_list = (UnitRule_1(),         # винительный
-              UnitRule_2(),
-              UnitRule_13(),        # дательный (следует перед UnitRule_14)
+              UnitRule_2(),         # следует перед UnitRule_10 и UnitRule_13
+              UnitRule_10(),        # предложный (перед UnitRule_14)
+              UnitRule_13(),        # предложный (следует перед UnitRule_14)
               UnitRule_14(),        # вин./дат. (следует после UnitRule_2)
               UnitRule_3(),         # родительный (следует перед UnitRule_4)
               UnitRule_4(),         # родительный
