@@ -956,7 +956,7 @@ class CardinalRule_13(RuleBase):
             r'| приблизительно | примерно | почти | плюс | минус | )'
             r'((\d+,|)(\d+)( - | или )|)(\d+,|)(\d+)'
             r'( ([а-яё]+([иы]х|[ео]й|[ео]го) |и более |и менее |)'
-            r'([а-яё]{3,})|(?!-го))\b')
+            r'([а-яё]{3,})|(?!-))\b')
 
     def check(self, m):
         if m.group(4):
@@ -1233,7 +1233,7 @@ class CardinalRule_22(RuleBase):
     def __init__(self):
         self.mask = (
             r'\b(([Оо]б?|[Пп]ри)( минус| плюс| более чем| менее чем|))'
-            r'( (\d+)( ([-и]|или)( минус| плюс|) )| )(\d+)\b(?!,)')
+            r'( (\d+)( ([-и]|или)( минус| плюс|) )| )(\d+)\b(?![-,])')
 
     def check(self, m):
         number = ' '
@@ -1520,7 +1520,7 @@ class CardinalRule_33(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b([Пп]о )(\d*[02-9]1(\d\d\d)*|1(\d\d\d)*)\b')
+        self.mask = (r'\b([Пп]о )(\d*[02-9]1(\d\d\d)*|1(\d\d\d)*)(?![-,])\b')
 
     def check(self, m):
         return m.group(1) + cardinal(m.group(2), d_ca)
