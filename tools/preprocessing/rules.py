@@ -615,15 +615,17 @@ class OrdinalRule_2(RuleBase):
             r'(\d*1\d|\d*[02-9]?[02-9]) ([а-яё]+)\b')
 
     def check(self, m):
-        number = ''
-        attr = words.get_attr(m.group(3))
-        if attr.have([M_GENDER, S_GENDER], False, [1]):
-            number = ordinal(m.group(2), r_mu)
-        elif attr.have([Z_GENDER], False, [1]):
-            number = ordinal(m.group(2), r_zh)
-        if number:
-            return m.group(1) + ' ' + number + ' ' + m.group(3)
-        return None
+        if m.group(3) not in ('утра', 'дня', 'вечера', 'ночи'):
+            number = ''
+            attr = words.get_attr(m.group(3))
+            if attr.have([M_GENDER, S_GENDER], False, [1]):
+                number = ordinal(m.group(2), r_mu)
+            elif attr.have([Z_GENDER], False, [1]):
+                number = ordinal(m.group(2), r_zh)
+            if number:
+                return m.group(1) + ' ' + number + ' ' + m.group(3)
+        else:
+            return None
 
 
 class OrdinalRule_3(RuleBase):
@@ -1263,13 +1265,21 @@ class CardinalRule_22(RuleBase):
     def __init__(self):
         self.mask = (
             r'\b(([Оо]б?|[Пп]ри)( минус| плюс| более чем| менее чем|))'
-            r'( (\d+)( ([-и]|или)( минус| плюс|) )| )(\d+)\b(?![-,])')
+            r'( (\d+,|)(\d+)( ([-и]|или)( минус| плюс|) )| )(\d+,|)(\d+)\b')
 
     def check(self, m):
         number = ' '
         if m.group(4) != ' ':
-            number += cardinal(m.group(5), p_ca) + m.group(6)
-        return m.group(1) + number + cardinal(m.group(9), p_ca)
+            if m.group(5):
+                number += decimal(m.group(5)[:-1], m.group(6), 4)
+            else:
+                number += cardinal(m.group(6), p_ca)
+            number += m.group(7)
+        if m.group(10):
+            number += decimal(m.group(10)[:-1], m.group(11), 4)
+        else:
+            number += cardinal(m.group(11), p_ca)
+        return m.group(1) + number
 
 
 class CardinalRule_23(RuleBase):
@@ -1541,19 +1551,6 @@ class CardinalRule_31(RuleBase):
         else:
             number += cardinal(m.group(8), d_ca)
         return m.group(1) + m.group(2) + number
-
-
-class CardinalRule_33(RuleBase):
-    """
-    Описание: Количественные числительные.
-              Предлог "по" при указании количества.
-    Пример:
-    """
-    def __init__(self):
-        self.mask = (r'\b([Пп]о )(\d*[02-9]1(\d\d\d)*|1(\d\d\d)*)(?![-,])\b')
-
-    def check(self, m):
-        return m.group(1) + cardinal(m.group(2), d_ca)
 
 
 class CardinalRule_35(RuleBase):
@@ -1857,7 +1854,6 @@ rules_list = (UnitRule_1(),         # винительный
               CardinalRule_36(),
               CardinalRule_10(),
               CardinalRule_31(),
-              CardinalRule_33(),
               CardinalRule_35(),
               CardinalRule_41(),
               Rule_1(),
