@@ -742,7 +742,7 @@ class OrdinalRule_39(RuleBase):
         attr = words.get_attr(m.group(2))
         if (attr.have([M_GENDER], False, [0])
             and not attr.have([M_GENDER], True, [1])
-            and not m.group(2) in ('грамм', 'килограмм', 'миллиграмм',
+            and not m.group(2) in ('грамм', 'килограмм', 'миллиграмм', 'мах',
                                    'парсек', 'килопарсек', 'мегапарсек',
                                    'человек')):
             number = ordinal(m.group(1), i_mu)
@@ -1238,7 +1238,7 @@ class CardinalRule_20(RuleBase):
         else:
             pre = ''
         number = ''
-        attr = words.get_attr(m.group(11))        
+        attr = words.get_attr(m.group(11))
         if m.group(6) and attr.have(None, True, [5]):
             number = decimal(m.group(6)[:-1], m.group(7), 4)
         else:
@@ -1249,7 +1249,7 @@ class CardinalRule_20(RuleBase):
                     number = cardinal(m.group(7), p_ca)[:-1] + 'й'
                 elif m.group(11) == 'сутках':
                     number = cardinal(m.group(7), p_ca)[:-2] + 'их'
-            elif m.group(11)[-2:] in ('ах', 'ях'):
+            elif attr.have(None, True, [5]):
                 number = cardinal(m.group(7), p_ca)
         if number:
             return pre + number + m.group(8)
