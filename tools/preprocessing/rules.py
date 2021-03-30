@@ -998,7 +998,7 @@ class CardinalRule_13(RuleBase):
             if condition(m.group(5)) and m.group(12) is not None:
                 attr = words.get_attr(m.group(12))
                 if m.group(9) and attr.have([Z_GENDER], None, [1]):
-                    pre = pre[:-2] + 'ой'
+                    pre = pre[:-2] + 'й'
                 elif m.group(12) == 'суток':
                     pre = pre[:-3] + 'их'
             pre += m.group(6)
@@ -1480,6 +1480,8 @@ class CardinalRule_29(RuleBase):
                 new += feminin(m.group(4)) + m.group(5)
             if m.group(6):
                 new += m.group(6) + m.group(7) + m.group(8)
+            elif a and condition(m.group(7)):
+                return None
             else:
                 new += feminin(m.group(7)) + m.group(8)
             return new
