@@ -1813,7 +1813,7 @@ rules_list = (UnitRule_1(),         # винительный
               TimeRule_3(),
               TimeRule_4(),
               QuasiRoman(),
-              RomanRule_1(),
+#              RomanRule_1(),
               RomanRule_2(),
               CardinalRule_40(),
               OrdinalRule_1(),
