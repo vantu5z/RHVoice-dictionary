@@ -1470,6 +1470,8 @@ samples_2 = (
    'ordinal(roman2arabic(m.group(1)), r_zh) + m.group(2)'),
   (r'\b([IV]+)(?= степени)',
    'ordinal(roman2arabic(m.group(1)), r_zh)'),
+  (r'\b([Оо]т )([IVX]+)( до [IVX]+ (века|столетия|тысячелетия))\b',
+   'm.group(1) + ordinal(roman2arabic(m.group(2)), r_mu) + m.group(3)'),
   (r'\b(?<= по )([IVX]+)(?= века)\b',
    r'ordinal(roman2arabic(m.group(1)), i_mu)'),
   (r'\b(?<= по )([IVX]+)( (сто|тысяче)летия)\b',
