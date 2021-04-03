@@ -59,9 +59,9 @@ class QuasiRoman(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b(([ІХIX]+( [-и] | или )|)[ІХIX]+)'
-                     r'( (в?в\.|век[аеу]?|веках|веками?|'
-                     r'(сто|тысяче)лети(ем?|й|ю|ях?|ями?))|)\b')
+        self.mask = (r'\b(([ІХIX]+( [-и] | или | [дп]о )|)[ІХIX]+ )'
+                     r'(век[аеу]?|веках|веками?|'
+                     r'(сто|тысяче)лети(ем?|й|ю|ях?|ями?))\b')
 
     def check(self, m):
         if 'Х' in m.group(1) or 'І' in m.group(1):
@@ -524,24 +524,7 @@ class TimeRule_4(RuleBase):
         return m.group(1) + hours + ' ' + minutes
 
 
-class RomanRule_1(RuleBase):
-    """
-    Описание: Римские цифры.
-    Пример:
-    """
-    def __init__(self):
-        self.mask = (
-            r'\b(([IVX]+)( (-|или|и|по)( в (конце |начале |середине |)| ))|)'
-            r'([IVX]+)( в?в\.)')
-
-    def check(self, m):
-        if m.group(1):
-            pre = roman2arabic(m.group(2)) + m.group(3)
-        else: pre = ''
-        return pre + roman2arabic(m.group(7)) + m.group(8)
-
-
-class RomanRule_2(RuleBase):
+class RomanRule(RuleBase):
     """
     Описание: Римские цифры.
     Пример:
@@ -1813,8 +1796,7 @@ rules_list = (UnitRule_1(),         # винительный
               TimeRule_3(),
               TimeRule_4(),
               QuasiRoman(),
-#              RomanRule_1(),
-              RomanRule_2(),
+              RomanRule(),
               CardinalRule_40(),
               OrdinalRule_1(),
               OrdinalRule_2(),
