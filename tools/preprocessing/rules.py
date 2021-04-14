@@ -1336,6 +1336,8 @@ class CardinalRule_25(RuleBase):
             r'(( [а-яё]+([ая]я|[ую]ю|[еиоы]е|[иы][йх]) | )([а-яё]+))\b')
 
     def check(self, m):
+        if m.group(11) == 'сутки':
+            return None
         attr = words.get_attr(m.group(11))
         a = attr.have([M_GENDER], False, [3])
         b = attr.have([M_GENDER], False, [0])
