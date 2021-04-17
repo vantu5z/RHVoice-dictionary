@@ -1627,9 +1627,6 @@ samples_2 = (
   (r'\b(\d+)-ю\b', 'ordinal(m.group(1), v_zh)'),
   (r'\b(\d+)( годовщин([аейоуы]{1,2}))\b',
    'ordinal(m.group(1), zh_pad[m.group(3)]) + m.group(2)'),
-#  (r'\b([Мм]ежду |[Пп]о сравнению с )(\d+)( - | и )(\d+)( годами| годом)\b',
- #  'm.group(1) + ordinal(m.group(2), t_mu) + m.group(3) + '
-  # 'ordinal(m.group(4), t_mu) + m.group(5)'),
   (r'\b(\d+)-й (или|и|-) (\d+)-й( годы?)\b',
    'ordinal(m.group(1), i_mu) + " " + m.group(2) + " " + '
    'ordinal(m.group(3), i_mu) + m.group(4)'),
