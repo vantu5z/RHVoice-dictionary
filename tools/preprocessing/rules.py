@@ -836,30 +836,18 @@ class OrdinalRule_5(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'(\A|\n|\(| )(\d*[02-9][02-9]|\d*1\d|[2-9])'
-            r'( ([а-я]+[ео](му|й)) | )([а-яё]{2,})\b')
+            r'(\A|\n|\(| )(\d*[02-9][02-9]|\d*1\d|[2-9]) ([а-яё]{2,})\b')
 
     def check(self, m):
         number = ''
-        attr = words.get_attr(m.group(6))
+        attr = words.get_attr(m.group(3))
         if attr.have([M_GENDER, S_GENDER], False, [2]):
             number = ordinal(m.group(2), d_mu)
-        elif (attr.have([Z_GENDER], False, [2])
+        if (attr.have([Z_GENDER], False, [2])
             and not attr.have([Z_GENDER], False, [1, 5], all_case=True)):
             number = ordinal(m.group(2), d_zh)
-
-        elif m.group(3) != ' ':
-
-            attr = words.get_attr(m.group(4))
-            if attr.have([M_GENDER, S_GENDER], False, [2]):
-                number = ordinal(m.group(2), d_mu)
-            if (attr.have([Z_GENDER], False, [2])
-                and not attr.have([Z_GENDER], False, [1, 5], all_case=True)):
-                number = ordinal(m.group(2), d_zh)
-
         if number:
-            return m.group(1) + number + m.group(3) + m.group(6)
-
+            return m.group(1) + number + ' ' + m.group(3)
         else:
             return None
 
@@ -1340,7 +1328,7 @@ class CardinalRule_25(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b([Вв]|[Нн]а|[Зз]а|[Пп]ро|[Сс]пустя|[Чч]ерез|состав[аеилотя]{2,4})'
+            r'\b([Вв]|[Нн]а|[Зз]а|[Пп]ро|[Сс]пустя|[Чч]ерез)'
             r'( (\d+,|)(\d+)( -| или)|) (\d+,|)(\d+)'
             r'(( [а-яё]+([ая]я|[ую]ю|[еиоы]е|[иы][йх]) | )([а-яё]+))\b')
 
@@ -1615,36 +1603,25 @@ class CardinalRule_21(RuleBase):
         return new
 
 
-#class OrdinalRule_40(RuleBase):
-#    """
-#    Описание: Порядковые числительные. Дательный падеж.
-#    Пример: "к 3 числу -> к третьему числу"
-#    """
-#    def __init__(self):
-#        self.mask = (r'\b([Кк]о? )(\d*[02-9][2-9]|\d*1\d|[2-9])'
-#            r'( ([а-я]+[ео](му|й)) | )([а-яё]+)\b')
-#
-#    def check(self, m):
-#        number = ''
-#        attr = words.get_attr(m.group(6))
-#        if attr.have(None, False, [2]):
-#            new = ordinal(m.group(2), d_mu)
-#            if attr.have([Z_GENDER], False, [2]):
-#                new = new[:-2] + 'й'
-#
-#        elif m.group(3) != ' ':
-#            attr = words.get_attr(m.group(4))
-#            if attr.have(None, False, [2]):
-#                new = ordinal(m.group(2), d_mu)
-#                if attr.have([Z_GENDER], False, [2]):
-#                    new = new[:-2] + 'й'
-#
-#        if number:
-#            return m.group(1) + new + m.group(3) + m.group(6)
-#        else:
-#            return None
-#
-#
+class OrdinalRule_40(RuleBase):
+    """
+    Описание: Порядковые числительные. Дательный падеж.
+    Пример: "к 3 числу -> к третьему числу"
+    """
+    def __init__(self):
+        self.mask = (r'\b([Кк]о? )(\d*[02-9][2-9]|\d*1\d|[2-9])'
+            r'( [а-я]+[ео](му|й) | )([а-яё]+)\b')
+
+    def check(self, m):
+        attr = words.get_attr(m.group(5))
+        if attr.have(None, False, [2]):
+            new = ordinal(m.group(2), d_mu)
+            if attr.have([Z_GENDER], False, [2]):
+                new = new[:-2] + 'й'
+            return m.group(1) + new + m.group(3) + m.group(5)
+        return None
+
+
 class CardinalRule_36(RuleBase):
     """
     Описание: Количественные числительные. Дательный падеж.
@@ -1832,7 +1809,7 @@ rules_list = (UnitRule_1(),         # винительный
               OrdinalRule_8(),       # винительный женского рода
               OrdinalRule_9(),       # родительный
               OrdinalRule_5(),       # дательный
-#              OrdinalRule_40(),      # дательный
+              OrdinalRule_40(),      # дательный
               OrdinalRule_4(),
               OrdinalRule_39(),
               CardinalRule_20(),     # предложный /перед винительным/
