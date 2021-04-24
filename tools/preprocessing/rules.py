@@ -1204,7 +1204,7 @@ class CardinalRule_20(RuleBase):
 
     def check(self, m):
         attr = words.get_attr(m.group(10))
-        if attr.have(None, None, [5]):
+        if attr.have(None, None, [5]) or m.group(10) == 'сутках':
             if m.group(1):
                 if m.group(2):
                     pre = decimal(m.group(2)[:-1], m.group(3), 4)
@@ -1224,7 +1224,7 @@ class CardinalRule_20(RuleBase):
                     number = cardinal(m.group(6), p_ca)
                 elif attr.have([Z_GENDER], False, [2, 5]):
                     number = cardinal(m.group(6), p_ca)[:-1] + 'й'
-                elif m.group(11) == 'сутках':
+                elif m.group(10) == 'сутках':
                     number = cardinal(m.group(6), p_ca)[:-2] + 'их'
             else:
                 number = cardinal(m.group(6), p_ca)
