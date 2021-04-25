@@ -59,8 +59,10 @@ class QuasiRoman(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b(([ІVХIX]+( [-и] | или | [дп]о )|)[ІVХIX]+ )'
-                     r'(век[аеу]?|веках|веками?|веков|'
+        self.mask = (r'\b(([ІVХIX]+( [-и] | или | [дп]о )'
+                     r'(начал[аеоу] |конец |конц[аеу] |середин[аеуы] |'
+                     r'началом |концом |серединой |)|)'
+                     r'[ІVХIX]+ )(век[аеу]?|веках|веками?|веков|'
                      r'(сто|тысяче)лети(ем?|й|ю|ях?|ями?))\b')
 
     def check(self, m):
@@ -68,7 +70,7 @@ class QuasiRoman(RuleBase):
             new = m.group(1)
             new = sub('І', 'I', new)
             new = sub('Х', 'X', new)
-            return new + m.group(4)
+            return new + m.group(5)
         else:
             return None
 
