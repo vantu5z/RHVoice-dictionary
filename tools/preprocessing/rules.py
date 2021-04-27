@@ -727,9 +727,9 @@ class OrdinalRule_39(RuleBase):
         attr = words.get_attr(m.group(2))
         if (attr.have([M_GENDER], False, [0])
             and not attr.have([M_GENDER], True, [1])
-            and not m.group(2) in ('грамм', 'килограмм', 'миллиграмм', 'мах',
-                                   'парсек', 'килопарсек', 'мегапарсек',
-                                   'человек')):
+            and not m.group(2) in ('грамм', 'кельвин', 'килограмм',
+                                   'миллиграмм', 'мах','парсек', 'килопарсек',
+                                   'мегапарсек', 'человек')):
             number = ordinal(m.group(1), i_mu)
         if attr.have([S_GENDER], False, [0]):
             number = ordinal(m.group(1), i_sr)
