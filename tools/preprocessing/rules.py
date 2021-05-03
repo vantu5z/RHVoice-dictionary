@@ -1816,12 +1816,12 @@ rules_list = (UnitRule_1(),         # винительный
               CardinalRule_23(),     # винительный
               CardinalRule_37(),     # предложный /после 23 и перед 25/
               CardinalRule_25(),     # винительный
-              CardinalRule_11(),     # родительный
-              CardinalRule_12(),
-              CardinalRule_13(),
               CardinalRule_17(),     # творительный
               CardinalRule_18(),     # творительный
               CardinalRule_19(),     # творительный / перед 14
+              CardinalRule_11(),     # родительный
+              CardinalRule_12(),
+              CardinalRule_13(),
               CardinalRule_14(),     # родительный
               CardinalRule_16(),     # родительный
               CardinalRule_26(),
