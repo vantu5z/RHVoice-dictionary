@@ -18,7 +18,7 @@ def condition(value):
     (value - число в формате строки)
     """
     if value == '1' or (len(value) > 1 and value[-2] != '1'
-                        and value[-1] == '1'):        
+                        and value[-1] == '1'):  
         return True
     else:
         return False
@@ -85,7 +85,7 @@ def cardinal(num, casus):
 def ordinal(num, casus):
     """
     Склонение порядковых числительных.
-    Корректно для чисел менее 1 000 000.
+    Корректно для чисел менее 1 000 000 000.
     (num - число, casus - падеж)
     """
 
@@ -98,7 +98,10 @@ def ordinal(num, casus):
             if num[-2] == '0':
                 if num[-3] == '0':
                     prenum = ''
-                    number = cardinal(num[:-3], r_ca) + casus[0][0][0][1]
+                    number = cardinal(num[:-3], r_ca)
+                    if number == 'одного':
+                        number = ''
+                    number += casus[0][0][0][1]
                 else:
                     if len(num) == 3:
                         prenum = ''
@@ -139,6 +142,7 @@ def ordinal(num, casus):
                     prenum += '_ '
                 dec = 0
         number = casus[int(num[-1])][dec]
+    number = sub(r'одной тысячитысяч| тысячтысяч', 'миллион', number)
     return prenum + number
 
 
@@ -290,30 +294,24 @@ def daynight(num, nom):
     Счёт суток.
     (num - число, nom - существительное)
     """
+    number = num
     if nom == 'сутки':
-        if num == '1':
+        if number == '1':
             number = 'одни'
         elif len(num) > 1 and num[-2] != '1' and num[-1] == '1':
             number = num[:-1] + '0_ одни'
-        else:
-            number = ordinal(num, i_mn)
     else:
-        if condition(num):
-            number = cardinal(num, r_ca)[:-3] + 'их'
-        elif num in '234' or (len(num) > 1 and num[-2] != '1'
-            and num[-1] in '234'):
-            if len(num) > 1 and num[-2] != '1':
-                number = num[:-1] + '0_ '
-            else:
-                number = ''
-            if num[-1] == '2':
-                number += 'двое'
-            elif num[-1] == '3':
-                number += 'трое'
-            elif num[-1] == '4':
-                number += 'четверо'
-        else:
-            number = num
+        if num == '2':
+            number = 'двое'
+        elif num == '3':
+            number = 'трое'
+        elif num == '4':
+            number = 'четверо'
+        elif len(num) > 1 and num[-2] != '1':
+            if 5 > int(num[-1]) > 0:
+                number = cardinal(num, r_ca)
+                if number[-6:] == 'одного':
+                    number = number[:-3] + 'их'
     return number
 
 
