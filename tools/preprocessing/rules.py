@@ -1819,6 +1819,8 @@ rules_list = (UnitRule_1(),         # винительный
               CardinalRule_17(),     # творительный
               CardinalRule_18(),     # творительный
               CardinalRule_19(),     # творительный / перед 14
+              CardinalRule_30(),     # дательный
+              CardinalRule_36(),
               CardinalRule_11(),     # родительный
               CardinalRule_12(),
               CardinalRule_13(),
@@ -1832,8 +1834,6 @@ rules_list = (UnitRule_1(),         # винительный
               CardinalRule_28(),
               CardinalRule_29(),
               CardinalRule_15(),
-              CardinalRule_30(),     # дательный
-              CardinalRule_36(),
               CardinalRule_10(),
               CardinalRule_31(),
               CardinalRule_35(),

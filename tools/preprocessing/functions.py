@@ -17,12 +17,11 @@ def condition(value):
     Оканчивается ли число на "1", но не на "11"?
     (value - число в формате строки)
     """
-    if value == '1':
+    if value == '1' or (len(value) > 1 and value[-2] != '1'
+                        and value[-1] == '1'):        
         return True
-    if len(value) > 1 and value[-2] != '1' and value[-1] == '1':
-        return True
-
-    return False
+    else:
+        return False
 
 
 def cardinal(num, casus):
@@ -86,7 +85,7 @@ def cardinal(num, casus):
 def ordinal(num, casus):
     """
     Склонение порядковых числительных.
-    Корректно для чисел менее 1 000 000 000.
+    Корректно для чисел менее 1 000 000.
     (num - число, casus - падеж)
     """
 
@@ -99,10 +98,7 @@ def ordinal(num, casus):
             if num[-2] == '0':
                 if num[-3] == '0':
                     prenum = ''
-                    number = cardinal(num[:-3], r_ca)
-                    if number == 'одного':
-                        number = ''
-                    number += casus[0][0][0][1]
+                    number = cardinal(num[:-3], r_ca) + casus[0][0][0][1]
                 else:
                     if len(num) == 3:
                         prenum = ''
@@ -143,7 +139,6 @@ def ordinal(num, casus):
                     prenum += '_ '
                 dec = 0
         number = casus[int(num[-1])][dec]
-    number = sub(r'одной тысячитысяч| тысячтысяч', 'миллион', number)
     return prenum + number
 
 
@@ -224,12 +219,14 @@ def substant(num, key, cas=0):
                             'тыс.': 'тысячу',
                             'шт.': 'штуку',
                             'атм': 'атмосферу'}[key]
-                elif num in '234' or (len(num) > 1 and num[-2] != '1' and num[-1] in '234'):
+                elif num in '234' or (len(num) > 1 and num[-2] != '1'
+                                      and num[-1] in '234'):
                     form = forms[key][10]
                 else:
                     form = forms[key][1]
             else:
-                if (len(num) > 1 and num[-2] != '1' and num[-1] in '234') or num in '234':
+                if num in '234' or (len(num) > 1 and num[-2] != '1'
+                                    and num[-1] in '234'):
                     form = forms[key][10]
                 elif (len(num) > 1 and num[-2] == '1') or num[-1] != '1':
                     form = forms[key][1]
