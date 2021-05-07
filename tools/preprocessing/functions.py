@@ -294,24 +294,30 @@ def daynight(num, nom):
     Счёт суток.
     (num - число, nom - существительное)
     """
-    number = num
     if nom == 'сутки':
-        if number == '1':
+        if num == '1':
             number = 'одни'
         elif len(num) > 1 and num[-2] != '1' and num[-1] == '1':
             number = num[:-1] + '0_ одни'
+        else:
+            number = ordinal(num, i_mn)
     else:
-        if num == '2':
-            number = 'двое'
-        elif num == '3':
-            number = 'трое'
-        elif num == '4':
-            number = 'четверо'
-        elif len(num) > 1 and num[-2] != '1':
-            if 5 > int(num[-1]) > 0:
-                number = cardinal(num, r_ca)
-                if number[-6:] == 'одного':
-                    number = number[:-3] + 'их'
+        if condition(num):
+            number = cardinal(num, r_ca)[:-3] + 'их'
+        elif num in '234' or (len(num) > 1 and num[-2] != '1'
+            and num[-1] in '234'):
+            if len(num) > 1 and num[-2] != '1':
+                number = num[:-1] + '0_ '
+            else:
+                number = ''
+            if num[-1] == '2':
+                number += 'двое'
+            elif num[-1] == '3':
+                number += 'трое'
+            elif num[-1] == '4':
+                number += 'четверо'
+        else:
+            number = num
     return number
 
 
