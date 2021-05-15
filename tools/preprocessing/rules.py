@@ -1228,6 +1228,8 @@ class CardinalRule_20(RuleBase):
                     number = cardinal(m.group(6), p_ca)[:-1] + 'й'
                 elif m.group(10) == 'сутках':
                     number = cardinal(m.group(6), p_ca)[:-2] + 'их'
+                else:
+                    return None
             else:
                 number = cardinal(m.group(6), p_ca)
             return pre + number + m.group(7)
