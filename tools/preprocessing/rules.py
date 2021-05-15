@@ -1074,10 +1074,10 @@ class CardinalRule_16(RuleBase):
     def __init__(self):
         self.mask = (
             r'(?<![,.])\b((\d+)( [-и] | или )|)'
-            r'(\d*[02-9][234]|[234])(( [а-яё]+[иы]х | )([а-яё]+))\b')
+            r'(\d*[02-9][234]|[234])(( [а-яё]+[иы]х | )([А-Я]?[а-яё]+))\b')
 
     def check(self, m):
-        attr = words.get_attr(m.group(7))
+        attr = words.get_attr(m.group(7).lower())
         a = attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
         b = m.group(7) in ('лет', 'человек')
         c = attr.have([M_GENDER], True, [5])
@@ -1206,7 +1206,7 @@ class CardinalRule_20(RuleBase):
 
     def check(self, m):
         attr = words.get_attr(m.group(10))
-        if attr.have(None, None, [5]) or m.group(10) == 'сутках':
+        if attr.have(None, None, [5], only_case=True) or m.group(10) == 'сутках':
             if m.group(1):
                 if m.group(2):
                     pre = decimal(m.group(2)[:-1], m.group(3), 4)
