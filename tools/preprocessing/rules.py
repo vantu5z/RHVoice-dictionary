@@ -1428,20 +1428,33 @@ class CardinalRule_28(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'(?<![,.])\b(\d*[02-9]1|1) '
-            r'(([а-яё]+[ео]е |)([а-яё]+[ео]))\b')
+            r'(?<![,.])\b((\d+)( [-и] | или )|)(\d+)'
+            r'( ([а-яё]+([ео]е|[иы]х) |)([а-яё]+))\b')
 
     def check(self, m):
-        if words.have(m.group(4), [S_GENDER], False, [0, 3]):
-            if len(m.group(1)) > 1:
-                if int(m.group(1)[:-1]) != 0:
-                    number = m.group(1)[:-1] + '0_ одно'
+        if (words.have(m.group(8), [S_GENDER], False, [0, 1])
+            or words.have(m.group(8), [S_GENDER], True, [1])):
+            if m.group(1):
+                if condition(m.group(2)):
+                    if len(m.group(2)) > 1:
+                        pre = m.group(2)[:-1] + '0 одно'
+                    else:
+                        pre = 'одно'
                 else:
-                    number = m.group(1)[:-1] + '_ одно'
+                    pre = m.group(2)
+                pre += m.group(3)
             else:
-                number = m.group(1)[:-1] + 'одно'
-            return number + ' ' + m.group(2)
-        return None
+                pre = ''
+            if condition(m.group(4)):
+                if len(m.group(4)) > 1:
+                    number = m.group(4)[:-1] + '0 одно'
+                else:
+                    number = 'одно'
+            else:
+                number = m.group(4)
+            return pre + number + m.group(5)
+        else:
+            return None
 
 
 class CardinalRule_29(RuleBase):
