@@ -1548,6 +1548,8 @@ samples_2 = (
    r'[Кк]онец|([Сс]ередин|[Пп]оловин)(а|е|ой|у|ы)|трет[иь]|четверт[иь])'
    r' ([IVX]+) ',
    'm.group(1) + " " + ordinal(roman2arabic(m.group(6)), r_mu) + " "'),
+  (r'\b([Чч]асть )([IVX]+)\b',
+   'm.group(1) + ordinal(roman2arabic(m.group(2)), i_zh)'),
   # Порядковые числительные - даты и т. д.
   (r'\b(\d+)(( (или|[-и]) \d+) сутки)',
    'ordinal(m.group(1), i_mn) + m.group(2)'),
