@@ -1505,8 +1505,8 @@ samples_2 = (
   (r'(Анн|Екатерин|Елизавет)(а|е|ой|у|ы) ([IVX]+)',
    'm.group(1) + m.group(2) + " " + ordinal(roman2arabic(m.group(3)), '
    'zh_pad[m.group(2)])'),
-  (r'\b([IVX]+)( династи(ей|и|ю|я))\b',
-   'ordinal(roman2arabic(m.group(1)), zh_pad[m.group(3)]) + m.group(2)'),
+  (r'\b([IVX]+)( (династи|[Кк]онференци)(ей|и|ю|я))\b',
+   'ordinal(roman2arabic(m.group(1)), zh_pad[m.group(4)]) + m.group(2)'),
   (r'\b([Гг]лав(а|е|ой|у|ы) )([IVXCL]+)\b',
    'm.group(1) + ordinal(roman2arabic(m.group(3)), zh_pad[m.group(2)])'),
   (r'\b([Сс]тать(я|е|ей|ю|и) )([IVXCL]+)\b',
