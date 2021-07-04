@@ -1390,17 +1390,16 @@ class CardinalRule_25(RuleBase):
                     number = number[:-1] + 'ух'
                 elif attr.have([Z_GENDER], False, [1]):
                     number = number[:-1] + 'е'
-
             elif ((number[-3:] == 'три' or number[-3:] == 'ыре')
                 and attr.have([M_GENDER, Z_GENDER], True, [1, 3],
                 all_case=True)):
                 number = number[:-1] + 'ёх'
 
-            elif (len(m.group(7)) > 3
-                and (attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
-                or m.group(11) in ('суток', 'лет'))):
-                pass
-        return m.group(1) + ' ' + pre + number + m.group(8)
+        if (attr.have([M_GENDER, S_GENDER, Z_GENDER], None, [1, 3])
+            or m.group(11) in ('суток', 'лет')):
+            return m.group(1) + ' ' + pre + number + m.group(8)
+        else:
+            return None
 
 
 class CardinalRule_27(RuleBase):
