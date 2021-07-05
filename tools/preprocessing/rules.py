@@ -1336,9 +1336,8 @@ class CardinalRule_25(RuleBase):
             r'(( [а-яё]+([ая]я|[ую]ю|[еиоы]е|[иы][йх]) | )([а-яё]+))\b')
 
     def check(self, m):
-        if m.group(11) == 'сутки':
-            return None
         attr = words.get_attr(m.group(11))
+
         a = attr.have([M_GENDER], False, [3])
         b = attr.have([M_GENDER], False, [0])
         c = a and not b
@@ -1348,58 +1347,96 @@ class CardinalRule_25(RuleBase):
         g = attr.have([S_GENDER], False, [0, 1])
         h = attr.have([S_GENDER], True, [1])
         j = c or attr.have([M_GENDER], True, [1, 3], all_case=True)
-        if m.group(2):
-            if m.group(3):
-                pre = decimal(m.group(3)[:-1], m.group(4), 5)
-            else:
-                pre = cardinal(m.group(4), v_ca)
-                if pre[-3:] == 'дин':
-                    if j:
-                        pre = pre[:-2] + 'ного'
-                    elif f:
-                        pre = pre[:-2] + 'ну'
-                    elif g or h:
-                        pre = pre[:-2] + 'но'
-                elif pre[-3:] == 'два':
-                    if (c or attr.have([M_GENDER, Z_GENDER], True, [1, 3],
-                        all_case=True)):
-                        pre = pre[:-1] + 'ух'
-                    elif f:
-                        pre = pre[:-1] + 'е'
-                elif ((pre[-3:] == 'три' or pre[-3:] == 'ыре') and 
-                    (c or attr.have([M_GENDER, Z_GENDER], True, [1, 3],
-                    all_case=True))):
-                    pre = pre[:-1] + 'ёх'
-            pre += m.group(5) + ' '
-        else:
-            pre = ''
+        i = attr.have([M_GENDER, Z_GENDER], True, [1, 3], all_case=True)
 
         if m.group(6):
-            number = decimal(m.group(6)[:-1], m.group(7), 5)
+            if (attr.have([M_GENDER, S_GENDER, Z_GENDER], None, [1])
+                or m.group(11) in ('суток', 'лет')):
+                number = decimal(m.group(6)[:-1], m.group(7), 5)
+            else:
+                return None
         else:
             number = cardinal(m.group(7), v_ca)
-            if number[-3:] == 'дин':
-                if c:
+            if attr.have([M_GENDER], False, [0, 3], all_case=True):
+                pass
+            elif number[-3:] == 'дин':
+                if m.group(11) in ('сутки', 'брюки', 'ножницы'):
+                    number = number[:-2] + 'ни'
+                elif c:
                     number = number[:-2] + 'ного'
                 elif attr.have([Z_GENDER], False, [3]):
                     number = number[:-2] + 'ну'
                 elif attr.have([S_GENDER], False, [0, 3]):
                     number = number[:-2] + 'но'
             elif number[-3:] == 'два':
-                if attr.have([M_GENDER, Z_GENDER], True, [1]):
+                if m.group(11) in ('суток', 'брюк', 'ножниц'):
+                    number = number[:-1] + 'ое'
+                elif attr.have([M_GENDER, Z_GENDER], True, [1]):
                     number = number[:-1] + 'ух'
                 elif attr.have([Z_GENDER], False, [1]):
                     number = number[:-1] + 'е'
-            elif ((number[-3:] == 'три' or number[-3:] == 'ыре')
-                and attr.have([M_GENDER, Z_GENDER], True, [1, 3],
-                all_case=True)):
-                number = number[:-1] + 'ёх'
-
-        if (attr.have([M_GENDER, S_GENDER, Z_GENDER], None, [1, 3])
-            or m.group(11) in ('суток', 'лет')):
-            return m.group(1) + ' ' + pre + number + m.group(8)
+            elif number[-3:] == 'три':
+                if m.group(11) in ('суток', 'брюк', 'ножниц'):
+                    number = number[:-1] + 'ое'
+                elif i:
+                    number = number[:-1] + 'ёх'
+                else:
+                    pass
+            elif number[-3:] == 'ыре':
+                if m.group(11) in ('суток', 'брюк', 'ножниц'):
+                    number = number[:-3] + 'веро'
+                elif i:
+                    number = number[:-1] + 'ёх'
+                else:
+                    pass
+            elif (attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
+                  or m.group(11) in ('суток', 'лет')):
+                pass
+            else:
+                return None
+        if m.group(2):
+            if m.group(3):
+                pre = decimal(m.group(3)[:-1], m.group(4), 5)
+            else:
+                pre = cardinal(m.group(4), v_ca)
+                if pre[-3:] == 'дин':
+                    if m.group(11) in ('сутки', 'суток', 'брюки', 'брюк',
+                                       'ножницы', 'ножниц'):
+                        pre = pre[:-2] + 'ни'
+                    elif j:
+                        pre = pre[:-2] + 'ного'
+                    elif f:
+                        pre = pre[:-2] + 'ну'
+                    elif g or h:
+                        pre = pre[:-2] + 'но'
+                elif pre[-3:] == 'два':
+                    if m.group(11) in ('сутки', 'суток', 'брюки', 'брюк',
+                                       'ножницы', 'ножниц'):
+                        pre = pre[:-1] + 'ое'
+                    elif (c or attr.have([M_GENDER, Z_GENDER], True, [1, 3],
+                          all_case=True)):
+                        print('>')
+                        pre = pre[:-1] + 'ух'
+                    elif f:
+                        pre = pre[:-1] + 'е'
+                elif pre[-3:] == 'три':
+                    if m.group(11) in ('сутки', 'суток', 'брюки', 'брюк',
+                                       'ножницы', 'ножниц'):
+                        pre = pre[:-1] + 'ое'
+                    elif (c or attr.have([M_GENDER, Z_GENDER], True, [1, 3],
+                          all_case=True)):
+                        pre = pre[:-1] + 'ёх'
+                elif pre[-3:] == 'ыре':
+                    if m.group(11) in ('сутки', 'суток', 'брюки', 'брюк',
+                                       'ножницы', 'ножниц'):
+                        pre = pre[:-3] + 'веро'
+                    elif (c or attr.have([M_GENDER, Z_GENDER], True, [1, 3],
+                          all_case=True)):
+                        pre = pre[:-1] + 'ёх'
+            pre += m.group(5) + ' '
         else:
-            return None
+            pre = ''
+        return m.group(1) + ' ' + pre + number + m.group(8)
 
 
 class CardinalRule_27(RuleBase):
