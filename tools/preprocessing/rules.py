@@ -1415,7 +1415,6 @@ class CardinalRule_25(RuleBase):
                         pre = pre[:-1] + 'ое'
                     elif (c or attr.have([M_GENDER, Z_GENDER], True, [1, 3],
                           all_case=True)):
-                        print('>')
                         pre = pre[:-1] + 'ух'
                     elif f:
                         pre = pre[:-1] + 'е'
