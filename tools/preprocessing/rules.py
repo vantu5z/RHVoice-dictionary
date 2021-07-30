@@ -1599,7 +1599,6 @@ class CardinalRule_35(RuleBase):
     def check(self, m):
         if condition(m.group(2)) or condition(m.group(3)):
             new = m.group(1) + decimal(m.group(2), m.group(3), 2)
-            new = sub('ым', 'ых', new)
             return new
         else:
             return None
