@@ -8,12 +8,7 @@ from re import finditer, sub
 from .templates import (units, zh_units,
                         forms,
                         pre_acc, pre_units,
-                        i_mu, i_sr, i_zh, i_mn,
-                        r_ca, r_mn, r_mu, r_sr, r_zh,
-                        d_ca, d_mn, d_mu, d_sr, d_zh,
-                        v_ca, v_zh,
-                        t_ca, t_mn, t_mu, t_sr, t_zh,
-                        p_ca, p_mn, p_mu, p_sr, p_zh,
+                        r_ca, d_ca, v_ca, t_ca, p_ca,
                         adj_pad, mn_pad, mu_pad, sr_pad, zh_pad)
 from .functions import (condition, cardinal, ordinal, roman2arabic, replace,
                         substant, feminin, daynight, decimal)
@@ -543,23 +538,23 @@ class RomanRule(RuleBase):
         else:
             ending = m.group(7)
         if ending == 'а':
-            num1 = ordinal(roman2arabic(m.group(1)), i_mu)
-            num2 = ordinal(roman2arabic(m.group(3)), i_mu)
+            num1 = ordinal(roman2arabic(m.group(1)), 'i_mu')
+            num2 = ordinal(roman2arabic(m.group(3)), 'i_mu')
         elif ending == 'я':
-            num1 = ordinal(roman2arabic(m.group(1)), i_sr)
-            num2 = ordinal(roman2arabic(m.group(3)), i_sr)
+            num1 = ordinal(roman2arabic(m.group(1)), 'i_sr')
+            num2 = ordinal(roman2arabic(m.group(3)), 'i_sr')
         elif ending == 'ов' or ending == 'й':
-            num1 = ordinal(roman2arabic(m.group(1)), r_mu)
-            num2 = ordinal(roman2arabic(m.group(3)), r_mu)
+            num1 = ordinal(roman2arabic(m.group(1)), 'r_mu')
+            num2 = ordinal(roman2arabic(m.group(3)), 'r_mu')
         elif ending == 'ам' or ending == 'ям':
-            num1 = ordinal(roman2arabic(m.group(1)), d_mu)
-            num2 = ordinal(roman2arabic(m.group(3)), d_mu)
+            num1 = ordinal(roman2arabic(m.group(1)), 'd_mu')
+            num2 = ordinal(roman2arabic(m.group(3)), 'd_mu')
         elif ending == 'ами' or ending == 'ями':
-            num1 = ordinal(roman2arabic(m.group(1)), t_mu)
-            num2 = ordinal(roman2arabic(m.group(3)), t_mu)
+            num1 = ordinal(roman2arabic(m.group(1)), 't_mu')
+            num2 = ordinal(roman2arabic(m.group(3)), 't_mu')
         else:
-            num1 = ordinal(roman2arabic(m.group(1)), p_mu)
-            num2 = ordinal(roman2arabic(m.group(3)), p_mu)
+            num1 = ordinal(roman2arabic(m.group(1)), 'p_mu')
+            num2 = ordinal(roman2arabic(m.group(3)), 'p_mu')
         return num1 + m.group(2) + num2 + m.group(4)
 
 
@@ -577,14 +572,14 @@ class OrdinalRule_1(RuleBase):
         attr = words.get_attr(m.group(5))
         number = ''
         if attr.have([S_GENDER, M_GENDER], False, [5]):
-            number = ordinal(m.group(2), p_mu)
+            number = ordinal(m.group(2), 'p_mu')
         elif attr.have([Z_GENDER], False, [2, 5]):
             if len(m.group(2)) == 1 or m.group(2)[-2] != '1':
                 a = m.group(2)[-1] not in ('2', '3', '4')
                 b = m.group(1).lower() not in ('в', 'на')
                 c = attr.have([Z_GENDER], False, [1])
                 if a or b or not c:
-                    number = ordinal(m.group(2), p_zh)
+                    number = ordinal(m.group(2), 'p_zh')
         if number:
             return m.group(1) + ' ' + number + m.group(3)
         return None
@@ -605,9 +600,9 @@ class OrdinalRule_2(RuleBase):
             number = ''
             attr = words.get_attr(m.group(3))
             if attr.have([M_GENDER, S_GENDER], False, [1]):
-                number = ordinal(m.group(2), r_mu)
+                number = ordinal(m.group(2), 'r_mu')
             elif attr.have([Z_GENDER], False, [1]):
-                number = ordinal(m.group(2), r_zh)
+                number = ordinal(m.group(2), 'r_zh')
             if number:
                 return m.group(1) + ' ' + number + ' ' + m.group(3)
         else:
@@ -626,9 +621,9 @@ class OrdinalRule_3(RuleBase):
         number = ''
         attr = words.get_attr(m.group(3))
         if attr.have([M_GENDER, S_GENDER], False, [4]):
-            number = ordinal(m.group(2), t_mu)
+            number = ordinal(m.group(2), 't_mu')
         elif attr.have([Z_GENDER], False, [2, 4, 5]):
-            number = ordinal(m.group(2), t_zh)
+            number = ordinal(m.group(2), 't_zh')
         if number:
             return m.group(1) + number + ' ' + m.group(3)
         return None
@@ -647,8 +642,8 @@ class OrdinalRule_35(RuleBase):
     def check(self, m):
         attr = words.get_attr(m.group(8))
         if attr.have([Z_GENDER], None, [5]):
-            new = m.group(1) + ' ' + ordinal(m.group(2), p_zh) + m.group(3)
-            new += ordinal(m.group(4), p_zh) + m.group(5)
+            new = m.group(1) + ' ' + ordinal(m.group(2), 'p_zh') + m.group(3)
+            new += ordinal(m.group(4), 'p_zh') + m.group(5)
             return new
         return None
 
@@ -667,10 +662,10 @@ class OrdinalRule_36(RuleBase):
         attr = words.get_attr(m.group(8))
         if attr.have([Z_GENDER], True, [1, 2, 4, 5]):
             if m.group(1):
-                new = ordinal(m.group(2), r_zh) + ', '
+                new = ordinal(m.group(2), 'r_zh') + ', '
             else:
                 new = ''
-            new += ordinal(m.group(3), r_zh) + ' и ' + ordinal(m.group(4), r_zh)
+            new += ordinal(m.group(3), 'r_zh') + ' и ' + ordinal(m.group(4), 'r_zh')
             return new + m.group(5) + m.group(8)
         else:
             return None
@@ -688,8 +683,8 @@ class OrdinalRule_37(RuleBase):
     def check(self, m):
         attr = words.get_attr(m.group(7))
         if attr.have([M_GENDER], None, [0]):
-            new = ordinal(m.group(1), i_mu) + m.group(2)
-            new += ordinal(m.group(3), i_mu) + m.group(4)
+            new = ordinal(m.group(1), 'i_mu') + m.group(2)
+            new += ordinal(m.group(3), 'i_mu') + m.group(4)
             return new
         return None
 
@@ -706,8 +701,8 @@ class OrdinalRule_38(RuleBase):
     def check(self, m):
         attr = words.get_attr(m.group(7))
         if attr.have([S_GENDER], None, [0, 3], only_case=True):
-            new = ordinal(m.group(1), i_sr) + m.group(2)
-            new += ordinal(m.group(3), i_sr) + m.group(4)
+            new = ordinal(m.group(1), 'i_sr') + m.group(2)
+            new += ordinal(m.group(3), 'i_sr') + m.group(4)
             return new
         return None
 
@@ -731,12 +726,12 @@ class OrdinalRule_39(RuleBase):
             and not m.group(2) in ('грамм', 'кельвин', 'килограмм',
                                    'миллиграмм', 'мах','парсек', 'килопарсек',
                                    'мегапарсек', 'человек')):
-            number = ordinal(m.group(1), i_mu)
+            number = ordinal(m.group(1), 'i_mu')
         if attr.have([S_GENDER], False, [0]):
-            number = ordinal(m.group(1), i_sr)
+            number = ordinal(m.group(1), 'i_sr')
         if (attr.have([Z_GENDER], False, [0]) and not attr.have(case=[3])
             and m.group(2) != 'полка'):
-            number = ordinal(m.group(1), i_zh)
+            number = ordinal(m.group(1), 'i_zh')
         if number:
             return number + ' ' + m.group(2)
         return None
@@ -760,16 +755,16 @@ class OrdinalRule_4(RuleBase):
         attr = words.get_attr(m.group(7).lower())
         if m.group(2) == 'м':
             if attr.have([M_GENDER, S_GENDER], False, [4]):
-                number = ordinal(m.group(1), t_mu)
+                number = ordinal(m.group(1), 't_mu')
             elif (attr.have([M_GENDER, S_GENDER], False, [5])
                   or m.group(7) in ('берегу', 'бою', 'году', 'лесу', 'полку',
                                     'пруду', 'саду', 'углу', 'шкафу')):
-                number = ordinal(m.group(1), p_mu)
+                number = ordinal(m.group(1), 'p_mu')
         else:
             if attr.have([M_GENDER], False, [0]):
-                number = ordinal(m.group(1), i_mu)
+                number = ordinal(m.group(1), 'i_mu')
             elif attr.have([Z_GENDER], False, [1, 2, 4, 5]):
-                number = ordinal(m.group(1), t_zh)
+                number = ordinal(m.group(1), 't_zh')
         if number:
             return number + ' ' + m.group(3)
         return None
@@ -785,7 +780,7 @@ class OrdinalRule_6(RuleBase):
 
     def check(self, m):
         if words.have(m.group(4).lower(), [S_GENDER], False, [0, 3]):
-            return ordinal(m.group(1), i_sr) + ' ' + m.group(2)
+            return ordinal(m.group(1), 'i_sr') + ' ' + m.group(2)
         return None
 
 
@@ -801,9 +796,9 @@ class OrdinalRule_8(RuleBase):
         attr = words.get_attr(m.group(2))
         if attr.have([Z_GENDER], False, [3]) and not attr.have(case=[0]):
             if m.group(1)[-1] == '3':
-                new = ordinal(m.group(1), r_mu)[:-3] + 'ю '
+                new = ordinal(m.group(1), 'r_mu')[:-3] + 'ю '
             else:
-                new = ordinal(m.group(1), r_mu)[:-3] + 'ую '
+                new = ordinal(m.group(1), 'r_mu')[:-3] + 'ую '
             new += m.group(2)
             return new
         return None
@@ -822,9 +817,9 @@ class OrdinalRule_9(RuleBase):
         number = ''
         attr = words.get_attr(m.group(3).lower())
         if attr.have([M_GENDER, S_GENDER], False, [1]):
-            number = ordinal(m.group(2), r_mu)
+            number = ordinal(m.group(2), 'r_mu')
         if attr.have([Z_GENDER], False, [1]):
-            number = ordinal(m.group(2), r_zh)
+            number = ordinal(m.group(2), 'r_zh')
         if number:
             return m.group(1) + number + ' ' + m.group(3)
         else:
@@ -844,10 +839,10 @@ class OrdinalRule_5(RuleBase):
         number = ''
         attr = words.get_attr(m.group(3))
         if attr.have([M_GENDER, S_GENDER], False, [2]):
-            number = ordinal(m.group(2), d_mu)
+            number = ordinal(m.group(2), 'd_mu')
         if (attr.have([Z_GENDER], False, [2])
             and not attr.have([Z_GENDER], False, [1, 5], all_case=True)):
-            number = ordinal(m.group(2), d_zh)
+            number = ordinal(m.group(2), 'd_zh')
         if number:
             return m.group(1) + number + ' ' + m.group(3)
         else:
@@ -1664,7 +1659,7 @@ class OrdinalRule_40(RuleBase):
     def check(self, m):
         attr = words.get_attr(m.group(5))
         if attr.have(None, False, [2]):
-            new = ordinal(m.group(2), d_mu)
+            new = ordinal(m.group(2), 'd_mu')
             if attr.have([Z_GENDER], False, [2]):
                 new = new[:-2] + 'й'
             return m.group(1) + new + m.group(3) + m.group(5)

@@ -85,65 +85,104 @@ def cardinal(num, casus):
 def ordinal(num, casus):
     """
     Склонение порядковых числительных.
-    Корректно для чисел менее 1 000 000 000.
+    Корректно для чисел менее 1 000 000.
     (num - число, casus - падеж)
     """
 
-    for char in num:
-        if char not in '0123456789':
-            return num
-
-    if num[-1] == '0':
-        try:
-            if num[-2] == '0':
-                if num[-3] == '0':
-                    prenum = ''
-                    number = cardinal(num[:-3], r_ca)
-                    if number == 'одного':
-                        number = ''
-                    number += casus[0][0][0][1]
-                else:
-                    if len(num) == 3:
-                        prenum = ''
-                    else:
-                        prenum = num[:-3]
-                        if int(prenum) != 0:
-                            prenum += '000_ '
-                    number = casus[0][0][int(num[-3])]
-            else:
-                if len(num) == 2:
-                    prenum = ''
-                else:
-                    prenum = num[:-2]
-                    if int(prenum) != 0:
-                        prenum += '00_ '
-                number = casus[0][int(num[-2])]
-        except:
-            prenum = ''
-            number = casus[0][0][0][0]
+    if len(num) == 1:
+        number = ordinal_d[num]
     else:
-        if len(num) == 1:
-            prenum = ''
-            dec = 0
+        if num[-3:] == '000':
+            number = cardinal(num[:-3], r_ca)
+            if number == 'одного':
+                number = ''
+            elif number == 'ста':
+                number = 'сто'
+            number += 'тысячный'
         else:
-            if num[-2] == '1':
-                dec = 1
-                if len(num) == 2:
-                    prenum = ''
-                else:
-                    prenum = num[:-2]
-                    if int(prenum) != 0:
-                        prenum += '00_ '
+            if num[-2:] == '00':
+                prenum = num[:-3]
+                if prenum != '':
+                    prenum += '000_ '
+                number = cardinal(num[-3], r_ca)
+                if number == 'одного':
+                    number = ''
+                number += prenum + 'сотый'
             else:
-                prenum = num[:-1]
-                if int(prenum) != 0:
-                    prenum += '0_ '
+                if num[-1] == '0' or num[-2] == '1':
+                    number = num[:-2]
+                    if number != '':
+                        number += '00_ '
+                    number += ordinal_d[num[-2:]]
                 else:
-                    prenum += '_ '
-                dec = 0
-        number = casus[int(num[-1])][dec]
-    number = sub(r'одной тысячитысяч| тысячтысяч', 'миллион', number)
-    return prenum + number
+                    number = num[:-1] + '0_ ' + ordinal_d[num[-1]]
+
+    if casus == 'i_sr':
+        if number[-2:] == 'ий':
+            number = number[:-2] + 'ье'
+        else:
+            number = number[:-2] + 'ое'
+    elif casus == 'i_zh':
+        if number[-2:] == 'ий':
+            number = number[:-2] + 'ья'
+        else:
+            number = number[:-2] + 'ая'
+    elif casus == 'i_mn':
+        if number[-2:] == 'ий':
+            number = number[:-2] + 'ьи'
+        else:
+            number = number[:-2] + 'ые'
+    elif casus == 'r_mu' or casus == 'r_sr':
+        if number[-2:] == 'ий':
+            number = number[:-2] + 'ьего'
+        else:
+            number = number[:-2] + 'ого'
+    elif casus in ('r_zh', 'd_zh', 't_zh', 'p_zh'):
+        if number[-2:] == 'ий':
+            number = number[:-2] + 'ьей'
+        else:
+            number = number[:-2] + 'ой'
+    elif casus == 'r_mn':
+        if number[-2:] == 'ий':
+            number = number[:-2] + 'ьих'
+        else:
+            number = number[:-2] + 'ых'
+    elif casus == 'd_mu' or casus == 'd_sr':
+        if number[-2:] == 'ий':
+            number = number[:-2] + 'ьему'
+        else:
+            number = number[:-2] + 'ому'
+    elif casus == 'd_mn':
+        if number[-2:] == 'ий':
+            number = number[:-2] + 'ьим'
+        else:
+            number = number[:-2] + 'ым'
+    elif casus == 'v_zh':
+        if number[-2:] == 'ий':
+            number = number[:-2] + 'ью'
+        else:
+            number = number[:-2] + 'ую'
+    elif casus == 't_mu'or casus == 't_sr':
+        if number[-2:] == 'ий':
+            number = number[:-2] + 'ьим'
+        else:
+            number = number[:-2] + 'ым'
+    elif casus == 't_mn':
+        if number[-2:] == 'ий':
+            number = number[:-2] + 'ьими'
+        else:
+            number = number[:-2] + 'ыми'
+    elif casus == 'p_mu'or casus == 'p_sr':
+        if number[-2:] == 'ий':
+            number = number[:-2] + 'ьем'
+        else:
+            number = number[:-2] + 'ом'
+    elif casus == 'p_mn':
+        if number[-2:] == 'ий':
+            number = number[:-2] + 'ьих'
+        else:
+            number = number[:-2] + 'ых'
+    return number
 
 
 values = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
@@ -345,6 +384,16 @@ def decimal(full, frac, cas=0):
             dp = 'ая'
         else:
             dp = 'ых'
+#            if d_part[-1] == 'е':
+#                dp = 'ые'
+#            else:
+#                if d_part[-1] in ('3', '4'):
+#                    if len(d_part) == 1 or d_part[-2] != '1':
+#                        dp = 'ые'
+#                    else:
+#                        dp = 'ых'
+#                else:
+#                    dp = 'ых'
     elif cas == 1:
         f_part = cardinal(full, r_ca)
         if condition(full):
