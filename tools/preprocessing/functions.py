@@ -86,7 +86,7 @@ def ordinal(num, casus):
     """
     Склонение порядковых числительных.
     Корректно для чисел менее 1 000 000.
-    (num - число, casus - падеж)
+    (num - число, casus - падеж_род/мн.ч.)
     """
 
     if len(num) == 1:
@@ -117,71 +117,12 @@ def ordinal(num, casus):
                 else:
                     number = num[:-1] + '0_ ' + ordinal_d[num[-1]]
 
-    if casus == 'i_sr':
-        if number[-2:] == 'ий':
-            number = number[:-2] + 'ье'
-        else:
-            number = number[:-2] + 'ое'
-    elif casus == 'i_zh':
-        if number[-2:] == 'ий':
-            number = number[:-2] + 'ья'
-        else:
-            number = number[:-2] + 'ая'
-    elif casus == 'i_mn':
-        if number[-2:] == 'ий':
-            number = number[:-2] + 'ьи'
-        else:
-            number = number[:-2] + 'ые'
-    elif casus == 'r_mu' or casus == 'r_sr':
-        if number[-2:] == 'ий':
-            number = number[:-2] + 'ьего'
-        else:
-            number = number[:-2] + 'ого'
-    elif casus in ('r_zh', 'd_zh', 't_zh', 'p_zh'):
-        if number[-2:] == 'ий':
-            number = number[:-2] + 'ьей'
-        else:
-            number = number[:-2] + 'ой'
-    elif casus == 'r_mn':
-        if number[-2:] == 'ий':
-            number = number[:-2] + 'ьих'
-        else:
-            number = number[:-2] + 'ых'
-    elif casus == 'd_mu' or casus == 'd_sr':
-        if number[-2:] == 'ий':
-            number = number[:-2] + 'ьему'
-        else:
-            number = number[:-2] + 'ому'
-    elif casus == 'd_mn':
-        if number[-2:] == 'ий':
-            number = number[:-2] + 'ьим'
-        else:
-            number = number[:-2] + 'ым'
-    elif casus == 'v_zh':
-        if number[-2:] == 'ий':
-            number = number[:-2] + 'ью'
-        else:
-            number = number[:-2] + 'ую'
-    elif casus == 't_mu'or casus == 't_sr':
-        if number[-2:] == 'ий':
-            number = number[:-2] + 'ьим'
-        else:
-            number = number[:-2] + 'ым'
-    elif casus == 't_mn':
-        if number[-2:] == 'ий':
-            number = number[:-2] + 'ьими'
-        else:
-            number = number[:-2] + 'ыми'
-    elif casus == 'p_mu'or casus == 'p_sr':
-        if number[-2:] == 'ий':
-            number = number[:-2] + 'ьем'
-        else:
-            number = number[:-2] + 'ом'
-    elif casus == 'p_mn':
-        if number[-2:] == 'ий':
-            number = number[:-2] + 'ьих'
-        else:
-            number = number[:-2] + 'ых'
+    if casus == 'i_mu':
+        pass
+    elif number[-2:] == 'ий':
+        number = number[:-2] + ordinal_d[casus][0]
+    else:
+        number = number[:-2] + ordinal_d[casus][1]
     return number
 
 
