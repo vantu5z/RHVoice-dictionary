@@ -89,6 +89,11 @@ def ordinal(num, casus):
     (num - число, casus - падеж_род/мн.ч.)
     """
 
+    nil = 0
+    while num[0] == '0' and len(num) > 1:
+        nil +=1
+        num = num[1:]
+
     if len(num) == 1:
         number = ordinal_d[num]
     else:
@@ -123,7 +128,7 @@ def ordinal(num, casus):
         number = number[:-2] + ordinal_d[casus][0]
     else:
         number = number[:-2] + ordinal_d[casus][1]
-    return number
+    return '0 ' * nil + number
 
 
 values = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
