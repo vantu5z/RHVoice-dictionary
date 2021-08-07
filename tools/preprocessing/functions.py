@@ -91,7 +91,7 @@ def ordinal(num, casus):
 
     nil = 0
     while num[0] == '0' and len(num) > 1:
-        nil +=1
+        nil += 1
         num = num[1:]
 
     if len(num) == 1:
