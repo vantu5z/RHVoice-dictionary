@@ -104,7 +104,8 @@ class UnitRule_2(RuleBase):
 
     def check(self, m):
         preacc = sub('ё', 'е', m.group(1).lower())
-        if preacc in pre_acc and m.group(9) in pre_units:
+        if preacc in pre_acc and (m.group(9) in pre_units or m.group(9) in
+                                                  ('тыс.', 'млн', 'млрд')):
             new = m.group(1) + m.group(2) + ' '
             if m.group(7):
                 new += forms[m.group(9)][2]
@@ -965,7 +966,8 @@ class CardinalRule_13(RuleBase):
             r'[Нн]а протяжении|[Нн]е превы[сш][аи][авеийолтшщюья]{1,4}'
             r')'
             r'( приблизительно | примерно | почти | более чем | менее чем '
-            r'| плюс | минус | максимум | минимум | следующих | )'
+            r'| плюс | минус | максимум | минимум | следующих '
+            r'| первых | последних | )'
             r'((\d+,|)(\d+)( - | или )|)(\d+,|)(\d+)'
             r'( ([а-яё]+([иы]х|[ео]й|[ео]го) |и более |и менее |)'
             r'([а-яё]{3,})|(?!-))\b')
