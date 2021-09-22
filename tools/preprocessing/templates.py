@@ -1023,12 +1023,10 @@ samples_2 = (
    'ordinal(roman2arabic(m.group(1)), mu_pad[m.group(4)]) + m.group(2)'),
   (r'\b([IVX]+)( ((зим|лет)н(ей|юю|яя) |)Олимпиад(а|е|у|ы|ой))\b',
    'ordinal(roman2arabic(m.group(1)), zh_pad[m.group(6)]) + m.group(2)'),
-  (r'([A-Z][a-z]*[ -.]|[А-Я][а-я]*[ -.])([IVX]+)($|\n|[.,;:!?)]| [^a-z])',
-   'm.group(1) + roman2arabic(m.group(2)) + "_" + m.group(3)'), # в названиях
   (r'(?<![-.])\b([IVX]+)( [А-Я]?[а-яё]+([иы]([ейх]|ми?)|'
    r'[ая]я|[ео](му?|го|[ей])|[ую]ю) ([А-Я]?[а-я]+))\b',
    'ordinal(roman2arabic(m.group(1)), adj_pad[m.group(3)]) + m.group(2)'),
-  (r'\b([Вв] )([IVX]+)( - (начале|середине|конце|'
+  (r'\b([Вв]о? )([IVX]+)( - (начале|середине|конце|'
    r'(первой|второй|третьей|последней) (половине|трети|четверти)))\b',
    'm.group(1) + ordinal(roman2arabic(m.group(2)), "p_mu") + m.group(3)'),
   (r'\b([Дд]о|[Нн]е позднее|[Нн]е ранее|[Оо]коло|[Пп]осле|[Нн]ачиная с|'
@@ -1038,6 +1036,8 @@ samples_2 = (
    'm.group(1) + " " + ordinal(roman2arabic(m.group(6)), "r_mu") + " "'),
   (r'\b([Чч]асть )([IVX]+)\b',
    'm.group(1) + ordinal(roman2arabic(m.group(2)), "i_zh")'),
+  (r'([A-Z][a-z]*[ -.]|[А-Я][а-я]*[ -.])([IVX]+)($|\n|[.,;:!?)]| [^a-z])',
+   'm.group(1) + roman2arabic(m.group(2)) + "_" + m.group(3)'), # в названиях
   # Порядковые числительные - даты и т. д.
   (r'\b(\d+)(( (или|[-и]) \d+) сутки)',
    'ordinal(m.group(1), "i_mn") + m.group(2)'),
