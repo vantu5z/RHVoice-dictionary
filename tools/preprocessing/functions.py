@@ -112,7 +112,7 @@ def ordinal(num, casus):
                 number = cardinal(num[-3], r_ca)
                 if number == 'одного':
                     number = ''
-                number += prenum + 'сотый'
+                number = prenum + number + 'сотый'
             else:
                 if num[-1] == '0' or num[-2] == '1':
                     number = num[:-2]
