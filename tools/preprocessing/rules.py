@@ -104,7 +104,8 @@ class UnitRule_2(RuleBase):
 
     def check(self, m):
         preacc = sub('ё', 'е', m.group(1).lower())
-        if preacc in pre_acc and m.group(9) in pre_units:
+        if preacc in pre_acc and (m.group(9) in pre_units or m.group(9) in
+                                                  ('тыс.', 'млн', 'млрд')):
             new = m.group(1) + m.group(2) + ' '
             if m.group(7):
                 new += forms[m.group(9)][2]
