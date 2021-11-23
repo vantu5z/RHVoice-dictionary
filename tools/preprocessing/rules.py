@@ -104,8 +104,7 @@ class UnitRule_2(RuleBase):
 
     def check(self, m):
         preacc = sub('ё', 'е', m.group(1).lower())
-        if preacc in pre_acc and (m.group(9) in pre_units or m.group(9) in
-                                                  ('тыс.', 'млн', 'млрд')):
+        if preacc in pre_acc and m.group(9) in pre_units:
             new = m.group(1) + m.group(2) + ' '
             if m.group(7):
                 new += forms[m.group(9)][2]
@@ -717,7 +716,7 @@ class OrdinalRule_39(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'(?<![,.])\b(\d*[02-9][02-9]|\d*1\d|[2-9]) ([а-яё]+)\b')
+            r'(?<![,.])\b(\d*[02-9][02-9]|\d*1\d|[2-9]) ([а-яё]+)(?!-)\b')
 
     def check(self, m):
         number = ''
@@ -747,13 +746,11 @@ class OrdinalRule_4(RuleBase):
     Пример: "на 8-м этаже -> на восьмом этаже"
     """
     def __init__(self):
-        self.mask = (r'\b(\d+)-(м|й) (([А-Я]?[а-яё]+(-[а-яё]+|)+'
-                     r'[б-джзк-нп-тфхцчшщ]'
-                     r'([ео][йм]|[иы]м) ){,2}([А-Я]?[а-яё]+))\b')
+        self.mask = (r'\b(\d+)-(м|й) ([А-Я]?[а-яё]+)\b')
 
     def check(self, m):
         number = ''
-        attr = words.get_attr(m.group(7).lower())
+        attr = words.get_attr(m.group(3).lower())
         if m.group(2) == 'м':
             if attr.have([M_GENDER, S_GENDER], False, [4]):
                 number = ordinal(m.group(1), 't_mu')
