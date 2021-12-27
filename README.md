@@ -25,7 +25,7 @@ RHVoice-dictionary
     * Ведётся разработка предварительной обработки текста на Питоне "[/tools/preprocessing](https://github.com/vantu5z/RHVoice-dictionary/tree/master/tools/preprocessing)".
 
 * ### Скрипты на Питоне
-    * Вспомогательые скрипты.
+    * Вспомогательные скрипты.
     * Воспроизведение с помощью `rhvoice_say`.
     * GUI для настройки `rhvoice_config`.
 

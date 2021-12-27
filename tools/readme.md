@@ -2,10 +2,10 @@
 
 ## Описание
 
-Вспомогательные иструменты разделены на несколько частей:
+Вспомогательные инструменты разделены на несколько частей:
 
 * Предварительная обработка текста "[/tools/preprocessing](https://github.com/vantu5z/RHVoice-dictionary/tree/master/tools/preprocessing)"
-* Вспомогательые скрипты.
+* Вспомогательные скрипты.
 * Воспроизведение с помощью `rhvoice_say`.
 * GUI для настройки `rhvoice_config`.
 
@@ -28,7 +28,7 @@ cp -R build/usr/bin ~/.local
     from rhvoice_tools import rhvoice_say
     rhvoice_say(text)
 ```
-* Для воспроизвдения из терминала:
+* Для воспроизведения из терминала:
 ```
     rhvoice_say "текст для чтения"
     rhvoice_say -c
