@@ -1362,6 +1362,8 @@ class CardinalRule_25(RuleBase):
                     number = number[:-2] + 'ну'
                 elif attr.have([S_GENDER], False, [0, 3]):
                     number = number[:-2] + 'но'
+                else:
+                    return None
             elif number[-3:] == 'два':
                 if m.group(11) in ('суток', 'брюк', 'ножниц'):
                     number = number[:-1] + 'ое'
