@@ -1770,7 +1770,7 @@ class CardinalRule_41(RuleBase):
     """
     def __init__(self):
         self.mask = (r'\b([а-я]+ш(ими?|их|его|ем|им|ей|ую)ся (минус |плюс |))'
-                     r'(\d+,|)(\d+)\b')
+                     r'(\d+,|)(\d+)\b(?!-)')
 
     def check(self, m):
         if m.group(2) == 'их':
