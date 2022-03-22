@@ -1366,6 +1366,8 @@ class CardinalRule_25(RuleBase):
             elif number[-3:] == 'два':
                 if m.group(11) in ('суток', 'брюк', 'ножниц'):
                     number = number[:-1] + 'ое'
+                elif m.group(11) in ('сутки', 'брюки', 'ножницы'):
+                    return None
                 elif attr.have([M_GENDER, Z_GENDER], True, [1]):
                     number = number[:-1] + 'ух'
                 elif attr.have([Z_GENDER], False, [1]):
@@ -1375,6 +1377,8 @@ class CardinalRule_25(RuleBase):
                     number = number[:-1] + 'ое'
                 elif i:
                     number = number[:-1] + 'ёх'
+                elif m.group(11) in ('сутки', 'брюки', 'ножницы'):
+                    return None
                 else:
                     pass
             elif number[-3:] == 'ыре':
@@ -1382,6 +1386,8 @@ class CardinalRule_25(RuleBase):
                     number = number[:-3] + 'веро'
                 elif i:
                     number = number[:-1] + 'ёх'
+                elif m.group(11) in ('сутки', 'брюки', 'ножницы'):
+                    return None
                 else:
                     pass
             elif (attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
