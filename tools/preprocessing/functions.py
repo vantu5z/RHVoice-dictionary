@@ -285,7 +285,7 @@ def daynight(num, nom):
         elif len(num) > 1 and num[-2] != '1' and num[-1] == '1':
             number = num[:-1] + '0_ одни'
         else:
-            number = ordinal(num, i_mn)
+            number = ordinal(num, "i_mn")
     else:
         if condition(num):
             number = cardinal(num, r_ca)[:-3] + 'их'
