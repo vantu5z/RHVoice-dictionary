@@ -1889,6 +1889,6 @@ rules_list = (UnitRule_1(),         # винительный
               CardinalRule_10(),
               CardinalRule_31(),
               CardinalRule_35(),
-              CardinalRule_41(),
+#              CardinalRule_41(),   (Ложное срабатывание правила)
               Rule_1(),
              )
