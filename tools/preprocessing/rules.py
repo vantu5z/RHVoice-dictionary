@@ -1768,61 +1768,6 @@ class CardinalRule_40(RuleBase):
             return None
 
 
-class CardinalRule_41(RuleBase):
-    """
-    Описание: Количественные числительные после возвратных причастий
-              в косвенных падежах.
-    Пример: "планировавшихся 450 -> планировавшихся четырехсот пятидесяти"
-    """
-    def __init__(self):
-        self.mask = (r'\b([а-я]+ш(ими?|их|его|ем|им|ей|ую)ся (минус |плюс |))'
-                     r'(\d+,|)(\d+)\b(?!-)')
-
-    def check(self, m):
-        if m.group(2) == 'их':
-            if m.group(4):
-                new = decimal(m.group(4)[:-1], m.group(5), 1)
-            else:
-                new = cardinal(m.group(5), r_ca)
-        elif m.group(2) == 'им':
-            if m.group(4):
-                new = decimal(m.group(4)[:-1], m.group(5), 2)
-            else:
-                if condition(m.group(5)): 
-                    new = cardinal(m.group(5), t_ca)
-                else:
-                    new = cardinal(m.group(5), d_ca)
-        elif m.group(2) == 'ими':
-            if m.group(4):
-                new = decimal(m.group(4)[:-1], m.group(5), 3)
-            else:
-                new = cardinal(m.group(5), t_ca)
-        elif m.group(2) == 'его':
-            if not m.group(4) and condition(m.group(5)):
-                new = cardinal(m.group(5), r_ca)
-            else:
-                return None
-        elif m.group(2) == 'ем':
-            if not m.group(4) and condition(m.group(5)):
-                new = cardinal(m.group(5), p_ca)
-            else:
-                return None
-        elif m.group(2) == 'ей':
-            if m.group(4):
-                if condition(m.group(4)[:-1]):
-                    new = decimal(m.group(4)[:-1], m.group(5), 4)
-                else:
-                    return None
-            else:
-                new = feminin(cardinal(m.group(5), r_ca), 1)
-        elif m.group(2) == 'ую':
-            if m.group(4):
-                new = decimal(m.group(4)[:-1], m.group(5), 5)
-            else:
-                new = feminin(m.group(5), 5)
-        return m.group(1) + new
-
-
 
 # ==========================
 # Подготовка списков правил.
@@ -1889,6 +1834,5 @@ rules_list = (UnitRule_1(),         # винительный
               CardinalRule_10(),
               CardinalRule_31(),
               CardinalRule_35(),
-#              CardinalRule_41(),   (Ложное срабатывание правила)
               Rule_1(),
              )
