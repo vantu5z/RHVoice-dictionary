@@ -1012,7 +1012,7 @@ samples_2 = (
   (r'\b([IV]+)( и [IV]+ степени)',
    'ordinal(roman2arabic(m.group(1)), "r_zh") + m.group(2)'),
   (r'\b([IV]+)(?= степени)',
-   'ordinal(roman2arabic(m.group(1)), "r_zh)"'),
+   'ordinal(roman2arabic(m.group(1)), "r_zh")'),
   (r'\b([IVX]+)( или [IVX]+ век(|а|е|ом|у))\b',
    'ordinal(roman2arabic(m.group(1)), mu_pad[m.group(3)]) + m.group(2)'),
   (r'\b([IVX]+)( или [IVX]+ (сто|тысяче)лети(ем?|и|ю|я))\b',
@@ -1137,7 +1137,7 @@ samples_2 = (
   # Формы r_mn и p_mn совпадают
   (r'\b(\d*1\d|\d*[02-9][015-9]|[015-9])-ы?х\b', 'ordinal(m.group(1), "r_mn")'),
   (r'\b([Дд]о|[Кк]о?|[Пп]осле|[Оо]т|[Сс]о?) (\d+)-й\b',
-   'm.group(1) + " " + ordinal(m.group(2), "r_zh)"'),
+   'm.group(1) + " " + ordinal(m.group(2), "r_zh")'),
   (r'\b(\d+)( [-и] )(\d+)( годами| веками| (сто|тысяче)летиями)',
    'ordinal(m.group(1), "t_mu") + m.group(2) + '
    'ordinal(m.group(3), "t_mu") + m.group(4)'),
