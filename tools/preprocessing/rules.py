@@ -1768,6 +1768,47 @@ class CardinalRule_40(RuleBase):
             return None
 
 
+class OrdinalRule_41(RuleBase):
+    """
+    Описание: Порядковые числительные.
+              Родительный/дательный/творительный/предложный падеж женского рода.
+    Пример: "3-й артиллерийской роты -> третьей артиллерийской роты"
+    """
+    def __init__(self):
+        self.mask = (r'\b(\d+)-й( [а-яё]+[ео]й ([а-яё]+))\b')
+
+    def check(self, m):
+        attr = words.get_attr(m.group(3))
+        if attr.have([Z_GENDER], False, [1, 2, 4, 5]):
+            return ordinal(m.group(1), 't_zh') + m.group(2)
+        else:
+            return None
+
+
+class OrdinalRule_42(RuleBase):
+    """
+    Описание: Порядковые числительные.
+              Творительный/предложный падеж мужского/среднего рода.
+    Пример: ""
+    """
+    def __init__(self):
+        self.mask = (r'\b(\d+)-м( [а-яё]+[еиоы]м ([а-яё]+))\b')
+
+    def check(self, m):
+        number = ''
+        attr = words.get_attr(m.group(3))
+        if attr.have([M_GENDER, S_GENDER], False, [4]):
+            number = ordinal(m.group(1), 't_mu')
+        elif (attr.have([M_GENDER, S_GENDER], False, [5])
+              or m.group(3) in ('берегу', 'бою', 'году', 'лесу', 'полку',
+                                'пруду', 'саду', 'углу', 'шкафу')):
+            number = ordinal(m.group(1), 'p_mu')
+        if number:
+            return number + m.group(2)
+        else:
+            return None
+
+
 
 # ==========================
 # Подготовка списков правил.
@@ -1806,6 +1847,8 @@ rules_list = (UnitRule_1(),         # винительный
               OrdinalRule_9(),       # родительный
               OrdinalRule_5(),       # дательный
               OrdinalRule_40(),      # дательный
+              OrdinalRule_41(),
+              OrdinalRule_42(),
               OrdinalRule_4(),
               OrdinalRule_39(),
               CardinalRule_20(),     # предложный /перед винительным/
