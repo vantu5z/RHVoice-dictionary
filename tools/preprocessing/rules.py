@@ -167,6 +167,24 @@ class UnitRule_14(RuleBase):
         return new
 
 
+class UnitRule_15(RuleBase):
+    """
+    Описание: Единицы измерения расстояния с предлогом "с". Родительный падеж.
+    Пример: "с 5 км -> с 5 километров"
+    """
+    def __init__(self):
+        self.mask = (
+            r'\b([Сс] (\d+ - |)(\d+) )((тыс\.) |)(к?м)')
+
+    def check(self, m):
+        new = m.group(1)
+        if m.group(4):
+            new += substant(m.group(3), m.group(5), 1) + ' ' + m.group(6)
+        else:
+            new += substant(m.group(3), m.group(6), 1)
+        return new
+
+
 class UnitRule_10(RuleBase):
     """
     Описание: Сокращенные обозначения колич. числительных. Предложный падеж.
@@ -1822,6 +1840,7 @@ rules_list = (UnitRule_1(),         # винительный
               UnitRule_3(),         # родительный (следует перед UnitRule_4)
               UnitRule_4(),         # родительный
               UnitRule_5(),         # родительный (следует после UnitRule_4)
+              UnitRule_15(),        # родительный (следует перед UnitRule_8)
               UnitRule_8(),         # творительный
               UnitRule_6(),         # именительный/винительный
               UnitRule_7(),
