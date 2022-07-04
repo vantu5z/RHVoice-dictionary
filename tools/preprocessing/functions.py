@@ -321,6 +321,13 @@ def decimal(full, frac, cas=0):
         return full + dec
     f_part = feminin(full)
     d_part = feminin(frac)
+
+    if  d_part != '0' * len(d_part):    # Не читаем нули в начале
+        while d_part[0] == '0':         # дробной части
+            d_part = d_part[1:]
+        if d_part[:2] == '_ ':
+            d_part = d_part[2:]
+
     if cas == 0:
         if f_part[-1] == 'а':
             fp = 'ая'
