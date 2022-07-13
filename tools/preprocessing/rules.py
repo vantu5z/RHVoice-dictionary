@@ -873,7 +873,7 @@ class CardinalRule_10(RuleBase):
     Пример: (3-кратный и т.п.)
     """
     def __init__(self):
-        self.mask = (r'(?<![,.-])\b((\d+) - |)(\d+)-(, |[а-яё]{5,}\b)')
+        self.mask = (r'(?<![,.-])\b((\d+) - |)(\d+)-(,? |[а-яё]{5,}\b)')
 
     def check(self, m):
         if m.group(1) == '':
@@ -1660,7 +1660,7 @@ class CardinalRule_21(RuleBase):
     Пример: "в 2 из 3 случаев -> в двух из ..."
     """
     def __init__(self):
-        self.mask = (r'\b([Вв] )(\d+)( из \d+ ([а-яё]+))\b')
+        self.mask = (r'\b([Вв] |[Оо] )(\d+)( из \d+ ([а-яё]+))\b')
 
     def check(self, m):
         number = cardinal(m.group(2), p_ca)
