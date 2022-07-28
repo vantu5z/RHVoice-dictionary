@@ -1169,8 +1169,8 @@ samples_2 = (
    'm.group(1) + ordinal(m.group(2), "t_mu") + " и " + '
    'ordinal(m.group(3), "t_mu") + " " + m.group(4)'),
   (r'\b(\d+)-[еи] сутки', 'ordinal(m.group(1), "i_mn") + " сутки"'),
-  (r'\b([Пп]ункт(|а|е|у|ом) )(\d+)\b(?!-й|-м|, ?\d)',
-   'm.group(1) + ordinal(m.group(3), mu_pad[m.group(2)])'),
+#  (r'\b([Пп]ункт(|а|е|у|ом) )(\d+)\b(?!-й|-м|, ?\d)',
+#   'm.group(1) + ordinal(m.group(3), mu_pad[m.group(2)])'),
   (r'\b([Пп]ункт )(\d+)-й\b', 'm.group(1) + ordinal(m.group(2), "i_mu")'),
   (r'\b([Пп]ункт(е|ом) )(\d+)-м\b',
    'm.group(1) + ordinal(m.group(3), mu_pad[m.group(2)])'),
