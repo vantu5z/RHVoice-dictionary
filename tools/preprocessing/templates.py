@@ -798,6 +798,10 @@ samples_1 = (
 
   (r'(месяц(|а|ев|ы) \d+)(?= г\.)', r'\1-го'),
   (r'(месяц(|а|ев|ы) \d+)( [-и] \d+)(?= гг\.)', r'\1-го\3-го'),
+
+  (r'([Мм]ежду \d+)( и \d+)' + months, r'\1-м\2-м \3'),
+  (r'([Мм]ежду \d+)' + months + '( и \d+)' + months, r'\1-м \2\3-м \4'),
+
   (r'([Сс]о? \d+)( (на|по) \d+)' + months, r'\1-го\2-е \4'),
   (r'([Пп]еред \d+)' + months, r'\1-м \2'),
   (r'\b(([Зз]а|[Нн]а) \d+)( - \d+)' + months, r'\1-е\3-е \4'),
@@ -1166,12 +1170,9 @@ samples_2 = (
   (r'\b(\d+)-е( - \d+-е)' + months,
    'ordinal(m.group(1), "i_sr") + m.group(2) + " " + m.group(3)'),
   (r'\b(\d+)-е' + months, 'ordinal(m.group(1), "i_sr") + " " + m.group(2)'),
-  (r'\b([Мм]ежду )(\d+)' + months + '( и )(\d+)' + months,
+  (r'\b([Мм]ежду )(\d+)-м' + months + '( и )(\d+)-м' + months,
    'm.group(1) + ordinal(m.group(2), "t_mu") + " " + m.group(3) + '
    'm.group(4) + ordinal(m.group(5), "t_mu") + " " + m.group(6)'),
-  (r'\b([Мм]ежду )(\d+) и (\d+)' + months,
-   'm.group(1) + ordinal(m.group(2), "t_mu") + " и " + '
-   'ordinal(m.group(3), "t_mu") + " " + m.group(4)'),
   (r'\b(\d+)-[еи] сутки', 'ordinal(m.group(1), "i_mn") + " сутки"'),
 #  (r'\b([Пп]ункт(|а|е|у|ом) )(\d+)\b(?!-й|-м|, ?\d)',
 #   'm.group(1) + ordinal(m.group(3), mu_pad[m.group(2)])'),
