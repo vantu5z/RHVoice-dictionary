@@ -27,8 +27,11 @@ def condition(value):
 def cardinal(num, casus):
     """
     Склонение количественного числительного.
+    Числа свыше 30 разрядов не обрабатыааются.
     (num - число, casus - падеж)
     """
+    if len(num) > 30:
+        return num
     rem = len(num) % 3
     if rem != 0:
         num = '0' * (3 - rem) + num
