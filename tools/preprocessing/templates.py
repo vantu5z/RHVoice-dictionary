@@ -1064,6 +1064,8 @@ samples_2 = (
   (r'(?<![-.])\b([IVX]+)( [А-Я]?[а-яё]+([иы]([ейх]|ми?)|'
    r'[ая]я|[ео](му?|го|[ей])|[ую]ю) ([А-Я]?[а-я]+))\b',
    'ordinal(roman2arabic(m.group(1)), adj_pad[m.group(3)]) + m.group(2)'),
+  (r'(?<=\A)([IVX])(\.?\n)', 'roman2arabic(m.group(1)) + m.group(2)'),
+  (r'(?<=\n)([IVX])(\.?\n)', 'roman2arabic(m.group(1)) + m.group(2)'),
   # Порядковые числительные - даты и т. д.
   (r'\b(\d+)(( (или|[-и]) \d+) сутки)',
    'ordinal(m.group(1), "i_mn") + m.group(2)'),
