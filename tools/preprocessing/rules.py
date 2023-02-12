@@ -1525,7 +1525,7 @@ class CardinalRule_29(RuleBase):
 
     def check(self, m):
         attr = words.get_attr(m.group(12))
-        a = attr.have([Z_GENDER], False, [1])
+        a = attr.have([Z_GENDER], None, [1])
         b = attr.have([Z_GENDER], False, [0]) and condition(m.group(7))
         if (a or b):
             new = m.group(1)
