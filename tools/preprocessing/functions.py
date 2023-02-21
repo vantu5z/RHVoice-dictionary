@@ -340,16 +340,16 @@ def decimal(full, frac, cas=0):
             dp = 'ая'
         else:
             dp = 'ых'
-#            if d_part[-1] == 'е':
-#                dp = 'ые'
-#            else:
-#                if d_part[-1] in ('3', '4'):
-#                    if len(d_part) == 1 or d_part[-2] != '1':
-#                        dp = 'ые'
-#                    else:
-#                        dp = 'ых'
-#                else:
-#                    dp = 'ых'
+            if d_part[-1] == 'е':
+                dp = 'ые'
+            else:
+                if d_part[-1] in ('3', '4'):
+                    if len(d_part) == 1 or d_part[-2] != '1':
+                        dp = 'ые'
+                    else:
+                        dp = 'ых'
+                else:
+                    dp = 'ых'
     elif cas == 1:
         f_part = cardinal(full, r_ca)
         if condition(full):
