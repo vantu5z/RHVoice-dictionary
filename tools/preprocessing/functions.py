@@ -422,11 +422,19 @@ def decimal(full, frac, cas=0):
         if f_part[-1] == 'а':
             f_part = f_part[:-1] + 'у'
             fp = 'ую'
+        elif f_part == f_part[:-1] + 'е':
+            fp = 'ые'
+        elif f_part[-1] in ('3', '4'):
+            fp = 'ые'
         else:
             fp = 'ых'
         if d_part[-1] == 'а':
             d_part = d_part[:-1] + 'у'
             dp = 'ую'
+        if d_part[-1] == 'е':
+            dp = 'ые'
+        elif d_part[-1] in ('3', '4'):
+            dp = 'ые'
         else:
             dp = 'ых'
     return f_part + '_ цел' + fp + ' ' + d_part + dec + dp
