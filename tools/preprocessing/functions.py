@@ -431,7 +431,7 @@ def decimal(full, frac, cas=0):
         if d_part[-1] == 'а':
             d_part = d_part[:-1] + 'у'
             dp = 'ую'
-        if d_part[-1] == 'е':
+        elif d_part[-1] == 'е':
             dp = 'ые'
         elif d_part[-1] in ('3', '4'):
             dp = 'ые'
