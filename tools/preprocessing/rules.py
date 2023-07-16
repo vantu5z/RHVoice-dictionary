@@ -379,6 +379,26 @@ class UnitRule_7(RuleBase):
         return m.group(1) + ' ' + substant(m.group(2), m.group(4), 2)
 
 
+class UnitRule_16(RuleBase):
+    """
+    Описание: Единицы измерения. Творительный падеж.
+    Пример:
+    """
+    def __init__(self):
+        self.mask = (
+            r'\b([Мм]ежду (\d+,|)(\d+) [а-я]+ ([а-я]+ |)и )'
+            r'(\d+,|)(\d+) ' + units)
+
+    def check(self, m):
+        new = m.group(1)
+        if m.group(5):
+            new += decimal(m.group(5)[:-1], m.group(6), 3) + ' '
+            new += forms[m.group(7)][2]
+        else:
+            new += m.group(6) + ' ' + substant(m.group(6), m.group(7), 3)
+        return new
+
+
 class UnitRule_8(RuleBase):
     """
     Описание: Единицы измерения. Творительный падеж.
@@ -1841,6 +1861,7 @@ rules_list = (UnitRule_1(),         # винительный
               UnitRule_4(),         # родительный
               UnitRule_5(),         # родительный (следует после UnitRule_4)
               UnitRule_15(),        # родительный (следует перед UnitRule_8)
+              UnitRule_16(),        # творительный (следует перед UnitRule_8)
               UnitRule_8(),         # творительный
               UnitRule_6(),         # именительный/винительный
               UnitRule_7(),
