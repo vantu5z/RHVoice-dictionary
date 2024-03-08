@@ -174,7 +174,7 @@ class UnitRule_15(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b([Сс] (\d+ - |)(\d+) )((тыс\.) |)(к?м)')
+            r'\b([Сс] (\d+ - |)(\d+) )((тыс\.) |)(к?м)\b')
 
     def check(self, m):
         new = m.group(1)
