@@ -769,7 +769,7 @@ class OrdinalRule_39(RuleBase):
         if attr.have([S_GENDER], False, [0]):
             number = ordinal(m.group(1), 'i_sr')
         if (attr.have([Z_GENDER], False, [0]) and not attr.have(case=[3])
-            and m.group(2) != 'полка'):
+            and not m.group(2) in ('полка', 'снимка')): # Приходится выбирать...
             number = ordinal(m.group(1), 'i_zh')
         if number:
             return number + ' ' + m.group(2)
