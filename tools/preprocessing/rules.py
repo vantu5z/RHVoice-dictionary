@@ -769,7 +769,7 @@ class OrdinalRule_39(RuleBase):
         if attr.have([S_GENDER], False, [0]):
             number = ordinal(m.group(1), 'i_sr')
         if (attr.have([Z_GENDER], False, [0]) and not attr.have(case=[3])
-            and not m.group(2) in ('полка', 'снимка')): # Приходится выбирать...
+            and m.group(2) != 'полка'):
             number = ordinal(m.group(1), 'i_zh')
         if number:
             return number + ' ' + m.group(2)
@@ -1001,7 +1001,7 @@ class CardinalRule_13(RuleBase):
             r'[Пп]ротив|[Сс]тарше|[Мм]оложе|[Кк]роме|[Пп]омимо|[Рр]анее|'
             r'[Нн]а протяжении|[Нн]е превы[сш][аи][авеийолтшщюья]{1,4}'
             r')'
-            r'( приблизительно | примерно | почти | более чем | менее чем '
+            r'( приблизительно | примерно | почти '
             r'| плюс | минус | максимум | минимум | )'
             r'((\d+,|)(\d+)( - | или )|)(\d+,|)(\d+)'
             r'( ([а-яё]+([иы]х|[ео]й|[ео]го) |и более |и менее |)'
