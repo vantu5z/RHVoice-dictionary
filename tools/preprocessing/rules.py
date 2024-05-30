@@ -1723,7 +1723,7 @@ class CardinalRule_36(RuleBase):
     def check(self, m):
         new = m.group(1) + cardinal(m.group(2), d_ca)
         if m.group(4) == 'й':
-            new = cardinal(m.group(2), p_ca)[:-1] + 'й'
+            new = m.group(1) + cardinal(m.group(2), p_ca)[:-1] + 'й'
         return new + m.group(3)
 
 
