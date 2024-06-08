@@ -425,7 +425,10 @@ def decimal(full, frac, cas=0):
         elif f_part == f_part[:-1] + 'е':
             fp = 'ые'
         elif f_part[-1] in ('3', '4'):
-            fp = 'ые'
+            if len(f_part) == 1 or f_part[-2] != '1':
+                fp = 'ые'
+            else:
+                fp = 'ых'
         else:
             fp = 'ых'
         if d_part[-1] == 'а':
@@ -434,7 +437,10 @@ def decimal(full, frac, cas=0):
         elif d_part[-1] == 'е':
             dp = 'ые'
         elif d_part[-1] in ('3', '4'):
-            dp = 'ые'
+            if len(d_part) == 1 or d_part[-2] != '1':
+                dp = 'ые'
+            else:
+                dp = 'ых'
         else:
             dp = 'ых'
     return f_part + '_ цел' + fp + ' ' + d_part + dec + dp
