@@ -965,16 +965,16 @@ class CardinalRule_12(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b((\d+ )([а-яё]{3,})( вместо | из | против ))(\d+,|)(\d+)\b')
+            r'\b((\d+ )([а-яё]{3,})( вместо | из | против )(всего |целых |))(\d+,|)(\d+)\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(3))
-        if m.group(5):
-            number = decimal(m.group(5)[:-1], m.group(6), 1)
+        if m.group(6):
+            number = decimal(m.group(6)[:-1], m.group(7), 1)
         else:
-            number = cardinal(m.group(6), r_ca)
+            number = cardinal(m.group(7), r_ca)
             day_forms = ('сутки', 'суток', 'суткам', 'сутками', 'сутках')
-            if condition(m.group(6)) and attr.have([Z_GENDER]):
+            if condition(m.group(7)) and attr.have([Z_GENDER]):
                 number = number[:-2] + 'й'
             elif number[-6:] == 'одного' and m.group(3) in day_forms:
                 number = number[:-3] + 'их'
@@ -1723,7 +1723,7 @@ class CardinalRule_36(RuleBase):
     def check(self, m):
         new = m.group(1) + cardinal(m.group(2), d_ca)
         if m.group(4) == 'й':
-            new = m.group(1) + cardinal(m.group(2), p_ca)[:-1] + 'й'
+            new = cardinal(m.group(2), p_ca)[:-1] + 'й'
         return new + m.group(3)
 
 
