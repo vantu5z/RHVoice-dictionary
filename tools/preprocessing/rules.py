@@ -1721,10 +1721,10 @@ class CardinalRule_36(RuleBase):
             r'(\d*[02-9]1|1)( [а-яё]+[ео](й|му)(|ся))\b')
 
     def check(self, m):
-        new = m.group(1) + cardinal(m.group(2), d_ca)
+        new = cardinal(m.group(2), d_ca)
         if m.group(4) == 'й':
             new = cardinal(m.group(2), p_ca)[:-1] + 'й'
-        return new + m.group(3)
+        return m.group(1) + new + m.group(3)
 
 
 class CardinalRule_37(RuleBase):
