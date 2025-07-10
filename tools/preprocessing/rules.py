@@ -1080,7 +1080,7 @@ class CardinalRule_15(RuleBase):
     def __init__(self):
         self.mask = (
             r'(\A|\n|\(| )((\d+) - |)(1|\d*[02-9]1)'
-            r'(( [а-яё]+[ео]го | )([а-яё]+))\b')
+            r'(( [а-яё]+[ео]го | [а-яё]+[ео]й | | )([а-яё]+))\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(7))
@@ -1157,7 +1157,7 @@ class CardinalRule_18(RuleBase):
             r'(\d+,|)(\d+)'
             r'( - | или | и (почти |приблизительно |примерно |плюс |минус |))|'
             r')'
-            r'(\d+) ([а-яё]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b')
+            r'(\d+)( [а-яё]+[иы]ми? | [а-яё]+[ео]й | )([а-яё]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b')
 
     def check(self, m):
         if m.group(1):
@@ -1166,34 +1166,35 @@ class CardinalRule_18(RuleBase):
             else:
                 pre = cardinal(m.group(3), t_ca)
                 if condition(m.group(3)):
-                    a = words.have(m.group(7), [Z_GENDER], False, [4])
-                    b = words.have(m.group(7)[:-2], [Z_GENDER], False, [0])
-                    c = words.have(m.group(7)[:-3] + 'ь', [Z_GENDER], False, [0])
+                    a = words.have(m.group(8), [Z_GENDER], False, [4])
+                    b = words.have(m.group(8)[:-2], [Z_GENDER], False, [0])
+                    c = words.have(m.group(8)[:-3] + 'ь', [Z_GENDER], False, [0])
                     if a or b or c:
                         pre = pre[:-2] + 'ой'
-                    elif m.group(8) == 'сутками':
+                    elif m.group(9) == 'сутками':
                         pre = cardinal(m.group(3), t_ca) + 'и'
             pre += m.group(4)
         else:
             pre = ''
         number = ''
         if condition(m.group(6)):
-            attr = words.get_attr(m.group(7))
+            attr = words.get_attr(m.group(8))
             if attr.have([M_GENDER, S_GENDER], False, [4]):
                 number = cardinal(m.group(6), t_ca)
             elif attr.have([Z_GENDER], False, [4]):
                 number = cardinal(m.group(6), t_ca)[:-2] + 'ой'
-            elif m.group(7) == 'сутками':
+            elif m.group(8) == 'сутками':
                 number = cardinal(m.group(6), t_ca) + 'и'
-            elif m.group(7)[-2:] == 'ми' and m.group(1):
+            elif m.group(8)[-2:] == 'ми' and m.group(1):
                 number = cardinal(m.group(6), t_ca)
                 if attr.have([Z_GENDER], True, [4]):
                     number = cardinal(m.group(6), t_ca)[:-2] + 'ой'
-        elif m.group(7)[-2:] == 'ми':
+        elif m.group(8)[-2:] == 'ми':
             number = cardinal(m.group(6), t_ca)
         if number:
-            return pre + number + ' ' + m.group(7)
-        return None
+            return pre + number + m.group(7) + m.group(8)
+        else:
+            return None
 
 
 class CardinalRule_19(RuleBase):
