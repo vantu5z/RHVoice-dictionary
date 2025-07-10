@@ -1080,7 +1080,7 @@ class CardinalRule_15(RuleBase):
     def __init__(self):
         self.mask = (
             r'(\A|\n|\(| )((\d+) - |)(1|\d*[02-9]1)'
-            r'(( [а-яё]+[ео]го | [а-яё]+[ео]й | | )([а-яё]+))\b')
+            r'(( [а-яё]+[ео]го | [а-яё]+[ео]й | )([а-яё]+))\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(7))
