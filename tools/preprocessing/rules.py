@@ -1153,7 +1153,7 @@ class CardinalRule_18(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b('
+            r'(?<![,.;:])\b('
             r'(\d+,|)(\d+)'
             r'( - | или | и (почти |приблизительно |примерно |плюс |минус |))|'
             r')'
@@ -1900,8 +1900,8 @@ rules_list = (UnitRule_1(),         # винительный
               CardinalRule_37(),     # предложный /после 23 и перед 25/
               CardinalRule_25(),     # винительный
               CardinalRule_17(),     # творительный
-              CardinalRule_18(),     # творительный
               CardinalRule_19(),     # творительный / перед 14
+              CardinalRule_18(),     # творительный
               CardinalRule_30(),     # дательный
               CardinalRule_36(),
               CardinalRule_11(),     # родительный
