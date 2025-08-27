@@ -1855,8 +1855,7 @@ class OrdinalRule_42(RuleBase):
 # Подготовка списков правил.
 # ==========================
 
-rules_list = (UnitRule_1(),         # винительный
-              UnitRule_2(),         # следует перед UnitRule_10 и UnitRule_13
+rules_list = (UnitRule_2(),         # следует перед UnitRule_10 и UnitRule_13
               UnitRule_10(),        # предложный (перед UnitRule_14)
               UnitRule_13(),        # предложный (следует перед UnitRule_14)
               UnitRule_14(),        # вин./дат. (следует после UnitRule_2)
@@ -1864,6 +1863,7 @@ rules_list = (UnitRule_1(),         # винительный
               UnitRule_4(),         # родительный
               UnitRule_5(),         # родительный (следует после UnitRule_4)
               UnitRule_15(),        # родительный (следует перед UnitRule_8)
+              UnitRule_1(),         # винительный (следует после UnitRule_4)
               UnitRule_16(),        # творительный (следует перед UnitRule_8)
               UnitRule_8(),         # творительный
               UnitRule_6(),         # именительный/винительный
