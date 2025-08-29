@@ -1609,7 +1609,7 @@ class CardinalRule_31(RuleBase):
     """
     def __init__(self):
         self.mask = (
-            r'\b([Кк] |рав[нагеийлмоcуюыхья]{2,6} |'
+            r'\b([Кк] |[Бб]лагодаря |[Вв]опреки |рав[нагеийлмоcуюыхья]{2,6} |'
             r'равносил[агеимноуыхья]{2,5} |эквивалент[аеноы]{2} )'
             r'(всего |почти |примерно |приблизительно |плюс |минус |)'
             r'((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)\b(?!-)')
@@ -1719,7 +1719,7 @@ class CardinalRule_36(RuleBase):
     Пример: "к 21 возвышающемуся -> к двадцати одному возвышающемуся"
     """
     def __init__(self):
-        self.mask = (r'\b([Кк] |[Пп]о )'
+        self.mask = (r'\b([Кк] |[Пп]о |[Бб]лагодаря |[Вв]опреки )'
             r'(\d*[02-9]1|1)( [а-яё]+[ео](й|му)(|ся))\b')
 
     def check(self, m):
@@ -1850,7 +1850,6 @@ class OrdinalRule_42(RuleBase):
             return None
 
 
-
 # ==========================
 # Подготовка списков правил.
 # ==========================
@@ -1900,10 +1899,10 @@ rules_list = (UnitRule_2(),         # следует перед UnitRule_10 и U
               CardinalRule_37(),     # предложный /после 23 и перед 25/
               CardinalRule_25(),     # винительный
               CardinalRule_17(),     # творительный
-              CardinalRule_19(),     # творительный / перед 14
+              CardinalRule_19(),     # творительный /перед 14/
               CardinalRule_18(),     # творительный
               CardinalRule_30(),     # дательный
-              CardinalRule_36(),
+              CardinalRule_36(),     # дательный
               CardinalRule_11(),     # родительный
               CardinalRule_12(),
               CardinalRule_13(),
@@ -1918,7 +1917,7 @@ rules_list = (UnitRule_2(),         # следует перед UnitRule_10 и U
               CardinalRule_29(),
               CardinalRule_15(),
               CardinalRule_10(),
-              CardinalRule_31(),
+              CardinalRule_31(),     # дательный /после 30 и 36/
               CardinalRule_35(),
               Rule_1(),
              )
