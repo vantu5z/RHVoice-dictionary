@@ -1239,37 +1239,41 @@ class CardinalRule_20(RuleBase):
             r'(?<= )((\d+,|)(\d+)( [-и] | или )'
             r'(около |почти |примерно |приблизительно |плюс |минус |'
             r'более чем |менее чем |)|)'
-            r'(\d+)( ([а-яё]+([иы]х|[ео][йм]) |с небольшим |)([а-яё]{3,}))\b')
+            r'(\d+,|)(\d+)( ([а-яё]+([иы]х|[ео][йм]) |с небольшим |)'
+            r'([а-яё]{3,}))\b')
 
     def check(self, m):
-        attr = words.get_attr(m.group(10))
-        if attr.have(None, None, [5], only_case=True) or m.group(10) == 'сутках':
+        attr = words.get_attr(m.group(11))
+        if attr.have(None, None, [5], only_case=True) or m.group(11) == 'сутках':
             if m.group(1):
                 if m.group(2):
                     pre = decimal(m.group(2)[:-1], m.group(3), 4)
                 else:
                     pre = cardinal(m.group(3), p_ca)
-                    a = attr.have(m.group(10), None, False, [2, 5])
-                    b = attr.have(m.group(10)[:-1] + 'м', [Z_GENDER], True, [2])
+                    a = attr.have(m.group(11), None, False, [2, 5])
+                    b = attr.have(m.group(11)[:-1] + 'м', [Z_GENDER], True, [2])
                     if condition(m.group(3)) and (a or b):
                         pre = pre[:-1] + 'й'
-                    elif condition(m.group(3)) and m.group(10) == 'сутках':
+                    elif condition(m.group(3)) and m.group(11) == 'сутках':
                         pre = pre[:-2] + 'их'
                 pre += m.group(4) + m.group(5)
             else:
                 pre = ''
-            if condition(m.group(6)):
-                if attr.have([M_GENDER, S_GENDER], False, [5]):
-                    number = cardinal(m.group(6), p_ca)
-                elif attr.have([Z_GENDER], False, [2, 5]):
-                    number = cardinal(m.group(6), p_ca)[:-1] + 'й'
-                elif m.group(10) == 'сутках':
-                    number = cardinal(m.group(6), p_ca)[:-2] + 'их'
-                else:
-                    return None
+            if m.group(6):
+                number = decimal(m.group(6)[:-1], m.group(7), 4)
             else:
-                number = cardinal(m.group(6), p_ca)
-            return pre + number + m.group(7)
+                if condition(m.group(7)):
+                    if attr.have([M_GENDER, S_GENDER], False, [5]):
+                        number = cardinal(m.group(7), p_ca)
+                    elif attr.have([Z_GENDER], False, [2, 5]):
+                        number = cardinal(m.group(7), p_ca)[:-1] + 'й'
+                    elif m.group(11) == 'сутках':
+                        number = cardinal(m.group(7), p_ca)[:-2] + 'их'
+                    else:
+                        return None
+                else:
+                    number = cardinal(m.group(7), p_ca)
+            return pre + number + m.group(8)
         else:
             return None
 
