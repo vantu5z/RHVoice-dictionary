@@ -43,4 +43,4 @@ cp -R build/usr/bin ~/.local
 
 ## Зависимости
 * Python 3;
-* Опционально [Pymorphy2](https://github.com/kmike/pymorphy2) (определение формы слова сторонней библиотекой, если не установлен, то будет использоваться встроенный словарь).
+* Опционально [Pymorphy2](https://github.com/kmike/pymorphy2) или [Pymorphy3](https://github.com/no-plagiarism/pymorphy3) (определение формы слова сторонней библиотекой, если не установлена, то будет использоваться встроенный словарь).

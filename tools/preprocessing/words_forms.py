@@ -2,16 +2,21 @@
 # -*- coding: utf-8 -*-
 
 from re import sub
+from importlib.util import find_spec
 
-# импорт pymorphy2 для определения атрибутов слов
-try:
+is_morph = False
+# импорт pymorphy2(3) для определения атрибутов слов
+if find_spec("pymorphy3") is not None:
+    import pymorphy3
+    morph = pymorphy3.MorphAnalyzer()
+    is_morph = True
+elif find_spec("pymorphy2") is not None:
     import pymorphy2
     morph = pymorphy2.MorphAnalyzer()
     is_morph = True
-except:
-    print('Не установлен "pymorphy2".\n'
-          'Определение атрибутов слова будет вестись по словарю.')
-    is_morph = False
+else:
+    print('Не установлен "pymorphy2" или "pymorphy3".\n'
+          'Определение атрибутов слова будет вестись по встроенному словарю.')
 
 # импорт словарей
 from .dict import words_muz
