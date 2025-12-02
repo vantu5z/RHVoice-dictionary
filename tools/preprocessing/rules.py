@@ -231,6 +231,31 @@ class UnitRule_3(RuleBase):
         return m.group(1) + m.group(2) + new
 
 
+class UnitRule_17(RuleBase):
+    """
+    Описание: Единицы измерения. Родительный падеж.
+    Пример: "с 3 кг до -> с 3 килограммов до"
+    """
+    def __init__(self):
+        self.mask = (r'\b([Сс]о? )((\d+,|)(\d+)( - | или )|)'
+                     r'(\d+,|)(\d+) ' + units + ' до ')
+
+    def check(self, m):
+        new = m.group(1)
+        if m.group(2):
+            if m.group(3):
+                new += decimal(m.group(3)[:-1], m.group(4), 1) + m.group(5)
+            else:
+                new += cardinal(m.group(4), r_ca) + m.group(5)
+        if m.group(6):
+            new += decimal(m.group(6)[:-1], m.group(7), 1) + ' '
+            new += forms[m.group(8)][2]
+        else:
+            new += cardinal(m.group(7), r_ca) + ' '
+            new += substant(m.group(7), m.group(8), 1)
+        return new + ' до '
+
+
 class UnitRule_4(RuleBase):
     """
     Описание: Единицы измерения. Родительный падеж.
@@ -1864,6 +1889,7 @@ rules_list = (UnitRule_2(),         # следует перед UnitRule_10 и U
               UnitRule_13(),        # предложный (следует перед UnitRule_14)
               UnitRule_14(),        # вин./дат. (следует после UnitRule_2)
               UnitRule_3(),         # родительный (следует перед UnitRule_4)
+              UnitRule_17(),        # родительный
               UnitRule_4(),         # родительный
               UnitRule_5(),         # родительный (следует после UnitRule_4)
               UnitRule_15(),        # родительный (следует перед UnitRule_8)
