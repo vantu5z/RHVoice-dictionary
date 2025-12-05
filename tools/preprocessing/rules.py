@@ -98,7 +98,7 @@ class UnitRule_2(RuleBase):
     def __init__(self):
         self.mask = (
             r'\b([А-Яа-яё]{3,})'
-            r'( ([а-яё]+ |более чем |не более чем |)в '
+            r'( (более чем |не более чем |)в '
             r'((\d+,|)(\d+) - |)(\d+,|)(\d+)) ' + units)
 
     def check(self, m):
