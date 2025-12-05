@@ -335,29 +335,11 @@ def decimal(full, frac, cas=0):
         if f_part[-1] == 'а':
             fp = 'ая'
         else:
-            if f_part[-1] == 'е':
-                fp = 'ые'
-            else:
-                if f_part[-1] in ('3', '4'):
-                    if len(f_part) == 1 or f_part[-2] != '1':
-                        fp = 'ые'
-                    else:
-                        fp = 'ых'
-                else:
-                    fp = 'ых'
+            fp = 'ых'
         if d_part[-1] == 'а':
             dp = 'ая'
         else:
-            if d_part[-1] == 'е':
-                dp = 'ые'
-            else:
-                if d_part[-1] in ('3', '4'):
-                    if len(d_part) == 1 or d_part[-2] != '1':
-                        dp = 'ые'
-                    else:
-                        dp = 'ых'
-                else:
-                    dp = 'ых'
+            dp = 'ых'
     elif cas == 1:
         f_part = cardinal(full, r_ca)
         if condition(full):
