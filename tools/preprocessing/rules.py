@@ -3,7 +3,7 @@
 
 # В этом файле определены правила.
 
-from re import finditer, sub
+from re import finditer, sub, compile
 
 from .templates import (units, zh_units,
                         forms,
@@ -1878,6 +1878,27 @@ class OrdinalRule_42(RuleBase):
             return number + m.group(2)
         else:
             return None
+
+
+class ArithmExpr(RuleBase):
+    """
+    Описание: Простые арифметические выражения.
+    Пример:
+    """
+    def __init__(self):
+        self.mask = (r'([0-9+-⋅×/÷(),]+)(=-?\d+(,\d+|))')
+
+    def check(self, m):
+        new = m.group(1)
+        p = compile('-')
+        new = p.sub(' ␣минус ', new)
+        p = compile(r'(⋅|×|(?<=\))(?=\())')
+        new = p.sub(' умножить на ', new)
+        p = compile(r'(/|÷)')
+        new = p.sub(' разделить на ', new)
+        p = compile(r'\(([^(]+)\)')
+        new = p.sub(r' (скобка открывается) \1 (скобка закрывается) ', new)
+        return new + m.group(2)
 
 
 # ==========================

@@ -17,13 +17,16 @@ from .templates import (samples_1, samples_2, samples_3,
                         greekletters)
 from .functions import (condition, cardinal, ordinal, roman2arabic, replace,
                         substant, feminin, daynight, decimal)
-from .rules import rules_list
+from .rules import (rules_list, ArithmExpr)
 
 
 def text_prepare(text, stress_marker=False, debug=False):
     """
     Основная функция обработки текста.
     """
+
+    # Обработка простых арифметических выражений
+    text = ArithmExpr().run(text)
 
     # применение шаблонов
     for sample in samples_1:
