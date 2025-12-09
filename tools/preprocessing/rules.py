@@ -1601,31 +1601,33 @@ class CardinalRule_30(RuleBase):
     def __init__(self):
         self.mask = (
             r'(?<![,.])\b((\d+)( [-и] | или )|)(\d+)'
-            r'(( ([а-яё]+-|)[а-яё]+([иы]м|[ео]му) | )([а-яё]+([аиыя]м|у|ю|е)))\b')
+            r'(( (весьма |довольно |относительно |крайне |предельно |'
+            r'сравнительно |наиболее |наименее |самым |самому |самой |)'
+            r'([а-яё]+-|)[а-яё]+([иы]м|[ео]му) | )([а-яё]+([аиыя]м|у|ю|е)))\b')
 
     def check(self, m):
         if m.group(1) == '':
             pre = ''
         else:
             pre = ' ' + cardinal(m.group(2), d_ca)
-            attr = words.get_attr(m.group(9))
+            attr = words.get_attr(m.group(10))
             a = attr.have([Z_GENDER], None, [2])
             b = attr.have([Z_GENDER], False, [5])
             if condition(m.group(2)) and (a or b):
                 pre = pre[:-2] + 'й'
-            elif m.group(9) == 'суткам':
+            elif m.group(10) == 'суткам':
                 pre = pre[:-3] + 'им'
             pre += m.group(3)
         number = ''
         if condition(m.group(4)):
-            if words.have(m.group(9), [M_GENDER, S_GENDER], False, [2]):
+            if words.have(m.group(10), [M_GENDER, S_GENDER], False, [2]):
                 number = cardinal(m.group(4), d_ca)
-            elif words.have(m.group(9), [Z_GENDER], False, [2, 5]):
+            elif words.have(m.group(10), [Z_GENDER], False, [2, 5]):
                 number = cardinal(m.group(4), d_ca)[:-2] + 'й'
-            elif m.group(8) == 'суткам':
+            elif m.group(10) == 'суткам':
                 number = cardinal(m.group(4), d_ca)[:-3] + 'им'
-#        elif m.group(10) == 'ам' or m.group(10) == 'ям':
-        elif words.have(m.group(9), [M_GENDER, S_GENDER, Z_GENDER], True, [2]):
+#        elif m.group(11) == 'ам' or m.group(11) == 'ям':
+        elif words.have(m.group(10), [M_GENDER, S_GENDER, Z_GENDER], True, [2]):
             number = cardinal(m.group(4), d_ca)
         if number:
             return pre + number +m.group(5)
