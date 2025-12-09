@@ -43,7 +43,7 @@ class Words():
         self.zen = WordsForms(words_zen.words, Z_GENDER)
         self.sre = WordsForms(words_sre.words, S_GENDER)
 
-        # поддержка pymorphy2
+        # поддержка pymorphy
         if is_morph:
             self.morph = morph
         else:
@@ -51,12 +51,16 @@ class Words():
 
     def parse_morph(self, records):
         """
-        Приведение результатов разобранного слова с помощью pymorphy2
+        Приведение результатов разобранного слова с помощью pymorphy
         к нужному виду.
         Возвращает: экземпляр AttrList
         """
         attr_list = AttrList()
 
+        # если наиболее вероятная форма не существительное, то выходим
+        tag = records[0].tag.cyr_repr
+        if 'СУЩ' not in tag or '0' in tag:
+            return attr_list
         norm_form = []
         # перебираем все варианты разбора
         # и составляем список слов в нормальной форме
@@ -117,7 +121,7 @@ class Words():
         Определение атрибутов слова.
         Возвращает: экземпляр AttrList
         """
-        # если подключен pymorphy2
+        # если подключен pymorphy
         if self.morph:
             result = self.morph.parse(word)
             attr_list = self.parse_morph(result)
@@ -277,17 +281,13 @@ class WordAttributes():
                     if c == 1:
                         return False
                 if all_case:
-                    if have_all:
-                        return True
-                    else:
-                        return False
+                    return have_all
                 return True
 
-            elif all_case and have_all:
+            if all_case and have_all:
                 return True
-            elif not all_case and present:
+            if not all_case and present:
                 return True
-            else:
-                return False
+            return False
 
         return True
