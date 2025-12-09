@@ -48,7 +48,7 @@ def text_prepare(text, stress_marker=False, debug=False):
         for letter in letters:
             text = sub(letter, letter_name, text)
 
-    # окончателная обработка
+    # окончательная обработка
     for sample in samples_3:
         text = sub(sample[0], sample[1], text)
 
