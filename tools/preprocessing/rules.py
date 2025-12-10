@@ -3,7 +3,7 @@
 
 # В этом файле определены правила.
 
-from re import finditer, sub, compile
+from re import finditer, sub, search, compile
 
 from .templates import (units, zh_units,
                         forms,
@@ -1889,19 +1889,22 @@ class ArithmExpr(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'([0-9+-⋅×/÷(),]+)(=-?\d+(,\d+|))')
+        self.mask = (r'(([0-9(-][0-9+-⋅×/÷(), ]*)(=|≠)([0-9+-⋅×/÷(), ]*[0-9)]))')
 
     def check(self, m):
-        new = m.group(1)
-        p = compile('-')
-        new = p.sub(' ␣минус ', new)
-        p = compile(r'(⋅|×|(?<=\))(?=\())')
-        new = p.sub(' умножить на ', new)
-        p = compile(r'(/|÷)')
-        new = p.sub(' разделить на ', new)
-        p = compile(r'\(([^(]+)\)')
-        new = p.sub(r' (скобка открывается) \1 (скобка закрывается) ', new)
-        return new + m.group(2)
+        if (search(r'\d', m.group(2)) or search(r'\d', m.group(4))) is None:
+            return None
+        else:
+            new = m.group(1)
+            p = compile('-')
+            new = p.sub(' ␣минус ', new)
+            p = compile(r'(⋅|×|(?<=\)) ?(?=\()|(?<=\d) ?(?=\())')
+            new = p.sub(' умножить на ', new)
+            p = compile(r'(/|÷)')
+            new = p.sub(' разделить на ', new)
+            p = compile(r'\(([^(]+)\)')
+            new = p.sub(r' (скобка открывается) \1 (скобка закрывается) ', new)
+            return new
 
 
 # ==========================
@@ -1954,7 +1957,7 @@ rules_list = (UnitRule_2(),         # следует перед UnitRule_10 и U
               CardinalRule_37(),     # предложный /после 23 и перед 25/
               CardinalRule_25(),     # винительный
               CardinalRule_17(),     # творительный
-              CardinalRule_18(),     # творительный / между 17 и 18/
+              CardinalRule_18(),     # творительный /между 17 и 18/
               CardinalRule_19(),     # творительный /перед 14/
               CardinalRule_30(),     # дательный
               CardinalRule_36(),     # дательный
