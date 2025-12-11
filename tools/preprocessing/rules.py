@@ -1904,7 +1904,7 @@ class CardinalRule_40(RuleBase):
     Пример: "вылет 15 рейсов -> вылет пятнадцати рейсов"
     """
     def __init__(self):
-        self.mask = (r'\b([А-ЯЁа-яё]{3,}) (\d+) ([а-яё]+)\b')
+        super().__init__(r'\b([А-ЯЁа-яё]{3,}) (\d+) ([а-яё]+)\b')
 
     def check(self, m):
         noun = sub('ё', 'е', m.group(1).lower())
