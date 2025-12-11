@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# В этом файле определены правила.
+"""
+В этом файле определены правила.
+"""
 
 from re import finditer, sub, search, compile
 
@@ -22,22 +24,33 @@ class RuleBase():
     """
     Базовый класс.
     """
-    def __init__(self):
-        self.mask = ''       # регулярное выражение для поиска (маска)
+    def __init__(self, mask=''):
+        self.mask = mask       # регулярное выражение для поиска (маска)
+        self.debug = False
+        self.debug_info = ''
 
     def run(self, text, debug=False):
         """
         Применение правила к тексту.
         """
+        self.debug = debug
         length = len(text)
         for m in finditer(self.mask, text):
+            self.debug_info = ''
             new = self.check(m)
-            if new is not None:
+            if new is not None and not new == m.group():
                 text = replace(text, new, length, m.start(), m.end())
-                if debug:
-                    print('Сработало правило: %s' % self.__class__.__name__)
-                    print('     найдено: "%s"\n'
-                          '    заменено: "%s"\n' % (m, new))
+            if debug:
+                print('===================================')
+                print('Сработало правило: %s' % self.__class__.__name__)
+                print(f' найдено: "{m}"')
+                if new is not None and not new == m.group():
+                    print(f'заменено: "{new}"')
+                if self.debug_info:
+                    print('-----------------------------------')
+                    print(self.debug_info)
+                else:
+                    print('')
         return text
 
     def check(self, m):
@@ -47,6 +60,20 @@ class RuleBase():
         """
         pass
 
+    def add_debug_info(self, text='', word='', attrs=None):
+        """
+        Сбор отладочной информации.
+        Будет выведена при срабатывании правила.
+        """
+        if not self.debug:
+            return
+        if text:
+            self.debug_info += '--> ' + text + '\n'
+        if word and attrs:
+            self.debug_info += f'атрибуты для слова "{word}":\n'
+            for item in attrs:
+                self.debug_info += f'  {item.gender} {item.plural} {item.case}\n'
+
 
 class QuasiRoman(RuleBase):
     """
@@ -54,11 +81,12 @@ class QuasiRoman(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b(([ІVХIX]+( [-и] | или | [дп]о )'
-                     r'(начал[аеоу] |конец |конц[аеу] |середин[аеуы] |'
-                     r'началом |концом |серединой |)|)'
-                     r'[ІVХIX]+ )(век[аеу]?|веках|веками?|веков|'
-                     r'(сто|тысяче)лети(ем?|й|ю|ях?|ями?))\b')
+        super().__init__(
+            r'\b(([ІVХIX]+( [-и] | или | [дп]о )'
+            r'(начал[аеоу] |конец |конц[аеу] |середин[аеуы] |'
+            r'началом |концом |серединой |)|)'
+            r'[ІVХIX]+ )(век[аеу]?|веках|веками?|веков|'
+            r'(сто|тысяче)лети(ем?|й|ю|ях?|ями?))\b')
 
     def check(self, m):
         if 'Х' in m.group(1) or 'І' in m.group(1):
@@ -66,8 +94,7 @@ class QuasiRoman(RuleBase):
             new = sub('І', 'I', new)
             new = sub('Х', 'X', new)
             return new + m.group(5)
-        else:
-            return None
+        return None
 
 
 class UnitRule_1(RuleBase):
@@ -76,7 +103,7 @@ class UnitRule_1(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'\b(([Зз]а|[Нн]а|[Пп]ро|[Сс]пустя|[Чч]ерез|'
             r'состав[авеийлотшщьюя]{2,6}|превы[сш][авеийлотшщьюя]{2,5}) (бы |)'
             r'((\d+,|)(\d+) - |)(\d+,|)(\d+)) ' + units)
@@ -96,10 +123,9 @@ class UnitRule_2(RuleBase):
     Пример: "диаметром в 2 см -> диаметром в 2 сантиметра"
     """
     def __init__(self):
-        self.mask = (
-            r'\b([А-Яа-яё]{3,})'
-            r'( (более чем |не более чем |)в '
-            r'((\d+,|)(\d+) - |)(\d+,|)(\d+)) ' + units)
+        super().__init__(r'\b([А-Яа-яё]{3,})'
+                         r'( (более чем |не более чем |)в '
+                         r'((\d+,|)(\d+) - |)(\d+,|)(\d+)) ' + units)
 
     def check(self, m):
         preacc = sub('ё', 'е', m.group(1).lower())
@@ -111,18 +137,17 @@ class UnitRule_2(RuleBase):
             else:
                 new += substant(m.group(8), m.group(9), 5)
             return new
-        else:
-            return None
+        return None
+
 
 class UnitRule_13(RuleBase):
     """
-    Описание: Сокращенные обозначения колич. числительных. Предложный падеж.
+    Описание: Сокращённые обозначения колич. числительных. Предложный падеж.
     Пример: "в 1 тыс. км -> в 1 тысяче км"
     """
     def __init__(self):
-        self.mask = (
-            r'\b([Вв] )((\d+,|)(\d+)( [-и] | или )|)'
-            r'(\d+,|)(\d+) (тыс\.|млн|млрд|трлн) ' + units)
+        super().__init__(r'\b([Вв] )((\d+,|)(\d+)( [-и] | или )|)'
+                         r'(\d+,|)(\d+) (тыс\.|млн|млрд|трлн) ' + units)
 
     def check(self, m):
         if m.group(9) in pre_units:
@@ -145,14 +170,14 @@ class UnitRule_13(RuleBase):
         else:
             return None
 
+
 class UnitRule_14(RuleBase):
     """
     Описание: Единицы измерения. Дательный/винительный падеж.
     Пример:
     """
     def __init__(self):
-        self.mask = (
-            r'\b([Вв] ((\d+,|)\d+ - |)(\d+,|)(\d+) )' + units)
+        super().__init__(r'\b([Вв] ((\d+,|)\d+ - |)(\d+,|)(\d+) )' + units)
 
     def check(self, m):
         new = m.group(1)
@@ -172,8 +197,7 @@ class UnitRule_15(RuleBase):
     Пример: "с 5 км -> с 5 километров"
     """
     def __init__(self):
-        self.mask = (
-            r'\b([Сс] (\d+ - |)(\d+) )((тыс\.) |)(к?м)\b')
+        super().__init__(r'\b([Сс] (\d+ - |)(\d+) )((тыс\.) |)(к?м)\b')
 
     def check(self, m):
         new = m.group(1)
@@ -186,11 +210,11 @@ class UnitRule_15(RuleBase):
 
 class UnitRule_10(RuleBase):
     """
-    Описание: Сокращенные обозначения колич. числительных. Предложный падеж.
+    Описание: Сокращённые обозначения колич. числительных. Предложный падеж.
     Пример: "в 1 тыс. километров -> в 1 тысяче километров"
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'\b([Вв] )((\d+,|)(\d+)( [-и] | или )|)'
             r'(\d+,|)(\d+) (тыс\.|млн|млрд|трлн) '
             r'(километров|(морских |)миль|парсек(ов|)|световых лет)\b')
@@ -220,8 +244,8 @@ class UnitRule_3(RuleBase):
     Пример: "от 1 до 4 км -> от 1 до 4 километров"
     """
     def __init__(self):
-        self.mask = (r'\b([Оо]т |[Сс]о? )(((\d+,|)\d+ - |)(\d+,|)\d+ '
-                     r'до ((\d+,|)\d+ - |)(\d+,|)(\d+) )' + units)
+        super().__init__(r'\b([Оо]т |[Сс]о? )(((\d+,|)\d+ - |)(\d+,|)\d+ '
+                         r'до ((\d+,|)\d+ - |)(\d+,|)(\d+) )' + units)
 
     def check(self, m):
         if m.group(8):
@@ -237,8 +261,8 @@ class UnitRule_17(RuleBase):
     Пример: "с 3 кг до -> с 3 килограммов до"
     """
     def __init__(self):
-        self.mask = (r'\b([Сс]о? )((\d+,|)(\d+)( - | или )|)'
-                     r'(\d+,|)(\d+) ' + units + ' до ')
+        super().__init__(r'\b([Сс]о? )((\d+,|)(\d+)( - | или )|)'
+                         r'(\d+,|)(\d+) ' + units + ' до ')
 
     def check(self, m):
         new = m.group(1)
@@ -262,7 +286,7 @@ class UnitRule_4(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'\b('
             r'[Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|'
             r'[Бб]лиже|[Дд]альше|[Мм]оложе|[Сс]тарше|[Сс]выше|'
@@ -308,7 +332,7 @@ class UnitRule_5(RuleBase):
     Пример: "С 10 кВт до 12 -> С десяти киловатт до двенадцати"
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'\b(([Оо]т|[Сс]) '
             r'(почти |примерно |приблизительно |плюс |минус |'
             r'более чем |менее чем|))'
@@ -364,8 +388,7 @@ class UnitRule_5(RuleBase):
             else:
                 number2 = ''
             return m.group(1) + number1 + m.group(10) + number2
-        else:
-            return None
+        return None
 
 
 class UnitRule_6(RuleBase):
@@ -374,7 +397,7 @@ class UnitRule_6(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'\b(([Кк]|равная?|равн[оы][ей]?|равен'
             r'|равняться|равнял[аио]сь|равнялся|равняется|эквивалент[аеноы]{2})'
             r'( всего | почти | примерно | приблизительно | плюс | минус | )'
@@ -390,7 +413,6 @@ class UnitRule_6(RuleBase):
         return m.group(1) + number
 
 
-
 class UnitRule_7(RuleBase):
     """
     Описание: Единицы измерения. Дательный падеж.
@@ -398,7 +420,7 @@ class UnitRule_7(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b([Пп]о (\d*[02-9]1|1(000){0,3})) ' + units)
+        super().__init__(r'\b([Пп]о (\d*[02-9]1|1(000){0,3})) ' + units)
 
     def check(self, m):
         return m.group(1) + ' ' + substant(m.group(2), m.group(4), 2)
@@ -410,9 +432,8 @@ class UnitRule_16(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
-            r'\b([Мм]ежду (\d+,|)(\d+) [а-я]+ ([а-я]+ |)и )'
-            r'(\d+,|)(\d+) ' + units)
+        super().__init__(r'\b([Мм]ежду (\d+,|)(\d+) [а-я]+ ([а-я]+ |)и )'
+                         r'(\d+,|)(\d+) ' + units)
 
     def check(self, m):
         new = m.group(1)
@@ -430,7 +451,7 @@ class UnitRule_8(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'\b(([Мм]ежду|[Нн]ад|[Сс]|[Вв]ладе[авеийлмтюшщья]{1,7}|'
             r'[Пп]о сравнению со?|[Вв] сравнении со?) '
             r'(более чем |почти |приблизительно |примерно |плюс |минус |))'
@@ -459,13 +480,12 @@ class UnitRule_9(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'\b(([Оо]б?|[Пп]ри) '
             r'((около |почти |приблизительно |примерно |плюс |минус |)'
             r'(\d+,|)(\d+) ([-и]|или) |)'
             r'(около |почти |приблизительно |примерно |плюс |минус |)'
-            r'(\d+,|)(\d+)) ' + units
-            )
+            r'(\d+,|)(\d+)) ' + units)
 
     def check(self, m):
         if m.group(9):
@@ -481,7 +501,7 @@ class UnitRule_11(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b(((\d+),|)(\d+)) ' + units)
+        super().__init__(r'\b(((\d+),|)(\d+)) ' + units)
 
     def check(self, m):
         if m.group(2):
@@ -496,7 +516,7 @@ class UnitRule_12(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'('
             r'-й степени|тысяч(|ами|а[мх]?|ей?|и|у)|'
             r'(миллион|миллиард|триллион)(|ами|а[мх]?|о[вм]|[еу])'
@@ -512,7 +532,7 @@ class TimeRule_1(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b([012]?\d) ?ч ?([0-5]?\d) ?мин\b')
+        super().__init__(r'\b([012]?\d) ?ч ?([0-5]?\d) ?мин\b')
 
     def check(self, m):
         if condition(m.group(1)):
@@ -538,7 +558,7 @@ class TimeRule_2(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b(([Вв]|[Нн]а) [012]?\d)[:.]([0-5]\d)\b(?!\.\d)')
+        super().__init__(r'\b(([Вв]|[Нн]а) [012]?\d)[:.]([0-5]\d)\b(?!\.\d)')
 
     def check(self, m):
         return m.group(1) + ' ' + feminin(m.group(3), 5) + '_'
@@ -550,7 +570,7 @@ class TimeRule_3(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b([Кк] )([012]?\d)[:.]([0-5]\d)\b(?!\.\d)')
+        super().__init__(r'\b([Кк] )([012]?\d)[:.]([0-5]\d)\b(?!\.\d)')
 
     def check(self, m):
         hours = cardinal(m.group(2), d_ca)
@@ -570,9 +590,8 @@ class TimeRule_4(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
-            r'\b([Дд]о |[Пп]осле |[Оо]коло |[Сс] )'
-            r'([012]?\d)[:.]([0-5]\d)\b(?!\.\d)')
+        super().__init__(r'\b([Дд]о |[Пп]осле |[Оо]коло |[Сс] )'
+                         r'([012]?\d)[:.]([0-5]\d)\b(?!\.\d)')
 
     def check(self, m):
         hours = cardinal(m.group(2), r_ca)
@@ -592,9 +611,8 @@ class RomanRule(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
-            r'\b([IVX]+)( [-и] )([IVX]+)( век(ами?|ах?|ов|е)'
-            r'| (тысячелети|столети|поколени)(ями?|ях?|и|й))\b')
+        super().__init__(r'\b([IVX]+)( [-и] )([IVX]+)( век(ами?|ах?|ов|е)'
+                         r'| (тысячелети|столети|поколени)(ями?|ях?|и|й))\b')
 
     def check(self, m):
         if m.group(5):
@@ -628,7 +646,7 @@ class OrdinalRule_1(RuleBase):
     Пример: "во 2 окне -> во втором окне"
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'\b([Вв]о?|[Нн]а|[Оо]б?|[Пп]ри) '
             r'(\d*[02-9]|\d*1\d)(( [а-яё]+[ео][йм]|) ([а-яё]{2,}))\b')
 
@@ -655,7 +673,7 @@ class OrdinalRule_2(RuleBase):
     Пример: "из 3 окна -> из третьего окна"
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'\b([Сс]о?|[Ии]з|[Дд]ля|[Дд]о|[Кк]роме|[Оо]т|[Пп]осле) '
             r'(\d*1\d|\d*[02-9]?[02-9]) ([а-яё]+)\b')
 
@@ -669,8 +687,7 @@ class OrdinalRule_2(RuleBase):
                 number = ordinal(m.group(2), 'r_zh')
             if number:
                 return m.group(1) + ' ' + number + ' ' + m.group(3)
-        else:
-            return None
+        return None
 
 
 class OrdinalRule_3(RuleBase):
@@ -679,7 +696,7 @@ class OrdinalRule_3(RuleBase):
     Пример: "со 2 примером -> со вторым примером"
     """
     def __init__(self):
-        self.mask = (r'\b([Сс]о? )(\d*1\d|\d*[02-9]?[02-9]) ([а-яё]+)\b')
+        super().__init__(r'\b([Сс]о? )(\d*1\d|\d*[02-9]?[02-9]) ([а-яё]+)\b')
 
     def check(self, m):
         number = ''
@@ -699,9 +716,9 @@ class OrdinalRule_35(RuleBase):
     Пример: "во 2-й или 3-й комнатах -> во второй или третьей комнатах"
     """
     def __init__(self):
-        self.mask = (
-            r'\b([Вв]о?|[Нн]а|[Оо]б?|[Пп]ри) '
-            r'(\d+)-й( или | и )(\d+)-й( ([а-я]+([ео]й|[иы]х) |)([а-яё]+))\b')
+        super().__init__(r'\b([Вв]о?|[Нн]а|[Оо]б?|[Пп]ри) '
+                         r'(\d+)-й( или | и )(\d+)-й'
+                         r'( ([а-я]+([ео]й|[иы]х) |)([а-яё]+))\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(8))
@@ -719,8 +736,8 @@ class OrdinalRule_36(RuleBase):
     Пример: "(3-й, )4-й и 5-й бригад -> (третьей, )четвёртой и пятой бригад"
     """
     def __init__(self):
-        self.mask = (r'\b((\d+)-й, |)(\d+)-й и (\d+)-й'
-            r'( ([а-я]+-|)[а-я]+[иы](х|ми?) | )([а-яё]+)\b')
+        super().__init__(r'\b((\d+)-й, |)(\d+)-й и (\d+)-й'
+                         r'( ([а-я]+-|)[а-я]+[иы](х|ми?) | )([а-яё]+)\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(8))
@@ -731,8 +748,7 @@ class OrdinalRule_36(RuleBase):
                 new = ''
             new += ordinal(m.group(3), 'r_zh') + ' и ' + ordinal(m.group(4), 'r_zh')
             return new + m.group(5) + m.group(8)
-        else:
-            return None
+        return None
 
 
 class OrdinalRule_37(RuleBase):
@@ -741,8 +757,8 @@ class OrdinalRule_37(RuleBase):
     Пример: "2-й и 3-й блок(и) -> второй и третий блок(и)"
     """
     def __init__(self):
-        self.mask = (
-            r'\b(\d+)-й( или | и )(\d+)-й( ([а-я]+([иы]й|[иы]е) |)([а-яё]+))\b')
+        super().__init__(r'\b(\d+)-й( или | и )(\d+)-й'
+                         r'( ([а-я]+([иы]й|[иы]е) |)([а-яё]+))\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(7))
@@ -759,8 +775,8 @@ class OrdinalRule_38(RuleBase):
     Пример: "2-е и 3-е числа -> второе и третье числа"
     """
     def __init__(self):
-        self.mask = (
-            r'\b(\d+)-е( или | и )(\d+)-е( ([а-я]+([ео]е|[иы]е) |)([а-яё]+))\b')
+        super().__init__(r'\b(\d+)-е( или | и )(\d+)-е'
+                         r'( ([а-я]+([ео]е|[иы]е) |)([а-яё]+))\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(7))
@@ -779,7 +795,7 @@ class OrdinalRule_39(RuleBase):
             "но: 18 мегаватт, 2 дверь"
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'(?<![,.])\b(\d*[02-9][02-9]|\d*1\d|[2-9]) ([а-яё]+)(?!-)\b')
 
     def check(self, m):
@@ -810,7 +826,7 @@ class OrdinalRule_4(RuleBase):
     Пример: "на 8-м этаже -> на восьмом этаже"
     """
     def __init__(self):
-        self.mask = (r'\b(\d+)-(м|й) ([А-Я]?[а-яё]+)\b')
+        super().__init__(r'\b(\d+)-(м|й) ([А-Я]?[а-яё]+)\b')
 
     def check(self, m):
         number = ''
@@ -838,7 +854,8 @@ class OrdinalRule_6(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b(\d+)-е (([а-яё]+[ео]е ){,2}([А-Я]?[а-яё]+[ео]))\b')
+        super().__init__(r'\b(\d+)-е '
+                         r'(([а-яё]+[ео]е ){,2}([А-Я]?[а-яё]+[ео]))\b')
 
     def check(self, m):
         if words.have(m.group(4).lower(), [S_GENDER], False, [0, 3]):
@@ -852,7 +869,7 @@ class OrdinalRule_8(RuleBase):
     Пример: "102 школу -> сто вторую школу"
     """
     def __init__(self):
-        self.mask = (r'(?<![,.])\b(\d*11|\d*[02-9]) ([а-яё]{2,})\b')
+        super().__init__(r'(?<![,.])\b(\d*11|\d*[02-9]) ([а-яё]{2,})\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(2))
@@ -872,20 +889,21 @@ class OrdinalRule_9(RuleBase):
     Пример: "5 этажа -> пятого этажа, 6 школы -> шестой школы"
     """
     def __init__(self):
-        self.mask = (
-            r'(\A|\n|\(| )(\d*[02-9][05-9]|\d*1\d|[5-9]) ([А-Я]?[а-яё]{2,})\b')
+        super().__init__(r'(\A|\n|\(| )(\d*[02-9][05-9]|\d*1\d|[5-9]) '
+                         r'([А-Я]?[а-яё]{2,})\b')
 
     def check(self, m):
         number = ''
         attr = words.get_attr(m.group(3).lower())
+        self.add_debug_info(word=m.group(3), attrs=attr)
+
         if attr.have([M_GENDER, S_GENDER], False, [1]):
             number = ordinal(m.group(2), 'r_mu')
         if attr.have([Z_GENDER], False, [1]):
             number = ordinal(m.group(2), 'r_zh')
         if number:
             return m.group(1) + number + ' ' + m.group(3)
-        else:
-            return None
+        return None
 
 
 class OrdinalRule_5(RuleBase):
@@ -894,7 +912,7 @@ class OrdinalRule_5(RuleBase):
     Пример: "23 дню -> двадцать третьему дню"
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'(\A|\n|\(| )(\d*[02-9][02-9]|\d*1\d|[2-9]) ([а-яё]{2,})\b')
 
     def check(self, m):
@@ -907,8 +925,7 @@ class OrdinalRule_5(RuleBase):
             number = ordinal(m.group(2), 'd_zh')
         if number:
             return m.group(1) + number + ' ' + m.group(3)
-        else:
-            return None
+        return None
 
 
 class CardinalRule_10(RuleBase):
@@ -918,7 +935,7 @@ class CardinalRule_10(RuleBase):
     Пример: (3-кратный и т.п.)
     """
     def __init__(self):
-        self.mask = (r'(?<![,.-])\b((\d+) - |)(\d+)-(,? |[а-яё]{5,}\b)')
+        super().__init__(r'(?<![,.-])\b((\d+) - |)(\d+)-(,? |[а-яё]{5,}\b)')
 
     def check(self, m):
         if m.group(1) == '':
@@ -945,7 +962,7 @@ class CardinalRule_11(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'\b([Оо]т|[Сс]о?)'
             r'( почти | примерно | приблизительно | плюс | минус | )'
             r'((\d+,|)(\d+)( [-и] | или )|)(\d+,|)(\d+)( ([а-яё]+ |)[а-яё]+ | )'
@@ -989,8 +1006,9 @@ class CardinalRule_12(RuleBase):
     Пример: "числительное + существительное + вместо/из/против + числительное"
     """
     def __init__(self):
-        self.mask = (
-            r'\b((\d+ )([а-яё]{3,})( вместо | из | против )(всего |целых |))(\d+,|)(\d+)\b')
+        super().__init__(r'\b((\d+ )([а-яё]{3,})'
+                         r'( вместо | из | против )(всего |целых |))'
+                         r'(\d+,|)(\d+)\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(3))
@@ -1012,7 +1030,7 @@ class CardinalRule_13(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'\b('
             r'[Бб]олее|[Мм]енее|[Бб]ольше|[Мм]еньше|[Вв]ыше|[Нн]иже|'
             r'[Дд][ао]льше|[Дд]ороже|[Дд]ешевле|[Оо]коло|[Сс]выше|[Сс]реди|'
@@ -1073,7 +1091,8 @@ class CardinalRule_14(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b([Сс]о?'
+        super().__init__(
+            r'\b([Сс]о?'
             r'( всех | [а-яё]+[иы]х | примерно | приблизительно '
             r'| почти | плюс | минус | ))'
             r'((\d+)( [-и] | или )|)(\d+)'
@@ -1103,7 +1122,7 @@ class CardinalRule_15(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'(\A|\n|\(| )((\d+) - |)(1|\d*[02-9]1)'
             r'(( [а-яё]+[ео]го | [а-яё]+[ео]й | )([а-яё]+))\b')
 
@@ -1131,7 +1150,7 @@ class CardinalRule_16(RuleBase):
     Пример: "3 дней -> трёх дней"
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'(?<![,.])\b((\d+)( [-и] | или )|)'
             r'(\d*[02-9][234]|[234])(( [а-яё]+[иы]х | )([А-Я]?[а-яё]+))\b')
 
@@ -1158,7 +1177,7 @@ class CardinalRule_17(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'\b((состав(ил[аио]?|[ия]т|ля[ею]т)|потеря(л[аио]?|[ею]т)|'
             r'[Дд]о|[Оо]коло|[Пп]омимо|[Кк]роме|[Зз]а исключением|[Сс]реди|'
             r'[Сс]выше) \d+) (погибшими|ранеными|убитыми)'
@@ -1178,7 +1197,7 @@ class CardinalRule_18(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'(?<![,.;:])\b('
             r'(\d+,|)(\d+)'
             r'( - | или | и (почти |приблизительно |примерно |плюс |минус |))|'
@@ -1220,8 +1239,7 @@ class CardinalRule_18(RuleBase):
             number = cardinal(m.group(6), t_ca)
         if number:
             return pre + number + m.group(7) + m.group(8)
-        else:
-            return None
+        return None
 
 
 class CardinalRule_19(RuleBase):
@@ -1230,7 +1248,7 @@ class CardinalRule_19(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'\b(([Мм]ежду|[Нн]ад|[Пп]еред|'
             r'[Пп]о сравнению со?|[Вв] сравнении со?) '
             r'(более чем |почти |приблизительно |примерно |плюс |минус |))'
@@ -1260,7 +1278,7 @@ class CardinalRule_20(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'(?<= )((\d+,|)(\d+)( [-и] | или )'
             r'(около |почти |примерно |приблизительно |плюс |минус |'
             r'более чем |менее чем |)|)'
@@ -1299,8 +1317,7 @@ class CardinalRule_20(RuleBase):
                 else:
                     number = cardinal(m.group(7), p_ca)
             return pre + number + m.group(8)
-        else:
-            return None
+        return None
 
 
 class CardinalRule_22(RuleBase):
@@ -1309,7 +1326,7 @@ class CardinalRule_22(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'\b(([Оо]б?|[Пп]ри)( минус| плюс| более чем| менее чем|))'
             r'( (\d+,|)(\d+)( ([-и]|или)( минус| плюс|) )| )'
             r'(\d+,|)(\d+)(?!-)\b')
@@ -1335,7 +1352,7 @@ class CardinalRule_23(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'\b(([А-Яа-яЁё]{3,}) '
             r'(всего |ориентировочно |примерно |приблизительно |почти |'
             r'более чем |не более чем |)в )'
@@ -1364,9 +1381,8 @@ class CardinalRule_24(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
-            r'(\A|\n|\(| )((\d+) - |)(1|\d*[02-9]1)'
-            r'(( [а-яё]+[ео]го | )([а-яё]+))\b')
+        super().__init__(r'(\A|\n|\(| )((\d+) - |)(1|\d*[02-9]1)'
+                         r'(( [а-яё]+[ео]го | )([а-яё]+))\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(7))
@@ -1394,13 +1410,15 @@ class CardinalRule_25(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'\b([Вв]|[Нн]а|[Зз]а|[Пп]ро|[Сс]пустя|[Чч]ерез)'
             r'( (\d+,|)(\d+)( -| или)|) (\d+,|)(\d+)'
             r'(( [а-яё]+([ая]я|[ую]ю|[еиоы]е|[иы][йх]) | )([а-яё]+))\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(11))
+
+        self.add_debug_info(word=m.group(11), attrs=attr)
 
         a = attr.have([M_GENDER], False, [3])
         b = attr.have([M_GENDER], False, [0])
@@ -1517,7 +1535,7 @@ class CardinalRule_27(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'(?<![,.])\b(\d*[02-9]1|1)'
             r'(( [а-яё]+[ую]ю | с половиной | с лишним | )([а-яё]+))')
 
@@ -1534,9 +1552,8 @@ class CardinalRule_28(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
-            r'(?<![,.])\b((\d+)( [-и] | или )|)(\d+)'
-            r'( ([а-яё]+([ео]е|[иы]х) |)([а-яё]+))\b')
+        super().__init__(r'(?<![,.])\b((\d+)( [-и] | или )|)(\d+)'
+                         r'( ([а-яё]+([ео]е|[иы]х) |)([а-яё]+))\b')
 
     def check(self, m):
         if (words.have(m.group(8), [S_GENDER], False, [0, 1])
@@ -1560,8 +1577,7 @@ class CardinalRule_28(RuleBase):
             else:
                 number = m.group(4)
             return pre + number + m.group(5)
-        else:
-            return None
+        return None
 
 
 class CardinalRule_29(RuleBase):
@@ -1571,7 +1587,7 @@ class CardinalRule_29(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'(\A|\n|\(| )(((\d+)( - | или | и ))|)(\d+,|)(\d+)'
             r'((( [а-яё]+([ая]я|[иы][ех]))+'
             r'| с половиной| с лишним|) ([а-яё]+))')
@@ -1600,7 +1616,7 @@ class CardinalRule_30(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'(?<![,.])\b((\d+)( [-и] | или )|)(\d+)'
             r'(( (весьма |довольно |относительно |крайне |предельно |'
             r'сравнительно |наиболее |наименее |самым |самому |самой |)'
@@ -1641,7 +1657,7 @@ class CardinalRule_31(RuleBase):
     Пример: "к 25 -> к двадцати пяти"
     """
     def __init__(self):
-        self.mask = (
+        super().__init__(
             r'\b([Кк] |[Бб]лагодаря |[Вв]опреки |рав[нагеийлмоcуюыхья]{2,6} |'
             r'равносил[агеимноуыхья]{2,5} |эквивалент[аеноы]{2} )'
             r'(всего |почти |примерно |приблизительно |плюс |минус |)'
@@ -1669,14 +1685,13 @@ class CardinalRule_35(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'\b([Пп]о )(\d+),(\d+)\b')
+        super().__init__(r'\b([Пп]о )(\d+),(\d+)\b')
 
     def check(self, m):
         if condition(m.group(2)) or condition(m.group(3)):
             new = m.group(1) + decimal(m.group(2), m.group(3), 2)
             return new
-        else:
-            return None
+        return None
 
 
 class Rule_1(RuleBase):
@@ -1685,7 +1700,7 @@ class Rule_1(RuleBase):
     Пример: "все небо" -> "всё небо"
     """
     def __init__(self):
-        self.mask = (r'\b([Вв]с)е ([а-яё]+)\b')
+        super().__init__(r'\b([Вв]с)е ([а-яё]+)\b')
 
     def check(self, m):
         if words.have(m.group(2), [S_GENDER], False, [0, 3]):
@@ -1699,8 +1714,8 @@ class CardinalRule_26(RuleBase):
     Пример: "в 21 принадлежащей -> в двадцати одной принадлежащей"
     """
     def __init__(self):
-        self.mask = (r'\b([Вв] |[Нн]а |[Пп]ри |[Оо]б? )'
-            r'(\d*[02-9]1|1)( [а-яё]+[ео](й|м)(|ся))\b')
+        super().__init__(r'\b([Вв] |[Нн]а |[Пп]ри |[Оо]б? )'
+                         r'(\d*[02-9]1|1)( [а-яё]+[ео](й|м)(|ся))\b')
 
     def check(self, m):
         new = m.group(1) + cardinal(m.group(2), p_ca)
@@ -1715,7 +1730,7 @@ class CardinalRule_21(RuleBase):
     Пример: "в 2 из 3 случаев -> в двух из ..."
     """
     def __init__(self):
-        self.mask = (r'\b([Вв] |[Оо] )(\d+)( из \d+ ([а-яё]+))\b')
+        super().__init__(r'\b([Вв] |[Оо] )(\d+)( из \d+ ([а-яё]+))\b')
 
     def check(self, m):
         number = cardinal(m.group(2), p_ca)
@@ -1733,8 +1748,8 @@ class OrdinalRule_40(RuleBase):
     Пример: "к 3 числу -> к третьему числу"
     """
     def __init__(self):
-        self.mask = (r'\b([Кк]о? )(\d*[02-9][2-9]|\d*1\d|[2-9])'
-            r'( [а-я]+[ео](му|й) | )([а-яё]+)\b')
+        super().__init__(r'\b([Кк]о? )(\d*[02-9][2-9]|\d*1\d|[2-9])'
+                         r'( [а-я]+[ео](му|й) | )([а-яё]+)\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(5))
@@ -1752,8 +1767,8 @@ class CardinalRule_36(RuleBase):
     Пример: "к 21 возвышающемуся -> к двадцати одному возвышающемуся"
     """
     def __init__(self):
-        self.mask = (r'\b([Кк] |[Пп]о |[Бб]лагодаря |[Вв]опреки )'
-            r'(\d*[02-9]1|1)( [а-яё]+[ео](й|му)(|ся))\b')
+        super().__init__(r'\b([Кк] |[Пп]о |[Бб]лагодаря |[Вв]опреки )'
+                         r'(\d*[02-9]1|1)( [а-яё]+[ео](й|му)(|ся))\b')
 
     def check(self, m):
         new = cardinal(m.group(2), d_ca)
@@ -1768,14 +1783,15 @@ class CardinalRule_37(RuleBase):
     Пример: "в 10,7 километра(х) -> в десяти целых семи десятых километра(х)"
     """
     def __init__(self):
-        self.mask = (r'\b([Вв] (более чем |менее чем |))'
-                     r'((\d+,|)(\d+)( [-и] | или )|)(\d+),(\d+) '
-                     r'((|кило|санти|милли)метрах?|(|кило|мега|гига)парсеках?|'
-                     r'процентах?|процентов|'
-                     r'астрономической единицы|астрономических единиц|'
-                     r'(морской |морских |)мили|(морских |)(миль|милях)|'
-                     r'светового года|световых годах|световых лет|'
-                     r'(миллиона|миллиарда) километров)\b')
+        super().__init__(
+            r'\b([Вв] (более чем |менее чем |))'
+            r'((\d+,|)(\d+)( [-и] | или )|)(\d+),(\d+) '
+            r'((|кило|санти|милли)метрах?|(|кило|мега|гига)парсеках?|'
+            r'процентах?|процентов|'
+            r'астрономической единицы|астрономических единиц|'
+            r'(морской |морских |)мили|(морских |)(миль|милях)|'
+            r'светового года|световых годах|световых лет|'
+            r'(миллиона|миллиарда) километров)\b')
 
     def check(self, m):
         new = m.group(1)
@@ -1802,9 +1818,9 @@ class CardinalRule_42(RuleBase):
     Пример: "в 10,1 процента -> в десять целых одну десятую процента"
     """
     def __init__(self):
-        self.mask = (r'\b([Вв] (более чем |менее чем |))'
-                     r'((\d+,|)(\d+)( [-и] | или )|)(\d+),(\d+)'
-                     r'( ([а-я]+[оы](го|й|х) |)([а-я]+))\b')
+        super().__init__(r'\b([Вв] (более чем |менее чем |))'
+                         r'((\d+,|)(\d+)( [-и] | или )|)(\d+),(\d+)'
+                         r'( ([а-я]+[оы](го|й|х) |)([а-я]+))\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(12))
@@ -1831,15 +1847,14 @@ class CardinalRule_40(RuleBase):
     Пример: "7-ми спелых/яблок -> семи спелых/яблок"
     """
     def __init__(self):
-        self.mask = (r'\b(\d*[02-9]?[78]+)(-ми) ([а-яё]{2,})\b')
+        super().__init__(r'\b(\d*[02-9]?[78]+)(-ми) ([а-яё]{2,})\b')
 
     def check(self, m):
         if (words.have(m.group(3), [M_GENDER, Z_GENDER, S_GENDER],
             True, [1, 2, 5]) or (len(m.group(3)) >= 4
             and m.group(3)[-2:] in ('их', 'ых'))):
             return cardinal(m.group(1), r_ca) + ' ' + m.group(3)
-        else:
-            return None
+        return None
 
 
 class OrdinalRule_41(RuleBase):
@@ -1849,14 +1864,13 @@ class OrdinalRule_41(RuleBase):
     Пример: "3-й артиллерийской роты -> третьей артиллерийской роты"
     """
     def __init__(self):
-        self.mask = (r'\b(\d+)-й( [а-яё]+[ео]й ([а-яё]+))\b')
+        super().__init__(r'\b(\d+)-й( [а-яё]+[ео]й ([а-яё]+))\b')
 
     def check(self, m):
         attr = words.get_attr(m.group(3))
         if attr.have([Z_GENDER], False, [1, 2, 4, 5]):
             return ordinal(m.group(1), 't_zh') + m.group(2)
-        else:
-            return None
+        return None
 
 
 class OrdinalRule_42(RuleBase):
@@ -1866,7 +1880,7 @@ class OrdinalRule_42(RuleBase):
     Пример: ""
     """
     def __init__(self):
-        self.mask = (r'\b(\d+)-м( [а-яё]+[еиоы]м ([а-яё]+))\b')
+        super().__init__(r'\b(\d+)-м( [а-яё]+[еиоы]м ([а-яё]+))\b')
 
     def check(self, m):
         number = ''
@@ -1879,8 +1893,7 @@ class OrdinalRule_42(RuleBase):
             number = ordinal(m.group(1), 'p_mu')
         if number:
             return number + m.group(2)
-        else:
-            return None
+        return None
 
 
 class ArithmExpr(RuleBase):
@@ -1889,7 +1902,8 @@ class ArithmExpr(RuleBase):
     Пример:
     """
     def __init__(self):
-        self.mask = (r'(([0-9(-][0-9+-⋅×/÷(), ]*)(=|≠)([0-9+-⋅×/÷(), ]*[0-9)]))')
+        super().__init__(r'(([0-9(-][0-9+-⋅×/÷(), ]*)(=|≠)'
+                         r'([0-9+-⋅×/÷(), ]*[0-9)]))')
 
     def check(self, m):
         if (search(r'\d', m.group(2)) or search(r'\d', m.group(4))) is None:
