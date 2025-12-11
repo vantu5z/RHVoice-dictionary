@@ -7,6 +7,7 @@ from re import finditer, sub, search, compile
 
 from .templates import (units, zh_units,
                         forms,
+                        noun_gen,
                         pre_acc, pre_units,
                         r_ca, d_ca, v_ca, t_ca, p_ca,
                         adj_pad, mn_pad, mu_pad, sr_pad, zh_pad)
@@ -1882,6 +1883,28 @@ class OrdinalRule_42(RuleBase):
         else:
             return None
 
+class CardinalRule_40(RuleBase):
+    """
+    Описание: Количественные числительные.
+              Существительное + числительное в родительном падеже
+              с сушесгвительным.
+    Пример: "вылет 15 рейсов -> вылет пятнадцати рейсов"
+    """
+    def __init__(self):
+        self.mask = (r'\b([А-ЯЁа-яё]{3,}) (\d+) ([а-яё]+)\b')
+
+    def check(self, m):
+        noun = sub('ё', 'е', m.group(1).lower())
+        if noun in noun_gen:
+            attr = words.get_attr(m.group(3))
+            if attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1]):
+                new = " " + cardinal(m.group(2), r_ca) + " "
+                return m.group(1) + new + m.group(3)
+            else:
+                return None
+        else:
+            return None
+
 
 class ArithmExpr(RuleBase):
     """
@@ -1966,6 +1989,7 @@ rules_list = (UnitRule_2(),         # следует перед UnitRule_10 и U
               CardinalRule_13(),
               CardinalRule_14(),     # родительный
               CardinalRule_16(),     # родительный
+              CardinalRule_40(),     # родительный /после всех прочих/
               CardinalRule_26(),
               CardinalRule_22(),
               CardinalRule_24(),
