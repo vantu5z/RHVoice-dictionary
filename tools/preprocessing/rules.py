@@ -30,7 +30,7 @@ class RuleBase():
         self.debug = False
         self.debug_info = ''
 
-    def run(self, text, debug=False):
+    def run(self, text, debug=False, debug_list=None):
         """
         Применение правила к тексту.
         """
@@ -42,6 +42,9 @@ class RuleBase():
             if new is not None and not new == m.group():
                 text = replace(text, new, length, m.start(), m.end())
             if debug:
+                if (debug_list is not None
+                    and not self.__class__.__name__ in debug_list):
+                    continue
                 print('===================================')
                 print('Сработало правило: %s' % self.__class__.__name__)
                 print(f' найдено: "{m}"')

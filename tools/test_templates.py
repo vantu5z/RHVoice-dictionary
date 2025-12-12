@@ -6,13 +6,20 @@
 # с известным результатом, например: "в 2000 г." -> "в двухтысячном году."
 # Для проверки не сломалось ли чего после внесения изменений в templates.py.
 
-import sys
+import argparse
 from preprocessing.text_prepare import text_prepare
 
 
-# нужно ли включать режим отладки
-debug = '-d' in sys.argv
-
+# разбор аргументов запуска
+parser = argparse.ArgumentParser()
+parser.add_argument('-d', '--debug', action='store_true', default=False,
+                    help='включить вывод отладочной информации')
+parser.add_argument('-r', '--rules',
+                    action="extend", nargs="+", type=str,
+                    help='список отслеживаемых правил')
+args = parser.parse_args()
+debug = args.debug
+rules = args.rules
 
 # набор фраз для проверки
 test_txt=[
@@ -110,7 +117,7 @@ i = 0
 
 for txt in test_txt:
     print('Проверка: %d из %d' % (i, len(test_txt)), end='\r')
-    text = text_prepare(txt[0], debug=debug)
+    text = text_prepare(txt[0], debug=debug, debug_list=rules)
     i += 1
     if text != txt[1]:
         print('ВНИМАНИЕ! неверное преобразование: "%s"' % txt[0])
@@ -123,6 +130,6 @@ print('Пройдено проверок: %d из %d\n' % (len(test_txt)-count_e
 # дальше предлагается ввести текст вручную для проверки
 txt = input('Введите текст:\n')
 
-text = text_prepare(txt, debug=debug)
+text = text_prepare(txt, debug=debug, debug_list=rules)
 
 print('Обработанный текст:\n'+text)

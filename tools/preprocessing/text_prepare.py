@@ -20,7 +20,7 @@ from .functions import (condition, cardinal, ordinal, roman2arabic, replace,
 from .rules import (rules_list, ArithmExpr)
 
 
-def text_prepare(text, stress_marker=False, debug=False):
+def text_prepare(text, stress_marker=False, debug=False, debug_list=None):
     """
     Основная функция обработки текста.
     """
@@ -34,7 +34,7 @@ def text_prepare(text, stress_marker=False, debug=False):
 
     # применение правил
     for rule in rules_list:
-        text = rule.run(text, debug)
+        text = rule.run(text, debug, debug_list)
 
     # применение шаблонов
     for sample in samples_2:
