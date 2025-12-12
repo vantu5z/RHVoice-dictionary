@@ -1896,7 +1896,7 @@ class OrdinalRule_42(RuleBase):
             return number + m.group(2)
         return None
 
-class CardinalRule_40(RuleBase):
+class CardinalRule_43(RuleBase):
     """
     Описание: Количественные числительные.
               Существительное + числительное в родительном падеже.
@@ -1906,12 +1906,13 @@ class CardinalRule_40(RuleBase):
         super().__init__(r'\b([А-ЯЁа-яё]{3,}) (\d+)\b')
 
     def check(self, m):
-        print('>')
         noun = sub('ё', 'е', m.group(1).lower())
+        self.add_debug_info(f'Поиск слова "{noun}" в списке..')
         if noun in noun_gen:
+            self.add_debug_info('найдено')
             return m.group(1) + " " + cardinal(m.group(2), r_ca)
-        else:
-            return None
+        self.add_debug_info('отсутствует')
+        return None
 
 class ArithmExpr(RuleBase):
     """
@@ -1997,7 +1998,7 @@ rules_list = (UnitRule_2(),         # следует перед UnitRule_10 и U
               CardinalRule_13(),
               CardinalRule_14(),     # родительный
               CardinalRule_16(),     # родительный
-              CardinalRule_40(),     # родительный /после всех прочих/
+              CardinalRule_43(),     # родительный /после всех прочих/
               CardinalRule_26(),
               CardinalRule_22(),
               CardinalRule_24(),
