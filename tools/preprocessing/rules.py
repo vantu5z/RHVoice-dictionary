@@ -1902,20 +1902,24 @@ class OrdinalRule_42(RuleBase):
 class CardinalRule_43(RuleBase):
     """
     Описание: Количественные числительные.
-              Существительное + числительное в родительном падеже.
-    Пример: "вылет 15 (рейсов) -> вылет пятнадцати"
+              Существительное + числительное в родительном падеже
+              с сушесгвительным.
+    Пример: "вылет 15 рейсов -> вылет пятнадцати рейсов"
     """
     def __init__(self):
-        super().__init__(r'\b([А-ЯЁа-яё]{3,}) (\d+)\b')
+        super().__init__(r'\b([А-ЯЁа-яё]{3,}) (\d+) ([а-яё]+)\b')
 
     def check(self, m):
         noun = sub('ё', 'е', m.group(1).lower())
-        self.add_debug_info(f'Поиск слова "{noun}" в списке..')
         if noun in noun_gen:
-            self.add_debug_info('найдено')
-            return m.group(1) + " " + cardinal(m.group(2), r_ca)
-        self.add_debug_info('отсутствует')
-        return None
+            attr = words.get_attr(m.group(3))
+            a = attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
+            b = m.group(3)[-2:] in ('их', 'ых') or m.group(3)[-4:] == 'ихся'
+            if a or b:
+                new = " " + cardinal(m.group(2), r_ca) + " "
+                return m.group(1) + new + m.group(3)
+        else:
+            return None
 
 class ArithmExpr(RuleBase):
     """
