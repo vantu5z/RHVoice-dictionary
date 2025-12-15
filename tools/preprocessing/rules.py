@@ -1927,8 +1927,8 @@ class ArithmExpr(RuleBase):
     Пример:
     """
     def __init__(self):
-        super().__init__(r'(([0-9(-][0-9+-⋅×/÷(), ]*)(=|≠)'
-                         r'([0-9+-⋅×/÷(), ]*[0-9)]))')
+        super().__init__(r'(([0-9(-][0-9⋅×/÷()√, +-]*)(=|≠)'
+                         r'([0-9⋅×/÷()√, +-]*[0-9)]))')
 
     def check(self, m):
         if (search(r'\d', m.group(2)) or search(r'\d', m.group(4))) is None:
