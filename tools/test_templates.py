@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Скрипт для проверки предварительной обработки текста
-#
-# Сюда можно добавить определённым образом сформированные строки
-# с известным результатом, например: "в 2000 г." -> "в двухтысячном году."
-# Для проверки не сломалось ли чего после внесения изменений в templates.py.
+"""
+Скрипт для проверки предварительной обработки текста
+
+Сюда можно добавить определённым образом сформированные строки
+с известным результатом, например: "в 2000 г." -> "в двухтысячном году."
+Для проверки не сломалось ли чего после внесения изменений в правила.
+"""
 
 import argparse
 from preprocessing.text_prepare import text_prepare
@@ -14,12 +16,18 @@ from preprocessing.text_prepare import text_prepare
 parser = argparse.ArgumentParser()
 parser.add_argument('-d', '--debug', action='store_true', default=False,
                     help='включить вывод отладочной информации')
+parser.add_argument('-s', '--skiptest', action='store_true', default=False,
+                    help='пропустить тест шаблонов')
+parser.add_argument('-i', '--input', action='store_true', default=False,
+                    help='ввод текста для проверки')
 parser.add_argument('-r', '--rules',
                     action="extend", nargs="+", type=str,
                     help='список отслеживаемых правил')
 args = parser.parse_args()
 debug = args.debug
 rules = args.rules
+skip_test = args.skiptest
+input_check = args.input
 
 # набор фраз для проверки
 test_txt=[
@@ -112,24 +120,26 @@ test_txt=[
     ('2 плюс 2 = 4', '2 плюс 2 равно четырём'),
     ]
 
-count_err = 0    # счётчик не пройденных проверок
-i = 0
+if not skip_test:
+    count_err = 0    # счётчик не пройденных проверок
+    i = 0
+    for txt in test_txt:
+        print('Проверка: %d из %d' % (i, len(test_txt)), end='\r')
+        text = text_prepare(txt[0], debug=debug, debug_list=rules)
+        i += 1
+        if text != txt[1]:
+            print('ВНИМАНИЕ! неверное преобразование: "%s"' % txt[0])
+            print('                          имеется: "%s"' % text)
+            print('                      должно быть: "%s"' % txt[1])
+            count_err += 1
 
-for txt in test_txt:
-    print('Проверка: %d из %d' % (i, len(test_txt)), end='\r')
-    text = text_prepare(txt[0], debug=debug, debug_list=rules)
-    i += 1
-    if text != txt[1]:
-        print('ВНИМАНИЕ! неверное преобразование: "%s"' % txt[0])
-        print('                          имеется: "%s"' % text)
-        print('                      должно быть: "%s"' % txt[1])
-        count_err += 1
+    print('Пройдено проверок: %d из %d\n'
+          % (len(test_txt)-count_err, len(test_txt)))
 
-print('Пройдено проверок: %d из %d\n' % (len(test_txt)-count_err, len(test_txt)))
+if input_check:
+    # ввод текста вручную для проверки
+    txt = input('Введите текст:\n')
 
-# дальше предлагается ввести текст вручную для проверки
-txt = input('Введите текст:\n')
+    text = text_prepare(txt, debug=debug, debug_list=rules)
 
-text = text_prepare(txt, debug=debug, debug_list=rules)
-
-print('Обработанный текст:\n'+text)
+    print('Обработанный текст:\n'+text)
