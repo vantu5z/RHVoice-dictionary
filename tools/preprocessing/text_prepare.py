@@ -16,7 +16,7 @@ from .templates import (samples_1, samples_2, samples_3,
                         adj_pad, mn_pad, mu_pad, sr_pad, zh_pad,
                         greekletters)
 from .functions import (condition, cardinal, ordinal, roman2arabic, replace,
-                        substant, feminin, daynight, decimal)
+                        substant, feminin, decimal)
 from .rules import (rules_list, ArithmExpr)
 
 

@@ -277,38 +277,6 @@ def feminin(num, cas=0):
     return number
 
 
-def daynight(num, nom):
-    """
-    Счёт суток.
-    (num - число, nom - существительное)
-    """
-    if nom == 'сутки':
-        if num == '1':
-            number = 'одни'
-        elif len(num) > 1 and num[-2] != '1' and num[-1] == '1':
-            number = num[:-1] + '0_ одни'
-        else:
-            number = ordinal(num, "i_mn")
-    else:
-        if condition(num):
-            number = cardinal(num, r_ca)[:-3] + 'их'
-        elif num in '234' or (len(num) > 1 and num[-2] != '1'
-            and num[-1] in '234'):
-            if len(num) > 1 and num[-2] != '1':
-                number = num[:-1] + '0_ '
-            else:
-                number = ''
-            if num[-1] == '2':
-                number += 'двое'
-            elif num[-1] == '3':
-                number += 'трое'
-            elif num[-1] == '4':
-                number += 'четверо'
-        else:
-            number = num
-    return number
-
-
 def decimal(full, frac, cas=0):
     """
     Чтение десятичных дробей до миллионных включительно.

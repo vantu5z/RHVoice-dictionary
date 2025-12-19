@@ -14,7 +14,7 @@ from .templates import (units, zh_units,
                         r_ca, d_ca, v_ca, t_ca, p_ca,
                         adj_pad, mn_pad, mu_pad, sr_pad, zh_pad)
 from .functions import (condition, cardinal, ordinal, roman2arabic, replace,
-                        substant, feminin, daynight, decimal)
+                        substant, feminin, decimal)
 from .words_forms import Words, M_GENDER, Z_GENDER, S_GENDER
 
 # Для определения атрибутов слов
@@ -1922,6 +1922,42 @@ class CardinalRule_43(RuleBase):
         else:
             return None
 
+class DayNight(RuleBase):
+    """
+    Описание: Счёт суток.
+    Пример:
+    """
+    def __init__(self):
+        super().__init__(r'\b(\d+) (сутки|суток)\b')
+
+    def check(self, m):
+        if m.group(2) == 'сутки':
+            if m.group(1) == '1':
+                number = 'одни'
+            elif (len(m.group(1)) > 1 and m.group(1)[-2] != '1'
+                                      and m.group(1)[-1] == '1'):
+                number = m.group(1)[:-1] + '0_ одни'
+            else:
+                number = ordinal(m.group(1), "i_mn")
+        else:
+            if condition(m.group(1)):
+                number = cardinal(m.group(1), r_ca)[:-3] + 'их'
+            elif m.group(1) in '234' or (len(m.group(1)) > 1
+                 and m.group(1)[-2] != '1' and m.group(1)[-1] in '234'):
+                if len(m.group(1)) > 1 and m.group(1)[-2] != '1':
+                    number = m.group(1)[:-1] + '0_ '
+                else:
+                    number = ''
+                if m.group(1)[-1] == '2':
+                    number += 'двое'
+                elif m.group(1)[-1] == '3':
+                    number += 'трое'
+                elif m.group(1)[-1] == '4':
+                    number += 'четверо'
+            else:
+                return None
+        return number + ' ' + m.group(2)
+
 class ArithmExpr(RuleBase):
     """
     Описание: Простые арифметические выражения.
@@ -2018,5 +2054,6 @@ rules_list = (UnitRule_2(),         # следует перед UnitRule_10 и U
               CardinalRule_10(),
               CardinalRule_31(),     # дательный /после 30 и 36/
               CardinalRule_35(),
+              DayNight(),
               Rule_1(),
              )
