@@ -1057,6 +1057,8 @@ class CardinalRule_13(RuleBase):
             r'([а-яё]{3,})|(?!-))\b')
 
     def check(self, m):
+        if m.group(2)[1:-1] in ('них', 'которых'):
+            return None
         if m.group(3):
             if m.group(4):
                 pre = decimal(m.group(4)[:-1], m.group(5), 1)
@@ -1075,12 +1077,17 @@ class CardinalRule_13(RuleBase):
             number = decimal(m.group(7)[:-1], m.group(8), 1)
         else:
             number = cardinal(m.group(8), r_ca)
-            if m.group(12) and condition(m.group(8)):
+            if m.group(12):
                 attr = words.get_attr(m.group(12))
-                if attr.have(Z_GENDER, False, [1]):
-                    number = number[:-2] + 'й'
-                elif m.group(12) == 'суток':
-                    number = number[:-3] + 'их'
+                if condition(m.group(8)):
+                    if attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1]):
+                        return None
+                    if attr.have(Z_GENDER, False, [1]):
+                        number = number[:-2] + 'й'
+                    elif m.group(12) == 'суток':
+                        number = number[:-3] + 'их'
+                elif attr.have([M_GENDER, S_GENDER, Z_GENDER], False, [1]):
+                    return None
             elif m.group(3) and condition(m.group(8)):
                 if m.group(3)[-1:] == 'й':
                     number = number[:-2] + 'й'
