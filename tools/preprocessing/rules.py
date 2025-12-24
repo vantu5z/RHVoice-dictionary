@@ -1041,7 +1041,7 @@ class CardinalRule_13(RuleBase):
             r'[Дд]ля|[Дд]о|[Ии]з|[Оо]т|[Бб]ез|[Уу]|[Вв]место|[Вв] возрасте'
             r'[Бб]лиже|[Вв] количестве|[Вв] пределах|[Вв] течение|[Дд]линнее|'
             r'[Вв] размере|[Нн]ач[инаетялсьо]{2,7} с|[Пп]орядка|[Пп]осле|'
-            r'[Зз]а исключением|[Кк]роме|[Сс]реди|'
+            r'[Зз]а исключением|[Кк]роме|[Сс]реди|[Пп]омимо|'
             r'[Дд]ости[гчаетья]{1,4}|[Дд]остига?л[аио]?|[Дд]остигн[еуть]{2,3}|'
             r'[Дд]остигши[еймх]|[Дд]остигавши[еймх]|[Дд]остигш[аеигмоуя]{2,3}|'
             r'[Дд]остигавш[аеигмоуя]{2,3}|[Дд]остигше[ейм|[Дд]остигавше[ейм]|'
@@ -1057,7 +1057,7 @@ class CardinalRule_13(RuleBase):
             r'([а-яё]{3,})|(?!-))\b')
 
     def check(self, m):
-        if m.group(2)[1:-1] in ('них', 'которых'):
+        if m.group(2)[1:-1] in ('которых', 'них', 'того'):
             return None
         if m.group(3):
             if m.group(4):
@@ -1086,7 +1086,9 @@ class CardinalRule_13(RuleBase):
                         number = number[:-2] + 'й'
                     elif m.group(12) == 'суток':
                         number = number[:-3] + 'их'
-                elif attr.have([M_GENDER, S_GENDER, Z_GENDER], False, [1]):
+                elif (attr.have([M_GENDER, S_GENDER, Z_GENDER], False, [1])
+                      or (attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
+                      and m.group(2)[1:-1] == 'этого')):
                     return None
             elif m.group(3) and condition(m.group(8)):
                 if m.group(3)[-1:] == 'й':
