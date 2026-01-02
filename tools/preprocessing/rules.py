@@ -1208,7 +1208,7 @@ class CardinalRule_17(RuleBase):
 class CardinalRule_18(RuleBase):
     """
     Описание: Количественные числительные. Творительный падеж.
-    Пример:
+    Пример: "2 миллионами -> двумя миллонами"
     """
     def __init__(self):
         super().__init__(
@@ -1216,7 +1216,7 @@ class CardinalRule_18(RuleBase):
             r'(\d+,|)(\d+)'
             r'( - | или | и (почти |приблизительно |примерно |плюс |минус |))|'
             r')'
-            r'(\d+)( [а-яё]+[иы]ми? | [а-яё]+[ео]й | )'
+            r'(\d+,|)(\d+)( [а-яё]+[иы]ми? | [а-яё]+[ео]й | )'
             r'([а-яё]+([аиыья]ми|[ео]м|[еиоы]й|ью))\b')
 
     def check(self, m):
@@ -1226,9 +1226,9 @@ class CardinalRule_18(RuleBase):
             else:
                 pre = cardinal(m.group(3), t_ca)
                 if condition(m.group(3)):
-                    a = words.have(m.group(8), [Z_GENDER], False, [4])
-                    b = words.have(m.group(8)[:-2], [Z_GENDER], False, [0])
-                    c = words.have(m.group(8)[:-3] + 'ь', [Z_GENDER], False, [0])
+                    a = words.have(m.group(9), [Z_GENDER], False, [4])
+                    b = words.have(m.group(9)[:-2], [Z_GENDER], False, [0])
+                    c = words.have(m.group(9)[:-3] + 'ь', [Z_GENDER], False, [0])
                     if a or b or c:
                         pre = pre[:-2] + 'ой'
                     elif m.group(9) == 'сутками':
@@ -1237,22 +1237,30 @@ class CardinalRule_18(RuleBase):
         else:
             pre = ''
         number = ''
-        if condition(m.group(6)):
-            attr = words.get_attr(m.group(8))
-            if attr.have([M_GENDER, S_GENDER], False, [4]):
-                number = cardinal(m.group(6), t_ca)
-            elif attr.have([Z_GENDER], False, [4]):
-                number = cardinal(m.group(6), t_ca)[:-2] + 'ой'
-            elif m.group(8) == 'сутками':
-                number = cardinal(m.group(6), t_ca) + 'и'
-            elif m.group(8)[-2:] == 'ми' and m.group(1):
-                number = cardinal(m.group(6), t_ca)
-                if attr.have([Z_GENDER], True, [4]):
-                    number = cardinal(m.group(6), t_ca)[:-2] + 'ой'
-        elif m.group(8)[-2:] == 'ми':
-            number = cardinal(m.group(6), t_ca)
+
+        if m.group(6):
+            if m.group(7) == '5' and m.group(9)[-2:] == 'ми':
+                if m.group(6) == '1,':
+                    number = 'полутора'
+                elif m.group(6) != '0,':
+                    number = cardinal(m.group(6)[:-1], t_ca) + ' с половиной'
+        else:
+            if condition(m.group(7)):
+                attr = words.get_attr(m.group(9))
+                if attr.have([M_GENDER, S_GENDER], False, [4]):
+                    number = cardinal(m.group(7), t_ca)
+                elif attr.have([Z_GENDER], False, [4]):
+                    number = cardinal(m.group(7), t_ca)[:-2] + 'ой'
+                elif m.group(9) == 'сутками':
+                    number = cardinal(m.group(7), t_ca) + 'и'
+                elif m.group(9)[-2:] == 'ми' and m.group(1):
+                    number = cardinal(m.group(7), t_ca)
+                    if attr.have([Z_GENDER], True, [4]):
+                        number = cardinal(m.group(7), t_ca)[:-2] + 'ой'
+            elif m.group(9)[-2:] == 'ми':
+                number = cardinal(m.group(7), t_ca)
         if number:
-            return pre + number + m.group(7) + m.group(8)
+            return pre + number + m.group(8) + m.group(9)
         return None
 
 
