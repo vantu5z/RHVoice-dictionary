@@ -594,8 +594,8 @@ class TimeRule_4(RuleBase):
     Пример:
     """
     def __init__(self):
-        super().__init__(r'\b([Дд]о |[Пп]осле |[Оо]коло |[Сс] )'
-                         r'([012]?\d)[:.]([0-5]\d)\b(?!\.\d)')
+        super().__init__(r'\b([Дд]о |[Пп]осле |[Оо]коло |[Сс] |[Пп]озднее |'
+                         r'[Рр]анее )([012]?\d)[:.]([0-5]\d)\b(?!\.\d)')
 
     def check(self, m):
         hours = cardinal(m.group(2), r_ca)
