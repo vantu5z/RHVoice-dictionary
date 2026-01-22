@@ -201,7 +201,7 @@ class UnitRule_15(RuleBase):
     Пример: "с 5 км -> с 5 километров"
     """
     def __init__(self):
-        super().__init__(r'\b([Сс] (\d+ - |)(\d+) )((тыс\.) |)(к?м)\b')
+        super().__init__(r'\b([Сс] (\d+ - |)(\d+) )((тыс\.) |)(к?м\b|а\.е\.)')
 
     def check(self, m):
         new = m.group(1)
