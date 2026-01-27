@@ -1137,24 +1137,26 @@ class CardinalRule_15(RuleBase):
     """
     def __init__(self):
         super().__init__(
-            r'(\A|\n|\(| )((\d+) - |)(1|\d*[02-9]1)'
+            r'(\A|\n|\(| )((\d+)( - | или )|)(1|\d*[02-9]1)'
             r'(( [а-яё]+[ео]го | [а-яё]+[ео]й | )([а-яё]+))\b')
 
     def check(self, m):
-        attr = words.get_attr(m.group(7))
+        attr = words.get_attr(m.group(8))
         a = attr.have([M_GENDER, S_GENDER], False, [1])
         b = attr.have([M_GENDER], False, [3])
         c = attr.have([Z_GENDER], False, [1])
         if (a and not b) or c:
-            number = cardinal(m.group(4), r_ca)
+            number = cardinal(m.group(5), r_ca)
             if c:
                 number = number[:-2] + 'й'
             if m.group(2) == '':
                 pre = ''
             else:
                 pre = cardinal(m.group(3), r_ca)
-                pre += ' - '
-            return m.group(1) + pre + number + m.group(5)
+                if condition(m.group(3)) and c:
+                    pre = pre[:-2] + 'й'
+                pre += m.group(4)
+            return m.group(1) + pre + number + m.group(6)
         return None
 
 
@@ -1926,17 +1928,26 @@ class CardinalRule_43(RuleBase):
     Пример: "вылет 15 рейсов -> вылет пятнадцати рейсов"
     """
     def __init__(self):
-        super().__init__(r'\b([А-ЯЁа-яё]{3,}) (\d+) ([а-яё]+)\b')
+        super().__init__(r'\b([А-ЯЁа-яё]{3,}) ((\d+)( - | или )|)'
+                         r'(\d+) ([а-яё]+)\b')
 
     def check(self, m):
         noun = sub('ё', 'е', m.group(1).lower())
         if noun in noun_gen:
-            attr = words.get_attr(m.group(3))
+            attr = words.get_attr(m.group(6))
             a = attr.have([M_GENDER, S_GENDER, Z_GENDER], True, [1])
-            b = m.group(3)[-2:] in ('их', 'ых') or m.group(3)[-4:] == 'ихся'
+            b = m.group(6)[-2:] in ('их', 'ых') or m.group(6)[-4:] == 'ихся'
             if a or b:
-                new = " " + cardinal(m.group(2), r_ca) + " "
-                return m.group(1) + new + m.group(3)
+                if m.group(2):
+                    new = ' ' + cardinal(m.group(3), r_ca)
+                    if (condition(m.group(3))
+                                    and attr.have([Z_GENDER], True, [1])):
+                        new = new[:-2] + 'й'
+                    new+= m.group(4)
+                else:
+                    new = ' '
+                new += cardinal(m.group(5), r_ca) + ' '
+                return m.group(1) + new + m.group(6)
         else:
             return None
 
