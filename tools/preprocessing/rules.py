@@ -128,7 +128,7 @@ class UnitRule_2(RuleBase):
     """
     def __init__(self):
         super().__init__(r'\b([А-Яа-яё]{3,})'
-                         r'( (более чем |не более чем |)в '
+                         r'( (более чем |не более чем |примерно |)в '
                          r'((\d+,|)(\d+) - |)(\d+,|)(\d+)) ' + units)
 
     def check(self, m):
@@ -1993,8 +1993,8 @@ class ArithmExpr(RuleBase):
     Пример:
     """
     def __init__(self):
-        super().__init__(r'(([0-9(-][0-9⋅×/÷()√, +-]*)(=|≠)'
-                         r'([0-9⋅×/÷()√, +-]*[0-9)]))')
+        super().__init__(r'(([0-9(-][0-9·⋅×/÷()√, +-]*)(=|≠)'
+                         r'([0-9·⋅×/÷()√, +-]*[0-9)]))')
 
     def check(self, m):
         if (search(r'\d', m.group(2)) or search(r'\d', m.group(4))) is None:
